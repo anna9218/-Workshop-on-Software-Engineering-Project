@@ -1,8 +1,14 @@
-# The guest enters username and password.
-# should receive an ACK msg from the system
-
 from src.main.DomainLayer import Registration
 
 
-def register(username, password):
-    ackMSG = Registration.register(username, password)
+class User:
+    def __init__(self):
+        self.registrationState = Registration()
+
+    def register(self, username, password):
+        ackMSG = self.registrationState.register(self, username, password)
+        if ackMSG:
+            print("registered successfully")
+        else:
+            print("something failed, please try again")
+
