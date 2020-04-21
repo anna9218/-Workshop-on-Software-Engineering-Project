@@ -7,16 +7,22 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 class PaymentSystemTest(ProjectTest):
 
     def setUp(self) -> None:
-        pass
+        self.connect_payment_sys()
+        self.username = "username"
+        self.credit = "123"
+        self.date = "12/12/12"
 
     def test_success(self):
-        pass
+        result = self.commit_payment(self.username, 10, self.credit, self.date)
+        self.assertEqual("Success", result)
 
     def test_fail(self):
-        pass
+        self.disconnect_payment_sys()
+        result = self.commit_payment(" ", 10, self.credit, self.date)
+        self.assertEqual("Fail", result)
 
     def test_fatal_error(self):
         self.reusableTests.test_server_error()
 
     def tearDown(self) -> None:
-        pass
+        self.disconnect_payment_sys()

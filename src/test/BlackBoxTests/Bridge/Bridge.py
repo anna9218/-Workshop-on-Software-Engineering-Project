@@ -16,3 +16,15 @@ class Bridge(ABC):
     @abstractmethod
     def register_user(self, username, password) -> str:
         pass
+
+    @abstractmethod
+    def connect_payment_sys(self):
+        pass
+
+    @abstractmethod
+    def commit_payment(self, username, amount, credit, date):
+        pass
+
+    @abstractmethod
+    def disconnect_payment_sys(self):
+        pass
