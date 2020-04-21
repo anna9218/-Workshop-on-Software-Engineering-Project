@@ -13,11 +13,5 @@ class ProxyBridge(Bridge):
         self.realbridge = realbridge
         # super().__init__()
 
-    def somefunction(self) -> str:
-        return "proxy"
-
-    def test_sum(self, x, y) -> int:
-        return self.realbridge.test_sum(x, y)
-
-    def test_wrong_sum(self, x, y) -> int:
-        return self.realbridge.test_wrong_sum(x, y)
+    def register_user(self, username, password) -> str:
+        self.realbridge.register_user(username, password)

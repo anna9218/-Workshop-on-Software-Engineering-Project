@@ -5,6 +5,7 @@
                             - real subject in the proxy pattern
 """
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
+from src.main.DomainLayer.User import User
 
 
 class RealBridge(Bridge):
@@ -12,13 +13,7 @@ class RealBridge(Bridge):
     def __init__(self):
         pass
 
-    def somefunction(self) -> str:
-        return "real"
+    def register_user(self, username, password) -> str:
+        return User().register(username, password)
 
-    def test_sum(self, x, y) -> int:
-        pass
-        # return junk.junk().sum(x, y)
 
-    def test_wrong_sum(self, x, y) -> int:
-        pass
-        # return junk.junk().wrongsum(x, y)
