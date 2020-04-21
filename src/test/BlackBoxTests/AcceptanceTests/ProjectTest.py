@@ -29,6 +29,10 @@ class ProjectTest(ABC, unittest.TestCase):
     def test_fatal_error(self):
         pass
 
+    # bridged function
+    def register_user(self, username, password) -> str:
+        self.bridge.register_user(username, password)
+
     # teardown after all tests are run
     @abstractmethod
     def tearDown(self) -> None:

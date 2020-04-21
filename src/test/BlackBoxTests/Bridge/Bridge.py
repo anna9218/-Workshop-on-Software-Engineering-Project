@@ -14,13 +14,5 @@ class Bridge(ABC):
         super().__init__()
 
     @abstractmethod
-    def somefunction(self) -> str:
-        pass
-
-    @abstractmethod
-    def test_sum(self, x, y) -> int:
-        pass
-
-    @abstractmethod
-    def test_wrong_sum(self, x, y) -> int:
+    def register_user(self, username, password) -> str:
         pass
