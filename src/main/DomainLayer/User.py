@@ -1,4 +1,4 @@
-from src.main.DomainLayer import Registration
+from src.main.DomainLayer.Registration import Registration
 
 
 class User:

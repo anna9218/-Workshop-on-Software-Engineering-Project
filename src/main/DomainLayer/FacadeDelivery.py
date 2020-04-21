@@ -1,7 +1,7 @@
 class FacadeDelivery:
 
     def __init__(self):
-        pass
+        self.isConnected = False
 
     def connect(self):
         pass
