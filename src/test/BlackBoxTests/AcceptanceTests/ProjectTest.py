@@ -16,7 +16,7 @@ class ProjectTest(ABC, unittest.TestCase):
         self.reusableTests = ReusableTests()
         super().__init__()
 
-    # default functions to be implemented in inheriting classes
+    # default functions to be implemented in inheriting classes (not in parent class)
     @abstractmethod
     def test_success(self):
         pass
