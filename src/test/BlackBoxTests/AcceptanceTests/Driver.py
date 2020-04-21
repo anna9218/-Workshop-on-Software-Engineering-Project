@@ -1,7 +1,9 @@
 """
     abstract class responsible for initializing and returning the Bridge
 """
-from src.test.BlackBoxTests.Bridge import Bridge, ProxyBridge, RealBridge
+from src.test.BlackBoxTests.Bridge.Bridge import Bridge
+from src.test.BlackBoxTests.Bridge.ProxyBridge import ProxyBridge
+from src.test.BlackBoxTests.Bridge.RealBridge import RealBridge
 from abc import ABC
 
 
@@ -12,6 +14,6 @@ class Driver(ABC):
 
     @staticmethod
     def get_bridge() -> Bridge:
-        real = RealBridge.RealBridge()
-        return ProxyBridge.ProxyBridge(real)
+        real = RealBridge()
+        return ProxyBridge(real)
 

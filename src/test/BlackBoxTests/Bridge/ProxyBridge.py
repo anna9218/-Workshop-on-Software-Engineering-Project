@@ -3,10 +3,11 @@
                             - concrete implementor in the Bridge pattern
                             - proxy in the proxy pattern
 """
-from src.test.BlackBoxTests.Bridge import Bridge, RealBridge
+from src.test.BlackBoxTests.Bridge.Bridge import Bridge
+from src.test.BlackBoxTests.Bridge.RealBridge import RealBridge
 
 
-class ProxyBridge(Bridge.Bridge):
+class ProxyBridge(Bridge):
 
     def __init__(self, realbridge: RealBridge):
         self.realbridge = realbridge
