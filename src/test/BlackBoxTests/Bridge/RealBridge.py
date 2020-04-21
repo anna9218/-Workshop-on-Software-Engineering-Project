@@ -4,10 +4,10 @@
                             - adapter in the the adapter pattern
                             - real subject in the proxy pattern
 """
-from src.test.BlackBoxTests.Bridge import Bridge
+from src.test.BlackBoxTests.Bridge.Bridge import Bridge
 
 
-class RealBridge(Bridge.Bridge):
+class RealBridge(Bridge):
 
     def __init__(self):
         pass
