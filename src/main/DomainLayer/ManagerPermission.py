@@ -11,9 +11,9 @@ class ManagerPermission: # TODO- maybe should be removed into User
         # TODO - check if the user is own this store
         return 1
 
-    def AddProducts (self, store, products):
+    def AddProducts (self, store, names_and_prices):
         self.CheckIfOwnesTheStore (store) # check pre conditions
-        store.AddProducts (products) #TODO - remember its different on s.AddProducts
+        store.AddProducts (names_and_prices) #TODO - remember its different on s.AddProducts
 
     def RemoveProducts (self, store, products):
         self.CheckIfOwnesTheStore (store) # check pre conditions

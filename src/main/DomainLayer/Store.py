@@ -13,7 +13,7 @@ class Store:
     #TODO - add check for manager? - maybe in ManagerPermission? (can be also for managers)
     def AddProducts (self, names_and_prices):
         for name, price in names_and_prices.items():
-            self.addProduct (name, price)
+            self.AddProduct (name, price)
 
     def AddProduct (self, name, price):
         # TODO - add check if it was on inventory?
