@@ -14,7 +14,7 @@ class FacadeDelivery:
         if not self.isConnected:
             self.isConnected = True
 
-    # need to check payment details with system once a system is set
+    # need to check address details with system once a system is set
     def deliver_products(self, username, address) -> bool:
         if not self.isConnected or not check_valid_details(username, address):
             return False
