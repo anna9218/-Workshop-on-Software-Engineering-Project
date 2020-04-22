@@ -36,8 +36,8 @@ class ProjectTest(ABC, unittest.TestCase):
     def connect_payment_sys(self):
         self.__bridge.connect_payment_sys()
 
-    def commit_payment(self, username, amount, credit, date):
-        self.__bridge.commit_payment(username, amount, credit, date)
+    def commit_payment(self, username, amount, credit, date) -> bool:
+        return self.__bridge.commit_payment(username, amount, credit, date)
 
     def disconnect_payment_sys(self):
         self.__bridge.disconnect_payment_sys()
