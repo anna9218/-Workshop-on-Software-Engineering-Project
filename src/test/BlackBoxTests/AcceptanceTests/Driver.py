@@ -10,7 +10,7 @@ from abc import ABC
 class Driver(ABC):
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
     @staticmethod
     def get_bridge() -> Bridge:

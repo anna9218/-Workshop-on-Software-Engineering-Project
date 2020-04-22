@@ -7,21 +7,22 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 class DeliverySystemTest(ProjectTest):
 
     def setUp(self) -> None:
-        self.connect_delivery_sys()
-        self.username = "username"
-        self.good_address = "some address 12"
-        self.bad_input = ""
+        super().setUp()
+        super().connect_delivery_sys()
+        self.__username = "username"
+        self.__good_address = "some address 12"
+        self.__bad_input = ""
 
     def test_success(self):
-        result = self.deliver(self.username, self.good_address)
+        result = super().deliver(self.__username, self.__good_address)
         self.assertEqual(True, result)
 
     def test_fail(self):
-        result = self.deliver(self.bad_input, self.good_address)
+        result = super().deliver(self.__bad_input, self.__good_address)
         self.assertEqual(False, result)
 
     def test_fatal_error(self):
-        self.reusableTests.test_server_error()
+        pass
 
     def tearDown(self) -> None:
-        self.disconnect_delivery_sys()
+        super().disconnect_delivery_sys()

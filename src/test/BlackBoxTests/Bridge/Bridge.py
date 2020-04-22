@@ -37,7 +37,7 @@ class Bridge(ABC):
         pass
 
     @abstractmethod
-    def deliver(self, username, address):
+    def deliver(self, username, address) -> bool:
         pass
 
     @abstractmethod
