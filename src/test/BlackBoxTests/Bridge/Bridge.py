@@ -13,10 +13,12 @@ class Bridge(ABC):
     def __init__(self):
         super().__init__()
 
+    # Register tests bridged functions
     @abstractmethod
     def register_user(self, username, password) -> str:
         pass
 
+    # Payment System tests bridged functions
     @abstractmethod
     def connect_payment_sys(self):
         pass
@@ -27,4 +29,17 @@ class Bridge(ABC):
 
     @abstractmethod
     def disconnect_payment_sys(self):
+        pass
+
+    # Payment System tests bridged functions
+    @abstractmethod
+    def connect_delivery_sys(self):
+        pass
+
+    @abstractmethod
+    def deliver(self, username, address):
+        pass
+
+    @abstractmethod
+    def disconnect_delivery_sys(self):
         pass
