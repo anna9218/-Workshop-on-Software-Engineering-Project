@@ -1,6 +1,7 @@
 from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.Logout import Logout
+from src.main.DomainLayer.TradeControl import TradeControl
 
 
 class User:
@@ -8,6 +9,7 @@ class User:
         self.registrationState = Registration()
         self.loginState = Login()
         self.logoutState = Logout()
+        self.tradeControl = TradeControl()
 
     def register(self, username, password):
         ackMSG = self.registrationState.register(self, username, password)

@@ -26,4 +26,6 @@ class TradeControl:
         self.manager.register("TradeManager", "123456789")
         self.managers.append(self.manager)
 
-
+    def subscribe(self, user):
+        self.users.append(user)
+        # TODO - maybe send to Security?
