@@ -9,7 +9,7 @@ class User:
     def __init__(self):
         self.__registrationState = Registration()
         self.__loginState = Login()
-        self.__logoutState = Logout()
+        # self.__logoutState = Logout()
         self.__appointment = Appointment()
         self.__tradeControl = TradeControl.getInstance()
 
@@ -20,30 +20,30 @@ class User:
         # else:
         #     print("something failed, please try again")
             
-    def login(self, username, password):
-        ackMSG = self.__loginState.login(self, username, password)
-        if ackMSG:
-            print("logged in successfully")
-        else:
-            print("error while logging in")
+    def login(self):
+        return self.__loginState.login()
 
     def logout(self):
-        ackMSG = self.__logoutState.logout(self)
-        print("logged out successfully")
+        return self.__loginState.logout()
+        # ackMSG = self.__loginState.login(self, username, password)
+        # if ackMSG:
+        #     print("logged in successfully")
+        # else:
+        #     print("error while logging in")
 
-    def open_store(self, store_name) -> bool:
-        # if self.__loginState.is_logged_in():
-        #     new_store = self.__tradeControl.open_store(self, store_name)
-            if new_store is None:
-                return False
-            else:
-                return self.__appointment.appoint_owner(None, self, new_store)
+    # def logout(self):
+    #     ackMSG = self.__logoutState.logout(self)
+    #     print("logged out successfully")
+
+    def checkPassword(self, password):
+        return self.__registrationState.get_password() == password
 
     def is_loggedIn(self):
         return self.__loginState.is_logged_in()
 
-    def get_trade_control(self):
-        return self._tradeControl
+    def is_loggedOut(self):
+        return not self.__loginState.is_logged_in()
+
 
     def get_login(self):
         return self.__loginState

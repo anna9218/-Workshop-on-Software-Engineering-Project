@@ -52,14 +52,17 @@ class TradeControl:
         self.__stores.append(store)
         return store
 
-    def validateNickName(self, name):
+    def validateNickName(self, nickname):
         for u in self.__subscribers:
-            if u.getName() == name:
+            if u.getName() == nickname:
                 return False
         return True
 
     def get_subscriber(self, nickname):
-        pass
+        for u in self.__subscribers:
+            if u.getName() == nickname:
+                return u
+        return None
 
     def get_users(self):
         return self.__subscribers
