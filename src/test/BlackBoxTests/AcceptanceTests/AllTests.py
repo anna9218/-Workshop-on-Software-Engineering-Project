@@ -8,13 +8,18 @@ from src.test.BlackBoxTests.AcceptanceTests.UcTests.RegisterTest import Register
 
 
 class AllTests:
+    # Build test suit
     suite = unittest.TestSuite()
-    runner = unittest.TextTestRunner()
 
     # add tests to test suite
     suite.addTest(DeliverySystemTest())
-    # suite.addTest(PaymentSystemTest())
+    suite.addTest(PaymentSystemTest())
     # suite.addTest(RegisterTest())
 
+    runner = unittest.TextTestRunner()
     # pass runner the suite and run it
     runner.run(suite)
+
+
+
+

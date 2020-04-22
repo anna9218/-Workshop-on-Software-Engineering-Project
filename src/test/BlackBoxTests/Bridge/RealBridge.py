@@ -7,17 +7,20 @@
 from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
 from src.main.DomainLayer.FacadePayment import FacadePayment
-from src.main.DomainLayer.User import User
+# from src.main.DomainLayer.User import User
 
 
 class RealBridge(Bridge):
 
     def __init__(self):
+        super().__init__()
         self.paymentSys = FacadePayment()
         self.deliverySys = FacadeDelivery()
+        # self.user = User()
 
     def register_user(self, username, password) -> str:
-        return User().register(username, password)
+        # return self.user.register(username, password)
+        pass
 
     def connect_payment_sys(self):
         self.paymentSys.connect()
@@ -25,8 +28,8 @@ class RealBridge(Bridge):
     def disconnect_payment_sys(self):
         self.paymentSys.disconnect()
 
-    def commit_payment(self, username, amount, credit, date):
-        self.paymentSys.commit_payment(username, amount, credit, date)
+    def commit_payment(self, username, amount, credit, date) -> bool:
+        return self.paymentSys.commit_payment(username, amount, credit, date)
 
     def connect_delivery_sys(self):
         self.deliverySys.connect()

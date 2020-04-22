@@ -24,7 +24,7 @@ class Bridge(ABC):
         pass
 
     @abstractmethod
-    def commit_payment(self, username, amount, credit, date):
+    def commit_payment(self, username, amount, credit, date) -> bool:
         pass
 
     @abstractmethod
