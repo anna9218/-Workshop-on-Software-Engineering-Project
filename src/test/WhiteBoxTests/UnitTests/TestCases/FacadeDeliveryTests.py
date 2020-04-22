@@ -4,7 +4,7 @@ from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
 
 class FacadeDeliveryTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.__delivery_sys = FacadeDelivery()
+        self.__delivery_sys = FacadeDelivery.getInstance()
         self.__delivery_sys.connect()
         self.__valid_username = "username"
         self.__valid_address = "my awesome address 04/20"
