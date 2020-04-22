@@ -15,7 +15,7 @@ class Bridge(ABC):
 
     # Register tests bridged functions
     @abstractmethod
-    def register_user(self, username, password) -> str:
+    def register_user(self, username, password) -> bool:
         pass
 
     # Payment System tests bridged functions
