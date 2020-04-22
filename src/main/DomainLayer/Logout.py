@@ -1,6 +1,6 @@
 class Logout:
     def __init__(self):
-        self.isLoggedOut = True
+        self.__isLoggedOut = True
 
     @classmethod
     def logout(cls, user):
@@ -9,4 +9,4 @@ class Logout:
 
     @classmethod
     def set_state(cls, state):
-        cls.isLoggedOut = state
+        cls.__isLoggedOut = state
