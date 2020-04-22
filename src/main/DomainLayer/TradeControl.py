@@ -23,7 +23,7 @@ class TradeControl:
             self.__manager = User(self)
             self.__managers = []
             self.__stores = []
-            self.__users = []
+            self.__subscribers = []
             self.__delivery_system = FacadeDelivery()
             self.__payment_system = FacadePayment()
             TradeControl.__instance = self
@@ -38,20 +38,34 @@ class TradeControl:
         self.__manager.register("TradeManager", "123456789")
         self.__managers.append(self.manager)
 
-    def subscribe(self, user):
-        self.__users.append(user)
+    def subscribe(self):
+        user = User()
+        self.__subscribers.append(user)
+        return user
         # TODO - maybe send to Security?
 
     def open_store(self, user, store_name) -> Store:
         for s in self.__stores:
             if s.get_name() == store_name:
                 return None
-        store = Store(store_name, user)
+        store = Store(store_name)
         self.__stores.append(store)
         return store
 
+    def validateNickName(self, nickname):
+        for u in self.__subscribers:
+            if u.getName() == nickname:
+                return False
+        return True
+
+    def get_subscriber(self, nickname):
+        for u in self.__subscribers:
+            if u.getName() == nickname:
+                return u
+        return None
+
     def get_users(self):
-        return self.__users
+        return self.__subscribers
 
     def get_stores(self):
         return self.__stores
