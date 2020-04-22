@@ -13,7 +13,7 @@ class ProxyBridge(Bridge):
         super().__init__()
         self._realbridge = bridge
 
-    def register_user(self, username, password) -> str:
+    def register_user(self, username, password) -> bool:
         return self._realbridge.register_user(username, password)
 
     def connect_payment_sys(self):

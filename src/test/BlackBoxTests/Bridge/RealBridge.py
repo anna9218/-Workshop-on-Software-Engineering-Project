@@ -7,7 +7,7 @@
 from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
 from src.main.DomainLayer.FacadePayment import FacadePayment
-# from src.main.DomainLayer.User import User
+from src.main.ServiceLayer.GuestRole import GuestRole
 
 
 class RealBridge(Bridge):
@@ -16,11 +16,10 @@ class RealBridge(Bridge):
         super().__init__()
         self.paymentSys = FacadePayment()
         self.deliverySys = FacadeDelivery()
-        # self.user = User()
+        self.guest = GuestRole()
 
-    def register_user(self, username, password) -> str:
-        # return self.user.register(username, password)
-        pass
+    def register_user(self, username, password) -> bool:
+        return self.guest.register(username, password)
 
     def connect_payment_sys(self):
         self.paymentSys.connect()
