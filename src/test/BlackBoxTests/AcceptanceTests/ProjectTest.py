@@ -29,9 +29,18 @@ class ProjectTest(ABC, unittest.TestCase):
     def test_fatal_error(self):
         pass
 
-    # bridged function
+    # bridged functions
     def register_user(self, username, password) -> str:
         self.bridge.register_user(username, password)
+
+    def connect_payment_sys(self):
+        self.bridge.connect_payment_sys()
+
+    def commit_payment(self, username, amount, credit, date):
+        self.bridge.commit_payment(username, amount, credit, date)
+
+    def disconnect_payment_sys(self):
+        self.bridge.disconnect_payment_sys()
 
     # teardown after all tests are run
     @abstractmethod
