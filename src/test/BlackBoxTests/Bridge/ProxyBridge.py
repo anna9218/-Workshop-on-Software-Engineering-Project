@@ -24,3 +24,12 @@ class ProxyBridge(Bridge):
 
     def commit_payment(self, username, amount, credit, date):
         self.realbridge.commit_payment(username, amount, credit, date)
+
+    def connect_delivery_sys(self):
+        self.realbridge.connect_delivery_sys()
+
+    def deliver(self, username, address):
+        self.realbridge.deliver(username, address)
+
+    def disconnect_delivery_sys(self):
+        self.realbridge.disconnect_delivery_sys()

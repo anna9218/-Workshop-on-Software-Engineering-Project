@@ -30,9 +30,12 @@ class ProjectTest(ABC, unittest.TestCase):
         pass
 
     # bridged functions
+
+    # Register tests functions
     def register_user(self, username, password) -> str:
         self.bridge.register_user(username, password)
 
+    # Payment System tests functions
     def connect_payment_sys(self):
         self.bridge.connect_payment_sys()
 
@@ -41,6 +44,16 @@ class ProjectTest(ABC, unittest.TestCase):
 
     def disconnect_payment_sys(self):
         self.bridge.disconnect_payment_sys()
+
+    # Delivery System tests functions
+    def connect_delivery_sys(self):
+        self.bridge.connect_delivery_sys()
+
+    def deliver(self, username, adress):
+        self.bridge.deliver(username, adress)
+
+    def disconnect_delivery_sys(self):
+        self.bridge.disconnect_delivery_sys()
 
     # teardown after all tests are run
     @abstractmethod
