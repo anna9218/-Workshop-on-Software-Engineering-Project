@@ -19,7 +19,7 @@ class PaymentSystemTest(ProjectTest):
 
     def test_fail(self):
         self.disconnect_payment_sys()
-        result = self.commit_payment(" ", 10, self.credit, self.date)
+        result = self.commit_payment("", 10, self.credit, self.date)
         self.assertEqual(False, result)
 
     def test_fatal_error(self):
