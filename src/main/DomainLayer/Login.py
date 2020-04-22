@@ -1,11 +1,12 @@
 class Login:
     def __init__(self):
-        self.isLoggedIn = False
+        self.__isLoggedIn = False
 
     @classmethod
     def login(cls, user, username, password):
         # checking if username and password are correct
-        if user.registrationState.username == username and user.registrationState.password == password:
+        if user.registrationState.is_registered() and user.registrationState.get_name() == username and user.registrationState.get_password() == password:
+
             cls.set_state(True)
             user.logoutState.set_state(False)
             return True
@@ -15,4 +16,7 @@ class Login:
 
     @classmethod
     def set_state(cls, state):
-        cls.isLoggedIn = state
+        cls.__isLoggedIn = state
+
+    def is_logged_in(self):
+        return self.__isLoggedIn

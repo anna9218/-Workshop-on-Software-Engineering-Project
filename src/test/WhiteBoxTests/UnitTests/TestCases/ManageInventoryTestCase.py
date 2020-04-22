@@ -24,3 +24,5 @@ class MyTestCase(unittest.TestCase):
     #     self.assertEqual(True, False)
     pass
 
+if __name__ == '__main__':
+    unittest.main()
