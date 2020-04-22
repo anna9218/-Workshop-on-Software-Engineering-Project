@@ -1,8 +1,3 @@
-# The system checks if the username and password are valid
-# The system creates a new Subscriber in the system with the given username and password.
-# The system returns an ACK message to the guest.
-
-
 class Registration:
     def __init__(self):
         self.isRegistered = False
@@ -11,21 +6,35 @@ class Registration:
 
     @classmethod
     def register(cls, user, username, password):
-        # need to check if registered and act accordingly
-        isUsernameValid = True
-        isPasswordLegal = True
-        # TODO - check if username is valid. if not, change isUsernameLegal to F
+        # check if username is valid
+        isUsernameValid = cls.checkUsername(user, username)
         if isUsernameValid:
-            # TODO - check if password legal. if not, change isPasswordLegal to F
+            isPasswordLegal = cls.checkPassword(password)
+            # check if password legal
             if isPasswordLegal:
                 cls.isRegistered = True
                 cls.username = username
                 cls.password = password
-                # TODO - create Subscriber - object? in DB? do we need to send to Security Component?
+                user.tradeControl.subscribe(user)
+                return True
             else:
                 print("The password is not legal, please try again")
+                return False
         else:
             print("The username is not legal, please try again")
+            return False
+
+    @classmethod
+    def checkUsername(cls, user, username):
+        isValid = True
+        for user in user.tradeControl.users:
+            if user.registrationState.get_username == username:
+                isValid = False
+        return isValid
+
+    @classmethod
+    def checkPassword(cls, password):
+        return True
 
     @classmethod
     def get_username(cls):
