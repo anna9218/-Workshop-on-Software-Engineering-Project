@@ -15,11 +15,11 @@ class FacadePayment:
             self.isConnected = True
 
     # need to check payment details with system once a system is set
-    def commit_payment(self, username, amount, credit, date) -> str:
+    def commit_payment(self, username, amount, credit, date) -> bool:
         if not self.isConnected or not check_valid_details(username, amount, credit, date):
-            return "Fail"
+            return False
         else:
-            return "Success"
+            return True
 
     def disconnect(self):
         if self.isConnected:
