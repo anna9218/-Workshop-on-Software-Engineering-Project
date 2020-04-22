@@ -31,8 +31,8 @@ class RealBridge(Bridge):
     def connect_delivery_sys(self):
         self.deliverySys.connect()
 
-    def deliver(self, username, address):
-        self.deliverySys.deliver_products(username, address)
+    def deliver(self, username, address) -> bool:
+        return self.deliverySys.deliver_products(username, address)
 
     def disconnect_delivery_sys(self):
         self.deliverySys.disconnect()

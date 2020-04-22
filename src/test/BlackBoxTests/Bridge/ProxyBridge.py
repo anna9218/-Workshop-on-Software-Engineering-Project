@@ -28,8 +28,8 @@ class ProxyBridge(Bridge):
     def connect_delivery_sys(self):
         self.realbridge.connect_delivery_sys()
 
-    def deliver(self, username, address):
-        self.realbridge.deliver(username, address)
+    def deliver(self, username, address) -> bool:
+        return self.realbridge.deliver(username, address)
 
     def disconnect_delivery_sys(self):
         self.realbridge.disconnect_delivery_sys()
