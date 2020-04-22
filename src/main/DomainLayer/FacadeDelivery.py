@@ -1,8 +1,21 @@
 
 class FacadeDelivery:
+    __instance = None
+
+    @staticmethod
+    def getInstance():
+        """ Static access method. """
+        if FacadeDelivery.__instance is None:
+            FacadeDelivery()
+        return FacadeDelivery.__instance
 
     def __init__(self):
-        self.__isConnected = False
+        """ Virtually private constructor. """
+        if FacadeDelivery.__instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            self.__isConnected = False
+            FacadeDelivery.__instance = self
 
     def connect(self):
         if not self.__isConnected:

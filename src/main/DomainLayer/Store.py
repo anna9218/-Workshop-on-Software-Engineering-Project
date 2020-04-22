@@ -2,10 +2,10 @@ from src.main.DomainLayer.Product import Product
 
 
 class Store:
-    def __init__(self, name, owner):
+    def __init__(self, store_name):
         # self.__id = id
-        self.__name = name
-        self.__owners = [owner]
+        self.__name = store_name
+        self.__owners = []
         self.__managers = []
         # TODO - should it be an external class?
         self.__inventory = []

@@ -4,7 +4,7 @@
 import unittest
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.DeliverySystemTest import DeliverySystemTest
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.PaymentSystemTest import PaymentSystemTest
-# from src.test.BlackBoxTests.AcceptanceTests.UcTests.RegisterTest import RegisterTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.RegisterTest import RegisterTest
 # from src.test.BlackBoxTests.AcceptanceTests import UcTests
 
 
@@ -19,6 +19,7 @@ class BlackBoxTestsRunner:
     # add individual tests to the test suite
     suite.addTest(loader.loadTestsFromTestCase(DeliverySystemTest))
     suite.addTest(loader.loadTestsFromTestCase(PaymentSystemTest))
+    suite.addTest(loader.loadTestsFromTestCase(RegisterTest))
 
     # pass runner the suite and run it
     runner = unittest.TextTestRunner(verbosity=2)

@@ -29,8 +29,8 @@ class ProjectTest(ABC, unittest.TestCase):
     # bridged functions
 
     # Register tests functions
-    def register_user(self, username, password) -> str:
-        self.__bridge.register_user(username, password)
+    def register_user(self, username, password) -> bool:
+        return self.__bridge.register_user(username, password)
 
     # Payment System tests functions
     def connect_payment_sys(self):

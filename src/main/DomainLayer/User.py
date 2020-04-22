@@ -44,6 +44,7 @@ class User:
     def is_loggedOut(self):
         return not self.__loginState.is_logged_in()
 
+
     def get_login(self):
         return self.__loginState
 
