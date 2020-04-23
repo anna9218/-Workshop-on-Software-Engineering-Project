@@ -37,8 +37,17 @@ class GuestRole:
         #     return False
 
     # use case 2.4
-    def display_stores_info(self):
-        pass
+    @staticmethod
+    def display_stores(self):
+        return TradeControl.getInstance().get_stores()
+
+    @staticmethod
+    def display_stores_info(self, store, store_info_flag, products_flag):
+        if store_info_flag:
+            return TradeControl.getInstance().get_store(store.get_name()).get_info()
+        else:
+            if products_flag:
+                return TradeControl.getInstance().get_store(store.get_name()).get_inventory()
 
     # use case 2.5
     @staticmethod
