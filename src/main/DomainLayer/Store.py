@@ -1,4 +1,5 @@
 from src.main.DomainLayer.Product import Product
+from src.main.DomainLayer.StoreInventory import StoreInventory
 
 
 class Store:
@@ -8,7 +9,7 @@ class Store:
         self.__owners = []
         self.__managers = []
         # TODO - should it be an external class?
-        self.__inventory = []
+        self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
 
     #TODO - add check for manager? - maybe in ManagerPermission? (can be also for managers)
@@ -47,6 +48,12 @@ class Store:
 
     def get_owners(self):
         return self.__owners
+
+    def getProductsBy(self, opt, string):
+        return self.__inventory.getProductsBy(opt, string)
+
+    def getProduct(self, product_name):
+        return self.__inventory.getProducts(product_name)
 
     def empty_inventory(self):
         return len(self.__inventory) == 0

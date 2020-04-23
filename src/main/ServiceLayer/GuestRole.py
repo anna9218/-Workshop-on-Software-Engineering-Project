@@ -42,7 +42,31 @@ class GuestRole:
 
     # use case 2.5
     @staticmethod
-    def search_products(self):
-        pass
+    # option: 1 = by name, 2 = by keyword, 3 = by category
+    def search_products_by(self, search_option, string):
+        product_and_amount_ls = TradeControl.getInstance().getProductsBy(search_option, string)
+        return [product[0] for product in product_and_amount_ls]
+
+    # use case 2.5
+    @staticmethod
+    # Parameters:
+    #    filter_details: list of filter details = "byPriceRange" (1, min_num, max_num)
+    #                                             "byCategory" (2, category)
+    #    products_ls: list of pairs: [(product_name, store_name)]
+    # Returns:
+    #    reverse(str1):The string which gets reversed.
+    def filter_products_by(self, filter_details, products_ls):
+        if products_ls is []:
+            return False
+        else:
+            products = map(lambda pair: TradeControl.getInstance().get_store(pair[1]).getProduct(pair[0]), products_ls)
+            # products = map(lambda store: store.getProduct(pair[0]), stores)
+            if filter_details[0] == 1:
+                return filter(lambda p: filter_details[1] <= p.get_price() <= filter_details[2], products)
+            else:
+                if filter_details[0] == 2:
+                    return filter(lambda p: filter_details[1] == p.get_category(), products)
+
+
 
 

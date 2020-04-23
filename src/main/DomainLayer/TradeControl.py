@@ -1,3 +1,4 @@
+from functools import reduce
 
 from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
 from src.main.DomainLayer.FacadePayment import FacadePayment
@@ -35,7 +36,6 @@ class TradeControl:
         user = User()
         self.__subscribers.append(user)
         return user
-        # TODO - maybe send to Security?
 
     def open_store(self, user, store_name) -> Store:
         for s in self.__stores:
@@ -57,11 +57,23 @@ class TradeControl:
                 return u
         return None
 
+    def getProductsBy(self, search_opt, string):
+        ls = map(lambda store: store.getProductsBy(search_opt, string))
+        return reduce(lambda acc, curr: acc.append(curr), ls)
+
+    # def getProduct(self, product_name, store_name):
+
     def get_users(self):
         return self.__subscribers
 
     def get_stores(self):
         return self.__stores
+
+    def get_store(self, store_name):
+        for s in self.__stores:
+            if s.get_name == store_name:
+                return s
+        return None
 
     def get_managers(self):
         return self.__managers
