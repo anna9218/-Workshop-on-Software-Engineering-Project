@@ -22,10 +22,6 @@ class ProjectTest(ABC, unittest.TestCase):
     def test_fail(self):
         pass
 
-    @abstractmethod
-    def test_fatal_error(self):
-        pass
-
     # bridged functions
 
     # Register tests functions

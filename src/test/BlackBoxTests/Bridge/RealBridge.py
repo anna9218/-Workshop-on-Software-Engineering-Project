@@ -18,9 +18,9 @@ class RealBridge(Bridge):
         self.deliverySys = FacadeDelivery.getInstance()
         # self.user = User()
 
-
     def register_user(self, username, password) -> bool:
-        return self.guest.register(username, password)
+        # return self.guest.register(username, password)
+        pass
 
     def connect_payment_sys(self):
         self.paymentSys.connect()

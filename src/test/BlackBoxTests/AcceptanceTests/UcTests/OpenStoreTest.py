@@ -15,8 +15,5 @@ class OpenStoreTest(ProjectTest):
     def test_fail(self):
         pass
 
-    def test_fatal_error(self):
-        self.reusableTests.test_server_error()
-
     def tearDown(self) -> None:
         pass
