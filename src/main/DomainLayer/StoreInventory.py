@@ -1,24 +1,6 @@
 from src.main.DomainLayer import Product
 
 
-# class StoreInventory:
-#
-#     def __init__(self):
-#         self._amountPerProduct = {}
-#
-#     def get_amount_of_product(self, p: Product):
-#         if self.check_if_exists(p):
-#             print(self._amountPerProduct.get (p))
-#             return self._amountPerProduct.get (p)
-#         else:
-#             print("There is no such product as " + p.get_name())
-#             return False
-#
-#     def add_to_amount(self, product: Product, addToAmount):
-#         self._amountPerProduct[product] = self._amountPerProduct(product)+ addToAmount # TODO- check it overwrites the prev amount of product
-#
-#     def add_product (self, product, amount):
-#         self._amountPerProduct[product] = amount # TODO- change the key to be the product name
 class StoreInventory:
 
     def __init__(self):
@@ -35,5 +17,22 @@ class StoreInventory:
         for i in self.__inv:
             if i[0].get_name() == product_name:
                 return i[0]
+        return None
+
+    def add_product(self, p, amount):
+        # TODO - add check if exist before?
+        self.__inv.append((p, amount))
+
+    def __repr__(self):
+        return repr("There are " + str(len(self.__inv)) + " products on inventory")
+
+    def add_to_amount(self, product: Product, addToAmount):
+        self._amountPerProduct[product] = self._amountPerProduct(product)+ addToAmount # TODO- check it overittes the prev amount of product
+
+
+    def get_amount_of_product (self, product_name):
+        for i in self.__inv:
+            if i[0].get_name() == product_name:
+                return i[1]
         return None
 

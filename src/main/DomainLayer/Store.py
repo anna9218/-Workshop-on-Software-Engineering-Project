@@ -8,36 +8,44 @@ class Store:
         self.__name = store_name
         self.__owners = []
         self.__managers = []
-        # TODO - should it be an external class?
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
 
-    def AddProducts (self, names, prices, amounts):
+    def add_products (self, names, prices, amounts, categories):
         for name in names:
             for price in prices:
                 for amount in amounts:
-                    self.AddProduct (name, price, amount)
+                    for category in categories:
+                        self.add_product (name, price, amount, category)
 
-    def AddProduct (self, name, price, amount):
-        p = Product (name, price)
-        if not self.__inventory.empty_inventory():
-            if self.__inventory.check_if_exists(p):
-                print ("The product is already existed")
-                return False
+    def add_product (self, name, price, amount, category):
+        p = Product (name, price, category)
+        if self.__inventory.getProduct(p.get_name()):
+            print ("The product is already existed")
+            return False
         self.__inventory.add_product(p, amount)
         return True
 
-    def RemoveProducts (self, products):
+    def remove_products (self, products):
         for p in products:
-            self.RemoveProduct (p)
+            self.remove_product (p)
 
-    def RemoveProduct(self, p):
-        # TODO- check something?
+    def remove_product(self, p):
+        # assume the product exists on inventory
         del self.__inventory[p.get_name()]
 
-    def ChangePrice (self, product, new_price):
+    def change_price (self, product, new_price):
         if product in self.__inventory:
             product.set_price(new_price)
+
+    def change_name (self, product, new_name):
+        if product in self.__inventory:
+            product.set_name(new_name)
+
+    def change_amount (self, product, amount):
+        if product in self.__inventory:
+            self.__inventory.add_to_amount(amount)
+
 
     def add_owner(self, owner):
         for o in self.__owners:
