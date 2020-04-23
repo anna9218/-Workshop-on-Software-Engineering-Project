@@ -8,7 +8,7 @@ from src.test.WhiteBoxTests.UnitTests.Stubs.StubPayment import StubPayment
 
 class TradeControlTestCase(unittest.TestCase):
     def setUp(self):
-        self.tradeControl = TradeControl()
+        self.tradeControl = TradeControl.getInstance()
         self.tradeControl.manager = StubUser(self.tradeControl)
         self.tradeControl.delivery_system = StubDelivery()
         self.tradeControl.payment_system = StubPayment()
