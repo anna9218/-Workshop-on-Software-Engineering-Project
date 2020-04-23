@@ -16,3 +16,4 @@ class TradeControlService:
             if GuestRole.register("TradeManager", "123456789"):
                 return TradeControl.getInstance().add_sys_manager("TradeManager")
         return False
+
