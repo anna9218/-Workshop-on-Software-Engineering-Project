@@ -32,7 +32,7 @@ class Store:
 
     def remove_product(self, p):
         # assume the product exists on inventory
-        del self.__inventory[p.get_name()]
+        self.__inventory.remove_product(p)
 
     def change_price (self, product, new_price):
         if product in self.__inventory:
@@ -43,8 +43,8 @@ class Store:
             product.set_name(new_name)
 
     def change_amount (self, product, amount):
-        if product in self.__inventory:
-            self.__inventory.add_to_amount(amount)
+        if self.__inventory.getProduct(product.get_name()):
+            self.__inventory.add_to_amount(product, amount)
 
 
     def add_owner(self, owner):

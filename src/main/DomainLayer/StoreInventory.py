@@ -20,14 +20,26 @@ class StoreInventory:
         return None
 
     def add_product(self, p, amount):
-        # TODO - add check if exist before?
+        if p in self.__inv:
+            return False
         self.__inv.append((p, amount))
+
+    def remove_product(self, product):
+        for p in self.__inv:
+            if product.get_name() == p[0].get_name():
+                self.__inv.remove(p)
 
     def __repr__(self):
         return repr("There are " + str(len(self.__inv)) + " products on inventory")
 
-    def add_to_amount(self, product: Product, addToAmount):
-        self._amountPerProduct[product] = self._amountPerProduct(product)+ addToAmount # TODO- check it overittes the prev amount of product
+    def add_to_amount(self, product: Product, new_amount):
+        for i in self.__inv:
+            if i[0].get_name() == product.get_name():
+                self.__inv.remove(i)
+                self.__inv.append((product, new_amount))
+
+    def len (self):
+        return len(self.__inv)
 
 
     def get_amount_of_product (self, product_name):

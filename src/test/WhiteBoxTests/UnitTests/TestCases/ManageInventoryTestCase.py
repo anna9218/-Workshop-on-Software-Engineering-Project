@@ -15,17 +15,13 @@ class MyTestCase(unittest.TestCase):
     def test_add_product_true(self):
 
         self._store.add_products(["p_name"], [12], [10], ["c"])
-        # print (self._store.get_inventory())
         self.assertEqual(10, self._store.get_inventory().get_amount_of_product(self._product.get_name()))
-    #
-    # def test_addProduct1(self):
-    #     self.assertEqual(True, False)
-    #
-    # def test_removeProduct0(self):
-    #     self.assertEqual(True, False)
-    #
-    # def test_removeProduct1(self):
-    #     self.assertEqual(True, False)
+        self._store.change_amount(self._product, 1)
+        self.assertEqual(1, self._store.get_inventory().get_amount_of_product(self._product.get_name()))
+        self._store.remove_product(self._product)
+        # print (self._store.get_inventory())
+        self.assertEqual(0, self._store.get_inventory().len())
+
     pass
 
 if __name__ == '__main__':
