@@ -1,4 +1,5 @@
 from src.main.DomainLayer.Product import Product
+from src.main.DomainLayer.StoreInventory import StoreInventory
 
 
 class Store:
@@ -7,17 +8,23 @@ class Store:
         self.__name = name
         self.__owner = owner
         self.__managers = ()
-        self.__inventory = {} # TODO - should it be an external class?
+        self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
 
-    #TODO - add check for manager? - maybe in ManagerPermission? (can be also for managers)
-    def AddProducts (self, names_and_prices):
-        for name, price in names_and_prices.items():
-            self.AddProduct (name, price)
+    def AddProducts (self, names, prices, amounts):
+        for name in names:
+            for price in prices:
+                for amount in amounts:
+                    self.AddProduct (name, price, amount)
 
-    def AddProduct (self, name, price):
-        # TODO - add check if it was on inventory?
-        self.__inventory[name] = Product (name, price)
+    def AddProduct (self, name, price, amount):
+        p = Product (name, price)
+        if not self.__inventory.empty_inventory():
+            if self.__inventory.check_if_exists(p):
+                print ("The product is already existed")
+                return False
+        self.__inventory.add_product(p, amount)
+        return True
 
     def RemoveProducts (self, products):
         for p in products:
@@ -37,14 +44,6 @@ class Store:
     def get_name (self):
         return self.__name
 
-    def empty_inventory (self):
-        return len(self.__inventory) == 0
-
-    def PrintInventory(self):
-        f"The products of store {self.__name}:"
-        i = 0
-        for name, p in self.__inventory:
-            f"For {name} press {i}" #TODO- check if contains \n
 
     pass
 

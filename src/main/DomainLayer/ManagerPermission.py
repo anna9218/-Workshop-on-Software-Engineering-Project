@@ -1,3 +1,6 @@
+from src.main.DomainLayer import Store
+
+
 class ManagerPermission: # TODO- maybe should be removed into User
 
     # def ManageStock(self, store):
@@ -11,9 +14,9 @@ class ManagerPermission: # TODO- maybe should be removed into User
         # TODO - check if the user is own this store
         return 1
 
-    def AddProducts (self, store, names_and_prices):
+    def AddProducts (self, store: Store, names, prices, amounts):
         self.CheckIfOwnesTheStore (store) # check pre conditions
-        store.AddProducts (names_and_prices) #TODO - remember its different on s.AddProducts
+        store.AddProducts (names, prices, amounts)
 
     def RemoveProducts (self, store, products):
         self.CheckIfOwnesTheStore (store) # check pre conditions
