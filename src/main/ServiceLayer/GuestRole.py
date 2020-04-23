@@ -8,6 +8,7 @@ class GuestRole:
         pass
 
     # use case 2.2
+    @staticmethod
     def register(self, nickname, password):
         if Security.getInstance().validatedPassword(password) and TradeControl.getInstance().validateNickName(nickname):
             subscriber = TradeControl.getInstance().subscribe()
@@ -16,6 +17,7 @@ class GuestRole:
         return False
 
     # use case 2.3
+    @staticmethod
     def login(self, nickname, password):
         subscriber = TradeControl.getInstance().getSubscriber(nickname)
         if subscriber is not None and subscriber.is_loggedOut() and subscriber.checkPassword(password):
@@ -39,6 +41,7 @@ class GuestRole:
         pass
 
     # use case 2.5
+    @staticmethod
     def search_products(self):
         pass
 
