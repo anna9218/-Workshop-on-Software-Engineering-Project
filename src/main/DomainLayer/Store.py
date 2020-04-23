@@ -37,7 +37,7 @@ class Store:
 
     def ChangePrice (self, product, new_price):
         if product in self.__inventory:
-            product.set_price (new_price)
+            product.set_price(new_price)
 
     def add_owner(self, owner):
         for o in self.__owners:
@@ -49,11 +49,14 @@ class Store:
     def get_inventory(self): #for test
         return self.__inventory
 
-    def get_name (self):
+    def get_name(self):
         return self.__name
 
     def get_owners(self):
         return self.__owners
+
+    def get_managers(self):
+        return self.__managers
 
     def getProductsBy(self, opt, string):
         return self.__inventory.getProductsBy(opt, string)
@@ -70,6 +73,9 @@ class Store:
         for name, p in self.__inventory:
             f"For {name} press {i}" #TODO- check if contains \n
 
-    pass
-
-
+    def get_info(self):
+        if not self.__managers:  # empty list
+            return "Store owners: %s" % (str(self.__owners.strip('[]')))
+        else:
+            if len(self.__managers) > 0:  # one manager exists
+                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers.strip('[]'))
