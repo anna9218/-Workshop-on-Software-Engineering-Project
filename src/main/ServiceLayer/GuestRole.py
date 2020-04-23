@@ -5,7 +5,7 @@ from src.main.DomainLayer.TradeControl import TradeControl
 class GuestRole:
 
     def __init__(self):
-        pass
+        self.__guest = TradeControl.getInstance().get_guest()
 
     # use case 2.2
     @staticmethod
@@ -67,6 +67,16 @@ class GuestRole:
                 if filter_details[0] == 2:
                     return filter(lambda p: filter_details[1] == p.get_category(), products)
 
-
+    # use case 2.6
+    @staticmethod
+    # Parameters: nickname of the user,
+    #             products_stores_quantity_ls is list of lists: [ [product, quantity, store], .... ]
+    def save_products_to_basket(self, nickname, products_stores_quantity_ls):
+        subscriber = TradeControl.getInstance().getSubscriber(nickname)
+        if subscriber is None:  # if it's a guest, who isn't subscribed
+            self.__guest.save_products_to_basket(products_stores_quantity_ls)
+        else:  # subscriber exists
+            subscriber.save_products_to_basket(products_stores_quantity_ls)
+        return True
 
 
