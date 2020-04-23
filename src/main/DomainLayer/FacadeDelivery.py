@@ -1,4 +1,3 @@
-
 class FacadeDelivery:
     __instance = None
 
@@ -18,19 +17,28 @@ class FacadeDelivery:
             FacadeDelivery.__instance = self
 
     def connect(self):
-        if not self.__isConnected:
-            self.__isConnected = True
+        try:
+            if not self.__isConnected:
+                self.__isConnected = True
+        except Exception:
+            raise ResourceWarning("System is down!")
 
     # need to check address details with system once a system is set
     def deliver_products(self, username, address) -> bool:
-        if not self.__isConnected or not self.__check_valid_details(username, address):
-            return False
-        else:
-            return True
+        try:
+            if not self.__isConnected or not self.__check_valid_details(username, address):
+                return False
+            else:
+                return True
+        except Exception:
+            raise ResourceWarning("System is down!")
 
     def disconnect(self):
-        if self.__isConnected:
-            self.__isConnected = False
+        try:
+            if self.__isConnected:
+                self.__isConnected = False
+        except Exception:
+            raise ResourceWarning("System is down!")
 
     def is_connected(self) -> bool:
         return self.__isConnected

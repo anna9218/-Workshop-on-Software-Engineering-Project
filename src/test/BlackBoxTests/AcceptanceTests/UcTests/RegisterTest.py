@@ -21,8 +21,5 @@ class RegisterTest(ProjectTest):
         res = self.register_user(self.username, self.bad_pass)
         self.assertEqual(res, False)
 
-    def test_fatal_error(self):
-        pass
-
     def tearDown(self) -> None:
         pass
