@@ -1,36 +1,52 @@
-# The system checks if the username and password are valid
-# The system creates a new Subscriber in the system with the given username and password.
-# The system returns an ACK message to the guest.
+# from src.main.DomainLayer.User import User
 
 
 class Registration:
     def __init__(self):
-        self.isRegistered = False
-        self.username = None
-        self.password = None
+        self.__isRegistered = False
+        self.__username = None
+        self.__password = None
 
-    @classmethod
-    def register(cls, user, username, password):
-        # need to check if registered and act accordingly
-        isUsernameValid = True
-        isPasswordLegal = True
-        # TODO - check if username is valid. if not, change isUsernameLegal to F
-        if isUsernameValid:
-            # TODO - check if password legal. if not, change isPasswordLegal to F
-            if isPasswordLegal:
-                cls.isRegistered = True
-                cls.username = username
-                cls.password = password
-                # TODO - create Subscriber - object? in DB? do we need to send to Security Component?
-            else:
-                print("The password is not legal, please try again")
-        else:
-            print("The username is not legal, please try again")
+    # @classmethod
+    def register(self, username, password):
+        # check if username is valid
+        # isUsernameValid = self.checkUsername(user, username)
 
-    @classmethod
-    def get_username(cls):
-        return cls.username
+        # if isUsernameValid:
+        #     isPasswordLegal = self.checkPassword(password)
+            # check if password legal
+            # if isPasswordLegal:
+                self.__isRegistered = True
+                self.__username = username
+                self.__password = password
+                # user.get_trade_control().subscribe(username, password)
+                # return True
+            # else:
+            #     print("The password is not legal, please try again")
+                # return False
+        # else:
+        #     print("The username is not legal, please try again")
+        #     return False
 
-    @classmethod
-    def get_password(cls):
-        return cls.password
+    # @classmethod
+    # def checkUsername(self, user, username):
+    #     isValid = True
+    #     for u in user.get_trade_control().get_users():
+    #         if u.registrationState.get_username() == username:
+    #             isValid = False
+    #     return isValid
+
+    # @classmethod
+    # def checkPassword(self, password):
+    #     return True
+
+    # @classmethod
+    def get_username(self):
+        return self.__username
+
+    # @classmethod
+    def get_password(self):
+        return self.__password
+
+    def is_registered(self):
+        return self.__isRegistered

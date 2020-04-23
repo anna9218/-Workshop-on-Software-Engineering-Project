@@ -4,21 +4,40 @@
                             - adapter in the the adapter pattern
                             - real subject in the proxy pattern
 """
+from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
+from src.main.DomainLayer.FacadePayment import FacadePayment
+from src.main.ServiceLayer.GuestRole import GuestRole
 
 
 class RealBridge(Bridge):
 
     def __init__(self):
+        super().__init__()
+        self.paymentSys = FacadePayment.getInstance()
+        self.deliverySys = FacadeDelivery.getInstance()
+        # self.user = User()
+
+    def register_user(self, username, password) -> bool:
+        # return self.guest.register(username, password)
         pass
 
-    def somefunction(self) -> str:
-        return "real"
+    def connect_payment_sys(self):
+        self.paymentSys.connect()
 
-    def test_sum(self, x, y) -> int:
-        pass
-        # return junk.junk().sum(x, y)
+    def disconnect_payment_sys(self):
+        self.paymentSys.disconnect()
 
-    def test_wrong_sum(self, x, y) -> int:
-        pass
-        # return junk.junk().wrongsum(x, y)
+    def commit_payment(self, username, amount, credit, date) -> bool:
+        return self.paymentSys.commit_payment(username, amount, credit, date)
+
+    def connect_delivery_sys(self):
+        self.deliverySys.connect()
+
+    def deliver(self, username, address) -> bool:
+        return self.deliverySys.deliver_products(username, address)
+
+    def disconnect_delivery_sys(self):
+        self.deliverySys.disconnect()
+
+

@@ -3,11 +3,12 @@ from src.main.DomainLayer.StoreInventory import StoreInventory
 
 
 class Store:
-    def __init__(self, name, owner):
+    def __init__(self, store_name):
         # self.__id = id
-        self.__name = name
-        self.__owner = owner
-        self.__managers = ()
+        self.__name = store_name
+        self.__owners = []
+        self.__managers = []
+        # TODO - should it be an external class?
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
 
@@ -38,12 +39,36 @@ class Store:
         if product in self.__inventory:
             product.set_price (new_price)
 
+    def add_owner(self, owner):
+        for o in self.__owners:
+            if o.get_name() == owner.get_name:
+                return False
+        self.__owners.append(owner)
+        return False
+
     def get_inventory(self): #for test
         return self.__inventory
 
     def get_name (self):
         return self.__name
 
+    def get_owners(self):
+        return self.__owners
+
+    def getProductsBy(self, opt, string):
+        return self.__inventory.getProductsBy(opt, string)
+
+    def getProduct(self, product_name):
+        return self.__inventory.getProducts(product_name)
+
+    def empty_inventory(self):
+        return len(self.__inventory) == 0
+
+    def print_inventory(self):
+        f"The products of store {self.__name}:"
+        i = 0
+        for name, p in self.__inventory:
+            f"For {name} press {i}" #TODO- check if contains \n
 
     pass
 

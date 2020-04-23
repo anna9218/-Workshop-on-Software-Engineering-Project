@@ -4,6 +4,7 @@ class Product:
         self.__name = name
         self.__price = price
         # self._amount = amount
+        self.__category = category
         # self.__rate = 0 TODO - for search 2.5
         # TODO - add category here or on Store? (for search - use case 2.5)
         # TODO - add more details? for each new detail need to open set_detail for use case 4.1 - owner can edit product's details
@@ -26,6 +27,9 @@ class Product:
 
     def get_name(self):
         return self.__name
+
+    def get_category(self):
+        return self.__category
 
     def set_price(self, new_price):
         self.__price = new_price
