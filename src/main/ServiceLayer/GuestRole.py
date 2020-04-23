@@ -5,7 +5,7 @@ from src.main.DomainLayer.TradeControl import TradeControl
 class GuestRole:
 
     def __init__(self):
-        pass
+        self.__guest = TradeControl.getInstance().get_guest()
 
     # use case 2.2
     @staticmethod
@@ -37,8 +37,17 @@ class GuestRole:
         #     return False
 
     # use case 2.4
-    def display_stores_info(self):
-        pass
+    @staticmethod
+    def display_stores(self):
+        return TradeControl.getInstance().get_stores()
+
+    @staticmethod
+    def display_stores_info(self, store, store_info_flag, products_flag):
+        if store_info_flag:
+            return TradeControl.getInstance().get_store(store.get_name()).get_info()
+        else:
+            if products_flag:
+                return TradeControl.getInstance().get_store(store.get_name()).get_inventory()
 
     # use case 2.5
     @staticmethod
@@ -66,7 +75,19 @@ class GuestRole:
             else:
                 if filter_details[0] == 2:
                     return filter(lambda p: filter_details[1] == p.get_category(), products)
-
+                  
+    # use case 2.6
+    @staticmethod
+    # Parameters: nickname of the user,
+    #             products_stores_quantity_ls is list of lists: [ [product, quantity, store], .... ]
+    def save_products_to_basket(self, nickname, products_stores_quantity_ls):
+        subscriber = TradeControl.getInstance().getSubscriber(nickname)
+        if subscriber is None:  # if it's a guest, who isn't subscribed
+            self.__guest.save_products_to_basket(products_stores_quantity_ls)
+        else:  # subscriber exists
+            subscriber.save_products_to_basket(products_stores_quantity_ls)
+        return True
+      
     # use case 2.7
     # Parameter is nickname of the subscriber. If its a guest - None
     def view_shopping_cart(self, nickname):
@@ -94,3 +115,4 @@ class GuestRole:
                     subscriber = TradeControl.getInstance().getSubscriber(nickname)
                     subscriber.update_quantity_in_shopping_cart(product[0], product[1])
         return True
+
