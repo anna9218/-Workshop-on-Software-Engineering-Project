@@ -28,15 +28,8 @@ class TradeControl:
             self.__payment_system = FacadePayment()
             TradeControl.__instance = self
 
-    # usecase 1.1
-    def init_system(self):
-        # connect the system to the delivery and payment systems
-        # add check for errors
-        self.__delivery_system.connect()
-        self.__payment_system.connect()
-        # TODO: ANNA: should return true/false and the presentation will send the ack msg
-        self.__manager.register("TradeManager", "123456789")
-        self.__managers.append(self.manager)
+    def add_sys_manager(self, subscriber):
+        self.__managers.append(subscriber)
 
     def subscribe(self):
         user = User()
