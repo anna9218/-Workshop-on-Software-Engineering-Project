@@ -12,7 +12,7 @@ class Store:
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
 
-    #TODO - add check for manager? - maybe in ManagerPermission? (can be also for managers)
+    # TODO - add check for manager? - maybe in ManagerPermission? (can be also for managers)
     def add_products(self, names_and_prices):
         for name, price in names_and_prices.items():
             self.add_product(name, price)
@@ -40,7 +40,7 @@ class Store:
         self.__owners.append(owner)
         return False
 
-    def get_inventory(self): #for test
+    def get_inventory(self):  # for test
         return self.__inventory
 
     def get_name(self):
@@ -48,6 +48,9 @@ class Store:
 
     def get_owners(self):
         return self.__owners
+
+    def get_managers(self):
+        return self.__managers
 
     def getProductsBy(self, opt, string):
         return self.__inventory.getProductsBy(opt, string)
@@ -62,8 +65,11 @@ class Store:
         f"The products of store {self.__name}:"
         i = 0
         for name, p in self.__inventory:
-            f"For {name} press {i}" #TODO- check if contains \n
+            f"For {name} press {i}" # TODO- check if contains \n
 
-
-
-
+    def get_info(self):
+        if not self.__managers:  # empty list
+            return "Store owners: %s" % (str(self.__owners.strip('[]')))
+        else:
+            if len(self.__managers) > 0:  # one manager exists
+                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers.strip('[]'))
