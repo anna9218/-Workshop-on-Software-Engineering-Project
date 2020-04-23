@@ -6,6 +6,12 @@ from src.main.DomainLayer.Store import Store
 from src.main.DomainLayer.User import User
 
 
+# get a user instance for guest
+def get_guest():
+    guest = User()
+    return guest
+
+
 class TradeControl:
     __instance = None
 
@@ -83,4 +89,3 @@ class TradeControl:
 
     def get_payment_system(self):
         return self.__payment_system
-

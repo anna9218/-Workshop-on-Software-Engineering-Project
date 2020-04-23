@@ -2,6 +2,7 @@ from src.main.DomainLayer.Appointment import Appointment
 from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.Logout import Logout
+from src.main.DomainLayer.ShoppingCart import ShoppingCart
 from src.main.DomainLayer.TradeControl import TradeControl
 
 
@@ -12,6 +13,7 @@ class User:
         # self.__logoutState = Logout()
         self.__appointment = Appointment()
         self.__tradeControl = TradeControl.getInstance()
+        self.__shoppingCart = ShoppingCart()
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
@@ -44,7 +46,6 @@ class User:
     def is_loggedOut(self):
         return not self.__loginState.is_logged_in()
 
-
     def get_login(self):
         return self.__loginState
 
@@ -65,3 +66,16 @@ class User:
     #
     # def set_name(self, new_name):
     #     self.__name = new_name
+
+    def save_products_to_basket(self, products_stores_quantity_ls):
+        self.__shoppingCart.add_products(products_stores_quantity_ls)
+
+    def view_shopping_cart(self):
+        return self.__shoppingCart
+
+    def remove_from_shopping_cart(self, product):
+        self.__shoppingCart.remove_product(product)
+
+    def update_quantity_in_shopping_cart(self, product, quantity):
+        self.__shoppingCart.update_quantity(product, quantity)
+
