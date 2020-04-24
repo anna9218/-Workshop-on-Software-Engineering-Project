@@ -24,11 +24,33 @@ class ProjectTest(ABC, unittest.TestCase):
 
     # bridged functions
 
-    # Register tests functions
+    # 1.1 init system functions
+    def init_sys(self):
+        self.__bridge.init_sys()
+
+    # 2.2 Register tests functions
     def register_user(self, username, password) -> bool:
         return self.__bridge.register_user(username, password)
 
-    # Payment System tests functions
+    # 2.3 login functions
+    def login(self, username, password):
+        return self.__bridge.login(username, password)
+
+    # 2.4 view stores' products functions
+    def view_stores(self):
+        return self.__bridge.view_stores()
+
+    def view_store_info(self, store, store_info_flag, products_flag):
+        return self.__bridge.view_store_info(store, store_info_flag, products_flag)
+
+    # 2.5 search products functions
+    def search_products_by(self, option, string):
+        pass
+
+    def filter_products_by(self, filter_details, products):
+        pass
+
+    # 7 Payment System tests functions
     def connect_payment_sys(self):
         self.__bridge.connect_payment_sys()
 
@@ -38,15 +60,21 @@ class ProjectTest(ABC, unittest.TestCase):
     def disconnect_payment_sys(self):
         self.__bridge.disconnect_payment_sys()
 
-    # Delivery System tests functions
+    def is_payment_sys_connected(self):
+        return self.__bridge.is_payment_connected()
+
+    # 8 Delivery System tests functions
     def connect_delivery_sys(self):
         self.__bridge.connect_delivery_sys()
 
-    def deliver(self, username, adress) -> bool:
-        return self.__bridge.deliver(username, adress)
+    def deliver(self, username, address) -> bool:
+        return self.__bridge.deliver(username, address)
 
     def disconnect_delivery_sys(self):
         self.__bridge.disconnect_delivery_sys()
+
+    def is_delivery_sys_connected(self):
+        return self.__bridge.is_delivery_connected()
 
     # teardown after all tests are run
     @abstractmethod

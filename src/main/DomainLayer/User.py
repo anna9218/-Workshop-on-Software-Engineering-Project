@@ -3,7 +3,6 @@ from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.Logout import Logout
 from src.main.DomainLayer.ShoppingCart import ShoppingCart
-from src.main.DomainLayer.TradeControl import TradeControl
 
 
 class User:
@@ -12,7 +11,6 @@ class User:
         self.__loginState = Login()
         # self.__logoutState = Logout()
         self.__appointment = Appointment()
-        self.__tradeControl = TradeControl.getInstance()
         self.__shoppingCart = ShoppingCart()
 
     def register(self, username, password):
@@ -54,8 +52,8 @@ class User:
     def get_login(self):
         return self.__loginState
 
-    def get_logout(self):
-        return self.__logoutState
+    # def get_logout(self):
+    #     return self.__logoutState
 
     def is_registered(self):
         return self.__registrationState.is_registered()
