@@ -12,40 +12,85 @@ class Store:
         # self.__rate = 0 TODO - for search 2.5
         self.__purchases = []
 
-    def add_products (self, names, prices, amounts, categories):
+    def add_products (self, names, prices, amounts, categories) -> bool:
+        """
+        :param names: list of names of the new products
+        :param prices: list of prices of the new products
+        :param amounts: list of amounts of the new products
+        :param categories: list of categories of the new products
+        :return: true if all products was added to the inventory
+        """
         for name in names:
             for price in prices:
                 for amount in amounts:
                     for category in categories:
-                        self.add_product (name, price, amount, category)
+                        if not self.add_product (name, price, amount, category):
+                            return False
+        return True
 
-    def add_product (self, name, price, amount, category):
+    def add_product (self, name, price, amount, category) -> bool:
+        """
+        :param name: name of the new product
+        :param price: price of the new product
+        :param amount: amount of the new product
+        :param category: category of the new product
+        :return: True if succeed update the inventory with the new product
+        """
         p = Product (name, price, category)
         if self.__inventory.get_product(p.get_name()):
             print ("The product is already existed")
             return False
-        self.__inventory.add_product(p, amount)
-        return True
+        return self.__inventory.add_product(p, amount)
 
     def remove_products (self, products):
+        """
+        :param products: products to delete from inventory (assume they exists on inventory)
+        :return: True if the inventory updated without the product
+        """
         for p in products:
-            self.remove_product (p)
+            if not self.remove_product (p):
+                return False
+        return True
 
-    def remove_product(self, p):
+    def remove_product(self, p: Product) -> bool:
+        """
+        :param p: product to delete from inventory
+        :return: True if the inventory updated without the product
+        """
         # assume the product exists on inventory
-        self.__inventory.remove_product(p)
+        return self.__inventory.remove_product(p)
 
-    def change_price (self, product, new_price):
-        if product in self.__inventory:
+    def change_price (self, product, new_price) -> bool:
+        """
+       :param product: product
+       :param new_price: number to replace with
+       :return: True if the product's price updated on inventory
+       """
+        if self.__inventory.get_product(product.get_name()) is not None:
             product.set_price(new_price)
+            return True
+        return False
 
-    def change_name (self, product, new_name):
-        if product in self.__inventory:
+    def change_name (self, product, new_name) -> bool:
+        """
+        :param product: product
+        :param new_name: name to replace with
+        :return: True if the product's name updated on inventory
+        """
+        if self.__inventory.get_product(product.get_name()) is not None:
             product.set_name(new_name)
+            return True
+        return False
 
-    def change_amount (self, product, amount):
-        if self.__inventory.get_product(product.get_name()):
-            self.__inventory.add_to_amount(product, amount)
+    def change_amount (self, product, amount) -> bool:
+        """
+       :param product: product
+       :param amount: number to replace with
+       :return: True if the product's amount updated on inventory
+       """
+        if self.__inventory.get_product(product.get_name()) is not None and amount>0:
+            return self.__inventory.change_amount(product, amount)
+        return False
 
     def add_owner(self, owner):
         for o in self.__owners:

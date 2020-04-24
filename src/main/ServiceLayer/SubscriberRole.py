@@ -31,5 +31,7 @@ class SubscriberRole(GuestRole):
 
     # use case 3.7
     def view_personal_purchase_history(self):
-        pass
+        if self.__subscriber.is_logged_in():
+            return self.__subscriber.get_purchases()
+
 
