@@ -69,7 +69,7 @@ class GuestRole:
             else:
                 if filter_details[0] == 2:
                     return filter(lambda p: filter_details[1] == p.get_category(), products)
-
+                  
     # use case 2.6
     @staticmethod
     # Parameters: nickname of the user,
@@ -81,5 +81,32 @@ class GuestRole:
         else:  # subscriber exists
             subscriber.save_products_to_basket(products_stores_quantity_ls)
         return True
+      
+    # use case 2.7
+    # Parameter is nickname of the subscriber. If its a guest - None
+    def view_shopping_cart(self, nickname):
+        if nickname is None:
+            self.__guest.view_shopping_cart()
+        else:
+            subscriber = TradeControl.getInstance().getSubscriber(nickname)
+            subscriber.view_shopping_cart()
 
+    # Parameters: nickname of the subscriber. If its a guest - None
+    #             flag=0 update quantity, flag=1 remove product
+    #             product can be a single product or a pair of (product quantity)
+    def update_shopping_cart(self, nickname, flag, product):
+        if flag == 1:  # remove product
+            if nickname is None:
+                self.__guest.remove_from_shopping_cart(product)
+            else:
+                subscriber = TradeControl.getInstance().getSubscriber(nickname)
+                subscriber.remove_from_shopping_cart(product)
+        else:
+            if flag == 0:  # update quantity -> product is a list of (product, quantity)
+                if nickname is None:
+                    self.__guest.update_quantity_in_shopping_cart(product[0], product[1])
+                else:
+                    subscriber = TradeControl.getInstance().getSubscriber(nickname)
+                    subscriber.update_quantity_in_shopping_cart(product[0], product[1])
+        return True
 
