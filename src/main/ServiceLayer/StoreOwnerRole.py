@@ -8,18 +8,12 @@ class StoreOwnerRole(SubscriberRole):
     def __init__(self, subscriber):
         self.__store_owner = subscriber
 
-    # def open_store_func(self, user_name, store_name) -> bool:
-    #     user = self.find_user_by_name(user_name)
-    #     if user is None or not user.is_loggedIn():
-    #         return False
-    #     self.validate_store_name(store_name)
-    #     new_store = TradeControl.getInstance().open_store(self, store_name)
-    #     if new_store is None:
-    #         return False
-    #     else:
-    #         return new_store.add_owner(user) and appointment.appoint_owner(None, self, new_store)
-
-    def check_if_owns_the_store(self, user_name, store_name) -> bool:
+    def check_if_ownes_the_store (self, user_name, store_name) -> bool:
+        """
+        :param user_name: username of the user we want to check
+        :param store_name: name of the store which we want to find if the above user owns
+        :return: true if the user with user_name owns the store with store_name
+        """
         user = self.find_user_by_name(user_name)
         if user is None or not user.is_loggedIn():
             return False
@@ -27,33 +21,53 @@ class StoreOwnerRole(SubscriberRole):
         if user in store.get_owners():
             return True
 
-    def add_to_inventory(self, user_name, store_name, products, prices, amounts, categories) -> bool:
-        if not self.check_if_owns_the_store(user_name, store_name):
+    def add_to_inventory (self, user_name, store_name, products, prices, amounts, categories) -> bool:
+        """
+        :param user_name: user name of the initializer user- should be owner
+        :param store_name: store name of a store which the user with the user_name wants to add products to
+        :param products: the names of the new products
+        :param prices: a list of the prices of the new products
+        :param amounts: a list of the amounts of the new products
+        :param categories: a list of the categories of the new products
+        :return: true if the inventory contains the new products
+        """
+        if not self.check_if_ownes_the_store(user_name, store_name):
             return False
         store = self.get_store(store_name)
-        store.add_products(products, prices, amounts, categories)
-        return True
+        return store.add_products(products, prices, amounts, categories)
 
     def remove_from_inventory(self, user_name, store_name, products) -> bool:
-        if not self.check_if_owns_the_store(user_name, store_name):
+        """
+        :param user_name: the user_name of the user that triggered this function
+        :param store_name: the store_name of the store we would like to edit its inventory
+        :param products: products to delete from inventory - assume they exists on inventory
+        :return: True if the inventory updated without the products
+        """
+        if not self.check_if_ownes_the_store(user_name, store_name):
             return False
         store = self.get_store(store_name)
-        store.remove_products(products)
-        return True
+        return store.remove_products(products)
 
-    def edit_product(self, user_name, store_name, product, new_value, op) -> bool:
-        if not self.check_if_owns_the_store(user_name, store_name):
+    def edit_product (self, user_name, store_name, product, new_value, op) -> bool:
+        """
+        :param user_name: the user_name of the user that triggered this function
+        :param store_name: the store_name of the store we would like to edit its inventory
+        :param product: product to edit
+        :param new_value: the new value to replace with
+        :param op: "name" / "price" / "amount" - parameter to edit
+        :return: True if the product info updated as need on the inventory if the store
+        """
+        if not self.check_if_ownes_the_store(user_name, store_name):
             return False
         store = self.get_store(store_name)
         if op is "name":
-            store.change_name(product, new_value)
+            return store.change_name(product, new_value)
         elif op is "price":
-            store.change_price(product, new_value)
+            return store.change_price(product, new_value)
         elif op is "amount":
-            store.change_amount(product, new_value)
+            return store.change_amount(product, new_value)
         else:
             return False
-        return True
 
     @staticmethod
     def get_store(self, store_name):

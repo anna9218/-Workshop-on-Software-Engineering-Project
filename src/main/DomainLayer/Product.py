@@ -6,19 +6,6 @@ class Product:
         self.__category = category
         # self.__rate = 0 TODO - for search 2.5
 
-    # def __eq__(self, p):
-    #     if self.__name == p.get_name() and self.__price == p.get_price():
-    #         return True
-    #     else:
-    #         return False
-    #
-    # def __repr__(self):
-    #    # stri = "Product: " + self.__name + " - " + str(self.get_price) + "$"
-    #     return self.__name
-    #
-    # def __hash__(self):
-    #     return hash(repr(self))
-
     def get_price(self):
         return self.__price
 
