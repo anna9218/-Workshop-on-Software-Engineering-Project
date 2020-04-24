@@ -21,6 +21,7 @@ class MyTestCase(unittest.TestCase):
         self._store.remove_product(self._product)
         # print (self._store.get_inventory())
         self.assertEqual(0, self._store.get_inventory().len())
+        self.assertEqual(True, self._store.empty_inventory())
 
     pass
 

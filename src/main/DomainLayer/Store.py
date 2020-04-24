@@ -20,7 +20,7 @@ class Store:
 
     def add_product (self, name, price, amount, category):
         p = Product (name, price, category)
-        if self.__inventory.getProduct(p.get_name()):
+        if self.__inventory.get_product(p.get_name()):
             print ("The product is already existed")
             return False
         self.__inventory.add_product(p, amount)
@@ -43,7 +43,7 @@ class Store:
             product.set_name(new_name)
 
     def change_amount (self, product, amount):
-        if self.__inventory.getProduct(product.get_name()):
+        if self.__inventory.get_product(product.get_name()):
             self.__inventory.add_to_amount(product, amount)
 
 
@@ -75,7 +75,7 @@ class Store:
         return self.__inventory.get_product(product_name)
 
     def empty_inventory(self):
-        return len(self.__inventory) == 0
+        return self.__inventory.len() == 0
 
     def print_inventory(self):
         f"The products of store {self.__name}:"
