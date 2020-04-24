@@ -1,3 +1,6 @@
+from datetime import datetime as date_time
+
+
 class FacadePayment:
     __instance = None
 
@@ -45,7 +48,10 @@ class FacadePayment:
 
     @staticmethod
     def __check_valid_details(name, amount, credit, date) -> bool:
-        if len(name) == 0 or len(credit) == 0 or len(date) == 0 or amount <= 0:
+        if type(date) != date_time:
+            return False
+
+        if len(name) == 0 or len(credit) == 0 or (date_time.today() > date) or amount <= 0:
             return False
         else:
             return True
