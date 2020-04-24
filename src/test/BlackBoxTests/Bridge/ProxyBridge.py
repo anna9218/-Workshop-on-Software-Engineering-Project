@@ -25,6 +25,9 @@ class ProxyBridge(Bridge):
     def commit_payment(self, username, amount, credit, date) -> bool:
         return self._realbridge.commit_payment(username, amount, credit, date)
 
+    def is_payment_connected(self):
+        return self._realbridge.is_payment_connected()
+
     def connect_delivery_sys(self):
         self._realbridge.connect_delivery_sys()
 
@@ -33,3 +36,19 @@ class ProxyBridge(Bridge):
 
     def disconnect_delivery_sys(self):
         self._realbridge.disconnect_delivery_sys()
+
+    def is_delivery_connected(self):
+        return self._realbridge.is_delivery_connected()
+
+    def init_sys(self):
+        self._realbridge.init_sys()
+
+    def login(self, username, password):
+        return self._realbridge.login(username, password)
+
+    # view stores' products functions
+    def view_stores(self):
+        return self._realbridge.view_stores()
+
+    def view_store_info(self, store, store_info_flag, products_flag):
+        return self._realbridge.view_store_info(store, store_info_flag, products_flag)
