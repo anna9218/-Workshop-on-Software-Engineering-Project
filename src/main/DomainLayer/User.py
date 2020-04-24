@@ -3,7 +3,7 @@ from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.Logout import Logout
 from src.main.DomainLayer.ShoppingCart import ShoppingCart
-from src.main.DomainLayer.TradeControl import TradeControl
+# from src.main.DomainLayer.TradeControl import TradeControl
 
 
 class User:
@@ -12,7 +12,7 @@ class User:
         self.__loginState = Login()
         # self.__logoutState = Logout()
         self.__appointment = Appointment()
-        self.__tradeControl = TradeControl.getInstance()
+        # self.__tradeControl = TradeControl.getInstance()
         self.__shoppingCart = ShoppingCart()
 
     def register(self, username, password):
@@ -84,3 +84,14 @@ class User:
     def update_quantity_in_shopping_cart(self, product, quantity):
         self.__shoppingCart.update_quantity(product, quantity)
 
+    def set_registration(self, registration):
+        self.__registrationState = registration
+
+    def set_login_state(self, login):
+        self.__loginState = login
+
+    def set_appointment(self, appointment):
+        self.__appointment = appointment
+
+    def set_shopping_cart(self, cart):
+        self.__shoppingCart = cart
