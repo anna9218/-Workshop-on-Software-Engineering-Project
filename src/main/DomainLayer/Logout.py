@@ -4,8 +4,9 @@ class Logout:
 
     @classmethod
     def logout(cls, user):
-        cls.set_state(True)
-        user.loginState.set_state(False)
+        pass
+        # cls.set_state(True)
+        # user.loginState.set_state(False)
 
     @classmethod
     def set_state(cls, state):

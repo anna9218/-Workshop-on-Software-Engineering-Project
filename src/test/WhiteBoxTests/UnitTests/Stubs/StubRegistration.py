@@ -1,5 +1,4 @@
-class StubRegistration():
-
+class StubRegistration:
     def __init__(self):
         self.isRegistered = False
         self.count = 0

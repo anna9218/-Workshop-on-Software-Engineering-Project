@@ -7,26 +7,10 @@ class Registration:
         self.__username = None
         self.__password = None
 
-    # @classmethod
     def register(self, username, password):
-        # check if username is valid
-        # isUsernameValid = self.checkUsername(user, username)
-
-        # if isUsernameValid:
-        #     isPasswordLegal = self.checkPassword(password)
-            # check if password legal
-            # if isPasswordLegal:
-                self.__isRegistered = True
-                self.__username = username
-                self.__password = password
-                # user.get_trade_control().subscribe(username, password)
-                # return True
-            # else:
-            #     print("The password is not legal, please try again")
-                # return False
-        # else:
-        #     print("The username is not legal, please try again")
-        #     return False
+        self.__isRegistered = True
+        self.__username = username
+        self.__password = password
 
     # @classmethod
     # def checkUsername(self, user, username):
@@ -40,11 +24,9 @@ class Registration:
     # def checkPassword(self, password):
     #     return True
 
-    # @classmethod
     def get_nickname(self):
         return self.__username
 
-    # @classmethod
     def get_password(self):
         return self.__password
 
