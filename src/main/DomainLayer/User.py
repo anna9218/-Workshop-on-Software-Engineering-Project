@@ -14,6 +14,7 @@ class User:
         self.__appointment = Appointment()
         self.__tradeControl = TradeControl.getInstance()
         self.__shoppingCart = ShoppingCart()
+        self.__purchases = []
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
@@ -62,6 +63,9 @@ class User:
 
     def get_nickname(self):
         return self.__registrationState.get_nickname()
+
+    def get_purchases(self):
+        return self.__purchases
 
     # def get_name(self):
     #     return self.__name
