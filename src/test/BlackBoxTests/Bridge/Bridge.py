@@ -31,7 +31,10 @@ class Bridge(ABC):
     def disconnect_payment_sys(self):
         pass
 
-    # Payment System tests bridged functions
+    def is_delivery_connected(self):
+        pass
+
+    # delivery System tests bridged functions
     @abstractmethod
     def connect_delivery_sys(self):
         pass
@@ -42,4 +45,33 @@ class Bridge(ABC):
 
     @abstractmethod
     def disconnect_delivery_sys(self):
+        pass
+
+    def is_payment_connected(self):
+        pass
+
+    # init system functions
+    def init_sys(self):
+        pass
+
+    # login functions
+    def login(self, username, password):
+        pass
+
+    # logout functions
+    def logout(self):
+        pass
+
+    # search products functions
+    def search_product(self, option, string):
+        pass
+
+    def filter_products(self, filter_details, products):
+        pass
+
+    # view stores' products functions
+    def view_stores(self):
+        pass
+
+    def view_store_info(self, store, store_info_flag, products_flag):
         pass

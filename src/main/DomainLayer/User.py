@@ -10,6 +10,7 @@ class User:
         self.__loginState = Login()
         self.__appointment = Appointment()
         self.__shoppingCart = ShoppingCart()
+        self.__purchases = []
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
@@ -46,6 +47,9 @@ class User:
     def get_nickname(self):
         return self.__registrationState.get_nickname()
 
+    def get_purchases(self):
+        return self.__purchases
+
     def save_products_to_basket(self, products_stores_quantity_ls):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
 
@@ -58,3 +62,5 @@ class User:
     def update_quantity_in_shopping_cart(self, product, quantity):
         self.__shoppingCart.update_quantity(product, quantity)
 
+    def get_appointment (self):
+        return self.__appointment

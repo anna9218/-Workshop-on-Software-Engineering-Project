@@ -1,7 +1,9 @@
 class Appointment:
     def __init__(self):
-        # pair of (appointer, store)
+        # pairs of (appointer, store)
         self.__owned_stores = []
+        # pairs of (store, permissions)
+        self.__manage_stores = []
 
         # self.__appointer = appointer
         # self.__appointee = appointee
@@ -16,8 +18,37 @@ class Appointment:
             if store.add_owner(appointee):
                 self.__owned_stores.append((appointer, store))
 
+    def appoint_manager (self, store):
+        self.__manage_stores.append((store, []))
+
     def is_owner(self, store_name):
         for (appointer, store) in self.__owned_stores:
             if store.get_name() == store_name:
                 return True
+        return False
+
+    def is_manager (self, store_name):
+        for (s, p) in self.__manage_stores:
+            if store_name == s.get_name():
+                return True
+        return False
+
+    def add_permission (self, store_name, permission):
+        for (s, p) in self.__manage_stores:
+            if s.get_name() == store_name:
+                if not permission in p:
+                    p.append(permission)
+
+    def del_permission (self, store_name, permission):
+        for (s, p) in self.__manage_stores:
+            if s.get_name() == store_name:
+                if permission in p:
+                    p.remove(permission)
+
+    def has_permission (self, store_name, permission) -> bool:
+        for (s, p) in self.__manage_stores:
+            if s.get_name() == store_name:
+                if permission in p:
+                    return True
+                return False
         return False
