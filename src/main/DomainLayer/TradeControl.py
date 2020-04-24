@@ -16,7 +16,7 @@ class TradeControl:
     __instance = None
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """ Static access method. """
         if TradeControl.__instance is None:
             TradeControl()
@@ -27,7 +27,7 @@ class TradeControl:
         if TradeControl.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
-            self.__manager = User(self)
+            self.__manager = User()
             self.__managers = []
             self.__stores = []
             self.__subscribers = []

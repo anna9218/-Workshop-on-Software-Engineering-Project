@@ -3,7 +3,7 @@ from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.Logout import Logout
 from src.main.DomainLayer.ShoppingCart import ShoppingCart
-from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.UserType import UserType
 
 
 class User:
@@ -12,8 +12,8 @@ class User:
         self.__loginState = Login()
         # self.__logoutState = Logout()
         self.__appointment = Appointment()
-        self.__tradeControl = TradeControl.getInstance()
         self.__shoppingCart = ShoppingCart()
+        self.__previous_purchases: list = list()
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
@@ -75,3 +75,8 @@ class User:
     def save_products_to_basket(self, products_stores_quantity_ls):
         self.__shoppingCart.add_products(products_stores_quantity_ls)
 
+    def get_user_type(self):
+        if self.is_logged_in():
+            return UserType.Subscriber
+        else:
+            return UserType.Guest

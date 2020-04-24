@@ -1,11 +1,16 @@
+from src.main.DomainLayer.Store import Store
+from src.main.DomainLayer.User import User
+
 
 class Purchase:
-    def __init__(self, amount_per_product):
+    def __init__(self, purchase_id: int, amount_per_product: [], store: Store):
         """
 
         :param amount_per_product: a list of  [product, amount]
         """
-        self.amount_per_product = amount_per_product
+        self.__Purchase_id: int = purchase_id
+        self.__amount_per_product = amount_per_product
+        self.__store: Store = store
 
     def get_product(self, product_name):
         for amount_per_product in self.__inv:
