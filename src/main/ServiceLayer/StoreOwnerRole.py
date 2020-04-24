@@ -1,11 +1,12 @@
 from src.main.DomainLayer.User import User
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Security import Security
+from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
 
-class StoreOwnerRole:
-    def __init__(self):
-        pass
+class StoreOwnerRole(SubscriberRole):
+    def __init__(self, subscriber):
+        self.__store_owner = subscriber
 
     def check_if_ownes_the_store (self, user_name, store_name) -> bool:
         """
@@ -68,14 +69,43 @@ class StoreOwnerRole:
         else:
             return False
 
+    @staticmethod
     def get_store(self, store_name):
         return TradeControl.getInstance().get_store(store_name)
 
-
+    @staticmethod
     def validate_store_name(self, store_name):
         TradeControl.getInstance().validate_store_name(store_name)
 
+    @staticmethod
     def find_user_by_name(self, user_name):
         return TradeControl.getInstance().getUser(user_name)
 
+    # use case 4.10 - View store’s purchase history
+    @staticmethod
+    def display_store_purchases(self, nickname, store):
+        """
+        :param self:
+        :param nickname: of the store owner
+        :param store: name of the store - (string?)
+        :return:
+        """
+        subscriber = TradeControl.getInstance().getSubscriber(nickname)
+        # checking preconditions
+        if subscriber.is_registered() and subscriber.is_logged_in() and self.check_if_owns_the_store(nickname, store):
+            store = TradeControl.getInstance().get_store(store)
+            if store in None:
+                return False
+            else:
+                return store.get_purchases()
 
+    @staticmethod
+    def display_purchase_info(self, purchase, store):
+        """
+        :param self:
+        :param purchase:
+        :param store: name of the store - (string?)
+        :return: returns a Purchase object
+        """
+        store = TradeControl.getInstance().get_store(store)
+        store.get_purchase_info(purchase)

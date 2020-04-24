@@ -2,6 +2,7 @@
     test class for use case 7 - commit transaction via payment system
 """
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from datetime import datetime as date_time
 
 
 class PaymentSystemTest(ProjectTest):
@@ -11,7 +12,7 @@ class PaymentSystemTest(ProjectTest):
         self.connect_payment_sys()
         self.username = "username"
         self.credit = "123"
-        self.date = "12/12/12"
+        self.date = date_time(2021, 6, 1)
 
     def test_success(self):
         try:

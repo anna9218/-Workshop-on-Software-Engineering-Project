@@ -10,6 +10,7 @@ class Store:
         self.__managers = []
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
+        self.__purchases = []
 
     def add_products (self, names, prices, amounts, categories) -> bool:
         """
@@ -91,7 +92,6 @@ class Store:
             return self.__inventory.change_amount(product, amount)
         return False
 
-
     def add_owner(self, owner):
         for o in self.__owners:
             if o.get_name() == owner.get_name:
@@ -134,3 +134,11 @@ class Store:
         else:
             if len(self.__managers) > 0:  # one manager exists
                 return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers.strip('[]'))
+
+    def get_purchases(self):
+        return self.__purchases
+
+    def get_purchase_info(self, purchase):
+        for p in self.__purchases:
+            if p == purchase:  # TODO - how do we compare purchases?
+                return p
