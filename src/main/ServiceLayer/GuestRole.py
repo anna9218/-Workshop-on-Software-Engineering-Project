@@ -91,7 +91,7 @@ class GuestRole:
         if nickname is None:
             self.__guest.view_shopping_cart()
         else:
-            subscriber = TradeControl.get_instance().getSubscriber(nickname)
+            subscriber = TradeControl.getInstance().getSubscriber(nickname)
             subscriber.view_shopping_cart()
 
     # Parameters: nickname of the subscriber. If its a guest - None
@@ -102,20 +102,19 @@ class GuestRole:
             if nickname is None:
                 self.__guest.remove_from_shopping_cart(product)
             else:
-                subscriber = TradeControl.get_instance().getSubscriber(nickname)
+                subscriber = TradeControl.getInstance().getSubscriber(nickname)
                 subscriber.remove_from_shopping_cart(product)
         else:
             if flag == 0:  # update quantity -> product is a list of (product, quantity)
                 if nickname is None:
                     self.__guest.update_quantity_in_shopping_cart(product[0], product[1])
                 else:
-                    subscriber = TradeControl.get_instance().getSubscriber(nickname)
+                    subscriber = TradeControl.getInstance().getSubscriber(nickname)
                     subscriber.update_quantity_in_shopping_cart(product[0], product[1])
         return True
+        # ---------------------------------------------------- U.C 2.8----------------------------------------------------------
 
-# ---------------------------------------------------- U.C 2.8----------------------------------------------------------
-
-    # U.C 2.8.1 - purchase product direct approach
+        # U.C 2.8.1 - purchase product direct approach
     @staticmethod
     def calculate_purchase_price_direct_approach(store_name: str, amount_per_product: list, username: str) -> float:
         """
@@ -149,7 +148,8 @@ class GuestRole:
         """
         total_price: float = 0
         for store_and_product_and_amount in amount_per_product_per_store:
-            basket_price: float = GuestRole.calculate_purchase_price_direct_approach(store_and_product_and_amount[0],
+            basket_price: float = GuestRole.calculate_purchase_price_direct_approach(
+                store_and_product_and_amount[0],
                 [{'product': store_and_product_and_amount[1], 'amount': store_and_product_and_amount[2]}], username)
             if basket_price > 0:
                 total_price = total_price + basket_price
@@ -176,7 +176,7 @@ class GuestRole:
 
     # U.C 2.8.5 - purchase_product
     @staticmethod
-    def accepted_price_purchase(username: str, total_price: float, payment_details: {str, date_time}) ->bool:
+    def accepted_price_purchase(username: str, total_price: float, payment_details: {str, date_time}) -> bool:
         """
 
         :param username: the username of the user which uses this system.
@@ -189,3 +189,4 @@ class GuestRole:
         """
         return (TradeControl.get_instance()).make_payment(username, total_price, payment_details['credit'],
                                                           payment_details['date'])
+

@@ -11,7 +11,7 @@ class TradeControlService:
 
     # use case 1.1
     @staticmethod
-    def init_system(self):
+    def init_system():
         if FacadeDelivery.get_instance().connect() and FacadePayment.get_instance().connect():
             if GuestRole.register("TradeManager", "123456789"):
                 return TradeControl.get_instance().add_sys_manager("TradeManager")

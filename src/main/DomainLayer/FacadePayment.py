@@ -47,11 +47,11 @@ class FacadePayment:
         return self.__isConnected
 
     @staticmethod
-    def __check_valid_details(name, amount, credit, date: date_time) -> bool:
-        if not (type(date) is date_time):
+    def __check_valid_details(name, amount, credit, date) -> bool:
+        if type(date) != date_time:
             return False
 
-        if len(name) == 0 or len(credit) == 0 or date.date() < date_time.today().date() or amount <= 0:
+        if len(name) == 0 or len(credit) == 0 or (date_time.today().date() > date) or amount <= 0:
             return False
         else:
             return True

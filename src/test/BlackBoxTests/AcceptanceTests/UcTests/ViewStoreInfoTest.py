@@ -10,7 +10,12 @@ class ViewStoreInfoTest(ProjectTest):
         pass
 
     def test_success(self):
-        pass
+        store_ls = self.view_stores()
+        self.assertNotEqual(len(store_ls), 0)
+
+        store = store_ls[0]
+        store_inf = self.view_store_info(store, True, True)
+        self.assertNotEqual(len(store_inf), 0)
 
     def test_fail(self):
         pass

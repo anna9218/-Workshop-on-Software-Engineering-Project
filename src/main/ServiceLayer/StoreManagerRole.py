@@ -6,3 +6,5 @@ class StoreManagerRole:
         self.user = user
         self.store_name = store_name
 
+
+

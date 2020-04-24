@@ -13,7 +13,7 @@ class User:
         # self.__logoutState = Logout()
         self.__appointment = Appointment()
         self.__shoppingCart = ShoppingCart()
-        self.__previous_purchases: list = list()
+        self.__purchases = []
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
@@ -54,14 +54,17 @@ class User:
     def get_login(self):
         return self.__loginState
 
-    def get_logout(self):
-        return self.__logoutState
+    # def get_logout(self):
+    #     return self.__logoutState
 
     def is_registered(self):
         return self.__registrationState.is_registered()
 
     def get_nickname(self):
         return self.__registrationState.get_nickname()
+
+    def get_purchases(self):
+        return self.__purchases
 
     # def get_name(self):
     #     return self.__name
@@ -75,8 +78,19 @@ class User:
     def save_products_to_basket(self, products_stores_quantity_ls):
         self.__shoppingCart.add_products(products_stores_quantity_ls)
 
+    def view_shopping_cart(self):
+        return self.__shoppingCart
+
+    def remove_from_shopping_cart(self, product):
+        self.__shoppingCart.remove_product(product)
     def get_user_type(self):
         if self.is_logged_in():
             return UserType.Subscriber
         else:
             return UserType.Guest
+
+    def update_quantity_in_shopping_cart(self, product, quantity):
+        self.__shoppingCart.update_quantity(product, quantity)
+
+    def get_appointment (self):
+        return self.__appointment
