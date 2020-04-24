@@ -1,3 +1,6 @@
+from src.main.DomainLayer.ManagerPermission import ManagerPermission
+
+
 class Appointment:
     def __init__(self):
         # pairs of (appointer, store)
@@ -20,6 +23,8 @@ class Appointment:
 
     def appoint_manager (self, store):
         self.__manage_stores.append((store, []))
+        # self.add_permission(store.get_name(), ManagerPermission.USERS_QUESTIONS) - in service layer
+        # self.add_permission(store.get_name(), ManagerPermission.WATCH_PURCHASE_HISTORY)
 
     def is_owner(self, store_name):
         for (appointer, store) in self.__owned_stores:
@@ -65,3 +70,9 @@ class Appointment:
                     return True
                 return False
         return False
+
+    def get_permissions_of_store (self, store_name) :
+        permissions = []
+        for (s, p) in self.__manage_stores:
+            if s.get_name() == store_name:
+                return p

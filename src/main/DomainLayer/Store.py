@@ -99,8 +99,11 @@ class Store:
                 return p
 
     def add_manager(self, manager):
+        for o in self.__owners:
+            if o.get_nickname() == manager.get_nickname():
+                return False
         for m in self.__managers:
-            if m.get_name() == manager.get_name():
+            if m.get_nickname() == manager.get_nickname():
                 return False
         self.__managers.append(manager)
         return True
