@@ -10,31 +10,23 @@ class GuestRole:
     # use case 2.2
     @staticmethod
     def register(self, nickname, password):
-        if Security.getInstance().validatedPassword(password) and TradeControl.getInstance().validateNickName(nickname):
-            subscriber = TradeControl.getInstance().subscribe()
-            subscriber.register(nickname, password)
+        if Security.get_instance().validated_password(password) and TradeControl.getInstance().validateNickName(nickname):
+            self.__guest.register(nickname, password)
+            TradeControl.getInstance().subscribe(self.__guest)
             return True
         return False
 
     # use case 2.3
     @staticmethod
     def login(self, nickname, password):
-        subscriber = TradeControl.getInstance().getSubscriber(nickname)
-        if subscriber is not None and subscriber.is_loggedOut() and subscriber.checkPassword(password):
-            subscriber.login()
-            return True
-        return False
-
-        # if user.registrationState.is_registered() and
-        #    user.registrationState.get_name() == username and
-        #    user.registrationState.get_password() == password:
-        #
-        #     cls.set_state(True)
-        #     user.logoutState.set_state(False)
+        # subscriber = TradeControl.getInstance().getSubscriber(nickname)
+        # if subscriber is not None and subscriber.is_loggedOut() and subscriber.checkPassword(password):
+        #     subscriber.login()
         #     return True
-        # else:
-        #     print("login failed")
-        #     return False
+        # return False
+        if self.__guest.is_registered() and self.__guest.is_loggedout():
+            return self.__guest.login(nickname, password)
+        return False
 
     # use case 2.4
     @staticmethod
@@ -51,9 +43,11 @@ class GuestRole:
 
     # use case 2.5
     @staticmethod
-    # option: 1 = by name, 2 = by keyword, 3 = by category
+    # Parameters:
+    #     search_option:  1 = search by_name, 2 = search by_keyword, 3 = search_by_category
+    #     string:  product name/ keyword / category
     def search_products_by(self, search_option, string):
-        product_and_amount_ls = TradeControl.getInstance().getProductsBy(search_option, string)
+        product_and_amount_ls = TradeControl.getInstance().get_products_by(search_option, string)
         return [product[0] for product in product_and_amount_ls]
 
     # use case 2.5
@@ -68,7 +62,7 @@ class GuestRole:
         if products_ls is []:
             return False
         else:
-            products = map(lambda pair: TradeControl.getInstance().get_store(pair[1]).getProduct(pair[0]), products_ls)
+            products = map(lambda pair: TradeControl.getInstance().get_store(pair[1]).get_product(pair[0]), products_ls)
             # products = map(lambda store: store.getProduct(pair[0]), stores)
             if filter_details[0] == 1:
                 return filter(lambda p: filter_details[1] <= p.get_price() <= filter_details[2], products)

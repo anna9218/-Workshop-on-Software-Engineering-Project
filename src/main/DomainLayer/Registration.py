@@ -41,7 +41,7 @@ class Registration:
     #     return True
 
     # @classmethod
-    def get_username(self):
+    def get_nickname(self):
         return self.__username
 
     # @classmethod

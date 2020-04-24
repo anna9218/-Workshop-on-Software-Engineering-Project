@@ -11,7 +11,7 @@ class MyTestCase(unittest.TestCase):
         u = ManagerPermission()
         s = Store("s_name", u)
         p = {"p_name": 12}
-        u.AddProducts(s, p)
+        u.add_products(s, p)
         self.assertEqual(Product("p_name", 12), s.get_inventory().get("p_name"))
     #
     # def test_addProduct1(self):

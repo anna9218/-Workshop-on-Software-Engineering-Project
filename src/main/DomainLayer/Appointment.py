@@ -3,8 +3,6 @@ class Appointment:
         # pair of (appointer, store)
         self.__owned_stores = []
 
-
-
         # self.__appointer = appointer
         # self.__appointee = appointee
         # self.__store = store
