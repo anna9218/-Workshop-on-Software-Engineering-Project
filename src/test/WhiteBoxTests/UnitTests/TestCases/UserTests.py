@@ -1,47 +1,45 @@
 import unittest
 
 from src.main.DomainLayer.User import User
-from src.main.DomainLayer.Store import Store
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogout import StubLogout
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubRegistration import StubRegistration
-from src.main.DomainLayer.TradeControl import TradeControl
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubTradeControl import StubTradeControl
 
 
 class UserTests(unittest.TestCase):
     def setUp(self):
-        self.trade = TradeControl()
-        self.user = User(self.trade)
-        self.user.registration = StubRegistration()
-        self.user.loginState = StubLogin()
-        self.user.logoutState = StubLogout()
+        # self.user.logoutState = StubLogout()
+        self.__valid_name = "anna9218"
+        self.__valid_pass = "password"
+        self.__invalid_input = ""
+        self.__user = User()
+        self.__user.__registration = StubRegistration()
+        self.__user.__loginState = StubLogin()
+
+        # self.trade = TradeControl()
+        # self.__user = User(self.trade)
+        # self.user.logoutState = StubLogout()
 
     def test_register(self):
-        self.user.get_registration().register(self, "anna9218", "password")
-        self.assertTrue(self.user.get_registration().isRegistered)
-
-        # check that it's not possible to register again with same credentials
-        self.user.get_registration().register(self, "anna9218", "password")
-        self.assertFalse(self.user.get_registration().isRegistered)
+        # register with valid input
+        self.__user.register(self.__valid_name, self.__valid_pass)
+        self.assertTrue(self.__user.is_registered)
 
     def test_login(self):
         # "anna9218", "password" -> registered user, should login successfully
-        self.user.get_login().login(self, "anna9218", "password")
-        self.assertTrue(self.user.get_login().isLoggedIn)
+        self.__user.login(self.__valid_name, self.__valid_pass)
+        self.assertTrue(self.__user.is_logged_in())
 
-    def test_login_fail(self):
-        # "anna", "password" -> not a registered user, login should fail
-        self.assertFalse(self.user.get_login().login(self, "anna", "password"))
+        self.__user.login(self.__invalid_input, self.__invalid_input)
+        self.assertFalse(self.__user.is_logged_in())
 
-    def test_logout(self):
-        # "anna9218", "password" -> logged in user, should logout successfully
-        self.user.get_logout().logout(self)
-        self.assertTrue(self.user.get_logout().isLoggedOut)
-
-    def test_open_store_success(self):
-        self.user.get_registration().register(self, "anna9218", "password")
-        self.trade.get_stores().append(Store("eden's store"))
+    # def test_logout(self):
+    #     # "anna9218", "password" -> logged in user, should logout successfully
+    #     self.user.get_logout().logout(self)
+    #     self.assertTrue(self.user.get_logout().isLoggedOut)
+    #
+    # def test_open_store_success(self):
+    #     self.user.get_registration().register(self, "anna9218", "password")
+    #     self.trade.get_stores().append(Store("eden's store"))
 
     def tearDown(self):
         # maybe delete the registered user resulted from this test
