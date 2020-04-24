@@ -34,18 +34,31 @@ class Appointment:
         return False
 
     def add_permission (self, store_name, permission):
+        """
+      :param store_name: name of the store
+      :param permission: a ManagerPermission to add
+      """
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
                 if not permission in p:
                     p.append(permission)
 
     def del_permission (self, store_name, permission):
+        """
+       :param store_name: name of the store
+       :param permission: a ManagerPermission to delete
+       """
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
                 if permission in p:
                     p.remove(permission)
 
     def has_permission (self, store_name, permission) -> bool:
+        """
+        :param store_name: name of the store
+        :param permission: a ManagerPermission
+        :return: true if the manager's permissions include the given permission
+        """
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
                 if permission in p:
