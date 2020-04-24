@@ -8,30 +8,44 @@ class Store:
         self.__name = store_name
         self.__owners = []
         self.__managers = []
-        # TODO - should it be an external class?
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
 
-    # TODO - add check for manager? - maybe in ManagerPermission? (can be also for managers)
-    def add_products(self, names_and_prices):
-        for name, price in names_and_prices.items():
-            self.add_product(name, price)
+    def add_products (self, names, prices, amounts, categories):
+        for name in names:
+            for price in prices:
+                for amount in amounts:
+                    for category in categories:
+                        self.add_product (name, price, amount, category)
 
-    def add_product(self, name, price):
-        # TODO - add check if it was on inventory?
-        self.__inventory[name] = Product(name, price)
+    def add_product (self, name, price, amount, category):
+        p = Product (name, price, category)
+        if self.__inventory.getProduct(p.get_name()):
+            print ("The product is already existed")
+            return False
+        self.__inventory.add_product(p, amount)
+        return True
 
-    def remove_products(self, products):
+    def remove_products (self, products):
         for p in products:
-            self.remove_product(p)
+            self.remove_product (p)
 
     def remove_product(self, p):
-        # TODO- check something?
-        del self.__inventory[p.get_name()]
+        # assume the product exists on inventory
+        self.__inventory.remove_product(p)
 
-    def change_price(self, product, new_price):
+    def change_price (self, product, new_price):
         if product in self.__inventory:
             product.set_price(new_price)
+
+    def change_name (self, product, new_name):
+        if product in self.__inventory:
+            product.set_name(new_name)
+
+    def change_amount (self, product, amount):
+        if self.__inventory.getProduct(product.get_name()):
+            self.__inventory.add_to_amount(product, amount)
+
 
     def add_owner(self, owner):
         for o in self.__owners:
@@ -40,7 +54,7 @@ class Store:
         self.__owners.append(owner)
         return False
 
-    def get_inventory(self):  # for test
+    def get_inventory(self): #for test
         return self.__inventory
 
     def get_name(self):
@@ -67,7 +81,7 @@ class Store:
         f"The products of store {self.__name}:"
         i = 0
         for name, p in self.__inventory:
-            f"For {name} press {i}" # TODO- check if contains \n
+            f"For {name} press {i}" #TODO- check if contains \n
 
     def get_info(self):
         if not self.__managers:  # empty list
