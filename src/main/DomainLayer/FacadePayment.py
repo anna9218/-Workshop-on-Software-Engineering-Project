@@ -5,7 +5,7 @@ class FacadePayment:
     __instance = None
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """ Static access method. """
         if FacadePayment.__instance is None:
             FacadePayment()

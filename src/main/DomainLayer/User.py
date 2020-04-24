@@ -2,6 +2,7 @@ from src.main.DomainLayer.Appointment import Appointment
 from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.Logout import Logout
+from src.main.DomainLayer.ShoppingCart import ShoppingCart
 from src.main.DomainLayer.TradeControl import TradeControl
 
 
@@ -12,6 +13,7 @@ class User:
         # self.__logoutState = Logout()
         self.__appointment = Appointment()
         self.__tradeControl = TradeControl.getInstance()
+        self.__shoppingCart = ShoppingCart()
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
@@ -20,8 +22,10 @@ class User:
         # else:
         #     print("something failed, please try again")
             
-    def login(self):
-        return self.__loginState.login()
+    def login(self, nickname, password):
+        if self.check_nickname(nickname) and self.check_password(password):
+            return self.__loginState.login()
+        return False
 
     def logout(self):
         return self.__loginState.logout()
@@ -35,15 +39,17 @@ class User:
     #     ackMSG = self.__logoutState.logout(self)
     #     print("logged out successfully")
 
-    def checkPassword(self, password):
+    def check_password(self, password):
         return self.__registrationState.get_password() == password
 
-    def is_loggedIn(self):
+    def check_nickname(self, nickname):
+        return self.__registrationState.get_nickname() == nickname
+
+    def is_logged_in(self):
         return self.__loginState.is_logged_in()
 
-    def is_loggedOut(self):
+    def is_logged_out(self):
         return not self.__loginState.is_logged_in()
-
 
     def get_login(self):
         return self.__loginState
@@ -51,11 +57,11 @@ class User:
     def get_logout(self):
         return self.__logoutState
 
-    def get_registration(self):
+    def is_registered(self):
         return self.__registrationState.is_registered()
 
-    def getName(self):
-        return self.__registrationState.get_username()
+    def get_nickname(self):
+        return self.__registrationState.get_nickname()
 
     # def get_name(self):
     #     return self.__name
@@ -65,3 +71,7 @@ class User:
     #
     # def set_name(self, new_name):
     #     self.__name = new_name
+
+    def save_products_to_basket(self, products_stores_quantity_ls):
+        self.__shoppingCart.add_products(products_stores_quantity_ls)
+
