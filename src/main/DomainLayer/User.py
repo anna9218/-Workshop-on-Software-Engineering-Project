@@ -75,3 +75,12 @@ class User:
     def save_products_to_basket(self, products_stores_quantity_ls):
         self.__shoppingCart.add_products(products_stores_quantity_ls)
 
+    def view_shopping_cart(self):
+        return self.__shoppingCart
+
+    def remove_from_shopping_cart(self, product):
+        self.__shoppingCart.remove_product(product)
+
+    def update_quantity_in_shopping_cart(self, product, quantity):
+        self.__shoppingCart.update_quantity(product, quantity)
+
