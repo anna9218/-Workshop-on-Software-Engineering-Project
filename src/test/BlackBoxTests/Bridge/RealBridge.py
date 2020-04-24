@@ -14,8 +14,8 @@ class RealBridge(Bridge):
 
     def __init__(self):
         super().__init__()
-        self.paymentSys = FacadePayment.getInstance()
-        self.deliverySys = FacadeDelivery.getInstance()
+        self.paymentSys = FacadePayment.get_instance()
+        self.deliverySys = FacadeDelivery.get_instance()
         # self.user = User()
 
     def register_user(self, username, password) -> bool:

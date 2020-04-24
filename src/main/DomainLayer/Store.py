@@ -52,11 +52,13 @@ class Store:
     def get_managers(self):
         return self.__managers
 
-    def getProductsBy(self, opt, string):
-        return self.__inventory.getProductsBy(opt, string)
+    # eden added
+    def get_products_by(self, opt, string):
+        return self.__inventory.get_products_by(opt, string)
 
-    def getProduct(self, product_name):
-        return self.__inventory.getProducts(product_name)
+    # eden added
+    def get_product(self, product_name):
+        return self.__inventory.get_product(product_name)
 
     def empty_inventory(self):
         return len(self.__inventory) == 0

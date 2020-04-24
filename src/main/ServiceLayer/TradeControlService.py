@@ -12,7 +12,7 @@ class TradeControlService:
     # use case 1.1
     @staticmethod
     def init_system(self):
-        if FacadeDelivery.getInstance().connect() and FacadePayment.getInstance().connect():
+        if FacadeDelivery.get_instance().connect() and FacadePayment.get_instance().connect():
             if GuestRole.register("TradeManager", "123456789"):
                 return TradeControl.getInstance().add_sys_manager("TradeManager")
         return False

@@ -2,7 +2,7 @@ class Security:
     __instance = None
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """ Static access method. """
         if Security.__instance is None:
             Security()
@@ -16,6 +16,6 @@ class Security:
             Security.__instance = self
 
     # @staticmethod
-    def validatedPassword(self, password) -> bool:
+    def validated_password(self, password) -> bool:
         return True
 
