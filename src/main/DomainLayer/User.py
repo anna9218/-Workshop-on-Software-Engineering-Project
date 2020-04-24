@@ -82,3 +82,5 @@ class User:
     def update_quantity_in_shopping_cart(self, product, quantity):
         self.__shoppingCart.update_quantity(product, quantity)
 
+    def get_appointment (self):
+        return self.__appointment
