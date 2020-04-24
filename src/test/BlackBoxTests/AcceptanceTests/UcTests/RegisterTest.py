@@ -8,17 +8,16 @@ class RegisterTest(ProjectTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.username = "username"
-        self.good_pass = "pass1234"
-        self.bad_pass = ""
+        self.__valid_username = "username"
+        self.__valid_pass = "password"
+        self.__invalid_input = ""
 
-    # register function should be checked with DB or stub
     def test_success(self):
-        res = self.register_user(self.username, self.good_pass)
+        res = self.register_user(self.__valid_username, self.__valid_pass)
         self.assertEqual(res, True)
 
     def test_fail(self):
-        res = self.register_user(self.username, self.bad_pass)
+        res = self.register_user(self.__valid_username, self.__invalid_input)
         self.assertEqual(res, False)
 
     def tearDown(self) -> None:
