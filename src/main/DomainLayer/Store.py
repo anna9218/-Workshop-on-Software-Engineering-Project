@@ -97,3 +97,10 @@ class Store:
         for p in self.__purchases:
             if p == purchase:  # TODO - how do we compare purchases?
                 return p
+
+    def add_manager(self, manager):
+        for m in self.__managers:
+            if m.get_name() == manager.get_name():
+                return False
+        self.__managers.append(manager)
+        return True

@@ -1,3 +1,4 @@
+from src.main.DomainLayer import ManagerPermission
 from src.main.DomainLayer.User import User
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Security import Security
@@ -56,6 +57,27 @@ class StoreOwnerRole(SubscriberRole):
         return True
 
     @staticmethod
+    def appoint_new_store_manager(self, user_name, store_name, user_name_to_appoint):
+        if not self.check_if_ownes_the_store(user_name, store_name):
+            return False
+        if self.check_if_ownes_the_store(user_name_to_appoint, store_name) or \
+                self.check_if_manages_the_store(user_name_to_appoint, store_name):
+            return False # check its sure- not possible to have more than 1 appointer
+        store = self.get_store(store_name)
+        manager = self.find_user_by_name(user_name_to_appoint)
+        store.add_manager(manager)
+        # the first permissions are 4.9 (not this version) and 4.10 (watch purchase's history)
+        self.add_permissions(manager, store_name, ManagerPermission.USERS_QUESTIONS)
+        self.add_permissions(manager, store_name, ManagerPermission.WATCH_PURCHASE_HISTORY)
+
+    def check_if_manages_the_store (self, user_name, store_name) -> bool:
+        user = self.find_user_by_name(user_name)
+        if user is None or not user.is_loggedIn():
+            return False
+        ap = user.get_appointment()
+        return ap.is_manager(store_name)
+
+    @staticmethod
     def get_store(self, store_name):
         return TradeControl.getInstance().get_store(store_name)
 
@@ -65,7 +87,7 @@ class StoreOwnerRole(SubscriberRole):
 
     @staticmethod
     def find_user_by_name(self, user_name):
-        return TradeControl.getInstance().getUser(user_name)
+        return TradeControl.getInstance().get_guest(user_name)
 
     # use case 4.10 - View store’s purchase history
     @staticmethod
@@ -85,6 +107,10 @@ class StoreOwnerRole(SubscriberRole):
             else:
                 return store.get_purchases()
 
+
+    def add_permissions (self, manager, store_name, permission):
+        manager.get_appointment().add_permission (store_name, permission)
+
     @staticmethod
     def display_purchase_info(self, purchase, store):
         """
@@ -95,3 +121,8 @@ class StoreOwnerRole(SubscriberRole):
         """
         store = TradeControl.getInstance().get_store(store)
         store.get_purchase_info(purchase)
+
+    def del_permissions (self, manager, store_name, permission):
+        manager.get_appointment().del_permission (store_name, permission)
+
+    pass
