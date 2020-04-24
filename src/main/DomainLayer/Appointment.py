@@ -42,11 +42,13 @@ class Appointment:
         """
       :param store_name: name of the store
       :param permission: a ManagerPermission to add
+      :return true if at the end of func the user have the permission on store
       """
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
-                if not permission in p:
+                if permission not in p:
                     p.append(permission)
+                return True
 
     def del_permission (self, store_name, permission):
         """
@@ -72,7 +74,7 @@ class Appointment:
         return False
 
     def get_permissions_of_store (self, store_name) :
-        permissions = []
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
                 return p
+        return []

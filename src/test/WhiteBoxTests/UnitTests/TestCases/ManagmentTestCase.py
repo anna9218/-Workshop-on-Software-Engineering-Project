@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
     def test_add_new_manager(self):
         # ser = StoreOwnerRole()
         # ser.appoint_new_store_manager(self._owner.get_nickname(), self._store.get_name(), self._manager.get_nickname())
-        self._store.add_manager(self._manager)
+        self.assertEqual(True, self._store.add_manager(self._manager))
         self._manager.get_appointment().appoint_manager(self._store)
         self._manager.get_appointment().add_permission(self._store.get_name(), ManagerPermission.USERS_QUESTIONS)
         self._manager.get_appointment().add_permission(self._store.get_name(), ManagerPermission.WATCH_PURCHASE_HISTORY)
