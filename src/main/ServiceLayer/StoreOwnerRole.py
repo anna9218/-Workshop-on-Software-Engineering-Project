@@ -7,16 +7,16 @@ class StoreOwnerRole:
     def __init__(self):
         pass
 
-    def open_store_func(self, user_name, store_name) -> bool:
-        user = self.find_user_by_name(user_name)
-        if user is None or not user.is_loggedIn():
-            return False
-        self.validate_store_name(store_name)
-        new_store = TradeControl.getInstance().open_store(self, store_name)
-        if new_store is None:
-            return False
-        else:
-            return new_store.add_owner(user) and appointment.appoint_owner(None, self, new_store)
+    # def open_store_func(self, user_name, store_name) -> bool:
+    #     user = self.find_user_by_name(user_name)
+    #     if user is None or not user.is_loggedIn():
+    #         return False
+    #     self.validate_store_name(store_name)
+    #     new_store = TradeControl.getInstance().open_store(self, store_name)
+    #     if new_store is None:
+    #         return False
+    #     else:
+    #         return new_store.add_owner(user) and appointment.appoint_owner(None, self, new_store)
 
     def check_if_ownes_the_store (self, user_name, store_name) -> bool:
         user = self.find_user_by_name(user_name)
@@ -40,7 +40,7 @@ class StoreOwnerRole:
         store.remove_products(products)
         return True
 
-    def edit_product (self, user_name, store_name, product, new_value, op) ->:
+    def edit_product (self, user_name, store_name, product, new_value, op) -> bool:
         if not self.check_if_ownes_the_store(user_name, store_name):
             return False
         store = self.get_store(store_name)
