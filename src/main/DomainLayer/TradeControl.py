@@ -6,6 +6,12 @@ from src.main.DomainLayer.Store import Store
 from src.main.DomainLayer.User import User
 
 
+# get a user instance for guest
+def get_guest():
+    guest = User()
+    return guest
+
+
 class TradeControl:
     __instance = None
 
@@ -32,10 +38,10 @@ class TradeControl:
     def add_sys_manager(self, subscriber):
         self.__managers.append(subscriber)
 
-    def subscribe(self):
-        user = User()
+    def subscribe(self, user):
+        # user = User()
         self.__subscribers.append(user)
-        return user
+        # return user
 
     def open_store(self, user, store_name) -> Store:
         for s in self.__stores:
@@ -47,18 +53,18 @@ class TradeControl:
 
     def validateNickName(self, nickname):
         for u in self.__subscribers:
-            if u.getName() == nickname:
+            if u.get_nickname() == nickname:
                 return False
         return True
 
     def get_subscriber(self, nickname):
         for u in self.__subscribers:
-            if u.getName() == nickname:
+            if u.get_nickname() == nickname:
                 return u
         return None
 
-    def getProductsBy(self, search_opt, string):
-        ls = map(lambda store: store.getProductsBy(search_opt, string))
+    def get_products_by(self, search_opt, string):
+        ls = map(lambda store: store.get_products_by(search_opt, string))
         return reduce(lambda acc, curr: acc.append(curr), ls)
 
     # def getProduct(self, product_name, store_name):
@@ -83,4 +89,8 @@ class TradeControl:
 
     def get_payment_system(self):
         return self.__payment_system
+
+    def make_payment(self, username, price, credit, date):
+        return self.get_payment_system().commit_payment(username, price, credit, date)
+
 

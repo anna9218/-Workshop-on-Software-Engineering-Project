@@ -1,5 +1,8 @@
 from src.main.DomainLayer.Security import Security
 from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.Store import Store
+from _datetime import datetime as date_time
+from src.main.DomainLayer.Purchase import Purchase
 
 
 class GuestRole:
@@ -76,6 +79,39 @@ class GuestRole:
                 if filter_details[0] == 2:
                     return filter(lambda p: filter_details[1] == p.get_category(), products)
 
+
+
+    # U.C 2.8.3
+    @staticmethod
+    def make_purchase(store, purchase, username) -> int:
+        return 0
+
+    # U.C 2.8.1
+    @staticmethod
+    def purchase_product(store_name: str, amount_per_product: list, username: str, payment_details: {}) -> bool:
+        """
+
+        :param payment_details: {'credit: str ,'date': date_time}.
+                credit = credit number.
+                date = expiration date.
+        :param username: the username of the user which uses this system
+        :param store_name: The store from which we want to purchase.
+        :param amount_per_product: list of dictionary {product, amount}
+        :return: if succeed true,
+                  else false.
+        """
+        store: Store = TradeControl.getInstance().get_store(store_name)
+        for product_and_amount in amount_per_product:
+            if not store.get_inventory().is_in_stock(product_and_amount['product'], product_and_amount['amount']):
+                return False
+        total_price = GuestRole.make_purchase(store, amount_per_product, username)
+        # if not GuestRole.confirm_price(total_price):
+        #     return False
+        if not type(payment_details) == {'credit', 'date'}:
+            return False
+
+        return (TradeControl.getInstance()).make_payment(username, total_price,  payment_details['credit'],
+                                                         payment_details['date'])
 
 
 

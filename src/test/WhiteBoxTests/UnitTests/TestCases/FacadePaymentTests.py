@@ -1,5 +1,5 @@
 import unittest
-from src.main.DomainLayer.FacadePayment import FacadePayment
+from src.main.DomainLayer.FacadePayment import FacadePayment, date_time
 
 
 class FacadePaymentTests(unittest.TestCase):
@@ -8,7 +8,7 @@ class FacadePaymentTests(unittest.TestCase):
         self.__payment_sys = FacadePayment.getInstance()
         self.__payment_sys.connect()
         self.__valid_username = "username"
-        self.__valid_date = "22/4/2020"
+        self.__valid_date = date_time(2021, 6, 1)
         self.__valid_credit = "123456789"
         self.__wrong_input = ""
 
