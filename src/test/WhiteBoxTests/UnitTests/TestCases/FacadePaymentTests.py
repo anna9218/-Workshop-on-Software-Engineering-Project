@@ -5,7 +5,7 @@ from src.main.DomainLayer.FacadePayment import FacadePayment
 class FacadePaymentTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.__payment_sys = FacadePayment.getInstance()
+        self.__payment_sys = FacadePayment.get_instance()
         self.__payment_sys.connect()
         self.__valid_username = "username"
         self.__valid_date = "22/4/2020"

@@ -2,7 +2,7 @@ class FacadeDelivery:
     __instance = None
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """ Static access method. """
         if FacadeDelivery.__instance is None:
             FacadeDelivery()

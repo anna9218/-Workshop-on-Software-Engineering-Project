@@ -16,4 +16,5 @@ class ManagerPermission:
     # def EditProducts (self, store, product, newPrice):
     #     self.CheckIfOwnesTheStore (store) # check pre conditions
 
+
     pass
