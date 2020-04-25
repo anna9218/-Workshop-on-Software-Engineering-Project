@@ -12,7 +12,7 @@ class TradeControlTestCase(unittest.TestCase):
 #         self.tradeControl.manager = StubUser(self.tradeControl)
 #         self.tradeControl.delivery_system = StubDelivery()
 #         self.tradeControl.payment_system = StubPayment()
-# TODO: talk with eitan
+# TODO: talk with eytan
 #     def test_init_system(self):
 #         self.tradeControl.init_system()
 #         self.assertEqual(len(self.tradeControl.get_managers()), 1)
@@ -84,6 +84,13 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertEqual(len(ls), 3)
         self.tradeControl.close_store("myStore")
         self.tradeControl.close_store("myStore2")
+
+    def test_next_purchase_id(self):
+        id1 = (TradeControl.get_instance()).get_next_purchase_id()
+        id2 = (TradeControl.get_instance()).get_next_purchase_id()
+
+        self.assertEqual(id1+1, id2)
+
 
     def tearDown(self):
         pass

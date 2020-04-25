@@ -18,6 +18,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertEqual(self.inv.get_amount_of_product("Chair"), 10)
         self.assertTrue(self.inv.add_product(self.product2, 8))
         self.assertTrue(self.inv.add_product(self.product2, 8))
+        self.assertFalse(self.inv.add_product(self.product2, -8))
 
     def test_get_product(self):
         self.inv.add_product(self.product1, 5)
@@ -64,6 +65,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 4)
         self.assertTrue(self.inv.change_amount("Chair", 16))
+        self.assertFalse(self.inv.change_amount("Chair", -16))
         self.assertEqual(self.inv.get_amount_of_product("Chair"), 16)
         self.assertEqual(self.inv.get_amount_of_product("Sofa"), 4)
 
@@ -81,4 +83,25 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertEqual(self.inv.get_amount_of_product("Sofa"), 16)
         self.assertEqual(self.inv.get_amount_of_product("Guitar"), None)
 
+    def test_is_in_stock(self):
+        self.inv.add_product(self.product1, 10)
 
+        # All valid
+        result = self.inv.is_in_stock(self.product1.get_name(), 9)
+        self.assertTrue(result)
+
+        # All valid - Edge case
+        result = self.inv.is_in_stock(self.product1.get_name(), 10)
+        self.assertTrue(result)
+
+        # All valid - Edge case 2
+        result = self.inv.is_in_stock(self.product1.get_name(), 0)
+        self.assertTrue(result)
+
+        # product name not valid
+        result = self.inv.is_in_stock("self.product1", 10)
+        self.assertFalse(result)
+
+        # amount not valid
+        result = self.inv.is_in_stock(self.product1.get_name(), -10)
+        self.assertFalse(result)
