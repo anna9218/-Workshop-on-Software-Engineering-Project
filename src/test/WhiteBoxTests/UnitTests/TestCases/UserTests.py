@@ -4,6 +4,8 @@ from src.main.DomainLayer.User import User
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubRegistration import StubRegistration
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubShoppingCart import StubShoppingCart
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubStore import StubStore
 
 
 class UserTests(unittest.TestCase):
@@ -13,15 +15,15 @@ class UserTests(unittest.TestCase):
         self.__valid_pass = "password"
         self.__invalid_input = ""
         self.__product = StubProduct()
-        self.__product_ls_to_add = [[]]
+        self.__store = StubStore()
+        self.__product_ls_to_add = [[self.__product, self.__store, 1]]  # products_stores_quantity_ls
         self.__user = User()
-        self.__user.__registration = StubRegistration()
-        self.__user.__loginState = StubLogin()
-        # self.trade = TradeControl()
-        # self.__user = User(self.trade)
-        # self.user.logoutState = StubLogout()
+        self.__user.__registration = self.__user.set_registration_state(StubRegistration())
+        # self.__user.__loginState = self.__user.set_login_state(StubLogin())
+        self.__user.__shoppingCart = self.__user.set_shopping_cart(StubShoppingCart())
 
     def test_register(self):
+        self.__user.register(self.__valid_name, self.__valid_pass)
         self.assertTrue(self.__user.register(self.__valid_name, self.__valid_pass))
 
     def test_login(self):
@@ -66,15 +68,38 @@ class UserTests(unittest.TestCase):
         self.assertEqual(self.__user.get_nickname(), self.__valid_name, "")
         self.assertNotEqual(self.__user.get_nickname(), self.__invalid_input, "")
 
-    # def test_save_products_to_basket(self):
-    #     self.__user.register(self.__valid_name, self.__valid_pass)
-    #     self.__user.save_products_to_basket()
+    def test_save_products_to_basket(self):
+        # test for guest
+        self.assertTrue(self.__user.save_products_to_basket(self.__product_ls_to_add))
+        # test for subscriber
+        self.__user.register(self.__valid_name, self.__valid_pass)
+        self.assertTrue(self.__user.save_products_to_basket(self.__product_ls_to_add))
 
-    # def test_view_shopping_cart(self):
-    #
-    # def test_remove_from_shopping_cart(self):
-    #
-    # def test_update_quantity_in_shopping_cart(self):
+    def test_view_shopping_cart(self):
+        # test for guest
+        self.__user.save_products_to_basket(self.__product_ls_to_add)
+        self.assertTrue(self.__user.view_shopping_cart())
+        # test for subscriber
+        self.__user.register(self.__valid_name, self.__valid_pass)
+        self.assertTrue(self.__user.view_shopping_cart())
+
+    def test_remove_from_shopping_cart(self):
+        # test for guest
+        self.__user.save_products_to_basket(self.__product_ls_to_add)
+        self.assertTrue(self.__user.remove_from_shopping_cart(self.__product))
+        # test for subscriber
+        self.__user.register(self.__valid_name, self.__valid_pass)
+        self.__user.save_products_to_basket(self.__product_ls_to_add)
+        self.assertTrue(self.__user.remove_from_shopping_cart(self.__product))
+
+    def test_update_quantity_in_shopping_cart(self):
+        # test for guest
+        self.__user.save_products_to_basket(self.__product_ls_to_add)
+        self.assertTrue(self.__user.update_quantity_in_shopping_cart(self.__product, 1))
+        # test for subscriber
+        self.__user.register(self.__valid_name, self.__valid_pass)
+        self.__user.save_products_to_basket(self.__product_ls_to_add)
+        self.assertTrue(self.__user.update_quantity_in_shopping_cart(self.__product, 1))
 
     def tearDown(self):
         # maybe delete the registered user resulted from this test
