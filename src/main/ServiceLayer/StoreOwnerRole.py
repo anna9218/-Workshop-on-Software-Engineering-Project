@@ -19,7 +19,7 @@ class StoreOwnerRole:
         """
         subscriber = self.get_subscriber(user_nickname)
         store = self.get_store(store_name)
-        if store is None and subscriber is not None and store.is_owner(user_nickname) and \
+        if store is not None and subscriber is not None and store.is_owner(user_nickname) and \
                 subscriber.is_registered() and subscriber.is_logged_in():
             store.add_products(products_details)
             return True
@@ -48,16 +48,16 @@ class StoreOwnerRole:
     def edit_product(self, nickname, store_name, product_name, op, new_value) -> bool:
         subscriber = self.get_subscriber(nickname)
         store = self.get_store(store_name)
-        if store is None and \
+        if store is not None and \
                 subscriber is not None and \
                 store.is_owner(nickname) and \
                 subscriber.is_registered() and \
                 subscriber.is_logged_in():
-            if op is "name":
+            if op == "name":
                 store.change_name(product_name, new_value)
-            elif op is "price":
+            elif op == "price":
                 store.change_price(product_name, new_value)
-            elif op is "amount":
+            elif op == "amount":
                 store.change_amount(product_name, new_value)
             else:
                 return False

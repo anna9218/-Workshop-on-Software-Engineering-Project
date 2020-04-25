@@ -15,6 +15,7 @@ class Security:
         else:
             Security.__instance = self
 
-    def validate_password(self, password) -> bool:
-        return True
+    @staticmethod
+    def validated_password(password) -> bool:
+        return len(password) != 0
 
