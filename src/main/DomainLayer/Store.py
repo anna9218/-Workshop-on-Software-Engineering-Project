@@ -1,5 +1,6 @@
 # from src.main.DomainLayer import Purchase
 from src.main.DomainLayer.Product import Product
+from src.main.DomainLayer.Purchase import Purchase
 from src.main.DomainLayer.StoreInventory import StoreInventory
 from src.main.DomainLayer.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.User import User
@@ -230,9 +231,12 @@ class Store:
     def get_purchases(self):
         return self.__purchases
 
-    def print_inventory(self):
-        f"The products of store {self.__name}:"
-        i = 0
-        for name, p in self.__inventory:
-            f"For {name} press {i}" #TODO- check if contains \n
+    # def print_inventory(self):
+    #     f"The products of store {self.__name}:"
+    #     i = 0
+    #     for name, p in self.__inventory:
+    #         f"For {name} press {i}" #TODO- check if contains \n
+
+    def add_purchase(self, purchase: Purchase):
+        self.__purchases.insert(0, purchase)
 
