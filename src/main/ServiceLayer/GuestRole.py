@@ -27,8 +27,13 @@ class GuestRole:
         #     subscriber.login()
         #     return True
         # return False
-        if self.__guest.is_registered() and self.__guest.is_loggedout():
+        if self.__guest.is_registered() and self.__guest.is_logged_out():
             return self.__guest.login(nickname, password)
+        return False
+
+    def logout(self):
+        if self.__guest.is_registered() and self.__guest.is_logged_in():
+            return self.__guest.logout()
         return False
 
     # use case 2.4
