@@ -54,6 +54,9 @@ class Bridge(ABC):
     def init_sys(self):
         pass
 
+    def remove_user(self, username):
+        pass
+
     # login functions
     def login(self, username, password):
         pass
@@ -73,5 +76,39 @@ class Bridge(ABC):
     def view_stores(self):
         pass
 
-    def view_store_info(self, store, store_info_flag, products_flag):
+    # save products functions
+    def add_products_to_cart(self, nickname, products_stores_quantity_ls):
+        pass
+
+    # view personal history functions
+    def view_personal_history(self):
+        pass
+
+    # open store functions
+    def open_store(self, name):
+        pass
+
+    def delete_store(self, store):
+        pass
+
+    # manage stock functions
+    def add_products_to_store(self, user_nickname, store_name, products_details):
+        pass
+
+    def edit_products_in_store(self, nickname, store_name, product_name, op, new_value):
+        pass
+
+    def remove_products_from_store(self, user_nickname, store_name, products_names):
+        pass
+
+    # add store owner functions
+    def appoint_additional_owner(self, nickname, store_name):
+        pass
+
+    # add store manager functions
+    def appoint_additional_manager(self, nickname, store_name, permissions):
+        pass
+
+    # remove manager functions
+    def remove_manager(self, store_name, manager_nickname, permissions):
         pass

@@ -43,12 +43,50 @@ class ProxyBridge(Bridge):
     def init_sys(self):
         self._realbridge.init_sys()
 
+    def remove_user(self, username):
+        self._realbridge.remove_user(username)
+
     def login(self, username, password):
         return self._realbridge.login(username, password)
 
-    # view stores' products functions
     def view_stores(self):
         return self._realbridge.view_stores()
 
-    def view_store_info(self, store, store_info_flag, products_flag):
-        return self._realbridge.view_store_info(store, store_info_flag, products_flag)
+    def logout(self):
+        return self._realbridge.logout()
+
+    def search_product(self, option, string):
+        return self._realbridge.search_product(option, string)
+
+    def filter_products(self, filter_details, products):
+        return self._realbridge.filter_products(filter_details, products)
+
+    def add_products_to_cart(self, nickname, products_stores_quantity_ls):
+        return self._realbridge.add_products_to_cart(nickname, products_stores_quantity_ls)
+
+    def view_personal_history(self):
+        return self._realbridge.view_personal_history()
+
+    def open_store(self, name):
+        return self._realbridge.open_store(name)
+
+    def delete_store(self, store):
+        self._realbridge.delete_store(store)
+
+    def add_products_to_store(self, user_nickname, store_name, products_details):
+        return self._realbridge.add_products_to_store(user_nickname, store_name, products_details)
+
+    def edit_products_in_store(self, nickname, store_name, product_name, op, new_value):
+        return self._realbridge.edit_products_in_store(nickname, store_name, product_name, op, new_value)
+
+    def remove_products_from_store(self, user_nickname, store_name, products_names):
+        return self._realbridge.remove_products_from_store(user_nickname, store_name, products_names)
+
+    def appoint_additional_owner(self, nickname, store_name):
+        return self._realbridge.appoint_additional_owner(nickname, store_name)
+
+    def appoint_additional_manager(self, nickname, store_name, permissions):
+        return self._realbridge.appoint_additional_manager(nickname, store_name, permissions)
+
+    def remove_manager(self, store_name, manager_nickname, permissions):
+        return self._realbridge.remove_manager(store_name, manager_nickname, permissions)

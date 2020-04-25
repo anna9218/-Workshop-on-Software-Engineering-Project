@@ -19,7 +19,7 @@ class StoreOwnerRole:
         """
         subscriber = self.get_subscriber(user_nickname)
         store = self.get_store(store_name)
-        if store is None and subscriber is not None and store.is_owner(user_nickname) and \
+        if store is not None and subscriber is not None and store.is_owner(user_nickname) and \
                 subscriber.is_registered() and subscriber.is_logged_in():
             store.add_products(products_details)
             return True
@@ -48,16 +48,16 @@ class StoreOwnerRole:
     def edit_product(self, nickname, store_name, product_name, op, new_value) -> bool:
         subscriber = self.get_subscriber(nickname)
         store = self.get_store(store_name)
-        if store is None and \
+        if store is not None and \
                 subscriber is not None and \
                 store.is_owner(nickname) and \
                 subscriber.is_registered() and \
                 subscriber.is_logged_in():
-            if op is "name":
+            if op == "name":
                 store.change_name(product_name, new_value)
-            elif op is "price":
+            elif op == "price":
                 store.change_price(product_name, new_value)
-            elif op is "amount":
+            elif op == "amount":
                 store.change_amount(product_name, new_value)
             else:
                 return False
@@ -82,6 +82,7 @@ class StoreOwnerRole:
                 self.__store_owner.is_registered() \
                 and store.is_owner(self.__store_owner.get_nickname()):
             return store.add_owner(subscriber)
+        return None
 
     # use case 4.5
     def appoint_store_manager(self, manager_nickname, store_name, permissions):
@@ -125,7 +126,7 @@ class StoreOwnerRole:
                 self.__store_owner.is_logged_in() and \
                 store.is_owner(self.__store_owner.get_nickname()) and \
                 store.is_manager(manager_nickname):
-            return store.remove_manager(manager, permissions, self.__store_owner)
+            return store.remove_manager(manager, self.__store_owner)
         return False
 
     # use case 4.10 - View store’s purchase history

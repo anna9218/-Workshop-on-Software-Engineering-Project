@@ -1,5 +1,5 @@
 """
-    test class for use case 2.4 - view stores' info
+    test class for use case 2.4 - view stores and stores' info
 """
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
@@ -7,18 +7,22 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 class ViewStoreInfoTest(ProjectTest):
 
     def setUp(self) -> None:
-        pass
+        super().setUp()
+        self.register_user("username", "password")
+        self.login("username", "password")
 
     def test_success(self):
-        store_ls = self.view_stores()
-        self.assertNotEqual(len(store_ls), 0)
+        self.open_store("store")
+        self.add_products_to_store("username", "store", [("product", 10, 3, "general")])
 
-        store = store_ls[0]
-        store_inf = self.view_store_info(store, True, True)
-        self.assertNotEqual(len(store_inf), 0)
+        res = self.view_stores()
+        self.assertEqual(True, res)
+        self.remove_products_from_store("username", "store", ["product"])
+        self.teardown_store("store")
 
     def test_fail(self):
-        pass
+        res = self.view_stores()
+        self.assertEqual(False, res)
 
     def tearDown(self) -> None:
-        pass
+        self.remove_user("username")

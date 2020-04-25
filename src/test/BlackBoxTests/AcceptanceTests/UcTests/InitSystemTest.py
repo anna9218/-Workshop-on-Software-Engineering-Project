@@ -27,4 +27,4 @@ class InitSystemTest(ProjectTest):
             self.assertTrue(True, "System down warning")
 
     def tearDown(self) -> None:
-        pass
+        self.remove_user("TradeManager")

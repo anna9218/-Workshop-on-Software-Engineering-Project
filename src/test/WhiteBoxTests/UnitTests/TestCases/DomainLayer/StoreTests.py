@@ -13,12 +13,15 @@ class StoreTests(unittest.TestCase):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
         self.assertTrue(self.store.add_products([("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)]))
         self.assertTrue(self.store.add_products([("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)]))
+        self.assertFalse(self.store.add_products([("Chair", -999, "Furniture", 5), ("Sofa", -999, "Furniture", 5)]))
+        self.assertFalse(self.store.add_products([("Chair", 100, "Furniture", -100), ("Sofa", 100, "Furniture", -100)]))
 
     def test_add_product(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
         self.assertTrue(self.store.add_product("Chair", 100, "Furniture", 5))
-        self.assertTrue(self.store.add_product("Chair", 100, "Furniture", 5))
+        self.assertFalse(self.store.add_product("Chair", -999, "Furniture", 5))
         self.assertTrue(self.store.add_product("Sofa", 100, "Furniture", 5))
+        self.assertFalse(self.store.add_product("Sofa", 100, "Furniture", -5))
 
     def test_remove_products(self):
         self.store.add_product("Chair", 100, "Furniture", 5)
@@ -44,6 +47,7 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.change_price("Chair", 8))
         self.assertEqual(self.store.get_product("Chair").get_price(), 8)
         self.assertFalse(self.store.change_price("NNNN", 8))
+        self.assertFalse(self.store.change_price("Chair", -8))
         self.assertEqual(self.store.get_product("NNNN"), None)
 
     def test_change_name(self):
@@ -63,6 +67,7 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.change_amount("Chair", 3))
         self.assertEqual(self.store.get_inventory().get_amount_of_product("Chair"), 3)
         self.assertTrue(self.store.change_amount("Chair", 8))
+        self.assertFalse(self.store.change_amount("Chair", -8))
         self.assertEqual(self.store.get_inventory().get_amount_of_product("Chair"), 8)
 
     def test_add_owner(self):

@@ -56,22 +56,9 @@ class StoreInventory:
         #                           __fun_map[1] = searchProductByKeyword(keyword)
         #                           __fun_map[2] = searchProductByCategory(category)
         #  all the functions returns list of products
-        self.__fun_map = [lambda product_name: list(
-            filter(lambda product: product.get_name() == product_name, [x[0] for x in self.__inventory])),
-                          lambda keyword: list(
-                              filter(lambda product: keyword in product.get_name(), [x[0] for x in self.__inventory])),
-                          lambda category: list(filter(lambda product: product.get_category() == category,
-                                                       [x[0] for x in self.__inventory]))]
-        # logging.basicConfig(filename="WorkshopProject.log",
-        #                     format='%(asctime)s >> %(levelName)s: %(message)s',
-        #                     # format='%(asctime)s >> %(levelName)s: %(module)s %(funcName)s %(message)s',
-        #                     filemode='w')
-        #
-        # # Creating a self._logger object with the relevant module name
-        # self.logger = logging.getLogger(__name__)
-        #
-        # # Setting the threshold of self._logger to INFO
-        # self.logger.setLevel(logging.INFO)
+        self.__fun_map = [lambda product_name: list(filter(lambda product: product.get_name() == product_name, [x[0] for x in self.__inventory])),
+                          lambda keyword: list(filter(lambda product: keyword in product.get_name(), [x[0] for x in self.__inventory])),
+                          lambda category: list(filter(lambda product: product.get_category() == category, [x[0] for x in self.__inventory]))]
 
     @logger
     def add_product(self, product: Product, amount) -> bool:
@@ -80,11 +67,9 @@ class StoreInventory:
         :param amount: amount of product
         :return: true,and the inventory updated with the new product or the products amount is increased
         """
-        # msg = "The function StoreIventory.add_product(" + str(product) + ", " + str(amount) + ") was called"
-        # logging.LogRecord(name =__name__, level= logging.INFO, func= self.add_product,
-        #                   pathname="src/WorkshopProject.log", msg="function call", args=(product, amount))
-        # Logger().add_to_log(msg)
-        # product.set_name("1")
+        if amount < 0:
+            return False
+
         products_ls = self.__fun_map[0](product.get_name())
         if len(products_ls):
             old_product_amount = self.get_amount_of_product(product.get_name())
@@ -108,7 +93,7 @@ class StoreInventory:
         :param string: for opt: 1 -> productName, 2 -> string, 3 -> category
         :return: list of products according to the selected searching option
         """
-        ls = self.__fun_map[opt - 1](string)
+        ls = self.__fun_map[opt-1](string)
         return ls
 
     @logger
@@ -134,6 +119,9 @@ class StoreInventory:
         # if product is not None:
         #     product.set_amount(new_amount)
         #     return True
+        if new_amount < 0:
+            return False
+
         for i in self.__inventory:
             if i[0].get_name() == product_name:
                 self.__inventory.remove(i)
@@ -166,12 +154,14 @@ class StoreInventory:
         :return: if is in stock true,
                  else false.
         """
+        if requested_amount < 0:
+            return False
+
         amount_in_stock = self.get_amount_of_product(product_name)
         if amount_in_stock:
             if int(amount_in_stock) >= requested_amount:
                 return True
-        else:
-            return False
-
+        return False
+ 
     def __repr__(self):
         return repr("StoreInventory")

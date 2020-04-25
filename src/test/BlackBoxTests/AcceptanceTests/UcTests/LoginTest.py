@@ -8,17 +8,17 @@ class LoginTest(ProjectTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.__valid_username = "username"
-        self.__valid_pass = "password"
-        self.__invalid_input = ""
+        self.__username = "username"
+        self.__password = "password"
 
     def test_success(self):
-        res = self.login(self.__valid_username, self.__valid_pass)
+        self.register_user("username", "password")
+        res = self.login(self.__username, self.__password)
         self.assertEqual(True, res)
 
     def test_fail(self):
-        res = self.login(self.__valid_username, self.__invalid_input)
+        res = self.login(self.__username, self.__password)
         self.assertEqual(False, res)
 
     def tearDown(self) -> None:
-        pass
+        self.remove_user("username")

@@ -7,13 +7,22 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 class SaveProductsTest(ProjectTest):
 
     def setUp(self) -> None:
-        pass
+        super().setUp()
+        self.register_user("username", "password")
+        self.login("username", "password")
+        self.open_store("store")
+        self.add_products_to_store("username", "store", [("product", 10, "general", 5)])
 
     def test_success(self):
-        pass
+        # [ [product, quantity, store], .... ]
+        res = self.add_products_to_cart("username", [("product", 1, "store")])
+        self.assertEqual(True, res)
 
     def test_fail(self):
-        pass
+        res = self.add_products_to_cart("username", [("products", 1, "store")])
+        self.assertEqual(False, res)
 
     def tearDown(self) -> None:
-        pass
+        self.remove_products_from_store("username", "store", ["product"])
+        self.teardown_store("store")
+        self.remove_user("username")
