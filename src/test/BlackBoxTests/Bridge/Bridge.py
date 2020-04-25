@@ -76,11 +76,8 @@ class Bridge(ABC):
     def view_stores(self):
         pass
 
-    def view_store_info(self, store, store_info_flag, products_flag):
-        pass
-
     # save products functions
-    def add_products_to_cart(self):
+    def add_products_to_cart(self, nickname, products_stores_quantity_ls):
         pass
 
     # view personal history functions

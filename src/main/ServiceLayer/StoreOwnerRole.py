@@ -126,7 +126,7 @@ class StoreOwnerRole:
                 self.__store_owner.is_logged_in() and \
                 store.is_owner(self.__store_owner.get_nickname()) and \
                 store.is_manager(manager_nickname):
-            return store.remove_manager(manager, permissions, self.__store_owner)
+            return store.remove_manager(manager, self.__store_owner)
         return False
 
     # use case 4.10 - View store’s purchase history

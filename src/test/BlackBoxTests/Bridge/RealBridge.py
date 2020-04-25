@@ -70,24 +70,22 @@ class RealBridge(Bridge):
         return res is not None
 
     def search_product(self, option, string):
-        return self.__guest_role.search_products_by(option, string)
+        res = self.__guest_role.search_products_by(option, string)
+        return res is not None and len(res) != 0
 
     def filter_products(self, filter_details, products):
-        self.__guest_role.filter_products_by(filter_details, products)
+        res = self.__guest_role.filter_products_by(filter_details, products)
+        return res is not None and len(res) != 0
 
-    # view stores' products functions
     def view_stores(self):
-        return self.__guest_role.display_stores()
-
-    def view_store_info(self, store, store_info_flag, products_flag):
-        return self.__guest_role.display_stores_info(store, store_info_flag, products_flag)
+        res = self.__guest_role.display_stores()
+        return res is not None and len(res) != 0
 
     def logout(self):
         return self.__subscriber.logout()
 
-    def add_products_to_cart(self):
-        pass
-    # TODO
+    def add_products_to_cart(self, nickname, products_stores_quantity_ls):
+        return self.__guest_role.save_products_to_basket(nickname, products_stores_quantity_ls)
 
     def view_personal_history(self):
         pass
@@ -122,5 +120,6 @@ class RealBridge(Bridge):
         return self.__store_owner.get_store(store_name).is_manager(nickname)
 
     def remove_manager(self, store_name, manager_nickname, permissions):
+        res = self.__store_owner.get_store(store_name).is_manager(manager_nickname)
         self.__store_owner.remove_manager(store_name, manager_nickname, permissions)
-        return self.__store_owner.get_store(store_name).is_manager(manager_nickname)
+        return not self.__store_owner.get_store(store_name).is_manager(manager_nickname) and res
