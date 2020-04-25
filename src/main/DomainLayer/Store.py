@@ -12,7 +12,7 @@ class Store:
         # self.__rate = 0 TODO - for search 2.5
         self.__purchases = []
 
-    def add_products (self, names, prices, amounts, categories) -> bool:
+    def add_products(self, names, prices, amounts, categories) -> bool:
         """
         :param names: list of names of the new products
         :param prices: list of prices of the new products
@@ -28,7 +28,7 @@ class Store:
                             return False
         return True
 
-    def add_product (self, name, price, amount, category) -> bool:
+    def add_product(self, name, price, amount, category) -> bool:
         """
         :param name: name of the new product
         :param price: price of the new product
@@ -36,19 +36,20 @@ class Store:
         :param category: category of the new product
         :return: True if succeed update the inventory with the new product
         """
-        p = Product (name, price, category)
+        p = Product(name, price, category)
         if self.__inventory.get_product(p.get_name()):
             print ("The product is already existed")
             return False
+            #TODO: here we should increase the amount in the inventory
         return self.__inventory.add_product(p, amount)
 
-    def remove_products (self, products):
+    def remove_products(self, products):
         """
         :param products: products to delete from inventory (assume they exists on inventory)
         :return: True if the inventory updated without the product
         """
         for p in products:
-            if not self.remove_product (p):
+            if not self.remove_product(p):
                 return False
         return True
 

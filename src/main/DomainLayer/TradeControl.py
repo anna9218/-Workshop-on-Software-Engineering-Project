@@ -6,17 +6,11 @@ from src.main.DomainLayer.Store import Store
 from src.main.DomainLayer.User import User
 
 
-# get a user instance for guest
-def get_guest():
-    guest = User()
-    return guest
-
-
 class TradeControl:
     __instance = None
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """ Static access method. """
         if TradeControl.__instance is None:
             TradeControl()
@@ -27,23 +21,33 @@ class TradeControl:
         if TradeControl.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
-            self.__manager = User(self)
             self.__managers = []
             self.__stores = []
             self.__subscribers = []
-            self.__delivery_system = FacadeDelivery()
-            self.__payment_system = FacadePayment()
             TradeControl.__instance = self
 
-    def add_sys_manager(self, subscriber):
+    def add_sys_manager(self, subscriber: User):
+        for s in self.__managers:
+            if s.get_nickname() == subscriber.get_nickname():
+                return False
         self.__managers.append(subscriber)
+        return True
 
-    def subscribe(self, user):
-        # user = User()
+    def subscribe(self, user: User):
+        for s in self.__subscribers:
+            if s.get_nickname() == user.get_nickname():
+                return False
         self.__subscribers.append(user)
-        # return user
+        return True
 
-    def open_store(self, user, store_name) -> Store:
+    def unsubscribe(self, nickname):
+        for s in self.__subscribers:
+            if s.get_nickname() == nickname:
+                self.__subscribers.remove(s)
+                return True
+        return False
+
+    def open_store(self, store_name) -> Store:
         for s in self.__stores:
             if s.get_name() == store_name:
                 return None
@@ -51,7 +55,14 @@ class TradeControl:
         self.__stores.append(store)
         return store
 
-    def validateNickName(self, nickname):
+    def close_store(self, store_name) -> bool:
+        for s in self.__stores:
+            if s.get_name() == store_name:
+                self.__stores.remove(s)
+                return True
+        return False
+
+    def validate_nickname(self, nickname):
         for u in self.__subscribers:
             if u.get_nickname() == nickname:
                 return False
@@ -64,28 +75,27 @@ class TradeControl:
         return None
 
     def get_products_by(self, search_opt, string):
-        ls = map(lambda store: store.get_products_by(search_opt, string))
+        ls = map(lambda store: store.get_products_by(search_opt, string), self.__stores)
         return reduce(lambda acc, curr: acc.append(curr), ls)
 
-    # def getProduct(self, product_name, store_name):
+    def get_store(self, store_name):
+        for s in self.__stores:
+            if s.get_name() == store_name:
+                return s
+        return None
 
-    def get_users(self):
+
+
+    def get_subscribers(self):
         return self.__subscribers
 
     def get_stores(self):
         return self.__stores
 
-    def get_store(self, store_name):
-        for s in self.__stores:
-            if s.get_name == store_name:
-                return s
-        return None
-
     def get_managers(self):
         return self.__managers
 
-    def get_delivery_system(self):
-        return self.__delivery_system
-
-    def get_payment_system(self):
-        return self.__payment_system
+    # get a user instance for guest
+    def get_guest(self):
+        guest = User()
+        return guest

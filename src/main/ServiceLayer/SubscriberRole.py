@@ -2,7 +2,7 @@ from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.ServiceLayer.GuestRole import GuestRole
 
 
-class SubscriberRole(GuestRole):
+class SubscriberRole:
 
     def __init__(self, subscriber):
         self.__subscriber = subscriber
@@ -20,8 +20,8 @@ class SubscriberRole(GuestRole):
         # user = TradeControl.getInstance().getUser(user_name)
         if self.__subscriber.is_logged_in():
             return False
-        TradeControl.getInstance().validate_store_name(store_name)
-        new_store = TradeControl.getInstance().open_store(self.__subscriber, store_name)
+        TradeControl.get_instance().validate_store_name(store_name)
+        new_store = TradeControl.get_instance().open_store(self.__subscriber, store_name)
         if new_store is None:
             return False
         else:
