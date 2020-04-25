@@ -3,6 +3,7 @@ from src.main.DomainLayer.Security import Security
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Store import Store
 from src.main.DomainLayer.User import User
+from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
 
 class GuestRole:

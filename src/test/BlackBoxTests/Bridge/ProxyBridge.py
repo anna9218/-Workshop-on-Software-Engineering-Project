@@ -82,3 +82,9 @@ class ProxyBridge(Bridge):
 
     def appoint_additional_owner(self, nickname, store_name):
         return self._realbridge.appoint_additional_owner(nickname, store_name)
+
+    def appoint_additional_manager(self, nickname, store_name, permissions):
+        return self._realbridge.appoint_additional_manager(nickname, store_name, permissions)
+
+    def remove_manager(self, store_name, manager_nickname, permissions):
+        return self._realbridge.remove_manager(store_name, manager_nickname, permissions)

@@ -116,3 +116,11 @@ class RealBridge(Bridge):
     def appoint_additional_owner(self, nickname, store_name):
         self.__store_owner.appoint_additional_owner(nickname, store_name)
         return self.__store_owner.get_store(store_name).is_owner(nickname)
+
+    def appoint_additional_manager(self, nickname, store_name, permissions):
+        self.__store_owner.appoint_store_manager(nickname, store_name, permissions)
+        return self.__store_owner.get_store(store_name).is_manager(nickname)
+
+    def remove_manager(self, store_name, manager_nickname, permissions):
+        self.__store_owner.remove_manager(store_name, manager_nickname, permissions)
+        return self.__store_owner.get_store(store_name).is_manager(manager_nickname)
