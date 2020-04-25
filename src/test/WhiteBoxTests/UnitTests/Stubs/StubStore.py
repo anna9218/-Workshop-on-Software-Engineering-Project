@@ -1,8 +1,7 @@
-from src.main.DomainLayer.Store import Store
-
-
-class StubStore(Store):
-
-    def __init__(self, name):
-        super().__init__(name)
+class StubStore:
+    def __init__(self):
+        self.__name = "Alcogel for all!"
+        self.__owners = []
+        self.__managers = []
+        self.__inventory = []
 

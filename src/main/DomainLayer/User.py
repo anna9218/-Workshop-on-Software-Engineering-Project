@@ -57,10 +57,22 @@ class User:
         return self.__shoppingCart
 
     def remove_from_shopping_cart(self, product):
-        self.__shoppingCart.remove_product(product)
+        return self.__shoppingCart.remove_product(product)
 
     def update_quantity_in_shopping_cart(self, product, quantity):
-        self.__shoppingCart.update_quantity(product, quantity)
+        return self.__shoppingCart.update_quantity(product, quantity)
 
     def get_appointment (self):
         return self.__appointment
+
+    def set_registration_state(self, registration):
+        self.__registrationState = registration
+        return True
+
+    def set_shopping_cart(self, shopping_cart):
+        self.__shoppingCart = shopping_cart
+        return True
+
+    def set_login_state(self, login_state):
+        self.__loginState = login_state
+
