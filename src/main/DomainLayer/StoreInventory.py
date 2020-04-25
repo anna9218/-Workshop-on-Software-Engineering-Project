@@ -84,5 +84,21 @@ class StoreInventory:
                 return i[1]
         return None
 
+    def is_in_stock(self, product_name, requested_amount):
+        """
+
+        :param product_name: the name of the product to search in inventory.
+        :param requested_amount: the requested amount.
+        :return: if is in stock true,
+                 else false.
+        """
+        product = self.get_product(product_name)
+        if product:
+            amount = product[1]
+            if amount >= requested_amount:
+                return True
+        else:
+            return False
+ 
     def __repr__(self):
         return repr("There are " + str(len(self.__inventory)) + " products in inventory")

@@ -111,6 +111,13 @@ class Store:
             if p == purchase:  # TODO - how do we compare purchases?
                 return p
 
+    def print_inventory(self):
+        f"The products of store {self.__name}:"
+        i = 0
+        for name, p in self.__inventory:
+            f"For {name} press {i}" #TODO- check if contains \n
+            
+
     def add_manager(self, manager: User, permissions):
         """
         :param manager:
@@ -126,6 +133,38 @@ class Store:
         else:
             if len(self.__managers) > 0:  # one manager exists
                 return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers.strip('[]'))
+
+    def is_in_store_inventory(self, amount_per_product):
+        for product_and_amount in amount_per_product:
+            if not self.get_inventory().is_in_stock(product_and_amount['product'], product_and_amount['amount']):
+                return False
+        return True
+
+    def check_purchase_policy(self, amount_per_product: [], username: str):
+        """
+        This function should check if the user can/can't complete the purchase.
+        Due to the fact that we does'nt have the purchase policies requirements, this func is currently a stab.
+
+        :param amount_per_product: param to check policy.
+        :param price: param to check policy.
+        :param username: param to check policy.
+        :return: the price if possible.
+                 -1 else.
+        """
+        return (self.get_inventory().get_product(amount_per_product[0])).get_price()
+
+    @staticmethod
+    def calc_discount(amount_per_product: [], price: float, username: str):
+        """
+        This function should check if the user can/can't complete the purchase.
+        Due to the fact that we does'nt have the purchase policies requirements, this func is currently a stab.
+
+        :param amount_per_product: param to check policy.
+        :param price: param to check policy.
+        :param username: param to check policy.
+        :return: the price after discount. if no discount is available, return the price.
+        """
+        return price
 
     def empty_inventory(self):
         return self.__inventory.len() == 0

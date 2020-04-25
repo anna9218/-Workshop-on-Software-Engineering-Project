@@ -2,6 +2,7 @@ from src.main.DomainLayer.Appointment import Appointment
 from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.ShoppingCart import ShoppingCart
+from src.main.DomainLayer.UserType import UserType
 
 
 class User:
@@ -15,7 +16,7 @@ class User:
     def register(self, username, password):
         self.__registrationState.register(username, password)
         return True
-
+           
     def login(self, nickname, password):
         if self.check_nickname(nickname) and self.check_password(password):
             self.__loginState.login()
@@ -67,6 +68,12 @@ class User:
 
     def get_appointment (self):
         return self.__appointment
+
+    def get_user_type(self):
+        if self.is_logged_in():
+            return UserType.Subscriber
+        else:
+            return UserType.Guest
 
     def set_registration_state(self, registration):
         self.__registrationState = registration

@@ -7,8 +7,17 @@ from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 class TradeControlTestCase(unittest.TestCase):
     def setUp(self):
         self.tradeControl = TradeControl.get_instance()
-        self.user = StubUser()
-        self.user.set_password_and_nickname("nickname", "password")
+#         self.tradeControl.manager = StubUser(self.tradeControl)
+#         self.tradeControl.delivery_system = StubDelivery()
+#         self.tradeControl.payment_system = StubPayment()
+# TODO: talk with eitan
+#     def test_init_system(self):
+#         self.tradeControl.init_system()
+#         self.assertEqual(len(self.tradeControl.get_managers()), 1)
+#         self.assertEqual(self.tradeControl.get_delivery_system().isConnected, True)
+#         self.assertEqual(self.tradeControl.get_payment_system().isConnected, True)
+#         self.user = StubUser()
+#         self.user.set_password_and_nickname("nickname", "password")
 
     def test_subscribe_success_and_fail(self):
         subscribers_num = len(self.tradeControl.get_subscribers())
