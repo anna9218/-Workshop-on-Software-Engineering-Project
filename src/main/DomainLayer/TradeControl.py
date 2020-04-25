@@ -75,16 +75,15 @@ class TradeControl:
         return None
 
     def get_products_by(self, search_opt, string):
-        ls = map(lambda store: store.get_products_by(search_opt, string), self.__stores)
-        return reduce(lambda acc, curr: acc.append(curr), ls)
+        list_of_lists = list(map(lambda store: store.get_products_by(search_opt, string), self.__stores))
+        list_ = reduce(lambda acc, curr: acc + curr, list_of_lists)
+        return list_
 
     def get_store(self, store_name):
         for s in self.__stores:
             if s.get_name() == store_name:
                 return s
         return None
-
-
 
     def get_subscribers(self):
         return self.__subscribers

@@ -61,6 +61,10 @@ class StoreInventory:
         :param new_amount: number to replace with
         :return: True if the product updated with new amount on inventory
         """
+        # product = self.get_product(product_name)
+        # if product is not None:
+        #     product.set_amount(new_amount)
+        #     return True
         for i in self.__inventory:
             if i[0].get_name() == product_name:
                 self.__inventory.remove(i)

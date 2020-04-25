@@ -4,7 +4,7 @@ from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.StoreInventory import StoreInventory
 
 
-class TradeControlTestCase(unittest.TestCase):
+class StoreInventoryTests(unittest.TestCase):
     def setUp(self):
         self.inv = StoreInventory()
         self.product1 = Product("Chair", 100, "Furniture")

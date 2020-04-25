@@ -32,6 +32,9 @@ class User:
     def check_nickname(self, nickname):
         return self.__registrationState.get_nickname() == nickname
 
+    def get_nickname(self, nickname):
+        return self.__registrationState.get_nickname()
+
     def is_logged_in(self):
         return self.__loginState.is_logged_in()
 

@@ -1,10 +1,7 @@
 import unittest
 
 from src.main.DomainLayer.TradeControl import TradeControl
-from src.main.DomainLayer.User import User
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubDelivery import StubDelivery
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubPayment import StubPayment
 
 
 class TradeControlTestCase(unittest.TestCase):
@@ -63,16 +60,22 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertEqual(self.tradeControl.get_store("blaaa"), None)
         self.tradeControl.close_store("myStore")
 
-    # def test_get_products_by(self, search_opt, string):
-    #     store1 = self.tradeControl.open_store("myStore")
-    #     store1.
-    #
-    #     ls = map(lambda store: store.get_products_by(search_opt, string), )
-    #     return reduce(lambda acc, curr: acc.append(curr), ls)
+    def test_get_products_by(self):
+        store1 = self.tradeControl.open_store("myStore")
+        store2 = self.tradeControl.open_store("myStore2")
+        store1.add_products([("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)])
+        store2.add_products([("Chair", 125, "Furniture", 5)])
+        ls = self.tradeControl.get_products_by(1, "Chair")
+        self.assertEqual(len(ls), 2)
+        ls = self.tradeControl.get_products_by(2, "o")
+        self.assertEqual(len(ls), 1)
+        ls = self.tradeControl.get_products_by(3, "Furniture")
+        self.assertEqual(len(ls), 3)
+        self.tradeControl.close_store("myStore")
+        self.tradeControl.close_store("myStore2")
 
     def tearDown(self):
         pass
-
 
 if __name__ == '__main__':
     unittest.main()
