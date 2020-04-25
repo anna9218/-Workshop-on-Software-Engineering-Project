@@ -4,7 +4,6 @@ from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Security import Security
 
 
-
 class StoreOwnerRole:
 
     def __init__(self, subscriber):
@@ -60,8 +59,10 @@ class StoreOwnerRole:
         return False
 
     # TODO: use case 4.2 - edit purchase and discount policies
+    def edit_purchase_and_discount_policies(self):
+        pass
 
-    # TODO: use case 4.3
+    # use case 4.3
     def appoint_additional_owner(self, nickname, store_name):
         """
         :param nickname: nickname of the new owner of the store
@@ -74,7 +75,7 @@ class StoreOwnerRole:
                 and store.is_owner(self.__store_owner.get_nickname()):
             return store.add_owner(subscriber)
 
-    # TODO: use case 4.5
+    # use case 4.5
     def appoint_store_manager(self, manager_nickname, store_name, permissions):
         """
         :param manager_nickname: new manager's nickname
@@ -92,6 +93,7 @@ class StoreOwnerRole:
     # TODO: use case 4.6
     def edit_manager_permissions(self, store_name, manager_nickname, permissions):
         pass
+
     # TODO: use case 4.7
     def remove_manager(self, store_name, manager_nickname, permissions):
         pass

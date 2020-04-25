@@ -11,7 +11,7 @@ class Store:
         self.__name = store_name
         self.__owners = []
         # list of pairs (manager: User, permissions: ManagerPermissions[])
-        self.__managers = []
+        self.__managers_and_permissions = []
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
         self.__purchases = []
@@ -96,7 +96,7 @@ class Store:
         return user_nickname in [owner.get_nickname() for owner in self.__owners]
 
     def is_manager(self, user_nickname):
-        return user_nickname in [manager.get_nickname() for manager in self.__managers]
+        return user_nickname in [manager.get_nickname() for manager in self.__managers_and_permissions]
 
     # eden added
     def get_products_by(self, opt, string):
@@ -124,15 +124,23 @@ class Store:
         :param permissions: type - ManagerPermission[]
         :return:
         """
-        self.__managers.append((manager, permissions))
+        self.__managers_and_permissions.append((manager, permissions))
         return True
 
+
+
+    def get_permissions(self, manager_nickname):
+        for pair in self.__managers_and_permissions:
+            if pair[0].get_nickname() == manager_nickname:
+                return pair[1]
+        return None
+
     def get_info(self):
-        if not self.__managers:  # empty list
+        if not self.__managers_and_permissions:  # empty list
             return "Store owners: %s" % (str(self.__owners.strip('[]')))
         else:
-            if len(self.__managers) > 0:  # one manager exists
-                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers.strip('[]'))
+            if len(self.__managers_and_permissions) > 0:  # one manager exists
+                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers_and_permissions.strip('[]'))
 
     def is_in_store_inventory(self, amount_per_product):
         for product_and_amount in amount_per_product:
@@ -179,7 +187,7 @@ class Store:
         return self.__owners
 
     def get_managers(self):
-        return self.__managers
+        return self.__managers_and_permissions
 
     def get_purchases(self):
         return self.__purchases
