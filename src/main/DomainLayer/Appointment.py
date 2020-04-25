@@ -1,3 +1,6 @@
+from src.main.DomainLayer.ManagerPermission import ManagerPermission
+
+
 class Appointment:
     def __init__(self):
         # pairs of (appointer, store)
@@ -20,6 +23,8 @@ class Appointment:
 
     def appoint_manager (self, store):
         self.__manage_stores.append((store, []))
+        # self.add_permission(store.get_name(), ManagerPermission.USERS_QUESTIONS) - in service layer
+        # self.add_permission(store.get_name(), ManagerPermission.WATCH_PURCHASE_HISTORY)
 
     def is_owner(self, store_name):
         for (appointer, store) in self.__owned_stores:
@@ -34,21 +39,42 @@ class Appointment:
         return False
 
     def add_permission (self, store_name, permission):
+        """
+      :param store_name: name of the store
+      :param permission: a ManagerPermission to add
+      :return true if at the end of func the user have the permission on store
+      """
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
-                if not permission in p:
+                if permission not in p:
                     p.append(permission)
+                return True
 
     def del_permission (self, store_name, permission):
+        """
+       :param store_name: name of the store
+       :param permission: a ManagerPermission to delete
+       """
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
                 if permission in p:
                     p.remove(permission)
 
     def has_permission (self, store_name, permission) -> bool:
+        """
+        :param store_name: name of the store
+        :param permission: a ManagerPermission
+        :return: true if the manager's permissions include the given permission
+        """
         for (s, p) in self.__manage_stores:
             if s.get_name() == store_name:
                 if permission in p:
                     return True
                 return False
         return False
+
+    def get_permissions_of_store (self, store_name) :
+        for (s, p) in self.__manage_stores:
+            if s.get_name() == store_name:
+                return p
+        return []

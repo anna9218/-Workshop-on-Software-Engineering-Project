@@ -33,6 +33,9 @@ class User:
     def check_nickname(self, nickname):
         return self.__registrationState.get_nickname() == nickname
 
+    def get_nickname(self, nickname):
+        return self.__registrationState.get_nickname()
+
     def is_logged_in(self):
         return self.__loginState.is_logged_in()
 
@@ -58,16 +61,28 @@ class User:
         return self.__shoppingCart
 
     def remove_from_shopping_cart(self, product):
-        self.__shoppingCart.remove_product(product)
+        return self.__shoppingCart.remove_product(product)
 
     def update_quantity_in_shopping_cart(self, product, quantity):
-        self.__shoppingCart.update_quantity(product, quantity)
+        return self.__shoppingCart.update_quantity(product, quantity)
 
     def get_appointment (self):
         return self.__appointment
-      
+
     def get_user_type(self):
         if self.is_logged_in():
             return UserType.Subscriber
         else:
             return UserType.Guest
+
+    def set_registration_state(self, registration):
+        self.__registrationState = registration
+        return True
+
+    def set_shopping_cart(self, shopping_cart):
+        self.__shoppingCart = shopping_cart
+        return True
+
+    def set_login_state(self, login_state):
+        self.__loginState = login_state
+

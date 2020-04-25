@@ -2,7 +2,7 @@ from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.ServiceLayer.GuestRole import GuestRole
 
 
-class SubscriberRole(GuestRole):
+class SubscriberRole:
 
     def __init__(self, subscriber):
         self.__subscriber = subscriber
@@ -10,7 +10,7 @@ class SubscriberRole(GuestRole):
     # use case 3.1
     def logout(self, nickname):
         # subscriber = TradeControl.getInstance().getSubscriber(nickname)
-        if self.__subscriber.is_logged_in():
+        if self.__subscriber.is_registered() and self.__subscriber.is_logged_in():
             self.__subscriber.logout()
             return True
         return False
@@ -31,7 +31,7 @@ class SubscriberRole(GuestRole):
 
     # use case 3.7
     def view_personal_purchase_history(self):
-        if self.__subscriber.is_logged_in():
+        if self.__subscriber.is_registered and self.__subscriber.is_logged_in():
             return self.__subscriber.get_purchases()
 
 

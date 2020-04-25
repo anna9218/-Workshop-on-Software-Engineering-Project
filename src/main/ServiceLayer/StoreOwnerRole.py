@@ -1,142 +1,141 @@
-from src.main.DomainLayer import ManagerPermission
+from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.User import User
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Security import Security
-from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
 
-class StoreOwnerRole(SubscriberRole):
+
+class StoreOwnerRole:
+
     def __init__(self, subscriber):
         self.__store_owner = subscriber
 
-    def check_if_ownes_the_store (self, user_name, store_name) -> bool:
+    # use case 4.1.1
+    def add_products(self, user_nickname, store_name, products_details) -> bool:
         """
-        :param user_name: username of the user we want to check
-        :param store_name: name of the store which we want to find if the above user owns
-        :return: true if the user with user_name owns the store with store_name
+        :param user_nickname: owner's nickname
+        :param store_name: store's name
+        :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
+        :return: empty list if ALL products were added successfully, else list of products who weren't added
         """
-        user = self.find_user_by_name(user_name)
-        if user is None or not user.is_loggedIn():
-            return False
-        store = self.get_store(store_name)
-        if user in store.get_owners():
+        store = TradeControl.get_instance().get_store(store_name)
+        subscriber = TradeControl.get_instance().get_subscriber(user_nickname)
+        if store is None and subscriber is not None and store.is_owner(user_nickname) and \
+                subscriber.is_registered() and subscriber.is_logged_in():
+            store.add_products(products_details)
             return True
+        return False
 
-    def add_to_inventory (self, user_name, store_name, products, prices, amounts, categories) -> bool:
+    # use 4.1.2
+    def remove_products(self, user_nickname, store_name, products_names) -> bool:
         """
-        :param user_name: user name of the initializer user- should be owner
-        :param store_name: store name of a store which the user with the user_name wants to add products to
-        :param products: the names of the new products
-        :param prices: a list of the prices of the new products
-        :param amounts: a list of the amounts of the new products
-        :param categories: a list of the categories of the new products
-        :return: true if the inventory contains the new products
+        :param user_name: owner's name
+        :param store_name: store's name
+        :param products_names: list of products name to remove
+        :return: True if all products were removed, else return False
         """
-        if not self.check_if_ownes_the_store(user_name, store_name):
-            return False
-        store = self.get_store(store_name)
-        return store.add_products(products, prices, amounts, categories)
+        store = TradeControl.get_instance().get_store(store_name)
+        subscriber = TradeControl.get_instance().get_subscriber(user_nickname)
+        if store is None and subscriber is not None and store.is_owner(user_nickname) and \
+                subscriber.is_registered() and subscriber.is_logged_in():
+            store.remove_products(products_names)
+            return True
+        return False
 
-    def remove_from_inventory(self, user_name, store_name, products) -> bool:
+    # use 4.1.3
+    def edit_product(self, nickcname, store_name, product_name, op, new_value) -> bool:
+        store = TradeControl.get_instance().get_store(store_name)
+        subscriber = TradeControl.get_instance().get_subscriber(nickcname)
+        if store is None and subscriber is not None and store.is_owner(nickcname) and \
+                subscriber.is_registered() and subscriber.is_logged_in():
+            if op is "name":
+                store.change_name(product_name, new_value)
+            elif op is "price":
+                store.change_price(product_name, new_value)
+            elif op is "amount":
+                store.change_amount(product_name, new_value)
+            else:
+                return False
+            return True
+        return False
+
+    # TODO: use case 4.2 - edit purchase and discount policies
+
+    # TODO: use case 4.3
+    def appoint_additional_owner(self, nickname, store_name):
         """
-        :param user_name: the user_name of the user that triggered this function
-        :param store_name: the store_name of the store we would like to edit its inventory
-        :param products: products to delete from inventory - assume they exists on inventory
-        :return: True if the inventory updated without the products
+        :param nickname: nickname of the new owner of the store
+        :param store_name: the store to add owner to
+        :return: True on success, else False
         """
-        if not self.check_if_ownes_the_store(user_name, store_name):
-            return False
-        store = self.get_store(store_name)
-        return store.remove_products(products)
+        subscriber = TradeControl.get_instance().get_subscriber(nickname)
+        store = TradeControl.get_instance().get_store(store_name)
+        if subscriber is not None and store is not None and self.__store_owner.is_registered() \
+                and store.is_owner(self.__store_owner.get_nickname()):
+            return store.add_owner(subscriber)
 
-    def edit_product (self, user_name, store_name, product, new_value, op) -> bool:
+    # TODO: use case 4.5
+    def appoint_store_manager(self, manager_nickname, store_name, permissions):
         """
-        :param user_name: the user_name of the user that triggered this function
-        :param store_name: the store_name of the store we would like to edit its inventory
-        :param product: product to edit
-        :param new_value: the new value to replace with
-        :param op: "name" / "price" / "amount" - parameter to edit
-        :return: True if the product info updated as need on the inventory if the store
+        :param manager_nickname: new manager's nickname
+        :param store_name: store's name
+        :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
+        :return: 
         """
-        if not self.check_if_ownes_the_store(user_name, store_name):
-            return False
-        store = self.get_store(store_name)
-        if op is "name":
-            return store.change_name(product, new_value)
-        elif op is "price":
-            return store.change_price(product, new_value)
-        elif op is "amount":
-            return store.change_amount(product, new_value)
-        else:
-            return False
+        subscriber = TradeControl.get_instance().get_subscriber(manager_nickname)
+        store = TradeControl.get_instance().get_store(store_name)
+        if subscriber is not None and store is not None and self.__store_owner.is_registered() \
+                and store.is_owner(self.__store_owner.get_nickname()) and not store.is_owner(manager_nickname) \
+                and not store.is_manager(manager_nickname):
+            return store.add_manager(subscriber, permissions)
 
-    @staticmethod
-    def appoint_new_store_manager(self, user_name, store_name, user_name_to_appoint):
-        if not self.check_if_ownes_the_store(user_name, store_name):
-            return False
-        if self.check_if_ownes_the_store(user_name_to_appoint, store_name) or \
-                self.check_if_manages_the_store(user_name_to_appoint, store_name):
-            return False # check its sure- not possible to have more than 1 appointer
-        store = self.get_store(store_name)
-        manager = self.find_user_by_name(user_name_to_appoint)
-        store.add_manager(manager)
-        # the first permissions are 4.9 (not this version) and 4.10 (watch purchase's history)
-        self.add_permissions(manager, store_name, ManagerPermission.USERS_QUESTIONS)
-        self.add_permissions(manager, store_name, ManagerPermission.WATCH_PURCHASE_HISTORY)
-
-    def check_if_manages_the_store (self, user_name, store_name) -> bool:
-        user = self.find_user_by_name(user_name)
-        if user is None or not user.is_loggedIn():
-            return False
-        ap = user.get_appointment()
-        return ap.is_manager(store_name)
-
-    @staticmethod
-    def get_store(self, store_name):
-        return TradeControl.getInstance().get_store(store_name)
-
-    @staticmethod
-    def validate_store_name(self, store_name):
-        TradeControl.getInstance().validate_store_name(store_name)
-
-    @staticmethod
-    def find_user_by_name(self, user_name):
-        return TradeControl.getInstance().get_guest(user_name)
+    # TODO: use case 4.6
+    def edit_manager_permissions(self, store_name, manager_nickname, permissions):
+        pass
+    # TODO: use case 4.7
+    def remove_manager(self, store_name, manager_nickname, permissions):
+        pass
 
     # use case 4.10 - View store’s purchase history
     @staticmethod
-    def display_store_purchases(self, nickname, store):
+    def display_store_purchases(self, nickname, store_name):
         """
         :param self:
         :param nickname: of the store owner
-        :param store: name of the store - (string?)
-        :return:
+        :param store_name: name of the store - (string)
+        :return: purchases list
         """
-        subscriber = TradeControl.getInstance().getSubscriber(nickname)
+        subscriber = TradeControl.get_instance().get_subscriber(nickname)
+        store = TradeControl.get_instance().get_store(store_name)
         # checking preconditions
-        if subscriber.is_registered() and subscriber.is_logged_in() and self.check_if_owns_the_store(nickname, store):
-            store = TradeControl.getInstance().get_store(store)
-            if store in None:
-                return False
-            else:
-                return store.get_purchases()
+        if subscriber is not None and store is not None and \
+                subscriber.is_registered() and subscriber.is_logged_in() and store.is_owner(nickname):
+            return store.get_purchases()
+        return []
 
+    # def check_if_owns_the_store(self, user_name, store_name) -> bool:
+    #     user = TradeControl.get_instance().getUser(user_name)
+    #     if user is None or not user.is_loggedIn():
+    #         return False
+    #     store = self.get_store(store_name)
+    #     if user in store.get_owners():
+    #         return True
 
-    def add_permissions (self, manager, store_name, permission):
-        manager.get_appointment().add_permission (store_name, permission)
+    # @staticmethod
+    # def get_store(self, store_name):
+    #     return TradeControl.getInstance().get_store(store_name)
 
-    @staticmethod
-    def display_purchase_info(self, purchase, store):
-        """
-        :param self:
-        :param purchase:
-        :param store: name of the store - (string?)
-        :return: returns a Purchase object
-        """
-        store = TradeControl.getInstance().get_store(store)
-        store.get_purchase_info(purchase)
+    # @staticmethod
+    # def validate_store_name(self, store_name):
+    #     TradeControl.getInstance().validate_store_name(store_name)
 
-    def del_permissions (self, manager, store_name, permission):
-        manager.get_appointment().del_permission (store_name, permission)
-
-    pass
+    # @staticmethod
+    # def display_purchase_info(self, purchase, store):
+    #     """
+    #     :param self:
+    #     :param purchase:
+    #     :param store: name of the store - (string?)
+    #     :return: returns a Purchase object
+    #     """
+    #     store = TradeControl.get_instance().get_store(store)
+    #     store.get_purchase_info(purchase)
