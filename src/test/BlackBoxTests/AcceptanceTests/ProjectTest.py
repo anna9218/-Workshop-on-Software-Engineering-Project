@@ -90,6 +90,13 @@ class ProjectTest(ABC, unittest.TestCase):
     def appoint_additional_owner(self, nickname, store_name):
         return self.__bridge.appoint_additional_owner(nickname, store_name)
 
+    def appoint_additional_manager(self, nickname, store_name, permissions):
+        return self.__bridge.appoint_additional_manager(nickname, store_name, permissions)
+
+    # remove manager functions
+    def remove_manager(self, store_name, manager_nickname, permissions):
+        return self.__bridge.remove_manager(store_name, manager_nickname, permissions)
+
     # 7 Payment System tests functions
     def connect_payment_sys(self):
         self.__bridge.connect_payment_sys()

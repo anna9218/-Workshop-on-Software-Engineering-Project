@@ -107,3 +107,11 @@ class Bridge(ABC):
     # add store owner functions
     def appoint_additional_owner(self, nickname, store_name):
         pass
+
+    # add store manager functions
+    def appoint_additional_manager(self, nickname, store_name, permissions):
+        pass
+
+    # remove manager functions
+    def remove_manager(self, store_name, manager_nickname, permissions):
+        pass

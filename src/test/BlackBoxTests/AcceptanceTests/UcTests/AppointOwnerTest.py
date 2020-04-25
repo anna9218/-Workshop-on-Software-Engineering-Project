@@ -21,7 +21,6 @@ class AppointOwnerTest(ProjectTest):
         self.open_store(self.__store)
         res = self.appoint_additional_owner(self.__appointee_name, self.__store)
         self.assertEqual(True, res)
-        self.remove_user(self.__appointee_name)
 
     def test_fail(self):
         self.remove_user(self.__appointee_name)
@@ -30,7 +29,6 @@ class AppointOwnerTest(ProjectTest):
         self.open_store(self.__store)
         res = self.appoint_additional_owner(self.__appointee_name, self.__store)
         self.assertEqual(False, res)
-        pass
 
     def tearDown(self) -> None:
         self.remove_user(self.__appointer_name)
