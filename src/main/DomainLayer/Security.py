@@ -15,7 +15,6 @@ class Security:
         else:
             Security.__instance = self
 
-    # @staticmethod
-    def validated_password(self, password) -> bool:
+    def validate_password(self, password) -> bool:
         return True
 

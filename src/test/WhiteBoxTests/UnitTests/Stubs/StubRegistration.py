@@ -1,4 +1,7 @@
-class StubRegistration:
+from src.main.DomainLayer.Registration import Registration
+
+
+class StubRegistration(Registration):
     def __init__(self):
         self.__isRegistered = False
         self.count = 0
