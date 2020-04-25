@@ -10,6 +10,7 @@ class Store:
         # self.__id = id
         self.__name = store_name
         self.__owners = []
+        # list of pairs (manager: User, permissions: ManagerPermissions[])
         self.__managers = []
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
@@ -94,6 +95,9 @@ class Store:
     def is_owner(self, user_nickname):
         return user_nickname in [owner.get_nickname() for owner in self.__owners]
 
+    def is_manager(self, user_nickname):
+        return user_nickname in [manager.get_nickname() for manager in self.__managers]
+
     # eden added
     def get_products_by(self, opt, string):
         return self.__inventory.get_products_by(opt, string)
@@ -107,14 +111,13 @@ class Store:
             if p == purchase:  # TODO - how do we compare purchases?
                 return p
 
-    def add_manager(self, manager):
-        for o in self.__owners:
-            if o.get_nickname() == manager.get_nickname():
-                return False
-        for m in self.__managers:
-            if m.get_nickname() == manager.get_nickname():
-                return False
-        self.__managers.append(manager)
+    def add_manager(self, manager: User, permissions):
+        """
+        :param manager:
+        :param permissions: type - ManagerPermission[]
+        :return:
+        """
+        self.__managers.append((manager, permissions))
         return True
 
     def get_info(self):

@@ -1,6 +1,8 @@
+from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.User import User
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Security import Security
+
 
 
 class StoreOwnerRole:
@@ -57,7 +59,7 @@ class StoreOwnerRole:
             return True
         return False
 
-    # TODO: use case 4.2
+    # TODO: use case 4.2 - edit purchase and discount policies
 
     # TODO: use case 4.3
     def appoint_additional_owner(self, nickname, store_name):
@@ -73,10 +75,27 @@ class StoreOwnerRole:
             return store.add_owner(subscriber)
 
     # TODO: use case 4.5
+    def appoint_store_manager(self, manager_nickname, store_name, permissions):
+        """
+        :param manager_nickname: new manager's nickname
+        :param store_name: store's name
+        :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
+        :return: 
+        """
+        subscriber = TradeControl.get_instance().get_subscriber(manager_nickname)
+        store = TradeControl.get_instance().get_store(store_name)
+        if subscriber is not None and store is not None and self.__store_owner.is_registered() \
+                and store.is_owner(self.__store_owner.get_nickname()) and not store.is_owner(manager_nickname) \
+                and not store.is_manager(manager_nickname):
+            return store.add_manager(subscriber, permissions)
 
     # TODO: use case 4.6
-
+    def edit_manager_permissions(self, store_name, manager_nickname, permissions):
+        pass
     # TODO: use case 4.7
+    def remove_manager(self, store_name, manager_nickname, permissions):
+        pass
+
     # use case 4.10 - View store’s purchase history
     @staticmethod
     def display_store_purchases(self, nickname, store_name):
