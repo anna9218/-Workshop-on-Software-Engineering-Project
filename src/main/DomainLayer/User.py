@@ -1,8 +1,8 @@
-# from src.main.DomainLayer.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.ShoppingCart import ShoppingCart
 from src.main.DomainLayer.UserType import UserType
+from src.main.DomainLayer.Purchase import Purchase
 
 
 class User:
@@ -11,7 +11,8 @@ class User:
         self.__loginState = Login()
         # self.__appointment = StoreManagerAppointment()
         self.__shoppingCart = ShoppingCart()
-        self.__purchases = []
+        self.__accepted_purchases = []
+        self.__unaccepted_purchases: [] = []
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
@@ -33,9 +34,6 @@ class User:
     def check_nickname(self, nickname):
         return self.__registrationState.get_nickname() == nickname
 
-    def get_nickname(self, nickname):
-        return self.__registrationState.get_nickname()
-
     def is_logged_in(self):
         return self.__loginState.is_logged_in()
 
@@ -51,8 +49,11 @@ class User:
     def get_nickname(self):
         return self.__registrationState.get_nickname()
 
-    def get_purchases(self):
-        return self.__purchases
+    def get_accepted_purchases(self):
+        return self.__accepted_purchases
+
+    def get_unaccepted_purchases(self):
+        return self.__unaccepted_purchases
 
     def save_products_to_basket(self, products_stores_quantity_ls):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
@@ -86,3 +87,11 @@ class User:
     def set_login_state(self, login_state):
         self.__loginState = login_state
 
+    def add_unaccepted_purchase(self, purchase: Purchase):
+        self.__unaccepted_purchases.insert(0, purchase)
+
+    def remove_unaccepted_purchase(self, purchase: Purchase):
+        self.__unaccepted_purchases.remove(purchase)
+
+    def add_accepted_purchase(self, purchase: Purchase):
+        self.__accepted_purchases.insert(0, purchase)
