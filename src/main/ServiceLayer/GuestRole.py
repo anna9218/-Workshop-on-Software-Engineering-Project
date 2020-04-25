@@ -28,30 +28,16 @@ class GuestRole:
             return self.__guest.login(nickname, password)
         return False
 
-    def logout(self):
-        if self.__guest.is_registered() and self.__guest.is_logged_in():
-            return self.__guest.logout()
-        return False
-
     # use case 2.4
     @staticmethod
     def display_stores(self):
         return TradeControl.get_instance().get_stores()
 
-    @staticmethod
-    # store_info_flag = true if user wants to display store info
-    # products_flag = true if user wants to display product info
-    def display_stores_info(self, store_name, store_info_flag, products_flag):
-        if store_info_flag:
-            return TradeControl.get_instance().get_store(store_name).get_info()
-        else:
-            if products_flag:
-                return TradeControl.get_instance().get_store(store_name).get_inventory()
-
-    # use case 2.5
+    # use case 2.5.1
     @staticmethod
     def search_products_by(self, search_option, string):
         """
+        :param self:
         :param search_option: = 0-byName, 1- byKeyword, 2- byCategoru
         :param string: for opt: 0 -> productName, 1 -> string, 2 -> category
         :return: list of products according to the selected searching option
@@ -59,7 +45,7 @@ class GuestRole:
         product_and_amount_ls = TradeControl.get_instance().get_products_by(search_option, string)
         return [product[0] for product in product_and_amount_ls]
 
-    # use case 2.5
+    # use case 2.5.2
     @staticmethod
     def filter_products_by(self, filter_details, products_ls):
         """
@@ -119,3 +105,12 @@ class GuestRole:
                     subscriber.update_quantity_in_shopping_cart(product[0], product[1])
         return True
 
+    @staticmethod
+    # store_info_flag = true if user wants to display store info
+    # products_flag = true if user wants to display product info
+    def display_stores_info(self, store_name, store_info_flag, products_flag):
+        if store_info_flag:
+            return TradeControl.get_instance().get_store(store_name).get_info()
+        else:
+            if products_flag:
+                return TradeControl.get_instance().get_store(store_name).get_inventory()

@@ -8,25 +8,6 @@ class StoreOwnerRole:
     def __init__(self, subscriber):
         self.__store_owner = subscriber
 
-    # def open_store_func(self, user_name, store_name) -> bool:
-    #     user = self.find_user_by_name(user_name)
-    #     if user is None or not user.is_loggedIn():
-    #         return False
-    #     self.validate_store_name(store_name)
-    #     new_store = TradeControl.getInstance().open_store(self, store_name)
-    #     if new_store is None:
-    #         return False
-    #     else:
-    #         return new_store.add_owner(user) and appointment.appoint_owner(None, self, new_store)
-
-    # def check_if_owns_the_store(self, user_name, store_name) -> bool:
-    #     user = TradeControl.get_instance().getUser(user_name)
-    #     if user is None or not user.is_loggedIn():
-    #         return False
-    #     store = self.get_store(store_name)
-    #     if user in store.get_owners():
-    #         return True
-
     # use case 4.1.1
     def add_products(self, user_nickname, store_name, products_details) -> bool:
         """
@@ -76,6 +57,26 @@ class StoreOwnerRole:
             return True
         return False
 
+    # TODO: use case 4.2
+
+    # TODO: use case 4.3
+    def appoint_additional_owner(self, nickname, store_name):
+        """
+        :param nickname: nickname of the new owner of the store
+        :param store_name: the store to add owner to
+        :return: True on success, else False
+        """
+        subscriber = TradeControl.get_instance().get_subscriber(nickname)
+        store = TradeControl.get_instance().get_store(store_name)
+        if subscriber is not None and store is not None and self.__store_owner.is_registered() \
+                and store.is_owner(self.__store_owner.get_nickname()):
+            return store.add_owner(subscriber)
+
+    # TODO: use case 4.5
+
+    # TODO: use case 4.6
+
+    # TODO: use case 4.7
     # use case 4.10 - View store’s purchase history
     @staticmethod
     def display_store_purchases(self, nickname, store_name):
@@ -92,6 +93,14 @@ class StoreOwnerRole:
                 subscriber.is_registered() and subscriber.is_logged_in() and store.is_owner(nickname):
             return store.get_purchases()
         return []
+
+    # def check_if_owns_the_store(self, user_name, store_name) -> bool:
+    #     user = TradeControl.get_instance().getUser(user_name)
+    #     if user is None or not user.is_loggedIn():
+    #         return False
+    #     store = self.get_store(store_name)
+    #     if user in store.get_owners():
+    #         return True
 
     # @staticmethod
     # def get_store(self, store_name):
