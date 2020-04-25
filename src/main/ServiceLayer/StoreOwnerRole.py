@@ -82,6 +82,7 @@ class StoreOwnerRole:
                 self.__store_owner.is_registered() \
                 and store.is_owner(self.__store_owner.get_nickname()):
             return store.add_owner(subscriber)
+        return None
 
     # use case 4.5
     def appoint_store_manager(self, manager_nickname, store_name, permissions):

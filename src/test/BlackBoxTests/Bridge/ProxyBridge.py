@@ -79,3 +79,6 @@ class ProxyBridge(Bridge):
 
     def remove_products_from_store(self, user_nickname, store_name, products_names):
         return self._realbridge.remove_products_from_store(user_nickname, store_name, products_names)
+
+    def appoint_additional_owner(self, nickname, store_name):
+        return self._realbridge.appoint_additional_owner(nickname, store_name)

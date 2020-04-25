@@ -76,7 +76,7 @@ class ProjectTest(ABC, unittest.TestCase):
         self.__bridge.view_personal_history()
     # TODO
 
-    # manage stock functions
+    # 4.1 manage stock functions
     def add_products_to_store(self, user_nickname, store_name, products_details):
         return self.__bridge.add_products_to_store(user_nickname, store_name, products_details)
 
@@ -85,6 +85,10 @@ class ProjectTest(ABC, unittest.TestCase):
 
     def remove_products_from_store(self, user_nickname, store_name, products_names):
         return self.__bridge.remove_products_from_store(user_nickname, store_name, products_names)
+
+    # 4.3 add store owner functions
+    def appoint_additional_owner(self, nickname, store_name):
+        return self.__bridge.appoint_additional_owner(nickname, store_name)
 
     # 7 Payment System tests functions
     def connect_payment_sys(self):

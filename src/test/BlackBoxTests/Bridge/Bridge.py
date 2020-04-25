@@ -103,3 +103,7 @@ class Bridge(ABC):
 
     def remove_products_from_store(self, user_nickname, store_name, products_names):
         pass
+
+    # add store owner functions
+    def appoint_additional_owner(self, nickname, store_name):
+        pass
