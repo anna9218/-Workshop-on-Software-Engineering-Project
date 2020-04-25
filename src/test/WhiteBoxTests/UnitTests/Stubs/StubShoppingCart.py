@@ -1,4 +1,7 @@
-class StubShoppingCart:
+from src.main.DomainLayer.ShoppingCart import ShoppingCart
+
+
+class StubShoppingCart(ShoppingCart):
     def __init__(self):
         self.__shopping_baskets = []
 
