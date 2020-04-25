@@ -5,4 +5,3 @@ class StubStore:
         self.__managers = []
         self.__inventory = []
 
-
