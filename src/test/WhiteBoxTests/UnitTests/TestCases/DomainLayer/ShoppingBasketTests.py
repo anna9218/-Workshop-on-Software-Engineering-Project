@@ -10,12 +10,14 @@ class ShoppingBasketTests(unittest.TestCase):
         self.__product = StubProduct()
 
     def test_add_product(self):
-        self.assertTrue(self.__basket.add_product(self.__product))
+        self.assertTrue(self.__basket.add_product([self.__product, 2]))
+        self.assertIn([self.__product, 2], self.__basket)
 
     def test_remove_product(self):
-        self.__basket.add_product(self.__product)
+        self.__basket.add_product([self.__product, 2])
         self.assertTrue(self.__basket.remove_product(self.__product))
         self.assertFalse(self.__basket.get_products())
+        self.assertNotIn([self.__product, 2], self.__basket)
 
     def tearDown(self):
         pass

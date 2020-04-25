@@ -6,3 +6,6 @@ class StubProduct(Product):
         self.__name = "Alcogel"
         self.__price = 100
         # self.__category = category
+
+    def get_name(self):
+        return self.__name
