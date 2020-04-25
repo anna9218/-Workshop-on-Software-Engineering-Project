@@ -21,4 +21,4 @@ class RegisterTest(ProjectTest):
         self.assertEqual(res, False)
 
     def tearDown(self) -> None:
-        pass
+        self.remove_user("username")

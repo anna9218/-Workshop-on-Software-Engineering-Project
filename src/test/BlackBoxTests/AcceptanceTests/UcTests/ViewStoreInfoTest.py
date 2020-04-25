@@ -1,5 +1,5 @@
 """
-    test class for use case 2.4 - view stores' info
+    test class for use case 2.4 - view stores and stores' info
 """
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 

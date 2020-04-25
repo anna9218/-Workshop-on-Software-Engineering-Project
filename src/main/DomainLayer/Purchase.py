@@ -1,32 +1,23 @@
-#
-# from src.main.DomainLayer.Store import Store
-# from src.main.DomainLayer.User import User
-#
-#
-# class Purchase:
-#     def __init__(self, purchase_id: int, amount_per_product: [], store: Store):
-#         """
-#
-#         :param amount_per_product: a list of  [product, amount]
-#         """
-#         self.__Purchase_id: int = purchase_id
-#         self.__amount_per_product = amount_per_product
-#         self.__store: Store = store
-#
-#     def get_product(self, product_name):
-#         for amount_per_product in self.__inv:
-#             if amount_per_product[0].get_name() == product_name:
-#                 return amount_per_product
-#         return None
-#
-#     def get_product_name(self, product_name):
-#         for amount_per_product in self.__inv:
-#             if amount_per_product[0].get_name() == product_name:
-#                 return amount_per_product[0]
-#         return None
-#
-#     def get_product_amount(self, product_name):
-#         product = self.get_product(product_name)
-#         if product:
-#             return product[1]
-#         return None
+from datetime import datetime as date_time
+
+
+class Purchase:
+    def __init__(self, purchase_id: int, amount_per_product: [], price: float, store_name: str, username: str = ""):
+        self.__purchase_id: int = purchase_id
+        self.__amount_per_product: [] = amount_per_product
+        self.__price:  float = price
+        self.__store_name: str = store_name
+        self.__username: str = username
+        self.__date: date_time = date_time.now()
+
+    def get_price(self) -> float:
+        return self.__price
+
+    def get_username(self) -> str:
+        return self.__username
+
+    def get_store_name(self) -> str:
+        return self.__store_name
+
+    def get_purchase_id(self) -> int:
+        return self.__purchase_id

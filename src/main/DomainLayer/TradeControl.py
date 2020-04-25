@@ -22,6 +22,7 @@ class TradeControl:
             self.__managers = []
             self.__stores = []
             self.__subscribers = []
+            self.__next_purchase_id = 0
             TradeControl.__instance = self
 
     def add_sys_manager(self, subscriber: User):
@@ -42,6 +43,13 @@ class TradeControl:
         for s in self.__subscribers:
             if s.get_nickname() == nickname:
                 self.__subscribers.remove(s)
+                return True
+        return False
+
+    def remove_manager(self, nickname):
+        for s in self.__managers:
+            if s.get_nickname() == nickname:
+                self.__managers.remove(s)
                 return True
         return False
 
@@ -92,10 +100,27 @@ class TradeControl:
     def get_managers(self):
         return self.__managers
 
+    def is_manager(self, username: str):
+        for manager in self.__managers:
+            if manager.get_nickname() == username:
+                return True
+        return False
+
+    def get_manager(self, username: str):
+        for manager in self.__managers:
+            if manager.get_nickname() == username:
+                return manager
+        return None
+
     # get a user instance for guest
     def get_guest(self):
         guest = User()
         return guest
+
+    def get_next_purchase_id(self):
+        output = self.__next_purchase_id
+        self.__next_purchase_id = self.__next_purchase_id + 1
+        return output
 
     def make_payment(self, username: str, amount: float, credit: str, date: date_time) -> bool:
         """
