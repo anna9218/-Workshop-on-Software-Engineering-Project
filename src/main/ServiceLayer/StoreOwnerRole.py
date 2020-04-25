@@ -88,11 +88,17 @@ class StoreOwnerRole:
         if subscriber is not None and store is not None and self.__store_owner.is_registered() \
                 and store.is_owner(self.__store_owner.get_nickname()) and not store.is_owner(manager_nickname) \
                 and not store.is_manager(manager_nickname):
-            return store.add_manager(subscriber, permissions)
+            return store.add_manager(subscriber, permissions, self.__store_owner)
+        return False
 
-    # TODO: use case 4.6
+    # use case 4.6
     def edit_manager_permissions(self, store_name, manager_nickname, permissions):
-        pass
+        manager = TradeControl.get_instance().get_subscriber(manager_nickname)
+        store = TradeControl.get_instance().get_store(store_name)
+        if manager is not None and store is not None and self.__store_owner.is_registered() \
+                and store.is_owner(self.__store_owner.get_nickname()) and store.is_manager(manager_nickname):
+            return store.edit_manager_permissions(manager, permissions, self.__store_owner)
+        return False
 
     # TODO: use case 4.7
     def remove_manager(self, store_name, manager_nickname, permissions):
