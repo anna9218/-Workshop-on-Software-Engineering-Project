@@ -2,6 +2,7 @@
 from src.main.DomainLayer import Purchase
 from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.StoreInventory import StoreInventory
+from src.main.DomainLayer.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.User import User
 
 
@@ -10,8 +11,8 @@ class Store:
         # self.__id = id
         self.__name = store_name
         self.__owners = []
-        # list of pairs (manager: User, permissions: ManagerPermissions[], appointer:User)
-        self.__managers_permissions_and_appointer = []
+        # list of StoreManagerAppointment (manager: User, permissions: ManagerPermissions[], appointer:User)
+        self.__StoreManagerAppointments = []
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
         self.__purchases = []
@@ -87,7 +88,7 @@ class Store:
 
     def add_owner(self, owner: User):
         for o in self.__owners:
-            if o.get_name() == owner.get_name:
+            if o.get_nickname() == owner.get_nickname():
                 return False
         self.__owners.append(owner)
         return True
@@ -96,7 +97,7 @@ class Store:
         return user_nickname in [owner.get_nickname() for owner in self.__owners]
 
     def is_manager(self, user_nickname):
-        return user_nickname in [tuple[0].get_nickname() for tuple in self.__managers_permissions_and_appointer]
+        return user_nickname in [appointment.get_manager().get_nickname() for appointment in self.__StoreManagerAppointments]
 
     # eden added
     def get_products_by(self, opt, string):
@@ -124,21 +125,23 @@ class Store:
         :param appointer: store's owner that appoints the subscriber as manager
         :return:
         """
-        self.__managers_permissions_and_appointer.append((future_manager, permissions, appointer))
+        if not self.is_owner(appointer.get_nickname()):
+            return False
+        self.__StoreManagerAppointments.append(StoreManagerAppointment(future_manager, permissions, appointer))
         return True
 
-    def get_permissions(self, manager_nickname):
-        for tuple in self.__managers_permissions_and_appointer:
-            if tuple[0].get_nickname() == manager_nickname:
-                return tuple[1]
-        return None
+    # def get_permissions(self, manager_nickname):
+    #     for appointment in self.__StoreManagerAppointments:
+    #         if appointment.get_manager().get_nickname() == manager_nickname:
+    #             return appointment.get_permissions()
+    #     return None
 
     def get_info(self):
-        if not self.__managers_permissions_and_appointer:  # empty list
+        if not self.__StoreManagerAppointments:  # empty list
             return "Store owners: %s" % (str(self.__owners.strip('[]')))
         else:
-            if len(self.__managers_permissions_and_appointer) > 0:  # one manager exists
-                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers_permissions_and_appointer.strip('[]'))
+            if len(self.__StoreManagerAppointments) > 0:  # one manager exists
+                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
 
     def is_in_store_inventory(self, amount_per_product):
         for product_and_amount in amount_per_product:
@@ -185,20 +188,29 @@ class Store:
         return self.__owners
 
     def get_managers(self):
-        return [t[0] for t in self.__managers_permissions_and_appointer]
+        return [t[0] for t in self.__StoreManagerAppointments]
 
     def edit_manager_permissions(self, manager: User, permissions, appointer: User):
-        for t in self.__managers_permissions_and_appointer:
-            if t[0].get_nickname() == manager.get_nickname() and t[2].get_nickname() == appointer.get_nickname():
-                self.__managers_permissions_and_appointer.remove(t)
-                self.__managers_permissions_and_appointer.append((manager, permissions,appointer))
+        for appointment in self.__StoreManagerAppointments:
+            if appointment.get_manager().get_nickname() == manager.get_nickname() and \
+                    appointment.get_appointer().get_nickname() == appointer.get_nickname():
+                # self.__StoreManagerAppointments.remove(t)
+                # self.__StoreManagerAppointments.append((manager, permissions, appointer))
+                appointment.set_permissions(permissions)
                 return True
         return False
 
-    def get_managers_tuple(self):
-        return self.__managers_permissions_and_appointer
+    def remove_manager(self, manager: User, appointer: User):
+        for appointment in self.__StoreManagerAppointments:
+            if appointment.get_manager().get_nickname() == manager.get_nickname() and \
+                    appointment.get_appointer().get_nickname() == appointer.get_nickname():
+                self.__StoreManagerAppointments.remove(appointment)
+                return True
+        return False
 
-    get_managers_tuple
+    def get_store_manager_appointments(self):
+        return self.__StoreManagerAppointments
+
     def get_purchases(self):
         return self.__purchases
 

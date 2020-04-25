@@ -1,4 +1,4 @@
-from src.main.DomainLayer.Appointment import Appointment
+# from src.main.DomainLayer.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.Registration import Registration
 from src.main.DomainLayer.Login import Login
 from src.main.DomainLayer.ShoppingCart import ShoppingCart
@@ -9,7 +9,7 @@ class User:
     def __init__(self):
         self.__registrationState = Registration()
         self.__loginState = Login()
-        self.__appointment = Appointment()
+        # self.__appointment = StoreManagerAppointment()
         self.__shoppingCart = ShoppingCart()
         self.__purchases = []
 
@@ -66,8 +66,8 @@ class User:
     def update_quantity_in_shopping_cart(self, product, quantity):
         return self.__shoppingCart.update_quantity(product, quantity)
 
-    def get_appointment (self):
-        return self.__appointment
+    # def get_appointment (self):
+    #     return self.__appointment
 
     def get_user_type(self):
         if self.is_logged_in():
