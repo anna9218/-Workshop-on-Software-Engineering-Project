@@ -19,10 +19,16 @@ class Store:
 
     def add_products(self, products_details) -> bool:
         """
-        :param products_details: list of tuples (product_name, product_price, product_amount, product_category)
+        :param products_details: list of tuples (product_name, product_price, product_category, product_amount)
         :return: true if all products was added to the inventory
         """
-        results = list(map(lambda details: self.add_product(details[0], details[1], details[2], details[3]), products_details))
+        for d in products_details:
+            if d[1] < 0:
+                return False
+            if d[3] < 0:
+                return False
+        results = list(map(lambda details: self.add_product(details[0], details[1], details[2], details[3]),
+                           products_details))
         return False not in results
 
     def add_product(self, name, price, category, amount) -> bool:
@@ -33,6 +39,11 @@ class Store:
         :param category: category of the new product
         :return: True if succeed update the inventory with the new product
         """
+        if price < 0:
+            return False
+        if amount < 0:
+            return False
+
         return self.__inventory.add_product(Product(name, price, category), amount)
 
     def remove_products(self, products_names):
@@ -57,6 +68,9 @@ class Store:
        :param new_price: number to replace with
        :return: True if the product's price updated on inventory
        """
+        if new_price < 0:
+            return False
+
         product = self.get_product(product_name)
         if product is not None:
             product.set_price(new_price)
@@ -239,4 +253,5 @@ class Store:
 
     def add_purchase(self, purchase: Purchase):
         self.__purchases.insert(0, purchase)
+
 

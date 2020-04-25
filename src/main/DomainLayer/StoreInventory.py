@@ -14,12 +14,15 @@ class StoreInventory:
                           lambda keyword: list(filter(lambda product: keyword in product.get_name(), [x[0] for x in self.__inventory])),
                           lambda category: list(filter(lambda product: product.get_category() == category, [x[0] for x in self.__inventory]))]
 
-    def add_product(self, product: Product, amount) -> bool:
+    def add_product(self, product: Product, amount: int) -> bool:
         """
         :param product: Product
         :param amount: amount of product
         :return: true,and the inventory updated with the new product or the products amount is increased
         """
+        if amount < 0:
+            return False
+
         products_ls = self.__fun_map[0](product.get_name())
         if len(products_ls):
             old_product_amount = self.get_amount_of_product(product.get_name())
@@ -65,6 +68,9 @@ class StoreInventory:
         # if product is not None:
         #     product.set_amount(new_amount)
         #     return True
+        if new_amount < 0:
+            return False
+
         for i in self.__inventory:
             if i[0].get_name() == product_name:
                 self.__inventory.remove(i)
@@ -94,12 +100,14 @@ class StoreInventory:
         :return: if is in stock true,
                  else false.
         """
+        if requested_amount < 0:
+            return False
+
         amount_in_stock = self.get_amount_of_product(product_name)
         if amount_in_stock:
             if int(amount_in_stock) >= requested_amount:
                 return True
-        else:
-            return False
+        return False
  
     def __repr__(self):
         return repr("There are " + str(len(self.__inventory)) + " products in inventory")
