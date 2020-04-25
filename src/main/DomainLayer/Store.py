@@ -2,6 +2,7 @@
 from src.main.DomainLayer import Purchase
 from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.StoreInventory import StoreInventory
+from src.main.DomainLayer.User import User
 
 
 class Store:
@@ -83,7 +84,7 @@ class Store:
             return self.__inventory.change_amount(product_name, amount)
         return False
 
-    def add_owner(self, owner):
+    def add_owner(self, owner: User):
         for o in self.__owners:
             if o.get_name() == owner.get_name:
                 return False
