@@ -2,9 +2,8 @@
     test suite class - used to organize the tests and run them together
 """
 import unittest
-from src.test.WhiteBoxTests.UnitTests.TestCases.FacadePaymentTests import FacadePaymentTests
-from src.test.WhiteBoxTests.UnitTests.TestCases.FacadeDeliveryTests import FacadeDeliveryTests
-from src.test.WhiteBoxTests.UnitTests import TestCases
+from src.test.WhiteBoxTests.UnitTests.TestCases.DomainLayer.FacadePaymentTests import FacadePaymentTests
+from src.test.WhiteBoxTests.UnitTests.TestCases.DomainLayer.FacadeDeliveryTests import FacadeDeliveryTests
 
 
 class WhiteBoxTestsRunner:
