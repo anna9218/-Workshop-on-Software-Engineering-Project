@@ -127,6 +127,13 @@ class Store:
         i = 0
         for name, p in self.__inventory:
             f"For {name} press {i}" #TODO- check if contains \n
+            
+    def get_info(self):
+        if not self.__managers:  # empty list
+            return "Store owners: %s" % (str(self.__owners.strip('[]')))
+        else:
+            if len(self.__managers) > 0:  # one manager exists
+                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers.strip('[]'))
 
     def is_in_store_inventory(self, amount_per_product):
         for product_and_amount in amount_per_product:
