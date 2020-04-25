@@ -86,16 +86,17 @@ class StoreInventory:
 
     def is_in_stock(self, product_name, requested_amount):
         """
+        This function check if the product exist in the store inventory.
+        If it does exist, check if the quantity of the product in the stock inventory is enough for making the purchase.
 
         :param product_name: the name of the product to search in inventory.
         :param requested_amount: the requested amount.
         :return: if is in stock true,
                  else false.
         """
-        product = self.get_product(product_name)
-        if product:
-            amount = product[1]
-            if amount >= requested_amount:
+        amount_in_stock = self.get_amount_of_product(product_name)
+        if amount_in_stock:
+            if int(amount_in_stock) >= requested_amount:
                 return True
         else:
             return False
