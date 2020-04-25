@@ -20,6 +20,19 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.add_product("Chair", 100, "Furniture", 5))
         self.assertTrue(self.store.add_product("Sofa", 100, "Furniture", 5))
 
+    def test_edit_manager_permissions(self):
+        manager = StubUser()
+        owner = StubUser()
+        owner2 = StubUser()
+        manager.set_password_and_nickname("manager", "sdf")
+        owner.set_password_and_nickname("owner", "123")
+        owner2.set_password_and_nickname("owner2", "123")
+        self.store.add_owner(owner)
+        self.store.add_manager(manager,
+                               [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER], owner)
+        self.assertTrue(self.store.edit_manager_permissions(manager, [ManagerPermission.CLOSE_STORE], owner))
+        self.assertFalse(self.store.edit_manager_permissions(manager, [ManagerPermission.APPOINT_MAMAGER], owner2))
+
     def test_remove_products(self):
         self.store.add_product("Chair", 100, "Furniture", 5)
         self.assertFalse(self.store.remove_products(["Chair", "Sofa"]))
@@ -72,10 +85,17 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(len(self.store.get_owners()), 1)
 
     def test_add_manager(self):
-        user = StubUser()
-        user.set_password_and_nickname("eden", "password")
-        self.assertTrue(self.store.add_manager(user, [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER]))
-        self.assertEqual(len(self.store.get_managers()), 1)
+        manager = StubUser()
+        owner = StubUser()
+        manager.set_password_and_nickname("eden", "password")
+        owner.set_password_and_nickname("dana", "password123")
+        self.store.add_owner(owner)
+        self.assertTrue(self.store.add_manager(manager, [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER], owner))
+        _tuple = self.store.get_managers_tuple()
+        self.assertEqual(len(_tuple), 1)
+        self.assertEqual(_tuple[0][0], manager)
+        self.assertEqual(_tuple[0][1], [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER])
+        self.assertEqual(_tuple[0][2], owner)
 
     def test_is_owner(self):
         user = StubUser()

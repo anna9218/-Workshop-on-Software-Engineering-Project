@@ -10,8 +10,8 @@ class Store:
         # self.__id = id
         self.__name = store_name
         self.__owners = []
-        # list of pairs (manager: User, permissions: ManagerPermissions[])
-        self.__managers_and_permissions = []
+        # list of pairs (manager: User, permissions: ManagerPermissions[], appointer:User)
+        self.__managers_permissions_and_appointer = []
         self.__inventory = StoreInventory()
         # self.__rate = 0 TODO - for search 2.5
         self.__purchases = []
@@ -96,7 +96,7 @@ class Store:
         return user_nickname in [owner.get_nickname() for owner in self.__owners]
 
     def is_manager(self, user_nickname):
-        return user_nickname in [manager.get_nickname() for manager in self.__managers_and_permissions]
+        return user_nickname in [tuple[0].get_nickname() for tuple in self.__managers_permissions_and_appointer]
 
     # eden added
     def get_products_by(self, opt, string):
@@ -116,31 +116,29 @@ class Store:
         i = 0
         for name, p in self.__inventory:
             f"For {name} press {i}" #TODO- check if contains \n
-            
 
-    def add_manager(self, manager: User, permissions):
+    def add_manager(self, future_manager: User, permissions, appointer: User):
         """
-        :param manager:
+        :param future_manager: subscriber to appoint as manager
         :param permissions: type - ManagerPermission[]
+        :param appointer: store's owner that appoints the subscriber as manager
         :return:
         """
-        self.__managers_and_permissions.append((manager, permissions))
+        self.__managers_permissions_and_appointer.append((future_manager, permissions, appointer))
         return True
 
-
-
     def get_permissions(self, manager_nickname):
-        for pair in self.__managers_and_permissions:
-            if pair[0].get_nickname() == manager_nickname:
-                return pair[1]
+        for tuple in self.__managers_permissions_and_appointer:
+            if tuple[0].get_nickname() == manager_nickname:
+                return tuple[1]
         return None
 
     def get_info(self):
-        if not self.__managers_and_permissions:  # empty list
+        if not self.__managers_permissions_and_appointer:  # empty list
             return "Store owners: %s" % (str(self.__owners.strip('[]')))
         else:
-            if len(self.__managers_and_permissions) > 0:  # one manager exists
-                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers_and_permissions.strip('[]'))
+            if len(self.__managers_permissions_and_appointer) > 0:  # one manager exists
+                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__managers_permissions_and_appointer.strip('[]'))
 
     def is_in_store_inventory(self, amount_per_product):
         for product_and_amount in amount_per_product:
@@ -187,8 +185,20 @@ class Store:
         return self.__owners
 
     def get_managers(self):
-        return self.__managers_and_permissions
+        return [t[0] for t in self.__managers_permissions_and_appointer]
 
+    def edit_manager_permissions(self, manager: User, permissions, appointer: User):
+        for t in self.__managers_permissions_and_appointer:
+            if t[0].get_nickname() == manager.get_nickname() and t[2].get_nickname() == appointer.get_nickname():
+                self.__managers_permissions_and_appointer.remove(t)
+                self.__managers_permissions_and_appointer.append((manager, permissions,appointer))
+                return True
+        return False
+
+    def get_managers_tuple(self):
+        return self.__managers_permissions_and_appointer
+
+    get_managers_tuple
     def get_purchases(self):
         return self.__purchases
 
