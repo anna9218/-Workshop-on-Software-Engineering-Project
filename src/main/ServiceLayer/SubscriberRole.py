@@ -1,5 +1,5 @@
 from src.main.DomainLayer.TradeControl import TradeControl
-from src.main.ServiceLayer.GuestRole import GuestRole
+from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
 
 
 class SubscriberRole:
@@ -8,7 +8,7 @@ class SubscriberRole:
         self.__subscriber = subscriber
 
     # use case 3.1
-    def logout(self, nickname):
+    def logout(self):
         # subscriber = TradeControl.getInstance().getSubscriber(nickname)
         if self.__subscriber.is_registered() and self.__subscriber.is_logged_in():
             self.__subscriber.logout()
@@ -16,18 +16,18 @@ class SubscriberRole:
         return False
 
     # 3.2 open store
-    def open_store(self, store_name) -> bool:
+    def open_store(self, store_name):
         # user = TradeControl.getInstance().getUser(user_name)
-        if self.__subscriber.is_logged_in():
-            return False
-        TradeControl.get_instance().validate_store_name(store_name)
-        new_store = TradeControl.get_instance().open_store(self.__subscriber, store_name)
+        if not self.__subscriber.is_registered() or not self.__subscriber.is_logged_in():
+            return None
+        # TradeControl.get_instance().validate_store_name(store_name)
+        new_store = TradeControl.get_instance().open_store(store_name)
+
         if new_store is None:
-            return False
+            return None
         else:
-            # TODO: appoint me as manager of the
-            return False
-                # new_store.add_owner(self.__subscriber) and appointment.appoint_owner(None, self, new_store)
+            new_store.add_owner(self.__subscriber)
+            return StoreOwnerRole(self.__subscriber)
 
     # use case 3.7
     def view_personal_purchase_history(self):

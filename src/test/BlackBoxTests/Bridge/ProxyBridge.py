@@ -43,6 +43,9 @@ class ProxyBridge(Bridge):
     def init_sys(self):
         self._realbridge.init_sys()
 
+    def remove_user(self, username):
+        self._realbridge.remove_user(username)
+
     def login(self, username, password):
         return self._realbridge.login(username, password)
 
@@ -52,3 +55,30 @@ class ProxyBridge(Bridge):
 
     def view_store_info(self, store, store_info_flag, products_flag):
         return self._realbridge.view_store_info(store, store_info_flag, products_flag)
+
+    def logout(self):
+        return self._realbridge.logout()
+
+    def add_products_to_cart(self):
+        return self._realbridge.add_products_to_cart()
+
+    def view_personal_history(self):
+        return self._realbridge.view_personal_history()
+
+    def open_store(self, name):
+        return self._realbridge.open_store(name)
+
+    def delete_store(self, store):
+        self._realbridge.delete_store(store)
+
+    def add_products_to_store(self, user_nickname, store_name, products_details):
+        return self._realbridge.add_products_to_store(user_nickname, store_name, products_details)
+
+    def edit_products_in_store(self, nickname, store_name, product_name, op, new_value):
+        return self._realbridge.edit_products_in_store(nickname, store_name, product_name, op, new_value)
+
+    def remove_products_from_store(self, user_nickname, store_name, products_names):
+        return self._realbridge.remove_products_from_store(user_nickname, store_name, products_names)
+
+    def appoint_additional_owner(self, nickname, store_name):
+        return self._realbridge.appoint_additional_owner(nickname, store_name)

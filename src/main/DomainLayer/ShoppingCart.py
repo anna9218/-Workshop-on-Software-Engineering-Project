@@ -28,7 +28,7 @@ class ShoppingCart:
         for product_store_quantity in products_stores_quantity_ls:
             for store_basket in self.__shopping_baskets:
                 if store_basket[0] == product_store_quantity[1]:  # basket already exists
-                    store_basket[1].add_product([product_store_quantity[0], product_store_quantity[2]])
+                    store_basket[1].add_products_to_store([product_store_quantity[0], product_store_quantity[2]])
                 else:  # creating new basket to add
                     shopping_basket = ShoppingBasket()
                     self.__shopping_baskets.append([product_store_quantity[1], shopping_basket])  # add [store, basket]

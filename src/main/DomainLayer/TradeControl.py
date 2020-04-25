@@ -46,6 +46,13 @@ class TradeControl:
                 return True
         return False
 
+    def remove_manager(self, nickname):
+        for s in self.__managers:
+            if s.get_nickname() == nickname:
+                self.__managers.remove(s)
+                return True
+        return False
+
     def open_store(self, store_name) -> Store:
         for s in self.__stores:
             if s.get_name() == store_name:

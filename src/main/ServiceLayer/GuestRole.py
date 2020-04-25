@@ -11,17 +11,14 @@ class GuestRole:
         self.__guest: User = TradeControl.get_instance().get_guest()
 
     # use case 2.2
-    @staticmethod
     def register(self, nickname, password):
-        if Security.get_instance().validated_password(password) and TradeControl.get_instance().validate_nickname(
-                nickname):
+        if Security.get_instance().validated_password(password) and TradeControl.get_instance().validate_nickname(nickname):
             self.__guest.register(nickname, password)
             TradeControl.get_instance().subscribe(self.__guest)
             return TradeControl.get_instance().get_subscriber(nickname)
         return None
 
     # use case 2.3
-    @staticmethod
     def login(self, nickname, password):
         # subscriber = TradeControl.getInstance().getSubscriber(nickname)
         # if subscriber is not None and subscriber.is_loggedOut() and subscriber.checkPassword(password):
@@ -29,8 +26,9 @@ class GuestRole:
         #     return True
         # return False
         if self.__guest.is_registered() and self.__guest.is_logged_out():
-            return self.__guest.login(nickname, password)
-        return False
+            self.__guest.login(nickname, password)
+            return SubscriberRole(self.__guest)
+        return None
 
     # use case 2.4
     @staticmethod
@@ -61,8 +59,7 @@ class GuestRole:
         if products_ls is []:
             return False
         else:
-            products = map(lambda pair: TradeControl.get_instance().get_store(pair[1]).get_product(pair[0]),
-                           products_ls)
+            products = map(lambda pair: TradeControl.get_instance().get_store(pair[1]).get_product(pair[0]), products_ls)
             # products = map(lambda store: store.getProduct(pair[0]), stores)
             if filter_details[0] == 1:
                 return filter(lambda p: filter_details[1] <= p.get_price() <= filter_details[2], products)
@@ -109,8 +106,7 @@ class GuestRole:
                     subscriber = TradeControl.get_instance().getSubscriber(nickname)
                     subscriber.update_quantity_in_shopping_cart(product[0], product[1])
         return True
-
-# ---------------------------------------------------- U.C 2.8----------------------------------------------------------
+        # ---------------------------------------------------- U.C 2.8----------------------------------------------------------
 
     # U.C 2.8.1 - purchase product direct approach
     def calculate_purchase_price_direct_approach(self, store_name: str, amount_per_product: list,
@@ -118,14 +114,11 @@ class GuestRole:
         """
         Purchasing some products from one store only.
 
-        The function checks if the products are in the store's inventory.
-        if does, call make_payment.
-
         :param username: the username of the user which uses this system
         :param store_name: The store from which we want to purchase.
-        :param amount_per_product: list of dictionary [product, amount]
-        :return: if succeed the price of the purchase,
-                 else              -1
+        :param amount_per_product: list of dictionary {product, amount}
+        :return: if succeed true,
+                  else false.
         """
         store: Store = TradeControl.get_instance().get_store(store_name)
         if store:

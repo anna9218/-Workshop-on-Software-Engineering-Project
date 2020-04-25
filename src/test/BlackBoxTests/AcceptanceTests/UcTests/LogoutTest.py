@@ -7,13 +7,21 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 class LogoutTest(ProjectTest):
 
     def setUp(self) -> None:
-        pass
+        super().setUp()
+        self.__valid_username = "username"
+        self.__valid_password = "password"
+        self.__invalid_input = ""
 
     def test_success(self):
-        pass
+        self.register_user(self.__valid_username, self.__valid_password)
+        self.login(self.__valid_username, self.__valid_password)
+        res = self.logout()
+        self.assertEqual(True, res)
 
     def test_fail(self):
-        pass
+        self.register_user(self.__valid_username, self.__valid_password)
+        res = self.logout()
+        self.assertEqual(False, res)
 
     def tearDown(self) -> None:
-        pass
+        self.remove_user(self.__valid_username)

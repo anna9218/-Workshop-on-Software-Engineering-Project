@@ -13,12 +13,14 @@ class LoginTest(ProjectTest):
         self.__invalid_input = ""
 
     def test_success(self):
+        self.register_user("username", "password")
         res = self.login(self.__valid_username, self.__valid_pass)
         self.assertEqual(True, res)
 
     def test_fail(self):
+        self.register_user("username", "password")
         res = self.login(self.__valid_username, self.__invalid_input)
         self.assertEqual(False, res)
 
     def tearDown(self) -> None:
-        pass
+        self.remove_user("username")
