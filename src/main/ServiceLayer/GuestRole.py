@@ -1,12 +1,14 @@
+from src.main.DomainLayer.Purchase import Purchase
 from src.main.DomainLayer.Security import Security
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Store import Store
+from src.main.DomainLayer.User import User
 
 
 class GuestRole:
 
     def __init__(self):
-        self.__guest = TradeControl.get_instance().get_guest()
+        self.__guest: User = TradeControl.get_instance().get_guest()
 
     # use case 2.2
     @staticmethod
@@ -111,8 +113,8 @@ class GuestRole:
 # ---------------------------------------------------- U.C 2.8----------------------------------------------------------
 
     # U.C 2.8.1 - purchase product direct approach
-    @staticmethod
-    def calculate_purchase_price_direct_approach(store_name: str, amount_per_product: list, username: str) -> float:
+    def calculate_purchase_price_direct_approach(self, store_name: str, amount_per_product: list,
+                                                 username: str) -> float:
         """
         Purchasing some products from one store only.
 
@@ -128,32 +130,30 @@ class GuestRole:
         store: Store = TradeControl.get_instance().get_store(store_name)
         if store:
             if store.is_in_store_inventory(amount_per_product):
-                return GuestRole.make_purchase(store, amount_per_product, username)
-        else:
-            return -1
+                purchase: Purchase = self.make_purchase(store, amount_per_product, username)
+                if purchase:
+                    return purchase.get_price()
+        return -1
 
     # U.C 2.8.2 - purchase product in walkaround approach
-    @staticmethod
-    def calculate_purchase_price_walkaround_approach(amount_per_product_per_store: list, username: str) -> float:
+    def calculate_purchase_price_walkaround_approach(self, amount_per_product_per_store: [], username: str) -> float:
         """
         Assumption: all purchases cost money.
-        TODO: May refactor this s.t [store, [product, amount]]
 
         for each basket(i.e, each store) calculate price and sum all the prices.
 
         IF the purchasing failed in ALL THE STORES, then total_price = 0, and the purchasing fails.
 
         :param username: the username of the user which uses this system
-        :param amount_per_product_per_store: list of dictionary [store, product, amount]
+        :param amount_per_product_per_store: list of  [store, [product, amount]]
         :return: if succeed true,
                   else false.
         """
         total_price: float = 0
         for store_and_product_and_amount in amount_per_product_per_store:
-            basket_price: float = GuestRole.calculate_purchase_price_direct_approach(store_and_product_and_amount[0],
-                                                                                     [[store_and_product_and_amount[1],
-                                                                                       store_and_product_and_amount[2]]]
-                                                                                     , username)
+            basket_price: float = self.calculate_purchase_price_direct_approach(store_and_product_and_amount[0],
+                                                                                store_and_product_and_amount[1],
+                                                                                username)
             if basket_price:
                 if basket_price > 0:
                     total_price = total_price + basket_price
@@ -163,38 +163,61 @@ class GuestRole:
         return total_price
 
     # U.C 2.8.3 & U.C 2.8.4
-    @staticmethod
-    def make_purchase(store: Store, amount_per_product: [], username: str) -> float:
+    def make_purchase(self, store: Store, amount_per_product: [], username: str = "") -> Purchase or None:
         """
         This function check if purchases policies allow this purchase.
-        if so, check if the purchase deserves discounts.
+        if so, check if the purchase deserves discounts and save it for further use.
 
         :param store: purchase policy and discount policy param.
         :param amount_per_product: purchase policy and discount policy param.
         :param username: purchase policy and discount policy param.
-        :return: the final price of this purchase.
+        :return: the purchase details.
         """
         total_price = store.check_purchase_policy(amount_per_product, username)
         if total_price > 0:
-            return store.calc_discount(amount_per_product, total_price, username)
-        return -1
+            final_price = store.calc_discount(amount_per_product, total_price, username)
+            purchase = Purchase((TradeControl.get_instance()).get_next_purchase_id(), amount_per_product, final_price,
+                                store.get_name(), username)
+            user = (TradeControl.get_instance()).get_subscriber(username)
+            if user:
+                user.add_unaccepted_purchase(purchase)
+                store.add
+            else:
+                self.__guest.add_unaccepted_purchase(purchase)
+            return purchase
+        return None
 
     # U.C 2.8.5 - purchase_product
-    @staticmethod
-    def accepted_price_purchase(username: str, total_price: float, payment_details: []) -> bool:
+    def accepted_price_purchase(self, purchase: Purchase, payment_details: []) -> bool:
         """
-        This function take a *confirmed* price and sent it + payment details to the external system for payment.
+        This function take a *confirmed* purchase and sent it + payment details to the external system for payment.
 
-        :param username: the username of the user which uses this system.
-        :param total_price: price of the purchase.
+        :param purchase:
         :param payment_details: [credit number-type str, the expiration date-type date_time]..
         :return: if purchase succeeded -> true.
                  else                  -> false.
         """
-        return (TradeControl.get_instance()).make_payment(username, total_price, payment_details[0],
-                                                          payment_details[1])
+        user: User = (TradeControl.get_instance()).get_subscriber(purchase.get_username())
+        if not user:
+            if purchase in self.__guest.get_unaccepted_purchases():
+                self.__guest.remove_unaccepted_purchase(purchase)
+                self.__guest.add_accepted_purchase(purchase)
+                store: Store = (TradeControl.get_instance()).get_store(purchase.get_store_name())
+                store.add_purchase(purchase)
+            else:
+                return False
+        else:
+            if purchase in user.get_unaccepted_purchases():
+                user.remove_unaccepted_purchase(purchase)
+                user.add_accepted_purchase(purchase)
+                store: Store = (TradeControl.get_instance()).get_store(purchase.get_store_name())
+                store.add_purchase(purchase)
+            else:
+                return False
+        return (TradeControl.get_instance()).make_payment(purchase.get_username(), purchase.get_price(),
+                                                          payment_details[0], payment_details[1])
 
-# ------------------------------------------------- END OF U.C 2.8 -----------------------------------------------------
+    # ------------------------------------------------- END OF U.C 2.8 -----------------------------------------------------
 
     @staticmethod
     # store_info_flag = true if user wants to display store info
