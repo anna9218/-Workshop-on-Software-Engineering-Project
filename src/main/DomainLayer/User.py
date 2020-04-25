@@ -10,34 +10,23 @@ class User:
     def __init__(self):
         self.__registrationState = Registration()
         self.__loginState = Login()
-        # self.__logoutState = Logout()
         self.__appointment = Appointment()
         self.__shoppingCart = ShoppingCart()
         self.__purchases = []
 
     def register(self, username, password):
         self.__registrationState.register(username, password)
-        # if ackMSG:
-        #     print("registered successfully")
-        # else:
-        #     print("something failed, please try again")
+        return True
             
     def login(self, nickname, password):
         if self.check_nickname(nickname) and self.check_password(password):
-            return self.__loginState.login()
+            self.__loginState.login()
+            return True
         return False
 
     def logout(self):
-        return self.__loginState.logout()
-        # ackMSG = self.__loginState.login(self, username, password)
-        # if ackMSG:
-        #     print("logged in successfully")
-        # else:
-        #     print("error while logging in")
-
-    # def logout(self):
-    #     ackMSG = self.__logoutState.logout(self)
-    #     print("logged out successfully")
+        self.__loginState.logout()
+        return True
 
     def check_password(self, password):
         return self.__registrationState.get_password() == password
@@ -54,9 +43,6 @@ class User:
     def get_login(self):
         return self.__loginState
 
-    # def get_logout(self):
-    #     return self.__logoutState
-
     def is_registered(self):
         return self.__registrationState.is_registered()
 
@@ -65,15 +51,6 @@ class User:
 
     def get_purchases(self):
         return self.__purchases
-
-    # def get_name(self):
-    #     return self.__name
-    #
-    # def set_price(self, new_price):
-    #     self.__price = new_price
-    #
-    # def set_name(self, new_name):
-    #     self.__name = new_name
 
     def save_products_to_basket(self, products_stores_quantity_ls):
         self.__shoppingCart.add_products(products_stores_quantity_ls)
