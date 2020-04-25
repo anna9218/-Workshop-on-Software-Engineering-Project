@@ -1,7 +1,5 @@
 from functools import reduce
-
-from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
-from src.main.DomainLayer.FacadePayment import FacadePayment
+from src.main.DomainLayer.FacadePayment import FacadePayment, date_time
 from src.main.DomainLayer.Store import Store
 from src.main.DomainLayer.User import User
 
@@ -98,3 +96,16 @@ class TradeControl:
     def get_guest(self):
         guest = User()
         return guest
+
+    def make_payment(self, username: str, amount: float, credit: str, date: date_time) -> bool:
+        """
+        Take a payment details + amount and send them to the facade-payment.
+
+        :param username: the user to make the payment.
+        :param amount: the price to pay.
+        :param credit: credit number.
+        :param date: expr date of the credit.
+        :return: True if the payment succeed.
+                 False else.
+        """
+        return (FacadePayment.get_instance()).commit_payment(username, amount, credit, date)

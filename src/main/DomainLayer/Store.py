@@ -1,5 +1,4 @@
-
-from src.main.DomainLayer import Purchase
+# from src.main.DomainLayer import Purchase
 from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.StoreInventory import StoreInventory
 from src.main.DomainLayer.StoreManagerAppointment import StoreManagerAppointment
@@ -107,10 +106,10 @@ class Store:
     def get_product(self, product_name):
         return self.__inventory.get_product(product_name)
 
-    def get_purchase_info(self, purchase: Purchase):
-        for p in self.__purchases:
-            if p == purchase:  # TODO - how do we compare purchases?
-                return p
+    # def get_purchase_info(self, purchase: Purchase):
+    #     for p in self.__purchases:
+    #         if p == purchase:  # TODO - how do we compare purchases?
+    #             return p
 
     def print_inventory(self):
         f"The products of store {self.__name}:"
@@ -144,26 +143,43 @@ class Store:
                 return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
 
     def is_in_store_inventory(self, amount_per_product):
+        """
+        :param amount_per_product: [product name : str, amount:int]
+                                    product name is the *id* of the product.
+                                    amount is the requested quantity.
+        :return: True if product is in store inventory in a quantity >= amount.
+                 False else.
+        """
         for product_and_amount in amount_per_product:
-            if not self.get_inventory().is_in_stock(product_and_amount['product'], product_and_amount['amount']):
+            if not self.get_inventory().is_in_stock(product_and_amount[0], product_and_amount[1]):
                 return False
         return True
 
-    def check_purchase_policy(self, amount_per_product: [], username: str):
+    def check_purchase_policy(self, amount_per_product: [], username: str) -> float:
         """
         This function should check if the user can/can't complete the purchase.
         Due to the fact that we does'nt have the purchase policies requirements, this func is currently a stab.
 
+        If the user can complete the purchase, the function calculate its price without discount.
+
         :param amount_per_product: param to check policy.
-        :param price: param to check policy.
         :param username: param to check policy.
         :return: the price if possible.
                  -1 else.
         """
-        return (self.get_inventory().get_product(amount_per_product[0])).get_price()
+        total_price: float = 0
+        for product_and_amount in amount_per_product:
+            try:
+                product: Product = self.__inventory.get_product(product_and_amount[0])
+                product_price = float(product.get_price())
+            except AttributeError:
+                product_price = -1
+            if product_price >= 0:
+                total_price = total_price + (product_price * product_and_amount[1])
 
-    @staticmethod
-    def calc_discount(amount_per_product: [], price: float, username: str):
+        return total_price
+
+    def calc_discount(self, amount_per_product: [], price: float, username: str):
         """
         This function should check if the user can/can't complete the purchase.
         Due to the fact that we does'nt have the purchase policies requirements, this func is currently a stab.
