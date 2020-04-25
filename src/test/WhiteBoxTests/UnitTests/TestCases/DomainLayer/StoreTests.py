@@ -1,5 +1,6 @@
 import unittest
 
+from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.Store import Store
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
@@ -18,6 +19,19 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.add_product("Chair", 100, "Furniture", 5))
         self.assertTrue(self.store.add_product("Chair", 100, "Furniture", 5))
         self.assertTrue(self.store.add_product("Sofa", 100, "Furniture", 5))
+
+    def test_edit_manager_permissions(self):
+        manager = StubUser()
+        owner = StubUser()
+        owner2 = StubUser()
+        manager.set_password_and_nickname("manager", "sdf")
+        owner.set_password_and_nickname("owner", "123")
+        owner2.set_password_and_nickname("owner2", "123")
+        self.store.add_owner(owner)
+        self.store.add_manager(manager,
+                               [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER], owner)
+        self.assertTrue(self.store.edit_manager_permissions(manager, [ManagerPermission.CLOSE_STORE], owner))
+        self.assertFalse(self.store.edit_manager_permissions(manager, [ManagerPermission.APPOINT_MAMAGER], owner2))
 
     def test_remove_products(self):
         self.store.add_product("Chair", 100, "Furniture", 5)
@@ -70,6 +84,19 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.add_owner(user))
         self.assertEqual(len(self.store.get_owners()), 1)
 
+    def test_add_manager(self):
+        manager = StubUser()
+        owner = StubUser()
+        manager.set_password_and_nickname("eden", "password")
+        owner.set_password_and_nickname("dana", "password123")
+        self.store.add_owner(owner)
+        self.assertTrue(self.store.add_manager(manager, [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER], owner))
+        appointments = self.store.get_store_manager_appointments()
+        self.assertEqual(len(appointments), 1)
+        self.assertEqual(appointments[0].get_manager(), manager)
+        self.assertEqual(appointments[0].get_permissions(), [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER])
+        self.assertEqual(appointments[0].get_appointer(), owner)
+
     def test_is_owner(self):
         user = StubUser()
         user.set_password_and_nickname("eden", "password")
@@ -77,3 +104,27 @@ class StoreTests(unittest.TestCase):
         self.store.add_owner(user)
         self.assertTrue(self.store.is_owner("eden"))
 
+    def test_is_manager(self):
+        user = StubUser()
+        owner = StubUser()
+        owner.set_password_and_nickname("eden", "password")
+        user.set_password_and_nickname("eden2", "password")
+        self.assertFalse(self.store.is_manager("eden"))
+        self.assertFalse(self.store.is_manager("eden2"))
+        self.store.add_owner(owner)
+        self.store.add_manager(user, [ManagerPermission.APPOINT_MAMAGER], owner)
+        self.assertTrue(self.store.is_manager("eden2"))
+
+    def test_remove_manager(self):
+        user = StubUser()
+        appointer = StubUser()
+        owner = StubUser()
+        appointer.set_password_and_nickname("appointer", "password")
+        owner.set_password_and_nickname("owner", "password")
+        user.set_password_and_nickname("manager", "password")
+        self.store.add_owner(appointer)
+        self.store.add_manager(user, [ManagerPermission.APPOINT_MAMAGER], appointer)
+        self.store.add_owner(owner)
+        self.assertFalse(self.store.remove_manager(user, owner))
+        self.assertTrue(self.store.remove_manager(user, appointer))
+        self.assertFalse(self.store.is_manager("manager"))

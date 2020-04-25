@@ -1,4 +1,7 @@
-class StubLogin:
+from src.main.DomainLayer.Login import Login
+
+
+class StubLogin(Login):
 
     def __init__(self):
         self.isLoggedIn = False
