@@ -1,5 +1,6 @@
 import unittest
 
+from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.Store import Store
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
@@ -69,6 +70,12 @@ class StoreTests(unittest.TestCase):
         user.set_password_and_nickname("eden", "password")
         self.assertTrue(self.store.add_owner(user))
         self.assertEqual(len(self.store.get_owners()), 1)
+
+    def test_add_manager(self):
+        user = StubUser()
+        user.set_password_and_nickname("eden", "password")
+        self.assertTrue(self.store.add_manager(user, [ManagerPermission.APPOINT_MAMAGER, ManagerPermission.DEL_MANAGER]))
+        self.assertEqual(len(self.store.get_managers()), 1)
 
     def test_is_owner(self):
         user = StubUser()
