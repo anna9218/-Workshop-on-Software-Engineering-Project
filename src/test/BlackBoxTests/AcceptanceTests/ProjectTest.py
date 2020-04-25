@@ -43,22 +43,16 @@ class ProjectTest(ABC, unittest.TestCase):
     def view_stores(self):
         return self.__bridge.view_stores()
 
-    def view_store_info(self, store, store_info_flag, products_flag):
-        return self.__bridge.view_store_info(store, store_info_flag, products_flag)
-
     # 2.5 search products functions
     def search_products_by(self, option, string):
         return self.__bridge.search_product(option, string)
-    # TODO
 
     def filter_products_by(self, filter_details, products):
         return self.__bridge.filter_products(filter_details, products)
-    # TODO
 
     # 2.6 save products to cart
-    def add_products_to_cart(self):
-        return self.__bridge.add_products_to_cart()
-    # TODO
+    def add_products_to_cart(self, nickname, products_stores_quantity_ls):
+        return self.__bridge.add_products_to_cart(nickname, products_stores_quantity_ls)
 
     # 3.1 logout functions
     def logout(self):

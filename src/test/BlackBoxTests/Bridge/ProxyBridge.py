@@ -49,18 +49,20 @@ class ProxyBridge(Bridge):
     def login(self, username, password):
         return self._realbridge.login(username, password)
 
-    # view stores' products functions
     def view_stores(self):
         return self._realbridge.view_stores()
-
-    def view_store_info(self, store, store_info_flag, products_flag):
-        return self._realbridge.view_store_info(store, store_info_flag, products_flag)
 
     def logout(self):
         return self._realbridge.logout()
 
-    def add_products_to_cart(self):
-        return self._realbridge.add_products_to_cart()
+    def search_product(self, option, string):
+        return self._realbridge.search_product(option, string)
+
+    def filter_products(self, filter_details, products):
+        return self._realbridge.filter_products(filter_details, products)
+
+    def add_products_to_cart(self, nickname, products_stores_quantity_ls):
+        return self._realbridge.add_products_to_cart(nickname, products_stores_quantity_ls)
 
     def view_personal_history(self):
         return self._realbridge.view_personal_history()
