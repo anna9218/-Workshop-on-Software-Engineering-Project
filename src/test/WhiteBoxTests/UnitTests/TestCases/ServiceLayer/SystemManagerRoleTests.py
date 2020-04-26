@@ -1,11 +1,13 @@
 import unittest
 
+from src.Logger import logger
 from src.main.DomainLayer.Purchase import Purchase
 from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
 from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
 
 class SystemManagerRoleTests(unittest.TestCase):
+    @logger
     def setUp(self):
         self.__eytan_as_sys_manager = User()
         self.__eytan_as_sys_manager.register("eytan_as_sys_manager", "eytan's password")
@@ -26,6 +28,7 @@ class SystemManagerRoleTests(unittest.TestCase):
         self.__eytan_as_store_owner.add_accepted_purchase(self.__purchase)
         self.__store.add_purchase(self.__purchase)
 
+    @logger
     def test_view_user_purchases_history(self):
         # All valid
         result = self.__system_manager_role.view_user_purchase_history(self.__eytan_as_store_owner.get_nickname())
@@ -39,6 +42,7 @@ class SystemManagerRoleTests(unittest.TestCase):
         result = self.__system_manager_role.view_user_purchase_history("eytan")
         self.assertIsNone(result)
 
+    @logger
     def test_view_store_purchases_history(self):
         # All valid
         result = self.__system_manager_role.view_store_purchases_history(self.__store.get_name())
@@ -52,6 +56,9 @@ class SystemManagerRoleTests(unittest.TestCase):
         # Invalid store name
         result = self.__system_manager_role.view_store_purchases_history("eytan")
         self.assertIsNone(result)
+
+    def __repr__(self):
+        return repr("SystemManagerRoleTests")
 
     if __name__ == '__main__':
         unittest.main()

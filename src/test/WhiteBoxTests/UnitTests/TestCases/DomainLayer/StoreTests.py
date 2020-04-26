@@ -1,14 +1,17 @@
 import unittest
 
+from src.Logger import logger
 from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.Store import Store
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class StoreTests(unittest.TestCase):
+    @logger
     def setUp(self):
         self.store = Store("myStore")
 
+    @logger
     def test_add_products(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
         self.assertTrue(self.store.add_products([("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)]))
@@ -16,6 +19,7 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(self.store.add_products([("Chair", -999, "Furniture", 5), ("Sofa", -999, "Furniture", 5)]))
         self.assertFalse(self.store.add_products([("Chair", 100, "Furniture", -100), ("Sofa", 100, "Furniture", -100)]))
 
+    @logger
     def test_add_product(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
         self.assertTrue(self.store.add_product("Chair", 100, "Furniture", 5))
@@ -23,6 +27,7 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.add_product("Sofa", 100, "Furniture", 5))
         self.assertFalse(self.store.add_product("Sofa", 100, "Furniture", -5))
 
+    @logger
     def test_remove_products(self):
         self.store.add_product("Chair", 100, "Furniture", 5)
         self.assertFalse(self.store.remove_products(["Chair", "Sofa"]))
@@ -33,6 +38,7 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.remove_products(["Chair", "Sofa"]))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
+    @logger
     def test_remove_product(self):
         self.assertFalse(self.store.remove_product("Chair"))
         self.store.add_product("Chair", 100, "Furniture", 5)
@@ -40,6 +46,7 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.remove_product("Chair"))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
+    @logger
     def test_change_price(self):
         self.store.add_product("Chair", 100, "Furniture", 5)
         self.assertTrue(self.store.change_price("Chair", 13))
@@ -50,6 +57,7 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(self.store.change_price("Chair", -8))
         self.assertEqual(self.store.get_product("NNNN"), None)
 
+    @logger
     def test_change_name(self):
         self.store.add_product("Chair", 100, "Furniture", 5)
         self.assertTrue(self.store.change_name("Chair", "Chair222"))
@@ -62,6 +70,7 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(self.store.get_product("NNNN"), None)
         self.assertEqual(self.store.get_product("blaaa"), None)
 
+    @logger
     def test_change_amount(self):
         self.store.add_product("Chair", 100, "Furniture", 5)
         self.assertTrue(self.store.change_amount("Chair", 3))
@@ -70,12 +79,14 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(self.store.change_amount("Chair", -8))
         self.assertEqual(self.store.get_inventory().get_amount_of_product("Chair"), 8)
 
+    @logger
     def test_add_owner(self):
         user = StubUser()
         user.set_password_and_nickname("eden", "password")
         self.assertTrue(self.store.add_owner(user))
         self.assertEqual(len(self.store.get_owners()), 1)
 
+    @logger
     def test_is_owner(self):
         user = StubUser()
         user.set_password_and_nickname("eden", "password")
@@ -83,6 +94,7 @@ class StoreTests(unittest.TestCase):
         self.store.add_owner(user)
         self.assertTrue(self.store.is_owner("eden"))
 
+    @logger
     def test_is_in_store_inventory(self):
         self.store.add_product("Eytan's Product", 100, "Eytan Category", 5)
         self.store.add_product("not Eytan's Product", 10, "Eytan Category", 2)
@@ -123,3 +135,5 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(result)
 
 
+    def __repr__(self):
+        return repr ("StoreTests")

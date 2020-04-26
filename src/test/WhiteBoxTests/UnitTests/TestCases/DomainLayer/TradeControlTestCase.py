@@ -1,10 +1,12 @@
 import unittest
 
+from src.Logger import logger
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class TradeControlTestCase(unittest.TestCase):
+    @logger
     def setUp(self):
         self.tradeControl = TradeControl.get_instance()
         self.user = StubUser()
@@ -21,6 +23,7 @@ class TradeControlTestCase(unittest.TestCase):
 #         self.user = StubUser()
 #         self.user.set_password_and_nickname("nickname", "password")
 
+    @logger
     def test_subscribe_success_and_fail(self):
         subscribers_num = len(self.tradeControl.get_subscribers())
         self.assertTrue(self.tradeControl.subscribe(self.user))
@@ -29,12 +32,14 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertTrue(self.tradeControl.get_subscriber(self.user.get_nickname()))
         self.tradeControl.unsubscribe(self.user)
 
+    @logger
     def test_add_sys_manager_success_and_fail(self):
         managers_num = len(self.tradeControl.get_managers())
         self.assertTrue(self.tradeControl.add_sys_manager(self.user))
         self.assertFalse(self.tradeControl.add_sys_manager(self.user))
         self.assertEqual(len(self.tradeControl.get_managers()), managers_num+1)
 
+    @logger
     def test_unsubscribe_success_and_fail(self):
         self.tradeControl.subscribe(self.user)
         subscribers_num = len(self.tradeControl.get_subscribers())
@@ -42,6 +47,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.unsubscribe("nickname"))
         self.assertEqual(len(self.tradeControl.get_subscribers()), subscribers_num - 1)
 
+    @logger
     def test_close_and_open_store(self):
         stores_num = len(self.tradeControl.get_stores())
         self.assertNotEqual(self.tradeControl.open_store("myFirstStore"), None)
@@ -51,18 +57,21 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.close_store("myFirstStore"))
         self.assertEqual(len(self.tradeControl.get_stores()), stores_num)
 
+    @logger
     def test_validate_nickname(self):
         self.assertTrue(self.tradeControl.validate_nickname("nickname"))
         self.tradeControl.subscribe(self.user)
         self.assertFalse(self.tradeControl.validate_nickname("nickname"))
         self.tradeControl.unsubscribe("nickname")
 
+    @logger
     def test_get_subscriber(self):
         self.assertEqual(self.tradeControl.get_subscriber("nickname"), None)
         self.tradeControl.subscribe(self.user)
         self.assertEqual(self.tradeControl.get_subscriber("nickname"), self.user)
         self.tradeControl.unsubscribe("nickname")
 
+    @logger
     def test_get_store(self):
         self.tradeControl.open_store("myStore")
         store = self.tradeControl.get_store("myStore")
@@ -71,11 +80,12 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertEqual(self.tradeControl.get_store("blaaa"), None)
         self.tradeControl.close_store("myStore")
 
+    @logger
     def test_get_products_by(self):
         store1 = self.tradeControl.open_store("myStore")
         store2 = self.tradeControl.open_store("myStore2")
-        store1.add_products_to_store([("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)])
-        store2.add_products_to_store([("Chair", 125, "Furniture", 5)])
+        store1.add_products([("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)])
+        store2.add_products([("Chair", 125, "Furniture", 5)])
         ls = self.tradeControl.get_products_by(1, "Chair")
         self.assertEqual(len(ls), 2)
         ls = self.tradeControl.get_products_by(2, "o")
@@ -85,6 +95,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.close_store("myStore")
         self.tradeControl.close_store("myStore2")
 
+    @logger
     def test_next_purchase_id(self):
         id1 = (TradeControl.get_instance()).get_next_purchase_id()
         id2 = (TradeControl.get_instance()).get_next_purchase_id()
@@ -94,6 +105,9 @@ class TradeControlTestCase(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def __repr__(self):
+        return repr ("TradeControlTestCase")
 
 
 if __name__ == '__main__':

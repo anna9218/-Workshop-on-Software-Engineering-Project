@@ -1,17 +1,20 @@
 import unittest
 
+from src.Logger import logger
 from src.main.DomainLayer.ShoppingCart import ShoppingCart
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubStore import StubStore
 
 
 class ShoppingCartTests(unittest.TestCase):
+    @logger
     def setUp(self):
         self.__shopping_cart = ShoppingCart()
         self.__product = StubProduct()
         self.__store = StubStore()
         self.__product_ls_to_add = [self.__product, self.__store, 1]  # products_stores_quantity_ls
 
+    @logger
     def test_add_products(self):
         self.__shopping_cart.add_products([self.__product_ls_to_add])
         # check products were added
@@ -24,6 +27,7 @@ class ShoppingCartTests(unittest.TestCase):
                         tmp_result = True
                 self.assertTrue(tmp_result)
 
+    @logger
     def test_remove_product(self):
         self.__shopping_cart.add_products([self.__product_ls_to_add])
         self.__shopping_cart.remove_product(self.__product)
@@ -31,6 +35,7 @@ class ShoppingCartTests(unittest.TestCase):
             if store_basket[0].get_name() == self.__store.get_name():  # if its the same store
                 self.assertNotIn(self.__product, store_basket[1])
 
+    @logger
     def test_update_quantity(self):
         self.__shopping_cart.add_products([self.__product_ls_to_add])
         self.__shopping_cart.update_quantity(self.__product, 5)
@@ -45,3 +50,6 @@ class ShoppingCartTests(unittest.TestCase):
 
     if __name__ == '__main__':
         unittest.main()
+
+    def __repr__(self):
+        return repr ("ShoppingCartTests")
