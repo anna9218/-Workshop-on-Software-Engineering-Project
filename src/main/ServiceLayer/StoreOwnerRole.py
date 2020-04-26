@@ -39,6 +39,11 @@ class StoreOwnerRole:
         """
         subscriber = self.get_subscriber(user_nickname)
         store = self.get_store(store_name)
+
+        for product_name in products_names:
+            if not store.get_product(product_name):
+                return False
+
         if store is not None and \
                 subscriber is not None and \
                 (store.is_owner(user_nickname)
@@ -72,11 +77,6 @@ class StoreOwnerRole:
         return False
 
     @logger
-    # TODO: use case 4.2 - edit purchase and discount policies
-    def edit_purchase_and_discount_policies(self):
-        pass
-
-    @logger
     # use case 4.3
     def appoint_additional_owner(self, nickname, store_name):
         """
@@ -93,10 +93,11 @@ class StoreOwnerRole:
             return store.add_owner(subscriber)
         return None
 
-    @logger
+    # @logger
     # use case 4.5
     def appoint_store_manager(self, manager_nickname, store_name, permissions):
         """
+        :param appointer:
         :param manager_nickname: new manager's nickname
         :param store_name: store's name
         :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
@@ -104,12 +105,14 @@ class StoreOwnerRole:
         """
         subscriber = self.get_subscriber(manager_nickname)
         store = self.get_store(store_name)
-        if (subscriber is not None and \
-                store is not None and \
-                self.__store_owner.is_registered() and \
-                store.is_owner(self.__store_owner.get_nickname()) and \
-                not store.is_owner(manager_nickname) and not store.is_manager(manager_nickname)):
-            return store.add_manager(subscriber, permissions, self.__store_owner)
+        if subscriber is not None:
+            if store is not None:
+                if self.__store_owner.is_registered():
+                    # if (store.is_owner(self.__store_owner.get_nickname()) or
+                    #         store.is_manager(self.__store_owner.get_nickname)):
+                    if not store.is_owner(manager_nickname):
+                        if not store.is_manager(manager_nickname):
+                            return store.add_manager(subscriber, permissions, self.__store_owner)
         return False
 
     @logger
@@ -117,13 +120,13 @@ class StoreOwnerRole:
     def edit_manager_permissions(self, store_name, manager_nickname, permissions):
         manager = self.get_subscriber(manager_nickname)
         store = self.get_store(store_name)
-        if manager is not None and \
-                store is not None and \
-                self.__store_owner.is_registered() and \
-                self.__store_owner.is_logged_in() and \
-                store.is_owner(self.__store_owner.get_nickname()) and \
-                store.is_manager(manager_nickname):
-            return store.edit_manager_permissions(manager, permissions, self.__store_owner)
+        if manager is not None:
+            if store is not None:
+                if self.__store_owner.is_registered():
+                    if self.__store_owner.is_logged_in():
+                        if store.is_manager(manager_nickname):
+                            # if store.is_owner(self.__store_owner.get_nickname()):
+                            return store.edit_manager_permissions(manager, permissions, self.__store_owner)
         return False
 
     @logger
@@ -131,13 +134,13 @@ class StoreOwnerRole:
     def remove_manager(self, store_name, manager_nickname, permissions):
         manager = self.get_subscriber(manager_nickname)
         store = self.get_store(store_name)
-        if manager is not None and \
-                store is not None and \
-                self.__store_owner.is_registered() and \
-                self.__store_owner.is_logged_in() and \
-                store.is_owner(self.__store_owner.get_nickname()) and \
-                store.is_manager(manager_nickname):
-            return store.remove_manager(manager, self.__store_owner)
+        if manager is not None:
+                if store is not None:
+                    if self.__store_owner.is_registered():
+                        if self.__store_owner.is_logged_in():
+                            if store.is_manager(manager_nickname):
+                                # store.is_owner(self.__store_owner.get_nickname()) and \
+                                return store.remove_manager(manager, self.__store_owner)
         return False
 
     @logger

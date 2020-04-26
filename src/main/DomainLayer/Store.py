@@ -153,8 +153,6 @@ class Store:
         :param appointer: store's owner that appoints the subscriber as manager
         :return:
         """
-        if not self.is_owner(appointer.get_nickname()):
-            return False
         self.__StoreManagerAppointments.append(StoreManagerAppointment(future_manager, permissions, appointer))
         return True
 

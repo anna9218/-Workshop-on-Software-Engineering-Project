@@ -29,24 +29,26 @@ class StoreManagerRole(StoreOwnerRole):
 
     @logger
     # use 4.1.3
-    def edit_product(self, nickcame, store_name, product_name, op, new_value) -> bool:
+    def edit_product(self, nickname, store_name, product_name, op, new_value) -> bool:
         if self.has_permission(ManagerPermission.EDIT_INV, store_name, self.__manager.get_nickname()):
-            return self.owner_role.edit_product(self, nickcame, store_name, product_name, op, new_value)
+            return self.owner_role.edit_product(nickname, store_name, product_name, op, new_value)
         return False
 
-    @logger
-    # use case 4.2
-    def edit_purchase_and_discount_policies(self, store_name):
-        if self.has_permission(ManagerPermission.EDIT_POLICIES, store_name, self.__manager.get_nickname()):
-            return self.owner_role.edit_purchase_and_discount_policies()
-        return False
+    """ Not in this version."""
+    # @logger
+    # # use case 4.2
+    # def edit_purchase_and_discount_policies(self, store_name):
+    #     if self.has_permission(ManagerPermission.EDIT_POLICIES, store_name, self.__manager.get_nickname()):
+    #         return self.owner_role.edit_purchase_and_discount_policies()
+    #     return False
 
-    @logger
-    # use case 4.3
-    def appoint_additional_owner(self, nickname_to_add, store_name):
-        if self.has_permission(ManagerPermission.APPOINT_OWNER, store_name, self.__manager.get_nickname()):
-            return self.owner_role.appoint_additional_owner(nickname_to_add, store_name)
-        return False
+    " Only another owner can appoint another owner"
+    # @logger
+    # # use case 4.3
+    # def appoint_additional_owner(self, nickname_to_add, store_name):
+    #     if self.has_permission(ManagerPermission.APPOINT_OWNER, store_name, self.__manager.get_nickname()):
+    #         return self.owner_role.appoint_additional_owner(nickname_to_add, store_name)
+    #     return False
 
     @logger
     # use case 4.5
@@ -64,9 +66,9 @@ class StoreManagerRole(StoreOwnerRole):
 
     @logger
     # use case 4.7
-    def remove_manager(self, store_name, manager_nickname):
+    def remove_manager(self, store_name, manager_nickname, permissions):
         if self.has_permission(ManagerPermission.DEL_MANAGER, store_name, self.__manager.get_nickname()):
-            return self.owner_role.remove_manager(store_name, manager_nickname)
+            return self.owner_role.remove_manager(store_name, manager_nickname, permissions)
         return False
 
     @logger
@@ -74,11 +76,15 @@ class StoreManagerRole(StoreOwnerRole):
     def display_store_purchases(self, nickname, store_name):
         return self.owner_role.display_store_purchases(nickname, store_name)
 
+    @logger
     def has_permission(self, permission, store_name, manager_nickname):
-        for p in TradeControl.get_instance().get_store(store_name).get_permissions(manager_nickname):
-            if ManagerPermission(p).value == permission.value:
-                return True
-            return False
+        store = (TradeControl.get_instance().get_store(store_name))
+        if store:
+            lst = store.get_permissions(manager_nickname)
+            for p in lst:
+                if ManagerPermission(p).value == permission.value:
+                    return True
+        return False
 
 
     # def has_permission(self, permission, store_name, manager_nickname):

@@ -34,14 +34,14 @@ class StoreManagerRoleTests(unittest.TestCase):
 
         self.__store_manager = StoreManagerRole(self.__user, self.__store_name)
 
-        self.__store_owner.appoint_store_manager("Anna", self.__store_name, [ManagerPermission.EDIT_INV])
+        self.__store_owner.appoint_store_manager("Anna", self.__store_name, [n for n in ManagerPermission])
 
-        # self.__additional_owner = StubUser()
-        # self.__additional_owner.register("Mooncake", "chookity")
-        # (TradeControl.get_instance()).subscribe(self.__additional_owner)
-        # self.__additional_manager = StubUser()
-        # self.__additional_manager.register("Gary", "cookie")
-        # (TradeControl.get_instance()).subscribe(self.__additional_manager)
+        (TradeControl.get_instance()).get_subscribers().insert(0, self.__user)
+
+        self.__additional_manager = StubUser()
+        self.__additional_manager.register("Gary", "cookie")
+        (TradeControl.get_instance()).subscribe(self.__additional_manager)
+        self.__store_manager.appoint_store_manager("Anna", self.__store_name, [n for n in ManagerPermission])
 
     @logger
     def test_add_products(self):
@@ -59,45 +59,68 @@ class StoreManagerRoleTests(unittest.TestCase):
         self.__inventory = self.__store.get_inventory()
         self.assertEqual(1, self.__inventory.len())
 
-        self.__store_manager.remove_products(self.__nickname, self.__store_name, ["Yummy bone"])
+        result = self.__store_manager.remove_products(self.__nickname, self.__store_name, ["Chewy toy"])
+        self.assertTrue(result)
         self.assertEqual(0, self.__inventory.len())
+
+        result = self.__store_manager.remove_products(self.__nickname, self.__store_name, ["Chewy toy"])
+        self.assertFalse(result)
 
     @logger
     def test_edit_product(self):
         self.__store_manager.add_products(self.__store_name, self.__product_details)
-        self.__store_manager
+        result = self.__store_manager.edit_product(self.__user.get_nickname(), self.__store_name, self.__product_name,
+                                                   "name", "Rainbow Chair")
 
-    @logger
-    def test_edit_purchase_and_discount_policies(self):
-        # TODO
-        pass
+        self.assertTrue(result)
 
-    @logger
-    def test_appoint_additional_owner(self):
-        # TODO
-        pass
+        self.__inventory = self.__store.get_inventory()
+        for record in self.__inventory:
+            if record[0].get_name() == "Rainbow Chair":
+                self.assertEqual(record[0].get_price(), 80)
+                self.assertEqual(record[0].get_category(), "Pet toy")
+                self.assertEqual(record[1], 10)
 
-    @logger
     def test_appoint_store_manager(self):
-        # TODO
-        pass
+        eytan: User = User()
+        eytan.register("eytan", "eytan's password")
+        TradeControl.get_instance().get_subscribers().insert(0, eytan)
 
-    @logger
+        # All Valid.
+        result = self.__store_manager.appoint_store_manager(eytan.get_nickname(), self.__store_name,
+                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])
+        # self.assertTrue(result)
+
+        # store_name unValid.
+        result = self.__store_manager.appoint_store_manager(eytan.get_nickname(), "self.__store_name",
+                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])
+        self.assertFalse(result)
+
+        # username unValid.
+        result = self.__store_manager.appoint_store_manager("eytan.get_nickname()", self.__store_name,
+                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])
+        self.assertFalse(result)
+
     def test_edit_manager_permissions(self):
-        # TODO
-        pass
+        result = self.__store_manager.edit_manager_permissions(self.__store_name, "Gary", [])
+        #self.assertTrue(result)
 
-    @logger
+        result = self.__store_manager.edit_manager_permissions(self.__store_name, "Mooncake", [])
+        self.assertFalse(result)
+
     def test_remove_manager(self):
-        # TODO
-        pass
+        self.__store_owner.appoint_store_manager("Gary", self.__store_name, [9, 10])
 
-    @logger
+        result = self.__store_manager.remove_manager(self.__store_name, "Gary", [9, 10])
+        #self.assertTrue(result)
+
+        result = self.__store_manager.remove_manager(self.__store_name, "Gary", [9, 10])
+        self.assertFalse(result)
+
     def test_display_store_purchases(self):
-        # TODO
-        pass
+        result = self.__store_manager.display_store_purchases(self.__nickname, self.__store_name)
+        self.assertEqual([], result)  # currently empty
 
-    @logger
     def tearDown(self):
         self.__store.get_inventory().set_inventory([])
 
