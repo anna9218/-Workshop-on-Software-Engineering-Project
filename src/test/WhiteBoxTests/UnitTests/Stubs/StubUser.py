@@ -9,7 +9,8 @@ class StubUser(User):
         self.__password = ""
 
     def register(self, username, password):
-        self
+        self.__nickname = username
+        self.__password = password
 
     def get_trade_control(self):
         return self.get_trade_control()
@@ -29,3 +30,9 @@ class StubUser(User):
     def set_password_and_nickname(self, name, password):
         self.__nickname = name
         self.__password = password
+
+    def is_registered(self):
+        return True
+
+    def is_logged_in(self):
+        return True

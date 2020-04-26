@@ -38,7 +38,7 @@ class StoreOwnerRole:
         """
         subscriber = self.get_subscriber(user_nickname)
         store = self.get_store(store_name)
-        if store is None and \
+        if store is not None and \
                 subscriber is not None and\
                 store.is_owner(user_nickname) and \
                 subscriber.is_registered() and \

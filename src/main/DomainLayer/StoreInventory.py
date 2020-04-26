@@ -14,8 +14,20 @@ class StoreInventory:
                           lambda keyword: list(filter(lambda product: keyword in product.get_name(), [x[0] for x in self.__inventory])),
                           lambda category: list(filter(lambda product: product.get_category() == category, [x[0] for x in self.__inventory]))]
 
+    def __iter__(self):
+        self.__i = 0
+        return self
+
+    def __next__(self):
+        while self.__i < len(self.__inventory):
+            x = self.__inventory[self.__i]
+            self.__i += 1
+            return x
+        else:
+            raise StopIteration
+
     @logger
-    def add_product(self, product: Product, amount) -> bool:
+    def add_product(self, product: Product, amount: int) -> bool:
         """
         :param product: Product
         :param amount: amount of product
@@ -116,6 +128,12 @@ class StoreInventory:
             if int(amount_in_stock) >= requested_amount:
                 return True
         return False
- 
+
+    def get_inventory(self):
+        return self.__inventory
+
+    def set_inventory(self, new_inventory):
+        self.__inventory = new_inventory
+
     def __repr__(self):
         return repr("StoreInventory")
