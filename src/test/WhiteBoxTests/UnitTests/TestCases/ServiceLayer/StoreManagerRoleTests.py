@@ -1,5 +1,6 @@
 import unittest
 
+from src.Logger import logger
 from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.ServiceLayer.StoreManagerRole import StoreManagerRole
 from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
@@ -8,6 +9,7 @@ from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
 
 
 class StoreManagerRoleTests(unittest.TestCase):
+    @logger
     def setUp(self):
         self.__nickname = "Tinka"
         self.__store_name = "Bones"
@@ -41,11 +43,13 @@ class StoreManagerRoleTests(unittest.TestCase):
         # self.__additional_manager.register("Gary", "cookie")
         # (TradeControl.get_instance()).subscribe(self.__additional_manager)
 
+    @logger
     def test_add_products(self):
         result = self.__store_manager.add_products(self.__store_name, self.__product_details)
         self.assertTrue(result)  # bug - need to find a way to compare 2 enums for permission
 
 
+    @logger
     def test_remove_products(self):
         # add products (there are 2), remove 1, check amount in inventory, remove another one and check
         self.__store_manager.add_products(self.__store_name, self.__product_details)
@@ -58,34 +62,42 @@ class StoreManagerRoleTests(unittest.TestCase):
         self.__store_manager.remove_products(self.__nickname, self.__store_name, ["Yummy bone"])
         self.assertEqual(0, self.__inventory.len())
 
+    @logger
     def test_edit_product(self):
         self.__store_manager.add_products(self.__store_name, self.__product_details)
         self.__store_manager
 
+    @logger
     def test_edit_purchase_and_discount_policies(self):
         # TODO
         pass
 
+    @logger
     def test_appoint_additional_owner(self):
         # TODO
         pass
 
+    @logger
     def test_appoint_store_manager(self):
         # TODO
         pass
 
+    @logger
     def test_edit_manager_permissions(self):
         # TODO
         pass
 
+    @logger
     def test_remove_manager(self):
         # TODO
         pass
 
+    @logger
     def test_display_store_purchases(self):
         # TODO
         pass
 
+    @logger
     def tearDown(self):
         self.__store.get_inventory().set_inventory([])
 
