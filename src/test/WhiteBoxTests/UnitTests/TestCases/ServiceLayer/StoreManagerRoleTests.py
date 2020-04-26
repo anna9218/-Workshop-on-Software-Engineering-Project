@@ -45,5 +45,8 @@ class StoreManagerRoleTests(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def __repr__(self):
+        return repr ("StoreManagerRoleTests")
+
     if __name__ == '__main__':
         unittest.main()
