@@ -124,7 +124,7 @@ class StoreOwnerRole:
             if store is not None:
                 if self.__store_owner.is_registered():
                     if self.__store_owner.is_logged_in():
-                        if store.is_manager(manager_nickname):
+                        if TradeControl.get_instance().is_manager(manager_nickname):
                             # if store.is_owner(self.__store_owner.get_nickname()):
                             return store.edit_manager_permissions(manager, permissions, self.__store_owner)
         return False
