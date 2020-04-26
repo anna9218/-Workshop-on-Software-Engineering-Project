@@ -1,4 +1,7 @@
+from src.main.DomainLayer.Purchase import Purchase
 from src.main.DomainLayer.User import User
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
+from datetime import datetime as date_time
 
 
 class StubUser(User):
@@ -7,6 +10,17 @@ class StubUser(User):
         # super().__init__()
         self.__nickname = ""
         self.__password = ""
+        self.__loginState = StubLogin()
+        self.__accepted_purchases = [Purchase(35, 1, 29.99, "Some Store", "anna9218")]
+
+    def login(self, nickname, password):
+        return self.__loginState.login(nickname, password)
+
+    def logout(self):
+        if self.is_logged_in():
+            self.__loginState.set_login(False)
+            return True
+        return False
 
     def register(self, username, password):
         self.__nickname = username
@@ -35,4 +49,8 @@ class StubUser(User):
         return True
 
     def is_logged_in(self):
-        return True
+        return self.__loginState.is_logged_in()
+
+    def get_accepted_purchases(self):
+        return self.__accepted_purchases
+
