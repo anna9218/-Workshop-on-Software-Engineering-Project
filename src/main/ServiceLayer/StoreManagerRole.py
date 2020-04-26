@@ -17,7 +17,7 @@ class StoreManagerRole(StoreOwnerRole):
     # use case 4.1.1
     def add_products(self, store_name, products_details):
         if self.has_permission(ManagerPermission.EDIT_INV, store_name, self.__manager.get_nickname()):
-            return self.owner_role.add_products(store_name, store_name, products_details)
+            return self.owner_role.add_products(self.__manager.get_nickname(), store_name, products_details)
         return False
 
     @logger
@@ -29,9 +29,9 @@ class StoreManagerRole(StoreOwnerRole):
 
     @logger
     # use 4.1.3
-    def edit_product(self, nickcname, store_name, product_name, op, new_value) -> bool:
+    def edit_product(self, nickcame, store_name, product_name, op, new_value) -> bool:
         if self.has_permission(ManagerPermission.EDIT_INV, store_name, self.__manager.get_nickname()):
-            return self.owner_role.edit_product(self, nickcname, store_name, product_name, op, new_value)
+            return self.owner_role.edit_product(self, nickcame, store_name, product_name, op, new_value)
         return False
 
     @logger
@@ -51,7 +51,7 @@ class StoreManagerRole(StoreOwnerRole):
     @logger
     # use case 4.5
     def appoint_store_manager(self, manager_nickname, store_name, permissions):
-        if self.has_permission(ManagerPermission.APPOINT_MAMAGER, store_name, self.__manager.get_nickname()):
+        if self.has_permission(ManagerPermission.APPOINT_MANAGER, store_name, self.__manager.get_nickname()):
             return self.owner_role.appoint_store_manager(manager_nickname, store_name, permissions)
         return False
 
@@ -75,7 +75,11 @@ class StoreManagerRole(StoreOwnerRole):
         return self.owner_role.display_store_purchases(nickname, store_name)
 
     def has_permission(self, permission, store_name, manager_nickname):
-        return permission in TradeControl.get_instance().get_store(store_name).get_permissions(manager_nickname)
+        for p in TradeControl.get_instance().get_store(store_name).get_permissions(manager_nickname):
+            if ManagerPermission(p).value == permission.value:
+                return True
+            return False
+
 
     # def has_permission(self, permission, store_name, manager_nickname):
     #     result = False
