@@ -6,7 +6,7 @@ class ManagerPermission(Enum):
     EDIT_POLICIES = 2
     APPOINT_OWNER = 3
     DEL_OWNER = 4  # you can delete only the one's you appoint
-    APPOINT_MAMAGER = 5
+    APPOINT_MANAGER = 5
     EDIT_MANAGER_PER = 6
     DEL_MANAGER = 7
     CLOSE_STORE = 8

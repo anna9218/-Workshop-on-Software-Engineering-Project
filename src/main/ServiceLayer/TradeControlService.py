@@ -21,6 +21,5 @@ class TradeControlService:
                 return TradeControl.get_instance().add_sys_manager(TradeControl.get_instance().get_subscriber("TradeManager"))
         return False
 
-
     def __repr__(self):
         return repr("TradeControlService")

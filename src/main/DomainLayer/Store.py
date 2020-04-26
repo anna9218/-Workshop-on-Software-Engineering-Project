@@ -158,11 +158,11 @@ class Store:
         self.__StoreManagerAppointments.append(StoreManagerAppointment(future_manager, permissions, appointer))
         return True
 
-    # def get_permissions(self, manager_nickname):
-    #     for appointment in self.__StoreManagerAppointments:
-    #         if appointment.get_manager().get_nickname() == manager_nickname:
-    #             return appointment.get_permissions()
-    #     return None
+    def get_permissions(self, manager_nickname):
+        for appointment in self.__StoreManagerAppointments:
+            if appointment.get_manager().get_nickname() == manager_nickname:
+                return appointment.get_permissions()
+        return None
 
     @logger
     def get_info(self):

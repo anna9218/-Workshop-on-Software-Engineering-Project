@@ -21,7 +21,8 @@ class StoreOwnerRole:
         """
         subscriber = self.get_subscriber(user_nickname)
         store = self.get_store(store_name)
-        if store is not None and subscriber is not None and store.is_owner(user_nickname) and \
+        if store is not None and subscriber is not None and (store.is_owner(user_nickname)
+                                                             or store.is_manager(user_nickname)) and \
                 subscriber.is_registered() and subscriber.is_logged_in():
             store.add_products(products_details)
             return True
@@ -39,8 +40,9 @@ class StoreOwnerRole:
         subscriber = self.get_subscriber(user_nickname)
         store = self.get_store(store_name)
         if store is not None and \
-                subscriber is not None and\
-                store.is_owner(user_nickname) and \
+                subscriber is not None and \
+                (store.is_owner(user_nickname)
+                 or store.is_manager(user_nickname)) and \
                 subscriber.is_registered() and \
                 subscriber.is_logged_in():
             store.remove_products(products_names)
@@ -54,7 +56,8 @@ class StoreOwnerRole:
         store = self.get_store(store_name)
         if store is not None and \
                 subscriber is not None and \
-                store.is_owner(nickname) and \
+                (store.is_owner(nickname)
+                 or store.is_manager(nickname)) and \
                 subscriber.is_registered() and \
                 subscriber.is_logged_in():
             if op == "name":
@@ -101,12 +104,11 @@ class StoreOwnerRole:
         """
         subscriber = self.get_subscriber(manager_nickname)
         store = self.get_store(store_name)
-        if subscriber is not None and \
+        if (subscriber is not None and \
                 store is not None and \
                 self.__store_owner.is_registered() and \
                 store.is_owner(self.__store_owner.get_nickname()) and \
-                not store.is_owner(manager_nickname) and \
-                not store.is_manager(manager_nickname):
+                not store.is_owner(manager_nickname) and not store.is_manager(manager_nickname)):
             return store.add_manager(subscriber, permissions, self.__store_owner)
         return False
 
