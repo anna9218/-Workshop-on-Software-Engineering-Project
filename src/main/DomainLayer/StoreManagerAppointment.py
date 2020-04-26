@@ -31,6 +31,9 @@ class StoreManagerAppointment:
     def get_appointer(self):
         return self.__appointer
 
+    def get_appointee(self):
+        return self.__appointee
+
     def __repr__(self):
         return repr("StoreManagerAppointment")
 
