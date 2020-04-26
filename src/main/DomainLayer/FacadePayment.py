@@ -63,7 +63,7 @@ class FacadePayment:
         if type(date) != date_time:
             return False
 
-        if len(name) == 0 or len(credit) == 0 or (date_time.today().date() > date) or amount <= 0:
+        if len(name) == 0 or len(credit) == 0 or (date_time.today().date() > date.date()) or amount <= 0:
             return False
         else:
             return True
