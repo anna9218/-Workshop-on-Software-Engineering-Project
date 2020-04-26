@@ -1,4 +1,5 @@
 # from src.main.DomainLayer import Purchase
+from src.Logger import logger
 from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.Purchase import Purchase
 from src.main.DomainLayer.StoreInventory import StoreInventory
@@ -17,6 +18,7 @@ class Store:
         # self.__rate = 0 TODO - for search 2.5
         self.__purchases = []
 
+    @logger
     def add_products(self, products_details) -> bool:
         """
         :param products_details: list of tuples (product_name, product_price, product_category, product_amount)
@@ -31,6 +33,7 @@ class Store:
                            products_details))
         return False not in results
 
+    @logger
     def add_product(self, name, price, category, amount) -> bool:
         """
         :param name: name of the new product
@@ -46,6 +49,7 @@ class Store:
 
         return self.__inventory.add_product(Product(name, price, category), amount)
 
+    @logger
     def remove_products(self, products_names):
         """
         :param products_names: products to delete from inventory (assume they exists on inventory)
@@ -54,6 +58,7 @@ class Store:
         results = list(map(lambda p_name: self.remove_product(p_name), products_names))
         return False not in results
 
+    @logger
     def remove_product(self, product_name) -> bool:
         """
         :param product_name: product's name to delete from inventory
@@ -62,6 +67,7 @@ class Store:
         # assume the product exists on inventory
         return self.__inventory.remove_product(product_name)
 
+    @logger
     def change_price(self, product_name, new_price) -> bool:
         """
        :param product_name: product
@@ -77,6 +83,7 @@ class Store:
             return True
         return False
 
+    @logger
     def change_name(self, product_name, new_name) -> bool:
         """
         :param product_name: product
@@ -89,6 +96,7 @@ class Store:
             return True
         return False
 
+    @logger
     def change_amount(self, product_name, amount: int) -> bool:
         """
        :param product_name: product
@@ -100,6 +108,7 @@ class Store:
             return self.__inventory.change_amount(product_name, amount)
         return False
 
+    @logger
     def add_owner(self, owner: User):
         for o in self.__owners:
             if o.get_nickname() == owner.get_nickname():
@@ -107,16 +116,20 @@ class Store:
         self.__owners.append(owner)
         return True
 
+    @logger
     def is_owner(self, user_nickname):
         return user_nickname in [owner.get_nickname() for owner in self.__owners]
 
+    @logger
     def is_manager(self, user_nickname):
         return user_nickname in [appointment.get_manager().get_nickname() for appointment in self.__StoreManagerAppointments]
 
+    @logger
     # eden added
     def get_products_by(self, opt, string):
         return self.__inventory.get_products_by(opt, string)
 
+    @logger
     # eden added
     def get_product(self, product_name):
         return self.__inventory.get_product(product_name)
@@ -126,12 +139,13 @@ class Store:
     #         if p == purchase:  # TODO - how do we compare purchases?
     #             return p
 
-    def print_inventory(self):
-        f"The products of store {self.__name}:"
-        i = 0
-        for name, p in self.__inventory:
-            f"For {name} press {i}" #TODO- check if contains \n
+    # def print_inventory(self):
+    #     f"The products of store {self.__name}:"
+    #     i = 0
+    #     for name, p in self.__inventory:
+    #         f"For {name} press {i}" #TODO- check if contains \n
 
+    @logger
     def add_manager(self, future_manager: User, permissions, appointer: User):
         """
         :param future_manager: subscriber to appoint as manager
@@ -150,6 +164,7 @@ class Store:
     #             return appointment.get_permissions()
     #     return None
 
+    @logger
     def get_info(self):
         if not self.__StoreManagerAppointments:  # empty list
             return "Store owners: %s" % (str(self.__owners.strip('[]')))
@@ -157,6 +172,7 @@ class Store:
             if len(self.__StoreManagerAppointments) > 0:  # one manager exists
                 return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
 
+    @logger
     def is_in_store_inventory(self, amount_per_product):
         """
         :param amount_per_product: [product name : str, amount:int]
@@ -170,6 +186,7 @@ class Store:
                 return False
         return True
 
+    @logger
     def check_purchase_policy(self, amount_per_product: [], username: str) -> float:
         """
         This function should check if the user can/can't complete the purchase.
@@ -194,6 +211,7 @@ class Store:
 
         return total_price
 
+    @logger
     def calc_discount(self, amount_per_product: [], price: float, username: str):
         """
         This function should check if the user can/can't complete the purchase.
@@ -206,21 +224,27 @@ class Store:
         """
         return price
 
+    @logger
     def empty_inventory(self):
         return self.__inventory.len() == 0
 
+    @logger
     def get_inventory(self):
         return self.__inventory
 
+    @logger
     def get_name(self):
         return self.__name
 
+    @logger
     def get_owners(self):
         return self.__owners
 
+    @logger
     def get_managers(self):
         return [t[0] for t in self.__StoreManagerAppointments]
 
+    @logger
     def edit_manager_permissions(self, manager: User, permissions, appointer: User):
         for appointment in self.__StoreManagerAppointments:
             if appointment.get_manager().get_nickname() == manager.get_nickname() and \
@@ -231,6 +255,7 @@ class Store:
                 return True
         return False
 
+    @logger
     def remove_manager(self, manager: User, appointer: User):
         for appointment in self.__StoreManagerAppointments:
             if appointment.get_manager().get_nickname() == manager.get_nickname() and \
@@ -239,9 +264,11 @@ class Store:
                 return True
         return False
 
+    @logger
     def get_store_manager_appointments(self):
         return self.__StoreManagerAppointments
 
+    @logger
     def get_purchases(self):
         return self.__purchases
 
@@ -251,7 +278,10 @@ class Store:
     #     for name, p in self.__inventory:
     #         f"For {name} press {i}" #TODO- check if contains \n
 
+    @logger
     def add_purchase(self, purchase: Purchase):
         self.__purchases.insert(0, purchase)
 
 
+    def __repr__(self):
+        return repr("Store")

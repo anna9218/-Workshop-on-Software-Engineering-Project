@@ -1,3 +1,4 @@
+from src.Logger import logger
 from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.User import User
 
@@ -13,17 +14,25 @@ class StoreManagerAppointment:
         # self.__owned_stores = []
         # # pairs of (store, permissions)
         # self.__manage_stores = []
+
+    @logger
     def set_permissions(self, permissions):
         self.__permissions = permissions
 
+    @logger
     def get_manager(self):
         return self.__appointee
 
+    @logger
     def get_permissions(self):
         return self.__permissions
 
+    @logger
     def get_appointer(self):
         return self.__appointer
+
+    def __repr__(self):
+        return repr("StoreManagerAppointment")
 
     # def appoint_owner(self, appointer, appointee, store) -> bool:
     #     # in case he is the one who opened the store

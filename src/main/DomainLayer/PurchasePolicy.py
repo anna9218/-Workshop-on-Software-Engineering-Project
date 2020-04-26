@@ -1,3 +1,4 @@
+from src.Logger import logger
 from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.UserType import UserType
 
@@ -8,6 +9,7 @@ class PurchasePolicy:
         """-> list of ([user_type: UserType, price: float, list of [product: Product, amount: int]] """
         self.__disallowed_purchases = list()
 
+    @logger
     def add_disallowed_purchasing(self, disallowed_purchase: list):
         if type(disallowed_purchase) != [UserType, Product, list]:
             return
@@ -18,7 +20,11 @@ class PurchasePolicy:
             return
         self.__disallowed_purchases.insert(0, disallowed_purchase)
 
+    @logger
     def can_purchase(self, amount_per_product_per_user_type: []):
         if amount_per_product_per_user_type in self.__disallowed_purchases:
             return False
         return True
+
+    def __repr__(self):
+        return repr("PurchasePolicy")

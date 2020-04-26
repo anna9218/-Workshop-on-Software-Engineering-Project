@@ -1,5 +1,6 @@
 import unittest
 
+from src.Logger import logger
 from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.Purchase import Purchase
 from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
@@ -10,6 +11,7 @@ from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class StoreOwnerRoleTests(unittest.TestCase):
+    @logger
     def setUp(self):
         self.__nickname = "anna_anna"
         self.__store_name = "Bambook"
@@ -36,6 +38,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
         else:
             self.__store: Store = (TradeControl.get_instance()).get_store(self.__store_name)
 
+    @logger
     def test_add_products(self):
         # product_details = (product_name, product_price, product_amounts, product_category)
         result = self.__store_owner.add_products(self.__nickname, self.__store_name, self.__product_details)
@@ -50,6 +53,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
                     self.assertEqual(record[0].get_category(), product_record[2])
                     self.assertEqual(record[1], product_record[3])
 
+    @logger
     def test_remove_products(self):
         self.__store_owner.add_products(self.__nickname, self.__store_name, self.__product_details)
         result = self.__store_owner.remove_products(self.__nickname, self.__store_name, self.__product_to_remove)
@@ -61,6 +65,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
         self.__store_owner.remove_products(self.__nickname, self.__store_name, ["Sofa"])
         self.assertEqual(0, self.__inventory.len())
 
+    @logger
     def test_edit_product(self):
         self.__store_owner.add_products(self.__nickname, self.__store_name, self.__product_details)
         result = self.__store_owner.edit_product(self.__nickname, self.__store_name, self.__product_name, "name", "Rainbow Chair")
@@ -76,6 +81,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
     # def test_edit_purchase_and_discount_policies(self):
     #     pass
 
+    @logger
     def test_appoint_additional_owner(self):
         result = self.__store_owner.appoint_additional_owner("Mooncake", self.__store_name)
         self.assertTrue(result)
@@ -83,6 +89,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
         result = self.__store_owner.appoint_additional_owner("Moon", self.__store_name)
         self.assertFalse(result)
 
+    @logger
     def test_appoint_store_manager(self):
         result = self.__store_owner.appoint_store_manager("Gary", self.__store_name, [9, 10])
         self.assertTrue(result)
@@ -90,6 +97,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
         result = self.__store_owner.appoint_additional_owner("Moon", self.__store_name)
         self.assertFalse(result)
 
+    @logger
     def test_edit_manager_permissions(self):
         result = self.__store_owner.edit_manager_permissions(self.__store_name, "Gary", [])
         self.assertTrue(result)
@@ -97,6 +105,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
         result = self.__store_owner.edit_manager_permissions(self.__store_name, "Mooncake", [])
         self.assertFalse(result)
 
+    @logger
     def test_remove_manager(self):
         self.__store_owner.appoint_store_manager("Gary", self.__store_name, [9, 10])
         result = self.__store_owner.remove_manager(self.__store_name, "Gary", [9, 10])
@@ -105,12 +114,17 @@ class StoreOwnerRoleTests(unittest.TestCase):
         result = self.__store_owner.remove_manager(self.__store_name, "Gary", [9, 10])
         self.assertFalse(result)
 
+    @logger
     def test_display_store_purchases(self):
         result = self.__store_owner.display_store_purchases(self.__nickname, self.__store_name)
         self.assertEqual([], result)  # currently empty
 
+    @logger
     def tearDown(self):
         self.__store.get_inventory().set_inventory([])
+
+    def __repr__(self):
+        return repr ("StoreOwnerRoleTests")
 
     if __name__ == '__main__':
         unittest.main()

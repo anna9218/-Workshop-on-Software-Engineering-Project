@@ -1,3 +1,4 @@
+from src.Logger import logger
 from src.main.DomainLayer.ShoppingBasket import ShoppingBasket
 
 
@@ -5,6 +6,7 @@ class ShoppingCart:
     def __init__(self):
         self.__shopping_baskets = []  # list of pairs (store, shopping basket) -> [ [store, shopping basket], ... ]
 
+    @logger
     def remove_product(self, product):
         for store_basket in self.__shopping_baskets:  # __shopping_baskets contains pairs of (store, basket)
             for product_amount in store_basket[1]:  # each basket contains pairs of (products amount)
@@ -15,6 +17,7 @@ class ShoppingCart:
                     return True
         return False
 
+    @logger
     def update_quantity(self, product, quantity):
         if self.is_product_in_cart(product):
             for store_basket in self.__shopping_baskets:
@@ -24,6 +27,7 @@ class ShoppingCart:
                         return True
         return False
 
+    @logger
     # Parameters: a list of products and their corresponding stores and quantities - [ [product, store, quantity], ... ]
     def add_products(self, products_stores_quantity_ls) -> bool:
         for product_store_quantity in products_stores_quantity_ls:
@@ -47,6 +51,7 @@ class ShoppingCart:
                 return True
         return False
 
+    @logger
     def get_shopping_baskets(self):
         return self.__shopping_baskets
 
@@ -55,3 +60,6 @@ class ShoppingCart:
     #         if store_basket[0].get_name() == store.get_name():
     #             return True
     #     return False
+
+    def __repr__(self):
+        return repr("ShoppingCart")

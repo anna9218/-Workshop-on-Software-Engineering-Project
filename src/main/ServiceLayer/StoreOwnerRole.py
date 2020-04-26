@@ -1,3 +1,4 @@
+from src.Logger import logger
 from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.User import User
 from src.main.DomainLayer.TradeControl import TradeControl
@@ -9,6 +10,7 @@ class StoreOwnerRole:
     def __init__(self, subscriber):
         self.__store_owner = subscriber
 
+    @logger
     # use case 4.1.1
     def add_products(self, user_nickname, store_name, products_details) -> bool:
         """
@@ -25,6 +27,7 @@ class StoreOwnerRole:
             return True
         return False
 
+    @logger
     # use 4.1.2
     def remove_products(self, user_nickname, store_name, products_names) -> bool:
         """
@@ -44,6 +47,7 @@ class StoreOwnerRole:
             return True
         return False
 
+    @logger
     # use 4.1.3
     def edit_product(self, nickname, store_name, product_name, op, new_value) -> bool:
         subscriber = self.get_subscriber(nickname)
@@ -64,10 +68,12 @@ class StoreOwnerRole:
             return True
         return False
 
+    @logger
     # TODO: use case 4.2 - edit purchase and discount policies
     def edit_purchase_and_discount_policies(self):
         pass
 
+    @logger
     # use case 4.3
     def appoint_additional_owner(self, nickname, store_name):
         """
@@ -84,6 +90,7 @@ class StoreOwnerRole:
             return store.add_owner(subscriber)
         return None
 
+    @logger
     # use case 4.5
     def appoint_store_manager(self, manager_nickname, store_name, permissions):
         """
@@ -103,6 +110,7 @@ class StoreOwnerRole:
             return store.add_manager(subscriber, permissions, self.__store_owner)
         return False
 
+    @logger
     # use case 4.6
     def edit_manager_permissions(self, store_name, manager_nickname, permissions):
         manager = self.get_subscriber(manager_nickname)
@@ -116,6 +124,7 @@ class StoreOwnerRole:
             return store.edit_manager_permissions(manager, permissions, self.__store_owner)
         return False
 
+    @logger
     # use case 4.7
     def remove_manager(self, store_name, manager_nickname, permissions):
         manager = self.get_subscriber(manager_nickname)
@@ -129,6 +138,7 @@ class StoreOwnerRole:
             return store.remove_manager(manager, self.__store_owner)
         return False
 
+    @logger
     # use case 4.10 - View store’s purchase history
     def display_store_purchases(self, nickname, store_name):
         """
@@ -148,11 +158,16 @@ class StoreOwnerRole:
             return store.get_purchases()
         return []
 
+    @logger
     def get_store(self, store_name):
         return TradeControl.get_instance().get_store(store_name)
 
+    @logger
     def get_subscriber(self, nickname):
         return TradeControl.get_instance().get_subscriber(nickname)
+
+    def __repr__(self):
+        return repr("StoreOwnerRole")
 
     # def check_if_owns_the_store(self, user_name, store_name) -> bool:
     #     user = TradeControl.get_instance().getUser(user_name)

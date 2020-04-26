@@ -1,5 +1,5 @@
+from src.Logger import logger
 from src.main.DomainLayer import Product
-
 
 class StoreInventory:
 
@@ -26,6 +26,7 @@ class StoreInventory:
         else:
             raise StopIteration
 
+    @logger
     def add_product(self, product: Product, amount: int) -> bool:
         """
         :param product: Product
@@ -44,12 +45,14 @@ class StoreInventory:
             self.__inventory.append((product, amount))
         return True
 
+    @logger
     def get_product(self, product_name):
         products_list = self.__fun_map[0](product_name)
         if len(products_list):
             return products_list[0]
         return None
 
+    @logger
     def get_products_by(self, opt, string):
         """
         :param opt: search option = 1-byName, 2- byKeyword, 3- byCategoru
@@ -59,6 +62,7 @@ class StoreInventory:
         ls = self.__fun_map[opt-1](string)
         return ls
 
+    @logger
     def remove_product(self, product_name):
         """
         :param product_name: product to delete from inventory
@@ -70,6 +74,7 @@ class StoreInventory:
                 return True
         return False
 
+    @logger
     def change_amount(self, product_name, new_amount) -> bool:
         """
         :param product_name: product name to edit
@@ -90,18 +95,21 @@ class StoreInventory:
                 return True
         return False
 
+    @logger
     def len(self):
         """
         :return: amount of products on inventory
         """
         return len(self.__inventory)
 
+    @logger
     def get_amount_of_product(self, product_name):
         for i in self.__inventory:
             if i[0].get_name() == product_name:
                 return i[1]
         return None
 
+    @logger
     def is_in_stock(self, product_name, requested_amount):
         """
         This function check if the product exist in the store inventory.
@@ -128,4 +136,4 @@ class StoreInventory:
         self.__inventory = new_inventory
 
     def __repr__(self):
-        return repr("There are " + str(len(self.__inventory)) + " products in inventory")
+        return repr("StoreInventory")

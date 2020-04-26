@@ -1,3 +1,4 @@
+from src.Logger import loggerStaticMethod
 from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
 from src.main.DomainLayer.FacadePayment import FacadePayment
 from src.main.DomainLayer.TradeControl import TradeControl
@@ -12,6 +13,7 @@ class TradeControlService:
     # use case 1.1
     @staticmethod
     def init_system():
+        loggerStaticMethod("init_system",[])
         if not FacadeDelivery.get_instance().is_connected() and not FacadePayment.get_instance().is_connected():
             FacadeDelivery.get_instance().connect()
             FacadePayment.get_instance().connect()
@@ -19,3 +21,6 @@ class TradeControlService:
                 return TradeControl.get_instance().add_sys_manager(TradeControl.get_instance().get_subscriber("TradeManager"))
         return False
 
+
+    def __repr__(self):
+        return repr("TradeControlService")

@@ -1,3 +1,4 @@
+from src.Logger import logger, loggerStaticMethod
 from src.main.DomainLayer.Purchase import Purchase
 from src.main.DomainLayer.Security import Security
 from src.main.DomainLayer.TradeControl import TradeControl
@@ -11,6 +12,7 @@ class GuestRole:
     def __init__(self):
         self.__guest: User = TradeControl.get_instance().get_guest()
 
+    @logger
     # use case 2.2
     def register(self, nickname, password):
         if Security.get_instance().validated_password(password) and \
@@ -20,6 +22,7 @@ class GuestRole:
             return TradeControl.get_instance().get_subscriber(nickname)
         return None
 
+    @logger
     # use case 2.3
     def login(self, nickname, password):
         # subscriber = TradeControl.getInstance().getSubscriber(nickname)
@@ -35,12 +38,14 @@ class GuestRole:
     # use case 2.4
     @staticmethod
     def display_stores():
+        loggerStaticMethod("GuestRole.display_stores",[])
         return TradeControl.get_instance().get_stores()
 
     @staticmethod
     # store_info_flag = true if user wants to display store info
     # products_flag = true if user wants to display product info
     def display_stores_info(store_name, store_info_flag, products_flag):
+        loggerStaticMethod("GuestRole.display_stores_info",[store_name, store_info_flag, products_flag])
         if store_info_flag:
             return TradeControl.get_instance().get_store(store_name).get_info()
         else:
@@ -56,6 +61,7 @@ class GuestRole:
         :param string: for opt: 0 -> productName, 1 -> string, 2 -> category
         :return: list of products according to the selected searching option
         """
+        loggerStaticMethod("GuestRole.search_products_by",[search_option, string])
         products_ls = TradeControl.get_instance().get_products_by(search_option, string)
         return products_ls
 
@@ -68,6 +74,7 @@ class GuestRole:
         :param products_ls: list of pairs: [(product_name, store_name)]
         :return: list of filtered products
         """
+        loggerStaticMethod("GuestRole.filter_products_by",[filter_details, products_ls])
         if products_ls is []:
             return None
         else:
@@ -79,6 +86,7 @@ class GuestRole:
                 if filter_details[0] == 2:
                     return list(filter(lambda p: filter_details[1] == p.get_category(), products))
 
+    @logger
     # use case 2.6
     # Parameters: nickname of the user,
     #             products_stores_quantity_ls is list of lists: [ [product, quantity, store], .... ]
@@ -90,6 +98,7 @@ class GuestRole:
             subscriber.save_products_to_basket(products_stores_quantity_ls)
         return True
 
+    @logger
     # use case 2.7
     # Parameter is nickname of the subscriber. If its a guest - None
     def view_shopping_cart(self, nickname):
@@ -99,6 +108,7 @@ class GuestRole:
             subscriber = TradeControl.get_instance().getSubscriber(nickname)
             subscriber.view_shopping_cart()
 
+    @logger
     # Parameters: nickname of the subscriber. If its a guest - None
     #             flag=0 update quantity, flag=1 remove product
     #             product can be a single product or a pair of (product quantity)
@@ -119,6 +129,7 @@ class GuestRole:
         return True
         # ---------------------------------------------------- U.C 2.8----------------------------------------------------------
 
+    @logger
     # U.C 2.8.1 - purchase product direct approach
     def calculate_purchase_price_direct_approach(self, store_name: str, amount_per_product: list,
                                                  username: str) -> float:
@@ -139,6 +150,7 @@ class GuestRole:
                     return purchase.get_price()
         return -1
 
+    @logger
     # U.C 2.8.2 - purchase product in walkaround approach
     def calculate_purchase_price_walkaround_approach(self, amount_per_product_per_store: [], username: str) -> float:
         """
@@ -166,6 +178,7 @@ class GuestRole:
             return -1
         return total_price
 
+    @logger
     # U.C 2.8.3 & U.C 2.8.4
     def make_purchase(self, store: Store, amount_per_product: [], username: str = "") -> Purchase or None:
         """
@@ -191,6 +204,7 @@ class GuestRole:
             return purchase
         return None
 
+    @logger
     # U.C 2.8.5 - purchase_product
     def accepted_price_purchase(self, purchase: Purchase, payment_details: []) -> bool:
         """
@@ -223,3 +237,5 @@ class GuestRole:
 
     # ------------------------------------------------- END OF U.C 2.8 -----------------------------------------------------
 
+    def __repr__(self):
+        return repr ("GuestRole")
