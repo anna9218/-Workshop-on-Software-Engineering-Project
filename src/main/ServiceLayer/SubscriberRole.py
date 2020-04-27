@@ -3,7 +3,7 @@ from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
 
 
-class SubscriberRole:
+class SubscriberRole(GuestRole):
 
     def __init__(self, subscriber):
         self.__subscriber = subscriber

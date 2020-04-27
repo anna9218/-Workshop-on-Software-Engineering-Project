@@ -9,31 +9,23 @@ from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
 class GuestRole:
 
-    def __init__(self):
-        self.__guest: User = TradeControl.get_instance().get_guest()
-
     @logger
+    def __init__(self):
+        # self.__guest = TradeControl.get_instance().get_guest()
+        pass
+    
     # use case 2.2
     def register(self, nickname, password):
-        if Security.get_instance().validated_password(password) and \
-                TradeControl.get_instance().validate_nickname(nickname) and not self.__guest.is_registered():
-            self.__guest.register(nickname, password)
-            TradeControl.get_instance().subscribe(self.__guest)
-            return TradeControl.get_instance().get_subscriber(nickname)
-        return None
+        if Security.get_instance().validated_password(password):
+                # Security.get_instance().validate_nickname(password):
+            return TradeControl.get_instance().register_guest(nickname, password)
 
     @logger
     # use case 2.3
     def login(self, nickname, password):
         # subscriber = TradeControl.getInstance().getSubscriber(nickname)
-        # if subscriber is not None and subscriber.is_loggedOut() and subscriber.checkPassword(password):
-        #     subscriber.login()
-        #     return True
-        # return False
-        if self.__guest.is_registered() and self.__guest.is_logged_out():
-            self.__guest.login(nickname, password)
-            return SubscriberRole(self.__guest)
-        return None
+        return TradeControl.get_instance().login_subscriber(nickname, password)
+
 
     # use case 2.4
     @staticmethod
