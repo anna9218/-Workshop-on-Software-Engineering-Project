@@ -18,13 +18,16 @@ def logger(f, name=None):
         name = f.__qualname__
 
     def wrapped(*args, **kwargs):
-        logger.fhwr.write("The function " + str(name) + " was called\n"
-        # -------------------- the two lines (maybe the upper one can cause errors) ----------------
-                          + "arguments: " + str(args) + "\n\n")
-                          # + "arguments: " + str(args) + str(kwargs) + "\n\n")
-        # ------------------------------------------------------------------------------------------
-        result = f(*args, **kwargs)
-        return result
+        try:
+            logger.fhwr.write("The function " + str(name) + " was called\n"
+            # -------------------- the two lines (maybe the upper one can cause errors) ----------------
+                              + "arguments: " + str(args) + "\n\n")
+                              # + "arguments: " + str(args) + str(kwargs) + "\n\n")
+            # ------------------------------------------------------------------------------------------
+            result = f(*args, **kwargs)
+            return result
+        except Exception:
+            errorLogger("Wrong input to log: name = " + name + ", arguments = " + str(args))
 
     wrapped.__doc__ = f.__doc__
     return wrapped
