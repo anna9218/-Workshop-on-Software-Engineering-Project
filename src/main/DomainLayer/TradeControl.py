@@ -4,6 +4,7 @@ from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
 from src.main.DomainLayer.FacadePayment import FacadePayment
 from src.main.DomainLayer.Store import Store
 from src.main.DomainLayer.User import User
+import jsonpickle
 
 
 class TradeControl:
@@ -24,8 +25,8 @@ class TradeControl:
             self.__managers = []
             self.__stores = []
             self.__subscribers = []
-            TradeControl.__instance = self
             self.__curr_user = User()
+            TradeControl.__instance = self
 
     def register_guest(self, nickname, password):
         if self.validate_nickname(nickname):
@@ -60,14 +61,6 @@ class TradeControl:
                 self.__subscribers.remove(s)
                 return True
         return False
-
-    def open_store(self, store_name) -> Store:
-        for s in self.__stores:
-            if s.get_name() == store_name:
-                return None
-        store = Store(store_name)
-        self.__stores.append(store)
-        return store
 
     def close_store(self, store_name) -> bool:
         for s in self.__stores:
@@ -113,7 +106,58 @@ class TradeControl:
         guest = User()
         return guest
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+    # ----   subscriber functions   ----
+    def logout_subscriber(self):
+        if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
+            self.__curr_user.logout()
+            return True
+        return False
+
+    def open_store(self, store_name) -> bool:
+        if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
+            for s in self.__stores:
+                if s.get_name() == store_name:
+                    return False
+            store = Store(store_name)
+            store.add_owner(self.__curr_user)
+            self.__stores.append(store)
+            return True
+        return False
+
+    def view_personal_purchase_history(self):
+        if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
+            purchases = self.__curr_user.get_accepted_purchases()
+            return reduce(lambda acc, curr_product: acc + jsonpickle.encode(curr_product), purchases)
+        return None
+    # ----------------------------------
+
+    # ---- system manager functions ----
+    def view_user_purchase_history(self, nickname):
+        if self.is_manager(self.__curr_user.get_nickname()):
+            viewed_user = self.get_subscriber(nickname)
+            if viewed_user:
+                return reduce(lambda acc, curr_product: acc + jsonpickle.encode(curr_product),
+                              viewed_user.get_accepted_purchases())
+        else:
+            return None
+
+    def view_store_purchases_history(self, store_name):
+        if self.is_manager(self.__curr_user.get_nickname()):
+            viewed_store = self.get_store(store_name)
+            if viewed_store:
+                return reduce(lambda acc, curr_product: acc + jsonpickle.encode(curr_product),
+                              viewed_store.get_purchases())
+        else:
+            return None
+
+    def is_manager(self, nickname):
+        for m in self.__managers:
+            if m.get_nickname() == nickname:
+                return True
+        return False
+    # ----------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     def add_products(self, store_name: str, products_details: list) -> bool:
         """
         :param store_name: store's name
