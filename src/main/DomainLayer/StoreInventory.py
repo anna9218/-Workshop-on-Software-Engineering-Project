@@ -129,9 +129,11 @@ class StoreInventory:
                 return True
         return False
 
+    @logger
     def get_inventory(self):
         return self.__inventory
 
+    @logger
     def set_inventory(self, new_inventory):
         self.__inventory = new_inventory
 

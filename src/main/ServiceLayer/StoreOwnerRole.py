@@ -93,7 +93,7 @@ class StoreOwnerRole:
             return store.add_owner(subscriber)
         return None
 
-    # @logger
+    @logger
     # use case 4.5
     def appoint_store_manager(self, manager_nickname, store_name, permissions):
         """

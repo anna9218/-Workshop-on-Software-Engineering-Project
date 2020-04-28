@@ -156,6 +156,7 @@ class Store:
         self.__StoreManagerAppointments.append(StoreManagerAppointment(future_manager, permissions, appointer))
         return True
 
+    @logger
     def get_permissions(self, manager_nickname):
         for appointment in self.__StoreManagerAppointments:
             if appointment.get_manager().get_nickname() == manager_nickname:

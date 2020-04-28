@@ -1,6 +1,7 @@
 """
     abstract class responsible for initializing and returning the Bridge
 """
+from src.Logger import loggerStaticMethod
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
 from src.test.BlackBoxTests.Bridge.ProxyBridge import ProxyBridge
 from src.test.BlackBoxTests.Bridge.RealBridge import RealBridge
@@ -14,6 +15,7 @@ class Driver(ABC):
 
     @staticmethod
     def get_bridge() -> Bridge:
+        loggerStaticMethod("Driver.get_bridge",[])
         real = RealBridge()
         return ProxyBridge(real)
 

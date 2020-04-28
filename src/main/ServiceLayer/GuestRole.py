@@ -4,16 +4,16 @@ from src.main.DomainLayer.Security import Security
 from src.main.DomainLayer.TradeControl import TradeControl
 from src.main.DomainLayer.Store import Store
 from src.main.DomainLayer.User import User
-from src.main.ServiceLayer.SubscriberRole import SubscriberRole
+# from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
 
 class GuestRole:
 
-    @logger
     def __init__(self):
         # self.__guest = TradeControl.get_instance().get_guest()
         pass
-    
+
+    @logger
     # use case 2.2
     def register(self, nickname, password):
         if Security.get_instance().validated_password(password):

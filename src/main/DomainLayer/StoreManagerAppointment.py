@@ -31,6 +31,7 @@ class StoreManagerAppointment:
     def get_appointer(self):
         return self.__appointer
 
+    @logger
     def get_appointee(self):
         return self.__appointee
 

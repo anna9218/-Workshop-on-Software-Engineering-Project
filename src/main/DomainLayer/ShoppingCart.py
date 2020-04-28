@@ -45,6 +45,7 @@ class ShoppingCart:
                         shopping_basket.add_product([product_store_quantity[0], product_store_quantity[2]])
         return True
 
+    @logger
     def is_product_in_cart(self, product) -> bool:
         for store_basket in self.__shopping_baskets:
             if store_basket[1].is_in_basket(product):

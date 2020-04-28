@@ -7,7 +7,7 @@ from src.main.DomainLayer.User import User
 from src.main.ServiceLayer.StoreManagerRole import StoreManagerRole
 from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
 
-
+# TODO-  can we delete it??
 class MyTestCase(unittest.TestCase):
     def setUp(self):
         self._store = Store("s_name")

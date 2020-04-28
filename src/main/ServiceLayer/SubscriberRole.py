@@ -1,5 +1,6 @@
 from src.Logger import logger
 from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
 
 
@@ -8,7 +9,7 @@ class SubscriberRole(GuestRole):
     def __init__(self, subscriber):
         self.__subscriber = subscriber
 
-    # @logger
+    @logger
     # use case 3.1
     def logout(self):
         """
