@@ -14,7 +14,7 @@ class MyTestCase(unittest.TestCase):
         self._owner = User()
         self._owner.register("username", "1234")
         self._owner.login("username", "1234")
-        self._store.add_owner(self._owner)
+        self._store.add_owner("", self._owner)
         self._owner.get_appointment().appoint_manager(self._store)
         self._manager = User()
         self._manager.register("manager", "1234")

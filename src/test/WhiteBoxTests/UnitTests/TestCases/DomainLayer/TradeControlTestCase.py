@@ -84,8 +84,8 @@ class TradeControlTestCase(unittest.TestCase):
     def test_get_products_by(self):
         store1 = self.tradeControl.open_store("myStore")
         store2 = self.tradeControl.open_store("myStore2")
-        store1.add_products([("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)])
-        store2.add_products([("Chair", 125, "Furniture", 5)])
+        store1.add_products(,
+        store2.add_products(,
         ls = self.tradeControl.get_products_by(1, "Chair")
         self.assertEqual(len(ls), 2)
         ls = self.tradeControl.get_products_by(2, "o")

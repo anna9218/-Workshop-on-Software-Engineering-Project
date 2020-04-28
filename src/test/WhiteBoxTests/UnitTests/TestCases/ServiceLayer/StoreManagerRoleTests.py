@@ -24,7 +24,7 @@ class StoreManagerRoleTests(unittest.TestCase):
         store = TradeControl.get_instance().open_store(self.__store_name)
         if store is not None:
             self.__store: Store = store
-            store.add_owner(self.__tinka_as_store_owner)
+            store.add_owner("", self.__tinka_as_store_owner)
         else:
             self.__store: Store = (TradeControl.get_instance()).get_store(self.__store_name)
 
@@ -34,43 +34,42 @@ class StoreManagerRoleTests(unittest.TestCase):
 
         self.__store_manager = StoreManagerRole(self.__user, self.__store_name)
 
-        self.__store_owner.appoint_store_manager("Anna", self.__store_name, [n for n in ManagerPermission])
+        self.__store_owner.appoint_store_manager(self.__store_name, [n for n in ManagerPermission], )
 
         (TradeControl.get_instance()).get_subscribers().insert(0, self.__user)
 
         self.__additional_manager = StubUser()
         self.__additional_manager.register("Gary", "cookie")
         (TradeControl.get_instance()).subscribe(self.__additional_manager)
-        self.__store_manager.appoint_store_manager("Anna", self.__store_name, [n for n in ManagerPermission])
+        self.__store_manager.appoint_store_manager(self.__store_name, [n for n in ManagerPermission], )
 
     @logger
     def test_add_products(self):
-        result = self.__store_manager.add_products(self.__store_name, self.__product_details)
+        result = self.__store_manager.add_products(self.__product_details, )
         self.assertTrue(result)  # bug - need to find a way to compare 2 enums for permission
 
 
     @logger
     def test_remove_products(self):
         # add products (there are 2), remove 1, check amount in inventory, remove another one and check
-        self.__store_manager.add_products(self.__store_name, self.__product_details)
-        result = self.__store_manager.remove_products(self.__nickname, self.__store_name, ["Yummy bone"])
+        self.__store_manager.add_products(self.__product_details, )
+        result = self.__store_manager.remove_products(self.__store_name, ["Yummy bone"])
         self.assertTrue(result)
 
         self.__inventory = self.__store.get_inventory()
         self.assertEqual(1, self.__inventory.len())
 
-        result = self.__store_manager.remove_products(self.__nickname, self.__store_name, ["Chewy toy"])
+        result = self.__store_manager.remove_products(self.__store_name, ["Chewy toy"])
         self.assertTrue(result)
         self.assertEqual(0, self.__inventory.len())
 
-        result = self.__store_manager.remove_products(self.__nickname, self.__store_name, ["Chewy toy"])
+        result = self.__store_manager.remove_products(self.__store_name, ["Chewy toy"])
         self.assertFalse(result)
 
     @logger
     def test_edit_product(self):
-        self.__store_manager.add_products(self.__store_name, self.__product_details)
-        result = self.__store_manager.edit_product(self.__user.get_nickname(), self.__store_name, self.__product_name,
-                                                   "name", "Rainbow Chair")
+        self.__store_manager.add_products(self.__product_details, )
+        result = self.__store_manager.edit_product(self.__store_name, self.__product_name, "name", "Rainbow Chair")
 
         self.assertTrue(result)
 
@@ -87,38 +86,38 @@ class StoreManagerRoleTests(unittest.TestCase):
         TradeControl.get_instance().get_subscribers().insert(0, eytan)
 
         # All Valid.
-        result = self.__store_manager.appoint_store_manager(eytan.get_nickname(), self.__store_name,
-                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])
+        result = self.__store_manager.appoint_store_manager(self.__store_name,
+                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY], )
         # self.assertTrue(result)
 
         # store_name unValid.
-        result = self.__store_manager.appoint_store_manager(eytan.get_nickname(), "self.__store_name",
-                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])
+        result = self.__store_manager.appoint_store_manager("self.__store_name",
+                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY], )
         self.assertFalse(result)
 
         # username unValid.
-        result = self.__store_manager.appoint_store_manager("eytan.get_nickname()", self.__store_name,
-                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])
+        result = self.__store_manager.appoint_store_manager(self.__store_name,
+                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY], )
         self.assertFalse(result)
 
     def test_edit_manager_permissions(self):
-        result = self.__store_manager.edit_manager_permissions(self.__store_name, "Gary", [])
+        result = self.__store_manager.edit_manager_permissions("Gary", [], )
         #self.assertTrue(result)
 
-        result = self.__store_manager.edit_manager_permissions(self.__store_name, "Mooncake", [])
+        result = self.__store_manager.edit_manager_permissions("Mooncake", [], )
         self.assertFalse(result)
 
     def test_remove_manager(self):
-        self.__store_owner.appoint_store_manager("Gary", self.__store_name, [9, 10])
+        self.__store_owner.appoint_store_manager(self.__store_name, [9, 10], )
 
-        result = self.__store_manager.remove_manager(self.__store_name, "Gary", [9, 10])
+        result = self.__store_manager.remove_manager(str, str)
         #self.assertTrue(result)
 
-        result = self.__store_manager.remove_manager(self.__store_name, "Gary", [9, 10])
+        result = self.__store_manager.remove_manager(str, str)
         self.assertFalse(result)
 
     def test_display_store_purchases(self):
-        result = self.__store_manager.display_store_purchases(self.__nickname, self.__store_name)
+        result = self.__store_manager.display_store_purchases(self.__store_name)
         self.assertEqual([], result)  # currently empty
 
     def tearDown(self):

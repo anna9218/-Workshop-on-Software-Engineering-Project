@@ -13,7 +13,7 @@ class MyTestCase(unittest.TestCase):
         # self._owner = user + appoint --> if tests the service
 
     def test_add_product_true(self):
-        self._store.add_products(["p_name"], [12], [10], ["c"])
+        self._store.add_products("", ["p_name"])
         self.assertEqual(10, self._store.get_inventory().get_amount_of_product(self._product.get_name()))
         self._store.change_amount(self._product, 1)
         self.assertEqual(1, self._store.get_inventory().get_amount_of_product(self._product.get_name()))
@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(True, self._store.empty_inventory())
 
     def manage_inventory_fail_tests (self):
-        self._store.add_products(["p_name"], [12], [10], ["c"])
+        self._store.add_products("", ["p_name"])
         self.assertNotEqual(0, self._store.get_inventory().len())
         self.assertNotEqual(None, self._store.get_inventory().get_product("p_name"))
         p = Product("p", 2, "c")

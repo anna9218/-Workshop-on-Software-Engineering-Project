@@ -7,7 +7,7 @@ from src.main.DomainLayer.TradeControl import TradeControl
 class SystemManagerRole:
 
     def __init__(self, username):
-        user = (TradeControl.get_instance()).get_manager(username)
+        user = (TradeControl.get_instance()).get_appointee(username)
         if not user:
             AttributeError(str("The user " + username + " is not a system manager."))
         else:
@@ -38,7 +38,7 @@ class SystemManagerRole:
         """
         store_to_view: Store = (TradeControl.get_instance()).get_store(store_name)
         if store_to_view:
-            return store_to_view.get_purchases()
+            return store_to_view.get_purchases("")
         else:
             return None
 

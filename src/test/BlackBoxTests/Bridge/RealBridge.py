@@ -62,7 +62,7 @@ class RealBridge(Bridge):
 
     def remove_user(self, username):
         self.__trade_control.unsubscribe(username)
-        self.__trade_control.remove_manager(username)
+        self.__trade_control.remove_manager(str, )
 
     def login(self, username, password):
         res = self.__guest_role.login(username, password)
@@ -100,26 +100,26 @@ class RealBridge(Bridge):
         self.__trade_control.close_store(store_name)
 
     def add_products_to_store(self, user_nickname, store_name, products_details):
-        self.__store_owner.add_products(user_nickname, store_name, products_details)
+        self.__store_owner.add_products(,
         return self.__store_owner.get_store(store_name).get_product(products_details[0][0]) is not None
 
     def edit_products_in_store(self, nickname, store_name, product_name, op, new_value):
-        self.__store_owner.edit_product(nickname, store_name, product_name, op, new_value)
+        self.__store_owner.edit_product("", product_name, op, new_value)
         return self.__store_owner.get_store(store_name).get_product(product_name).get_price() == new_value
 
     def remove_products_from_store(self, user_nickname, store_name, products_names):
-        self.__store_owner.remove_products(user_nickname, store_name, products_names)
+        self.__store_owner.remove_products(store_name, )
         return self.__store_owner.get_store(store_name).get_product(products_names) is None
 
     def appoint_additional_owner(self, nickname, store_name):
-        self.__store_owner.appoint_additional_owner(nickname, store_name)
+        self.__store_owner.appoint_additional_owner(,
         return self.__store_owner.get_store(store_name).is_owner(nickname)
 
     def appoint_additional_manager(self, nickname, store_name, permissions):
-        self.__store_owner.appoint_store_manager(nickname, store_name, permissions)
+        self.__store_owner.appoint_store_manager(permissions,,
         return self.__store_owner.get_store(store_name).is_manager(nickname)
 
     def remove_manager(self, store_name, manager_nickname, permissions):
         res = self.__store_owner.get_store(store_name).is_manager(manager_nickname)
-        self.__store_owner.remove_manager(store_name, manager_nickname, permissions)
+        self.__store_owner.remove_manager(str, )
         return not self.__store_owner.get_store(store_name).is_manager(manager_nickname) and res

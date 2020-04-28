@@ -38,7 +38,7 @@ class SubscriberRole(GuestRole):
         if new_store is None:
             return None
         else:
-            new_store.add_owner(self.__subscriber)
+            new_store.add_owner("", self.__subscriber)
             return StoreOwnerRole(self.__subscriber)
 
     @logger

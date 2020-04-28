@@ -1,5 +1,6 @@
 # from src.main.DomainLayer import Purchase
 from src.Logger import logger
+from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.Product import Product
 from src.main.DomainLayer.Purchase import Purchase
 from src.main.DomainLayer.StoreInventory import StoreInventory
@@ -19,60 +20,84 @@ class Store:
         self.__purchases = []
 
     @logger
-    def add_products(self, products_details) -> bool:
+    def add_products(self, user_nickname: str, products_details: list) -> bool:
         """
-        :param products_details: list of tuples (product_name, product_price, product_category, product_amount)
-        :return: true if all products was added to the inventory
+        :param user_nickname: owner's/manager's nickname
+        :param products_details: list of tuples (product_name, product_price, product_category, product_amount) / JSON
+        :return: True if all products were added to the inventory
         """
-        for d in products_details:
-            if d[1] < 0:
-                return False
-            if d[3] < 0:
-                return False
-        results = list(map(lambda details: self.add_product(details[0], details[1], details[2], details[3]),
-                           products_details))
-        return False not in results
+        # check permission to add - EDIT_INV
+        if self.is_owner(user_nickname) or (self.is_manager(user_nickname) and
+                                            self.has_permission(user_nickname, ManagerPermission.EDIT_INV)):
+            for d in products_details:
+                if d[1] < 0:
+                    return False
+                if d[3] < 0:
+                    return False
+            results = list(map(lambda details: self.add_product(details[0], details[1], details[2], details[3]),
+                               products_details))
+            return False not in results
 
     @logger
-    def add_product(self, name, price, category, amount) -> bool:
+    def add_product(self, name: str, price: int, category: str, amount: int) -> bool:
         """
         :param name: name of the new product
         :param price: price of the new product
         :param amount: amount of the new product
         :param category: category of the new product
-        :return: True if succeed update the inventory with the new product
+        :return: True if product was added to the inventory
         """
-        if price < 0:
-            return False
-        if amount < 0:
-            return False
-
         return self.__inventory.add_product(Product(name, price, category), amount)
 
     @logger
-    def remove_products(self, products_names):
+    def remove_products(self, user_nickname: str, products_names: list) -> bool:
         """
+        :param user_nickname: owner's/manager's nickname
         :param products_names: products to delete from inventory (assume they exists on inventory)
-        :return: True if the inventory updated without the product
+        :return: True if products were removed
         """
-        results = list(map(lambda p_name: self.remove_product(p_name), products_names))
-        return False not in results
+        # check permission to remove - EDIT_INV
+        if self.is_owner(user_nickname) or (self.is_manager(user_nickname) and
+                                            self.has_permission(user_nickname, ManagerPermission.EDIT_INV)):
+            results = list(map(lambda p_name: self.remove_product(p_name), products_names))
+            return False not in results
 
     @logger
-    def remove_product(self, product_name) -> bool:
+    def remove_product(self, product_name: str) -> bool:
         """
         :param product_name: product's name to delete from inventory
-        :return: True if the inventory updated without the product
+        :return: True if product was removed
         """
-        # assume the product exists on inventory
+        # assume the product exists in the inventory
         return self.__inventory.remove_product(product_name)
 
-    @logger
-    def change_price(self, product_name, new_price) -> bool:
+    def edit_product(self, user_nickname: str, product_name: str, op: str, new_value):  # new_value can be str or int
         """
-       :param product_name: product
-       :param new_price: number to replace with
-       :return: True if the product's price updated on inventory
+        :param user_nickname: owner's/manager's nickname
+        :param product_name:
+        :param op:
+        :param new_value:
+        :return:
+        """
+        # check permission to remove - EDIT_INV
+        if self.is_owner(user_nickname) or (self.is_manager(user_nickname) and
+                                            self.has_permission(user_nickname, ManagerPermission.EDIT_INV)):
+            if op == "name":
+                self.change_name(product_name, new_value)
+            elif op == "price":
+                self.change_price(self.__curr_user.get_nickname(), product_name, new_value)
+            elif op == "amount":
+                self.change_amount(self.__curr_user.get_nickname(), product_name, new_value)
+            else:
+                return False
+        return True
+
+    @logger
+    def change_price(self, product_name: str, new_price: int) -> bool:
+        """
+       :param product_name: name of the product
+       :param new_price: new price to replace with
+       :return: True if price was updated
        """
         if new_price < 0:
             return False
@@ -84,11 +109,11 @@ class Store:
         return False
 
     @logger
-    def change_name(self, product_name, new_name) -> bool:
+    def change_name(self, product_name: str, new_name: str) -> bool:
         """
-        :param product_name: product
+        :param product_name: name of the product
         :param new_name: name to replace with
-        :return: True if the product's name updated on inventory
+        :return: True if name was updated
         """
         product = self.get_product(product_name)
         if product is not None:
@@ -97,24 +122,33 @@ class Store:
         return False
 
     @logger
-    def change_amount(self, product_name, amount: int) -> bool:
+    def change_amount(self, product_name: str, new_amount: int) -> bool:
         """
        :param product_name: product
-       :param amount: number to replace with
-       :return: True if the product's amount updated on inventory
+       :param new_amount: new amount to replace with
+       :return: True if amount was updated
        """
+        if new_amount < 0:
+            return False
+
         product = self.get_product(product_name)
-        if product is not None and amount > 0:
-            return self.__inventory.change_amount(product_name, amount)
+        if product is not None and new_amount > 0:
+            return self.__inventory.change_amount(product_name, new_amount)
         return False
 
     @logger
-    def add_owner(self, owner: User):
-        for o in self.__owners:
-            if o.get_nickname() == owner.get_nickname():
-                return False
-        self.__owners.append(owner)
-        return True
+    def add_owner(self, appointer: str, appointee: User) -> bool:
+        """
+        :param appointer: owner's/manager's nickname
+        :param appointee: new manager's nickname
+        :return: True if owner has been added
+        """
+        # check permission to add owner - APPOINT_OWNER
+        if self.is_owner(appointer) or (self.is_manager(appointer) and
+                                        self.has_permission(appointer, ManagerPermission.APPOINT_MANAGER)):
+            self.__owners.append(appointee)
+            return True
+        return False
 
     @logger
     def is_owner(self, user_nickname):
@@ -122,7 +156,16 @@ class Store:
 
     @logger
     def is_manager(self, user_nickname):
-        return user_nickname in [appointment.get_manager().get_nickname() for appointment in self.__StoreManagerAppointments]
+        return user_nickname in [appointment.get_appointee().get_nickname() for appointment in
+                                 self.__StoreManagerAppointments]
+
+    @logger
+    def has_permission(self, user_nickname, permission):
+        my_appointment = list(
+            filter(lambda app: app.get_appointee().get_nickname() == user_nickname, self.__StoreManagerAppointments))
+        if my_appointment:
+            return my_appointment[0].has_permission(permission)
+        return False
 
     @logger
     # eden added
@@ -146,19 +189,23 @@ class Store:
     #         f"For {name} press {i}" #TODO- check if contains \n
 
     @logger
-    def add_manager(self, future_manager: User, permissions, appointer: User):
+    def add_manager(self, appointer: User, appointee: User, permissions: list):
         """
-        :param future_manager: subscriber to appoint as manager
+        :param appointer: store's owner/manager
+        :param appointee: manager to appoint
         :param permissions: type - ManagerPermission[]
-        :param appointer: store's owner that appoints the subscriber as manager
-        :return:
+        :return: True on success, else False
         """
-        self.__StoreManagerAppointments.append(StoreManagerAppointment(future_manager, permissions, appointer))
-        return True
+        # check permission to add owner - APPOINT_MANAGER
+        if self.is_owner(appointer) or (self.is_manager(appointer) and
+                                        self.has_permission(appointer, ManagerPermission.APPOINT_OWNER)):
+            self.__StoreManagerAppointments.append(StoreManagerAppointment(appointer, appointee, permissions))
+            return True
+        return False
 
     def get_permissions(self, manager_nickname):
         for appointment in self.__StoreManagerAppointments:
-            if appointment.get_manager().get_nickname() == manager_nickname:
+            if appointment.get_appointee().get_nickname() == manager_nickname:
                 return appointment.get_permissions()
         return None
 
@@ -168,7 +215,8 @@ class Store:
             return "Store owners: %s" % (str(self.__owners.strip('[]')))
         else:
             if len(self.__StoreManagerAppointments) > 0:  # one manager exists
-                return "Store owners: %s \n managers: $s" % (str(self.__owners.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
+                return "Store owners: %s \n managers: $s" % (
+                    str(self.__owners.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
 
     @logger
     def is_in_store_inventory(self, amount_per_product):
@@ -243,23 +291,39 @@ class Store:
         return [t[0] for t in self.__StoreManagerAppointments]
 
     @logger
-    def edit_manager_permissions(self, manager: User, permissions, appointer: User):
-        for appointment in self.__StoreManagerAppointments:
-            if appointment.get_manager().get_nickname() == manager.get_nickname() and \
-                    appointment.get_appointer().get_nickname() == appointer.get_nickname():
-                # self.__StoreManagerAppointments.remove(t)
-                # self.__StoreManagerAppointments.append((manager, permissions, appointer))
-                appointment.set_permissions(permissions)
-                return True
+    def edit_manager_permissions(self, appointer: User, appointee_nickname: str, permissions: list) -> bool:
+        """
+        :param appointer: store's owner/manager
+        :param appointee_nickname: manager who's permissions will be editted
+        :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
+        :return: True on success, else False
+        """
+        # check permission to add owner - EDIT_MANAGER_PER
+        if self.is_owner(appointer) or (self.is_manager(appointer) and
+                                        self.has_permission(appointer, ManagerPermission.EDIT_MANAGER_PER)):
+            for appointment in self.__StoreManagerAppointments:
+                if appointment.get_appointee().get_nickname() == appointee_nickname and \
+                        appointment.get_appointer().get_nickname() == appointer.get_nickname():
+                    appointment.set_permissions(permissions)
+                    return True
         return False
 
     @logger
-    def remove_manager(self, manager: User, appointer: User):
-        for appointment in self.__StoreManagerAppointments:
-            if appointment.get_manager().get_nickname() == manager.get_nickname() and \
-                    appointment.get_appointer().get_nickname() == appointer.get_nickname():
-                self.__StoreManagerAppointments.remove(appointment)
-                return True
+    def remove_manager(self, appointer_nickname: str, appointee_nickname: str) -> bool:
+        """
+        :param appointer_nickname: store's owner/manager
+        :param appointee_nickname: manager to remove
+        :return: True on success, else False
+        """
+        # check permission to add owner - DEL_MANAGER
+        if self.is_owner(appointer_nickname) or (self.is_manager(appointer_nickname) and
+                                                 self.has_permission(appointer_nickname,
+                                                                     ManagerPermission.DEL_MANAGER)):
+            for appointment in self.__StoreManagerAppointments:
+                if appointment.get_appointee().get_nickname() == appointee_nickname and \
+                        appointment.get_appointer().get_nickname() == appointer_nickname:
+                    self.__StoreManagerAppointments.remove(appointment)
+                    return True
         return False
 
     @logger
@@ -267,8 +331,13 @@ class Store:
         return self.__StoreManagerAppointments
 
     @logger
-    def get_purchases(self):
-        return self.__purchases
+    def get_purchases(self, appointer_nickname: str):
+        # check permission to add owner - WATCH_PURCHASE_HISTORY
+        if self.is_owner(appointer_nickname) or (self.is_manager(appointer_nickname) and
+                                                 self.has_permission(appointer_nickname,
+                                                                     ManagerPermission.WATCH_PURCHASE_HISTORY)):
+            return self.__purchases
+        return []
 
     # def print_inventory(self):
     #     f"The products of store {self.__name}:"
@@ -279,7 +348,6 @@ class Store:
     @logger
     def add_purchase(self, purchase: Purchase):
         self.__purchases.insert(0, purchase)
-
 
     def __repr__(self):
         return repr("Store")

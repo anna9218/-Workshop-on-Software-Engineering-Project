@@ -1,27 +1,16 @@
 from src.Logger import logger
-from src.main.DomainLayer.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.User import User
 
 
 class StoreManagerAppointment:
-    def __init__(self, appointee: User, permissions, appointer: User):
+    def __init__(self, appointer: User, appointee: User, permissions: list):
         self.__appointer = appointer
         self.__permissions = permissions
         self.__appointee = appointee
-        # self.__store = store
-
-        # # pairs of (appointer, store)
-        # self.__owned_stores = []
-        # # pairs of (store, permissions)
-        # self.__manage_stores = []
 
     @logger
     def set_permissions(self, permissions):
         self.__permissions = permissions
-
-    @logger
-    def get_manager(self):
-        return self.__appointee
 
     @logger
     def get_permissions(self):
@@ -31,8 +20,16 @@ class StoreManagerAppointment:
     def get_appointer(self):
         return self.__appointer
 
+    @logger
     def get_appointee(self):
         return self.__appointee
+
+    def has_permission(self, permission):
+        return permission in self.__permissions
+
+    def add_permission(self, permission):
+        self.__permissions.append(permission)
+        return True
 
     def __repr__(self):
         return repr("StoreManagerAppointment")
