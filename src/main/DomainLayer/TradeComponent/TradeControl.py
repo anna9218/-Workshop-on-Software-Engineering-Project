@@ -28,30 +28,32 @@ class TradeControl:
             self.__subscribers = []
             TradeControl.__instance = self
 
-    # ----   subscriber functions   ----
+    # ------- TradeControlService function
+    def add_system_manager(self, nickname, password):
+        for s in self.__managers:
+            if s.get_nickname() == nickname:
+                return False
+        if self.register_guest(nickname, password):
+            self.__managers.append(self.__curr_user)
+            return True
+        return False
+
+    # ----   Guest functions   ----
     def register_guest(self, nickname, password):
-        return self.validate_nickname(nickname) and \
-               self.__curr_user.register(nickname, password) and \
-               self.subscribe(self.__curr_user)
+        return (self.validate_nickname(nickname) and \
+                self.__curr_user.register(nickname, password) and \
+                self.subscribe(self.__curr_user))
 
     def login_subscriber(self, nickname, password):
         # subscriber: User = self.get_subscriber(nickname)
-        return self.__curr_user.is_registered() and \
+        return (self.__curr_user.is_registered() and \
                self.__curr_user.is_logged_out() and \
-               self.__curr_user.login(nickname, password)
-
-    # TODO: regactor
-    def add_sys_manager(self, subscriber: User):
-        for s in self.__managers:
-            if s.get_nickname() == subscriber.get_nickname():
-                return False
-        self.__managers.append(subscriber)
-        return True
+               self.__curr_user.login(nickname, password))
 
     def subscribe(self, user: User):
         if self.validate_nickname(user.get_nickname()):
             self.__subscribers.append(user)
-            return False
+            return True
         return False
 
     def unsubscribe(self, nickname):
@@ -164,7 +166,7 @@ class TradeControl:
                 if s.get_name() == store_name:
                     return False
             store = Store(store_name)
-            store.add_owner(self.__curr_user)
+            store.get_owners().append(self.__curr_user)
             self.__stores.append(store)
             return True
         return False
@@ -203,7 +205,7 @@ class TradeControl:
     # ----------------------------------
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "amount": int, "category": str}]) -> bool:
+    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         """
         :param store_name: store's name
         :param products_details: list of JSONs, each JSON is one details record, for one product
@@ -366,3 +368,6 @@ class TradeControl:
     def get_guest(self):
         guest = User()
         return guest
+
+    def set_curr_user(self, curr: User):
+        self.__curr_user = curr

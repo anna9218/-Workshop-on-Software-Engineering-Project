@@ -39,7 +39,7 @@ class StoreInventory:
 
         products_ls = self.__fun_map[0](product.get_name())
         if len(products_ls):
-            old_product_amount = self.get_amount_of_product(product.get_name())
+            old_product_amount = self.get_amount(product.get_name())
             self.remove_product(product.get_name())
             self.__inventory.append({"product": product, "amount": amount + old_product_amount})
         else:
@@ -103,7 +103,7 @@ class StoreInventory:
         return len(self.__inventory)
 
     @logger
-    def get_amount_of_product(self, product_name: str):
+    def get_amount(self, product_name: str):
         for i in self.__inventory:
             if i["product"].get_name() == product_name:
                 return i["amount"]
@@ -123,7 +123,7 @@ class StoreInventory:
         if requested_amount < 0:
             return False
 
-        amount_in_stock = self.get_amount_of_product(product_name)
+        amount_in_stock = self.get_amount(product_name)
         if amount_in_stock:
             if int(amount_in_stock) >= requested_amount:
                 return True

@@ -42,10 +42,10 @@ class ShoppingBasket:
 
     @logger
     # eden
-    def remove_product(self, product) -> bool:
-        for product_amount in self.__products:
-            if product.get_name() == product_amount["product"].get_name():
-                self.__products.remove([product_amount["product"], product_amount["amount"]])
+    def remove_product(self, product_name: str) -> bool:
+        for p in self.__products:
+            if product_name == p["product"].get_name():
+                self.__products.remove(p)
                 return True
         return False
 
@@ -80,6 +80,12 @@ class ShoppingBasket:
     @logger
     def get_products(self):
         return self.__products
+
+    def get_product_amount(self, product_name: str):
+        for p in self.__products:
+            if p["product"].get_name() == product_name:
+                return p["amount"]
+        return 0
 
     def __repr__(self):
         return repr("ShoppingBasket")

@@ -1,4 +1,6 @@
 from src.Logger import logger, secureLogger
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.Registration import Registration
 from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
@@ -70,7 +72,9 @@ class User:
         return self.__unaccepted_purchases
 
     @logger
-    def save_products_to_basket(self, products_stores_quantity_ls):
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+                                                                     "amount": int, "discount_type": DiscountType,
+                                                                     "purchase_type": PurchaseType}]):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
 
     @logger
@@ -81,7 +85,7 @@ class User:
                                      "amount": int}, ...]
                         }, ...]
         """
-        return self.__shoppingCart.get_cart_info()
+        return self.__shoppingCart.view_shopping_cart()
 
     @logger
     def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):

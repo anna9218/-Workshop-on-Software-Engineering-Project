@@ -13,9 +13,9 @@ class MyTestCase(unittest.TestCase):
 
     def test_add_product_true(self):
         self._store.add_products("", ["p_name"])
-        self.assertEqual(10, self._store.get_inventory().get_amount_of_product(self._product.get_name()))
+        self.assertEqual(10, self._store.get_inventory().get_amount(self._product.get_name()))
         self._store.change_amount(self._product, 1)
-        self.assertEqual(1, self._store.get_inventory().get_amount_of_product(self._product.get_name()))
+        self.assertEqual(1, self._store.get_inventory().get_amount(self._product.get_name()))
         self._store.change_name(self._product, "new name")
         self.assertEqual(None, self._store.get_inventory().get_product("p_name"))
         self.assertEqual("new name", self._store.get_inventory().get_product(self._product.get_name()).get_name())

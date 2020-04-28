@@ -151,12 +151,14 @@ class Store:
         :param appointee: new manager's nickname
         :return: True if owner has been added
         """
+        # first case: appointing first owner he when opens the
         # check permission to add owner - APPOINT_OWNER
         if self.is_owner(appointer) or (self.is_manager(appointer) and
                                         self.has_permission(appointer, ManagerPermission.APPOINT_MANAGER)):
             self.__owners.append(appointee)
             return True
         return False
+
 
     @logger
     def is_owner(self, user_nickname):

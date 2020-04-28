@@ -13,12 +13,13 @@ class TradeControlService:
     # use case 1.1
     @staticmethod
     def init_system():
-        loggerStaticMethod("init_system",[])
+        loggerStaticMethod("init_system", [])
         if not DeliveryProxy.get_instance().is_connected() and not PaymentProxy.get_instance().is_connected():
-            DeliveryProxy.get_instance().connect()
-            PaymentProxy.get_instance().connect()
+
             if GuestRole.register(GuestRole(), "TradeManager", "123456789"):
-                return TradeControl.get_instance().add_sys_manager(TradeControl.get_instance().get_subscriber("TradeManager"))
+                return DeliveryProxy.get_instance().connect() and \
+                       PaymentProxy.get_instance().connect() and \
+                       TradeControl.get_instance().add_system_manager("TradeManager", "123456789")
         return False
 
     def __repr__(self):

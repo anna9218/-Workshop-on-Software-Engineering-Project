@@ -13,5 +13,13 @@ class StubShoppingCart(ShoppingCart):
     def remove_product(self, product):
         return True
 
+    def add_products(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+                                                          "amount": int, "discount_type": DiscountType,
+                                                          "purchase_type": PurchaseType}]) -> bool:
+
+        return True
+    def update_quantity(self, product, quantity):
+        return True
+
     def update_quantity(self, product, quantity):
         return True

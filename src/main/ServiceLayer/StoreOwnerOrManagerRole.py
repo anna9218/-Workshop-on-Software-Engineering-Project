@@ -9,7 +9,7 @@ class StoreOwnerOrManagerRole:
 
     @logger
     # use case 4.1.1
-    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "amount": int, "category": str}]) -> bool:
+    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         """
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
