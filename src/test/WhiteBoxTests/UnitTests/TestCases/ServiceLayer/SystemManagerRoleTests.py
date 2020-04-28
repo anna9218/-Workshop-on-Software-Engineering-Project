@@ -1,7 +1,7 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
 from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 

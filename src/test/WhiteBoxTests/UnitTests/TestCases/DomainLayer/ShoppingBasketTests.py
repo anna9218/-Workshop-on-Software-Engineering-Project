@@ -1,7 +1,7 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.ShoppingBasket import ShoppingBasket
+from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
 
 

@@ -1,12 +1,9 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.Purchase import Purchase
-from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
-from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
-from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.ServiceLayer.GuestRole import TradeControl, Store
+from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
@@ -21,7 +18,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
         self.__anna_as_store_owner = StubUser()
         self.__anna_as_store_owner.register(self.__nickname, "pass")
         (TradeControl.get_instance()).subscribe(self.__anna_as_store_owner)
-        self.__store_owner = StoreOwnerRole(self.__anna_as_store_owner)
+        self.__store_owner = StoreOwnerOrManagerRole(self.__anna_as_store_owner)
 
         self.__additional_owner = StubUser()
         self.__additional_owner.register("Mooncake", "chookity")

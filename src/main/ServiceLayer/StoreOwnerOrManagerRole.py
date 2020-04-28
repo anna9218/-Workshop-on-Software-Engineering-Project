@@ -1,19 +1,19 @@
 from src.Logger import logger
-from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
 
-class StoreOwnerRole:
+class StoreOwnerOrManagerRole:
 
     def __init__(self):
         pass
 
     @logger
     # use case 4.1.1
-    def add_products(self, store_name: str, products_details: list) -> bool:
+    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "amount": int, "category": str}]) -> bool:
         """
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
-        # param products_details: list of JSONs, each JSON is one details record, for one product
+        # param products_details: list products details: [{"name": str, "price": int, "amount": int, "category": str},...]
         :return: empty list if ALL products were added successfully, else list of products who weren't added
         """
         return TradeControl.get_instance().add_products(store_name, products_details)
@@ -59,7 +59,7 @@ class StoreOwnerRole:
         :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
         :return: True on success, else False
         """
-        return TradeControl.get_instance().appoint_store_manager(store_name, permissions, )
+        return TradeControl.get_instance().appoint_store_manager(appointee_nickname, store_name, permissions)
 
     @logger
     # use case 4.6
@@ -89,7 +89,6 @@ class StoreOwnerRole:
         :param store_name: store's name
         :return: purchases list
         """
-        # TODO - implement JSON for return value
         return TradeControl.get_instance().display_store_purchases(store_name)
 
     def __repr__(self):

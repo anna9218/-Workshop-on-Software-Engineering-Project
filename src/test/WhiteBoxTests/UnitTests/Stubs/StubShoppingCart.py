@@ -1,4 +1,4 @@
-from src.main.DomainLayer.ShoppingCart import ShoppingCart
+from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
 
 
 class StubShoppingCart(ShoppingCart):

@@ -1,13 +1,13 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 
 
 class FacadeDeliveryTests(unittest.TestCase):
     @logger
     def setUp(self) -> None:
-        self.__delivery_sys = FacadeDelivery.get_instance()
+        self.__delivery_sys = DeliveryProxy.get_instance()
         self.__delivery_sys.connect()
         self.__valid_username = "username"
         self.__valid_address = "my awesome address 04/20"

@@ -1,11 +1,11 @@
 import unittest
 # from src.main.DomainLayer.TradeControl import TradeControl as TC
 from src.Logger import logger
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.Purchase import Purchase
-from src.main.DomainLayer.Store import Store
-from src.main.DomainLayer.User import User
-from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.User import User
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.ServiceLayer.GuestRole import GuestRole
 from datetime import datetime as date_time
 
@@ -49,9 +49,20 @@ class GuestRoleTest(unittest.TestCase):
 
     @logger
     # use case 2.4
-    def display_stores_test(self):
-        self.assertIsNotNone(self.__guest_role.display_stores())
-
+    def test_display_stores(self):
+        eytan = User()
+        eytan.register("eytan", "isTheBest")
+        self.__user = eytan
+        self.__store_name = "Eytan's best store"
+        self.__store = Store(self.__store_name)
+        self.__store.add_product("Eytan's Product", 100, "Eytan Category", 5)
+        self.__product1 = Product("Eytan's Product", 100, "Eytan Category")
+        self.__store.add_product("not Eytan's Product", 10, "Eytan Category", 2)
+        self.__product2 = Product("Eytan's Product", 10, "Eytan Category")
+        (TradeControl.get_instance()).get_stores().insert(0, self.__store)
+        guest_role = GuestRole()
+        s = TradeControl.get_instance().get_store_info("Eytan's best store")
+        print(s)
     @logger
     def display_stores_info_test(self):
         self.__guest_role.display_stores_info(self.__store_name, True, False)   # display store info
@@ -95,9 +106,26 @@ class GuestRoleTest(unittest.TestCase):
     # use case 2.6
     # Parameters: nickname of the user,
     #             products_stores_quantity_ls is list of lists: [ [product, quantity, store], .... ]
-    def save_products_to_basket_test(self):
-        products_stores_quantity_ls = [self.__product1, self.__store, 1]
-        self.assertTrue(self.__guest_role.save_products_to_basket(self.__user.get_nickname, products_stores_quantity_ls))
+    def test_save_products_to_basket_test(self):
+        eytan = User()
+        eytan.register("eytan", "isTheBest")
+        self.__user = eytan
+        self.__store_name = "Eytan's best store"
+        self.__store = Store(self.__store_name)
+        self.__store.add_product("chair", 100, "aaaaa", 6)
+        self.__store.add_product("sofa", 300, "aaaaa", 7)
+        self.__store.add_product("TV", 2500, "aaaaa", 8)
+        # self.__product1 = Product("Eytan's Product", 100, "Eytan Category")
+        # self.__store.add_product("not Eytan's Product", 10, "Eytan Category", 2)
+        # self.__product2 = Product("Eytan's Product", 10, "Eytan Category")
+        (TradeControl.get_instance()).get_stores().insert(0, self.__store)
+        self.__guest_role = GuestRole()
+
+        # :param products_stores_quantity_ls: [ {"product_name": str, "amount": int, "store_name": str}, .... ]
+
+        products_stores_quantity_ls = [{"product_name": "Eytan's Product", "amount": 5, "store_name": "Eytan's best store"},
+                                       {"product_name": "sdf", "amount": 13, "store_name": "sdf"}]
+        self.assertTrue(self.__guest_role.save_products_to_basket(products_stores_quantity_ls))
         self.assertTrue(self.__guest_role.save_products_to_basket("yarin", products_stores_quantity_ls))
 
     @logger

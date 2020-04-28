@@ -4,23 +4,20 @@
                             - adapter in the the adapter pattern
                             - real subject in the proxy pattern
 """
-from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
-from src.main.DomainLayer.FacadePayment import FacadePayment
+from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
 from src.main.ServiceLayer.TradeControlService import TradeControlService
-from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.ServiceLayer.GuestRole import GuestRole
-from src.main.ServiceLayer.SubscriberRole import SubscriberRole
-from src.main.ServiceLayer.StoreManagerRole import StoreManagerRole
-from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
 
 
 class RealBridge(Bridge):
 
     def __init__(self):
         super().__init__()
-        self.__paymentSys = FacadePayment.get_instance()
-        self.__deliverySys = FacadeDelivery.get_instance()
+        self.__paymentSys = PaymentProxy.get_instance()
+        self.__deliverySys = DeliveryProxy.get_instance()
         self.__trade_control_srv = TradeControlService()
         self.__trade_control = TradeControl.get_instance()
         self.__guest_role = GuestRole()

@@ -1,48 +1,44 @@
 from src.Logger import logger, loggerStaticMethod
-from src.main.DomainLayer.Purchase import Purchase
-from src.main.DomainLayer.Security import Security
-from src.main.DomainLayer.TradeControl import TradeControl
-from src.main.DomainLayer.Store import Store
-from src.main.DomainLayer.User import User
-from src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.SecurityComponent.Security import Security
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.User import User
 
 
 class GuestRole:
 
     @logger
     def __init__(self):
-        # self.__guest = TradeControl.get_instance().get_guest()
         pass
     
-    # use case 2.2
+    # use case 2.2 - fixed
     def register(self, nickname, password):
         if Security.get_instance().validated_password(password):
-                # Security.get_instance().validate_nickname(password):
             return TradeControl.get_instance().register_guest(nickname, password)
 
     @logger
-    # use case 2.3
+    # use case 2.3 - fixed
     def login(self, nickname, password):
-        # subscriber = TradeControl.getInstance().getSubscriber(nickname)
         return TradeControl.get_instance().login_subscriber(nickname, password)
+
+    @staticmethod
+    # def display_stores():
+    #     loggerStaticMethod("GuestRole.display_stores", [])
+    #     return TradeControl.get_instance().get_stores()
 
 
     # use case 2.4
     @staticmethod
-    def display_stores():
-        loggerStaticMethod("GuestRole.display_stores",[])
-        return TradeControl.get_instance().get_stores()
-
-    @staticmethod
     # store_info_flag = true if user wants to display store info
     # products_flag = true if user wants to display product info
-    def display_stores_info(store_name, store_info_flag, products_flag):
-        loggerStaticMethod("GuestRole.display_stores_info",[store_name, store_info_flag, products_flag])
+    def display_stores_or_products_info(store_name, store_info_flag, products_info_flag):
+        loggerStaticMethod("GuestRole.display_stores_info", [store_name, store_info_flag, products_info_flag])
         if store_info_flag:
-            return TradeControl.get_instance().get_store(store_name).get_info()
-        else:
-            if products_flag:
-                return TradeControl.get_instance().get_store(store_name).get_inventory()
+            return TradeControl.get_instance().get_store_info(store_name)
+        if products_info_flag:
+            return TradeControl.get_instance().get_store_inventory(store_name)
+        return []
 
     # use case 2.5.1
     @staticmethod
@@ -53,7 +49,7 @@ class GuestRole:
         :param string: for opt: 0 -> productName, 1 -> string, 2 -> category
         :return: list of products according to the selected searching option
         """
-        loggerStaticMethod("GuestRole.search_products_by",[search_option, string])
+        loggerStaticMethod("GuestRole.search_products_by", [search_option, string])
         products_ls = TradeControl.get_instance().get_products_by(search_option, string)
         return products_ls
 
@@ -63,63 +59,51 @@ class GuestRole:
         """
         :param filter_details: list of filter details = "byPriceRange" (1, min_num, max_num)
                                                         "byCategory" (2, category)
-        :param products_ls: list of pairs: [(product_name, store_name)]
+        :param products_ls: list of string: [(product_name, store_name), ...]
         :return: list of filtered products
         """
-        loggerStaticMethod("GuestRole.filter_products_by",[filter_details, products_ls])
-        if products_ls is []:
-            return None
-        else:
-            products = list(map(lambda pair: TradeControl.get_instance().get_store(pair[1]).get_product(pair[0]), products_ls))
-            # products = map(lambda store: store.getProduct(pair[0]), stores)
-            if filter_details[0] == 1:
-                return list(filter(lambda p: filter_details[1] <= p.get_price() <= filter_details[2], products))
-            else:
-                if filter_details[0] == 2:
-                    return list(filter(lambda p: filter_details[1] == p.get_category(), products))
+        loggerStaticMethod("GuestRole.filter_products_by", [filter_details, products_ls])
+        return TradeControl.get_instance().filter_products_by(filter_details, products_ls)
 
     @logger
     # use case 2.6
-    # Parameters: nickname of the user,
-    #             products_stores_quantity_ls is list of lists: [ [product, quantity, store], .... ]
-    def save_products_to_basket(self, nickname, products_stores_quantity_ls):
-        subscriber = TradeControl.get_instance().get_subscriber(nickname)
-        if subscriber is None:  # if it's a guest, who isn't subscribed
-            self.__guest.save_products_to_basket(products_stores_quantity_ls)
-        else:  # subscriber exists
-            subscriber.save_products_to_basket(products_stores_quantity_ls)
-        return True
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str, "amount": int}]):
+        """
+        :param products_stores_quantity_ls: [ {"product_name": str, "amount": int, "store_name": str}, .... ]
+        :return: True on success, else False
+        """
+        return TradeControl.get_instance().save_products_to_basket(products_stores_quantity_ls)
 
     @logger
     # use case 2.7
     # Parameter is nickname of the subscriber. If its a guest - None
-    def view_shopping_cart(self, nickname):
-        if nickname is None:
-            self.__guest.view_shopping_cart()
-        else:
-            subscriber = TradeControl.get_instance().getSubscriber(nickname)
-            subscriber.view_shopping_cart()
+    def view_shopping_cart(self):
+        """
+        :return: list: [{"store_name": str,
+                         "basket": [{"product_name": str
+                                     "amount": int}, ...]
+                        }, ...]
+        """
+        TradeControl.get_instance().view_shopping_cart()
 
     @logger
-    # Parameters: nickname of the subscriber. If its a guest - None
-    #             flag=0 update quantity, flag=1 remove product
-    #             product can be a single product or a pair of (product quantity)
-    def update_shopping_cart(self, nickname, flag, product):
-        if flag == 1:  # remove product
-            if nickname is None:
-                self.__guest.remove_from_shopping_cart(product)
-            else:
-                subscriber = TradeControl.get_instance().getSubscriber(nickname)
-                subscriber.remove_from_shopping_cart(product)
-        else:
-            if flag == 0:  # update quantity -> product is a list of (product, quantity)
-                if nickname is None:
-                    self.__guest.update_quantity_in_shopping_cart(product[0], product[1])
-                else:
-                    subscriber = TradeControl.get_instance().getSubscriber(nickname)
-                    subscriber.update_quantity_in_shopping_cart(product[0], product[1])
+    def update_shopping_cart(self, flag: str, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+        """
+        :param flag: action option - "remove"/"update"
+        :param products_details: [{"product_name": str,
+                                       "store_name": str,
+                                       "amount": int}, ...]
+        :return: True on success, False when one of the products doesn't exist in the shopping cart
+        """
+        if flag == "remove":
+            TradeControl.get_instance().remove_from_shopping_cart(products_details)
+        elif flag == "update":
+            TradeControl.get_instance().update_quantity_in_shopping_cart(products_details)
         return True
-        # ---------------------------------------------------- U.C 2.8----------------------------------------------------------
+
+    # ---------------------------------------------------- U.C 2.8----------------------------------------------------------
+
+    # TODO: refactor of use case 2.8
 
     @logger
     # U.C 2.8.1 - purchase product direct approach
@@ -230,4 +214,4 @@ class GuestRole:
     # ------------------------------------------------- END OF U.C 2.8 -----------------------------------------------------
 
     def __repr__(self):
-        return repr ("GuestRole")
+        return repr("GuestRole")

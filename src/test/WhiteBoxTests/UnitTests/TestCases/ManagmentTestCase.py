@@ -1,11 +1,9 @@
 import unittest
 
 # from src.main.DomainLayer import ManagerPermission
-from src.main.DomainLayer.ManagerPermission import ManagerPermission
-from src.main.DomainLayer.Store import Store
-from src.main.DomainLayer.User import User
-from src.main.ServiceLayer.StoreManagerRole import StoreManagerRole
-from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.User import User
 
 
 class MyTestCase(unittest.TestCase):

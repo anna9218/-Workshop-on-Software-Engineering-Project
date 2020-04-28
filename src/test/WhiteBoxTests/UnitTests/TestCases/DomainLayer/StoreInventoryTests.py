@@ -1,8 +1,8 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.StoreInventory import StoreInventory
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 
 
 class StoreInventoryTests(unittest.TestCase):

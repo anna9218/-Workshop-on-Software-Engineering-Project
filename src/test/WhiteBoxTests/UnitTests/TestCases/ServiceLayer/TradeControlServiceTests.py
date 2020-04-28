@@ -2,7 +2,7 @@ import unittest
 
 from src.Logger import logger
 from src.main.ServiceLayer.TradeControlService import TradeControlService
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubDelivery import StubDelivery
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubDelivery import StubDeliveryProxy
 
 
 class TradeControlServiceTests(unittest.TestCase):

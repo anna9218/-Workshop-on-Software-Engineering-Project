@@ -1,5 +1,5 @@
 from src.Logger import logger
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.UserComponent.User import User
 
 
 class StoreManagerAppointment:

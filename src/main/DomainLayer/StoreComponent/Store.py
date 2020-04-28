@@ -1,11 +1,13 @@
 # from src.main.DomainLayer import Purchase
 from src.Logger import logger
-from src.main.DomainLayer.ManagerPermission import ManagerPermission
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.Purchase import Purchase
-from src.main.DomainLayer.StoreInventory import StoreInventory
-from src.main.DomainLayer.StoreManagerAppointment import StoreManagerAppointment
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.StoreComponent.DiscountPolicy import DiscountPolicy
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.PurchasePolicy import PurchasePolicy
+from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
+from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.UserComponent.User import User
 
 
 class Store:
@@ -16,11 +18,12 @@ class Store:
         # list of StoreManagerAppointment (manager: User, permissions: ManagerPermissions[], appointer:User)
         self.__StoreManagerAppointments = []
         self.__inventory = StoreInventory()
-        # self.__rate = 0 TODO - for search 2.5
+        self.__discount_policies: [DiscountPolicy] = [DiscountPolicy()]
+        self.__purchase_policies: [PurchasePolicy] = [PurchasePolicy()]
         self.__purchases = []
 
     @logger
-    def add_products(self, user_nickname: str, products_details: list) -> bool:
+    def add_products(self, user_nickname: str, products_details: [{"name": str, "price": int, "amount": int, "category": str}]) -> bool:
         """
         :param user_nickname: owner's/manager's nickname
         :param products_details: list of tuples (product_name, product_price, product_category, product_amount) / JSON
@@ -30,11 +33,14 @@ class Store:
         if self.is_owner(user_nickname) or (self.is_manager(user_nickname) and
                                             self.has_permission(user_nickname, ManagerPermission.EDIT_INV)):
             for d in products_details:
-                if d[1] < 0:
+                if d["price"] < 0:
                     return False
-                if d[3] < 0:
+                if d["amount"] < 0:
                     return False
-            results = list(map(lambda details: self.add_product(details[0], details[1], details[2], details[3]),
+            results = list(map(lambda details: self.add_product(details["name"],
+                                                                details["price"],
+                                                                details["category"],
+                                                                details["amount"]),
                                products_details))
             return False not in results
 
@@ -253,6 +259,7 @@ class Store:
             except AttributeError:
                 product_price = -1
             if product_price >= 0:
+                total_price = total_price + (product_price * product_and_amount[1])
                 total_price = total_price + (product_price * product_and_amount[1])
 
         return total_price

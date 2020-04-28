@@ -1,8 +1,7 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.ManagerPermission import ManagerPermission
-from src.main.DomainLayer.Store import Store
+from src.main.DomainLayer.StoreComponent.Store import Store
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 

@@ -1,5 +1,6 @@
 from src.Logger import logger
-from src.main.DomainLayer import Product
+from src.main.DomainLayer.StoreComponent import Product
+
 
 class StoreInventory:
 

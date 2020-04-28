@@ -1,4 +1,4 @@
-from src.main.DomainLayer.Product import Product
+from src.main.DomainLayer.StoreComponent.Product import Product
 
 
 class StubProduct(Product):

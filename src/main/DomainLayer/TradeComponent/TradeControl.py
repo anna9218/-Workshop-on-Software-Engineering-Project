@@ -1,9 +1,7 @@
 from functools import reduce
 
-from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
-from src.main.DomainLayer.FacadePayment import FacadePayment
-from src.main.DomainLayer.Store import Store
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.User import User
 import jsonpickle
 
 
@@ -22,25 +20,25 @@ class TradeControl:
         if TradeControl.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
+            self.__curr_user = User()
             self.__managers = []
             self.__stores = []
             self.__subscribers = []
-            self.__curr_user = User()
             TradeControl.__instance = self
 
+    # ----   subscriber functions   ----
     def register_guest(self, nickname, password):
-        if self.validate_nickname(nickname):
-            guest = User()
-            guest.register(nickname, password)
-            self.subscribe(guest)
-            return True
-        return False
+        return self.validate_nickname(nickname) and \
+               self.__curr_user.register(nickname, password) and \
+               self.subscribe(self.__curr_user)
 
-    def login_subsceiber(self, nickname, password):
-        subscriber: User = self.get_subscriber(nickname)
-        if subscriber and subscriber.is_registered() and subscriber.is_logged_out():
-            return subscriber.login(nickname, password)
+    def login_subscriber(self, nickname, password):
+        # subscriber: User = self.get_subscriber(nickname)
+        return self.__curr_user.is_registered() and \
+               self.__curr_user.is_logged_out() and \
+               self.__curr_user.login(nickname, password)
 
+    # TODO: regactor
     def add_sys_manager(self, subscriber: User):
         for s in self.__managers:
             if s.get_nickname() == subscriber.get_nickname():
@@ -49,11 +47,10 @@ class TradeControl:
         return True
 
     def subscribe(self, user: User):
-        for s in self.__subscribers:
-            if s.get_nickname() == user.get_nickname():
-                return False
-        self.__subscribers.append(user)
-        return True
+        if self.validate_nickname(user.get_nickname()):
+            self.__subscribers.append(user)
+            return False
+        return False
 
     def unsubscribe(self, nickname):
         for s in self.__subscribers:
@@ -86,27 +83,69 @@ class TradeControl:
         list_ = reduce(lambda acc, curr: acc + curr, list_of_lists)
         return list_
 
+    def filter_products_by(self, filter_details, products_ls):
+        """
+        :param filter_details: list of filter details = "byPriceRange" (1, min_num, max_num)
+                                                        "byCategory" (2, category)
+        :param products_ls: list of string: [(product_name, store_name), ...]
+        :return: list of filtered products
+        """
+        if products_ls is []:
+            return []
+        else:
+            # convert all products
+            products_list = list(map(lambda pair: self.get_store(pair[1]).get_product(pair[0]), products_ls))
+            # filter by Price Range
+            if filter_details[0] == 1:
+                return list(filter(lambda p: filter_details[1] <= p.get_price() <= filter_details[2], products_list))
+            else:
+                # filter by Category
+                if filter_details[0] == 2:
+                    return list(filter(lambda p: filter_details[1] == p.get_category(), products_list))
+
+    def get_store_info(self, store_name):
+        return jsonpickle.encode(self.get_store(store_name))
+
+    def get_store_inventory(self, store_name):
+        return jsonpickle.encode(self.get_store(store_name).get_inventory())
+
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,  "amount": int}]):
+        ls = list(map(lambda x: {"product": self.get_store(x["store_name"]).get_product(x["product_name"]),
+                                 "store": x["store_name"],
+                                 "amount": x["amount"]},
+                      products_stores_quantity_ls))
+        return self.__curr_user.save_products_to_basket(ls)
+
+    def view_shopping_cart(self):
+        return self.__curr_user.view_shopping_cart()
+
+    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+        """
+        :param products_details: [{"product_name": str,
+                                       "store_name": str,
+                                       "amount": int}, ...]
+        :return: True on success, False when one of the products doesn't exist in the shopping cart
+        """
+        return self.__curr_user.remove_from_shopping_cart(products_details)
+
+    def update_quantity_in_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+        """
+        :param flag: action option - "remove"/"update"
+        :param products_details: [{"product_name": str,
+                                       "store_name": str,
+                                       "amount": int}, ...]
+        :return: True on success, False when one of the products doesn't exist in the shopping cart
+        """
+        return self.__curr_user.update_quantity_in_shopping_cart(products_details)
+
     def get_store(self, store_name):
         for s in self.__stores:
             if s.get_name() == store_name:
                 return s
         return None
+    # ---------------------------------------------------
 
-    def get_subscribers(self):
-        return self.__subscribers
-
-    def get_stores(self):
-        return self.__stores
-
-    def get_managers(self):
-        return self.__managers
-
-    # get a user instance for guest
-    def get_guest(self):
-        guest = User()
-        return guest
-
-    # ----   subscriber functions   ----
+    # --------------   subscriber functions   --------------
     def logout_subscriber(self):
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             self.__curr_user.logout()
@@ -158,13 +197,13 @@ class TradeControl:
     # ----------------------------------
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-    def add_products(self, store_name: str, products_details: list) -> bool:
+    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "amount": int, "category": str}]) -> bool:
         """
         :param store_name: store's name
         :param products_details: list of JSONs, each JSON is one details record, for one product
         :return: True if products were added, False otherwise
         """
-        store = self.get_store(store_name)
+        store: Store = self.get_store(store_name)
         if store is not None and \
                 (store.is_owner(self.__curr_user.get_nickname()) or
                  store.is_manager(self.__curr_user.get_nickname())) and \
@@ -180,7 +219,7 @@ class TradeControl:
         :param products_names: list of product's names to remove
         :return: True if products were removed, False otherwise
         """
-        store = self.get_store(store_name)
+        store: Store = self.get_store(store_name)
         for product_name in products_names:
             if store is not None and not store.get_product(product_name):
                 return False
@@ -303,5 +342,21 @@ class TradeControl:
                 self.__curr_user.is_registered() and \
                 self.__curr_user.is_logged_in() and \
                 (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
-            return store.get_purchases(self.__curr_user.get_nickname())
+            # TODO - check if the jsonpickle.encode convert to json works
+            return jsonpickle.encode(store.get_purchases(self.__curr_user.get_nickname()))
         return []
+
+    # ----------- Getters & Setters --------------
+
+    def get_subscribers(self):
+        return self.__subscribers
+
+    def get_stores(self):
+        return self.__stores
+
+    def get_managers(self):
+        return self.__managers
+
+    def get_guest(self):
+        guest = User()
+        return guest

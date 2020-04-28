@@ -1,9 +1,9 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.ManagerPermission import ManagerPermission
-from src.main.ServiceLayer.StoreManagerRole import StoreManagerRole
-from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.ServiceLayer.StoreManagerRole import StoreManagerOrManagerRole
+from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
 
@@ -19,7 +19,7 @@ class StoreManagerRoleTests(unittest.TestCase):
         self.__tinka_as_store_owner = StubUser()
         self.__tinka_as_store_owner.register(self.__nickname, "pass")
         (TradeControl.get_instance()).subscribe(self.__tinka_as_store_owner)
-        self.__store_owner = StoreOwnerRole(self.__tinka_as_store_owner)
+        self.__store_owner = StoreOwnerOrManagerRole(self.__tinka_as_store_owner)
 
         store = TradeControl.get_instance().open_store(self.__store_name)
         if store is not None:
@@ -32,7 +32,7 @@ class StoreManagerRoleTests(unittest.TestCase):
         self.__user.register("Anna", "cookie37")
         (TradeControl.get_instance()).subscribe(self.__user)
 
-        self.__store_manager = StoreManagerRole(self.__user, self.__store_name)
+        self.__store_manager = StoreManagerOrManagerRole(self.__user, self.__store_name)
 
         self.__store_owner.appoint_store_manager(self.__store_name, [n for n in ManagerPermission], )
 

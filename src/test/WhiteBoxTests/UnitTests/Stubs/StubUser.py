@@ -1,7 +1,6 @@
-from src.main.DomainLayer.Purchase import Purchase
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.UserComponent.User import User
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
-from datetime import datetime as date_time
 
 
 class StubUser(User):

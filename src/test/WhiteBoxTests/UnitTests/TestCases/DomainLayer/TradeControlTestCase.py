@@ -1,7 +1,7 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 

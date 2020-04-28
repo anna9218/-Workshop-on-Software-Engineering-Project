@@ -1,8 +1,7 @@
 import unittest
 
-from src.main.DomainLayer.ManagerPermission import ManagerPermission
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.Store import Store
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.Store import Store
 
 
 class MyTestCase(unittest.TestCase):
