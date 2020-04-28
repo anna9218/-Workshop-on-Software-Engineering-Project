@@ -1,23 +1,32 @@
 import unittest
 
 from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.UserComponent.User import User
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class StoreTests(unittest.TestCase):
     @logger
     def setUp(self):
-        self.store = Store("myStore")
+        self.store: Store = Store("myStore")
+        self.owner = User()
+        self.owner.register("shani", "passwordd45646")
+        self.store.get_owners().append(self.owner)
+        self.manager = User()
+        self.manager.register("shani", "passwordd45646")
+        self.store.get_store_manager_appointments().append(StoreManagerAppointment(self.owner, self.manager, [ManagerPermission.APPOINT_MANAGER]))
 
     @logger
     def test_add_products(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
-        self.assertTrue(self.store.add_products("", [("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)]))
-        self.assertTrue(self.store.add_products("", [("Chair", 100, "Furniture", 5), ("Sofa", 100, "Furniture", 5)]))
-        self.assertFalse(self.store.add_products("", [("Chair", -999, "Furniture", 5), ("Sofa", -999, "Furniture", 5)]))
+        self.assertTrue(self.store.add_products("shani", [{"Chair", 100, "Furniture", 5}, {"Sofa", 100, "Furniture", 5}]))
+        self.assertTrue(self.store.add_products("shani", [{"Chair", 100, "Furniture", 5}, {"Sofa", 100, "Furniture", 5}]))
+        self.assertFalse(self.store.add_products("shani", [{"Chair", -999, "Furniture", 5}, {"Sofa", -999, "Furniture", 5}]))
         self.assertFalse(
-            self.store.add_products("", [("Chair", 100, "Furniture", -100), ("Sofa", 100, "Furniture", -100)]))
+            self.store.add_products("shani", [{"Chair", 100, "Furniture", -100}, {"Sofa", 100, "Furniture", -100}]))
 
     @logger
     def test_add_product(self):

@@ -1,10 +1,12 @@
 from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 
 
 class ShoppingBasket:
     def __init__(self):
-        self.__products: [{"product": Product, "amount": int}] = []
+        self.__products: [{"product": Product, "amount": int, "discountType": DiscountType, "purchaseType": PurchaseType}] = []
         self.__i = 0
 
     # in order to make the object iterable
@@ -21,12 +23,12 @@ class ShoppingBasket:
             raise StopIteration
 
     @logger
-    def add_product(self, product: Product, amount: int) -> bool:
+    def add_product(self, product: Product, amount: int, discount_type: DiscountType, purchase_type: PurchaseType) -> bool:
         for product_amount in self.__products:
             if product.get_name() == product_amount["product"].get_name():
                 product_amount["amount"] += amount
                 return True
-        self.__products.append({"product": product, "amount": amount})
+        self.__products.append({"product": product, "amount": amount, "discountType": discount_type, "purchaseType": purchase_type})
         return True
 
     @logger

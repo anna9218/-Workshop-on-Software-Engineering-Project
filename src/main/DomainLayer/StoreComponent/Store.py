@@ -7,6 +7,8 @@ from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
 
 
@@ -23,7 +25,7 @@ class Store:
         self.__purchases = []
 
     @logger
-    def add_products(self, user_nickname: str, products_details: [{"name": str, "price": int, "amount": int, "category": str}]) -> bool:
+    def add_products(self, user_nickname: str, products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         """
         :param user_nickname: owner's/manager's nickname
         :param products_details: list of tuples (product_name, product_price, product_category, product_amount) / JSON

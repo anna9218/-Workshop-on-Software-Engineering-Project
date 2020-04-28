@@ -1,5 +1,5 @@
 """
-    test class for use case 5.1 - manage store
+    test class for use case 5.1 - check that manager can activated actions he has permissions to
 """
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 

@@ -4,7 +4,7 @@
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
-class SaveProductsTest(ProjectTest):
+class UpdateCartTest(ProjectTest):
 
     def setUp(self) -> None:
         pass

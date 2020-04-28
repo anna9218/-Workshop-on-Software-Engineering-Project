@@ -50,10 +50,10 @@ class ShoppingCart:
         for curr in products_stores_quantity_ls:
             basket = self.get_store_basket(curr["store_name"])
             if basket:
-                basket.add_product(curr["product"], curr["amount"])
+                basket.add_product(curr["product"], curr["amount"], curr["discount_type"], curr["purchase_type"])
             else:
                 basket = ShoppingBasket()
-                basket.add_product(curr["product"], curr["amount"])
+                basket.add_product(curr["product"], curr["amount"], curr["discount_type"], curr["purchase_type"])
                 self.__shopping_baskets.append([curr["store_name"], basket])
         return True
 

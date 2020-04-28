@@ -89,7 +89,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertEqual(self.inv.get_amount_of_product("Chair"), 4)
         self.inv.add_product(self.product2, 16)
         self.assertEqual(self.inv.get_amount_of_product("Sofa"), 16)
-        self.assertEqual(self.inv.get_amount_of_product("Guitar"), None)
+        self.assertEqual(self.inv.get_amount_of_product("Guitar"), 0)
 
     @logger
     def test_is_in_stock(self):

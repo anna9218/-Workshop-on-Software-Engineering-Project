@@ -3,6 +3,8 @@ from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.SecurityComponent.Security import Security
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
 
 
@@ -42,10 +44,9 @@ class GuestRole:
 
     # use case 2.5.1
     @staticmethod
-    def search_products_by(search_option, string):
+    def search_products_by(search_option: int, string: str):
         """
-        :param self:
-        :param search_option: = 0-byName, 1- byKeyword, 2- byCategoru
+        :param search_option: = 1-byName/2-byKeyword/3-byCategoru
         :param string: for opt: 0 -> productName, 1 -> string, 2 -> category
         :return: list of products according to the selected searching option
         """
@@ -67,7 +68,9 @@ class GuestRole:
 
     @logger
     # use case 2.6
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str, "amount": int}]):
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+                                                                     "amount": int, "discount_type": DiscountType,
+                                                                     "purchase_type": PurchaseType}]):
         """
         :param products_stores_quantity_ls: [ {"product_name": str, "amount": int, "store_name": str}, .... ]
         :return: True on success, else False
@@ -104,7 +107,6 @@ class GuestRole:
     # ---------------------------------------------------- U.C 2.8----------------------------------------------------------
 
     # TODO: refactor of use case 2.8
-
     @logger
     # U.C 2.8.1 - purchase product direct approach
     def calculate_purchase_price_direct_approach(self, store_name: str, amount_per_product: list,

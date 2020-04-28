@@ -1,6 +1,8 @@
 from functools import reduce
 
 from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
 import jsonpickle
 
@@ -78,7 +80,7 @@ class TradeControl:
                 return u
         return None
 
-    def get_products_by(self, search_opt, string):
+    def get_products_by(self, search_opt: int, string: str):
         list_of_lists = list(map(lambda store: store.get_products_by(search_opt, string), self.__stores))
         list_ = reduce(lambda acc, curr: acc + curr, list_of_lists)
         return list_
@@ -109,10 +111,14 @@ class TradeControl:
     def get_store_inventory(self, store_name):
         return jsonpickle.encode(self.get_store(store_name).get_inventory())
 
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,  "amount": int}]):
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+                                                                     "amount": int, "discount_type": DiscountType,
+                                                                     "purchase_type": PurchaseType}]):
         ls = list(map(lambda x: {"product": self.get_store(x["store_name"]).get_product(x["product_name"]),
                                  "store": x["store_name"],
-                                 "amount": x["amount"]},
+                                 "amount": x["amount"],
+                                 "discount_type": x["discount_type"],
+                                 "purchase_type": x["purchase_type"]},
                       products_stores_quantity_ls))
         return self.__curr_user.save_products_to_basket(ls)
 
