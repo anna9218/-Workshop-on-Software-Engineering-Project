@@ -27,3 +27,6 @@ class LoginTest(ProjectTest):
     @logger
     def tearDown(self) -> None:
         self.remove_user("username")
+
+    def __repr__(self):
+        return repr("LoginTest")

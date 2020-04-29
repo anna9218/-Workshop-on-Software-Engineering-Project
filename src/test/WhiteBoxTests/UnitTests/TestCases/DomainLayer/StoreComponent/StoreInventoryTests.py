@@ -32,6 +32,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertEqual(product.get_price(), 100)
         self.assertEqual(product.get_category(), "Furniture")
         self.assertEqual(self.inv.get_product("Sofa"), None)
+
     @logger
     def test_get_products_by(self):
         self.inv.add_product(self.product1, 4)

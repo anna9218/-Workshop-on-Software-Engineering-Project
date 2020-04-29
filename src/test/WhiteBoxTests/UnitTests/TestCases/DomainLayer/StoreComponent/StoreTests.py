@@ -163,6 +163,7 @@ class StoreTests(unittest.TestCase):
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
+    @logger
     def tearDown(self) -> None:
         self.store = None
 

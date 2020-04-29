@@ -30,3 +30,6 @@ class LogoutTest(ProjectTest):
     @logger
     def tearDown(self) -> None:
         self.remove_user(self.__valid_username)
+
+    def __repr__(self):
+        return repr("LogoutTest")

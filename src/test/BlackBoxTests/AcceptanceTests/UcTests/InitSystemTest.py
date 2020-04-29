@@ -35,3 +35,6 @@ class InitSystemTest(ProjectTest):
     @logger
     def tearDown(self) -> None:
         self.remove_user("TradeManager")
+
+    def __repr__(self):
+        return repr("InitSystemTest")

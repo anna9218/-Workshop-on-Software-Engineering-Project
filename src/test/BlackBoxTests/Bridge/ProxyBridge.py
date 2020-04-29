@@ -117,3 +117,6 @@ class ProxyBridge(Bridge):
     @logger
     def remove_manager(self, store_name, manager_nickname, permissions):
         return self._realbridge.remove_manager(store_name, manager_nickname, permissions)
+
+    def __repr__(self):
+        return repr("ProxyBridge")

@@ -32,3 +32,6 @@ class OpenStoreTest(ProjectTest):
     def tearDown(self) -> None:
         self.remove_user(self.__username)
         self.teardown_store(self.__store_name)
+
+    def __repr__(self):
+        return repr("OpenStoreTest")

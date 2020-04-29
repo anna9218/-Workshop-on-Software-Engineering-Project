@@ -3,7 +3,7 @@ import unittest
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Store import Store
 
-
+# TODO - can we delete it?
 class MyTestCase(unittest.TestCase):
 
     def setUp(self):

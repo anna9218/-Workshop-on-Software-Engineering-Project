@@ -48,3 +48,5 @@ class SearchProductsTest(ProjectTest):
         self.teardown_store("store")
         self.remove_user("username")
 
+    def __repr__(self):
+        return repr("SearchProductsTest")

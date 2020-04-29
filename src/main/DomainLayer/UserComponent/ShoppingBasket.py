@@ -81,6 +81,7 @@ class ShoppingBasket:
     def get_products(self):
         return self.__products
 
+    @logger
     def get_product_amount(self, product_name: str):
         for p in self.__products:
             if p["product"].get_name() == product_name:

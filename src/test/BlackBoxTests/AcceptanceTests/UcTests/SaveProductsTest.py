@@ -30,3 +30,6 @@ class SaveProductsTest(ProjectTest):
         self.remove_products_from_store("username", "store", ["product"])
         self.teardown_store("store")
         self.remove_user("username")
+
+    def __repr__(self):
+        return repr("SaveProductsTest")

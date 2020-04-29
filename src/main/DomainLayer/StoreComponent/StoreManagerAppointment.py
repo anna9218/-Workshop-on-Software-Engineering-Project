@@ -24,9 +24,11 @@ class StoreManagerAppointment:
     def get_appointee(self):
         return self.__appointee
 
+    @logger
     def has_permission(self, permission):
         return permission in self.__permissions
 
+    @logger
     def add_permission(self, permission):
         self.__permissions.append(permission)
         return True

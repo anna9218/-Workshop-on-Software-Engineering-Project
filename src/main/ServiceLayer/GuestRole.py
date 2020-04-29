@@ -10,10 +10,10 @@ from src.main.DomainLayer.UserComponent.User import User
 
 class GuestRole:
 
-    @logger
     def __init__(self):
         pass
-    
+
+    @logger
     # use case 2.2 - fixed
     def register(self, nickname, password):
         if Security.get_instance().validated_password(password):

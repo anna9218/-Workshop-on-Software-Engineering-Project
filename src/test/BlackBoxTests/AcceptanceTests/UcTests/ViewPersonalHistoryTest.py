@@ -21,3 +21,6 @@ class ViewPersonalHistoryTest(ProjectTest):
     @logger
     def tearDown(self) -> None:
         pass
+
+    def __repr__(self):
+        return repr("ViewPersonalHistoryTest")

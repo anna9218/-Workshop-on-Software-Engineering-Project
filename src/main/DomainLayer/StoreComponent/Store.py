@@ -79,6 +79,7 @@ class Store:
         # assume the product exists in the inventory
         return self.__inventory.remove_product(product_name)
 
+    @logger
     def edit_product(self, user_nickname: str, product_name: str, op: str, new_value):  # new_value can be str or int
         """
         :param user_nickname: owner's/manager's nickname
@@ -213,6 +214,7 @@ class Store:
             return True
         return False
 
+    @logger
     def get_permissions(self, manager_nickname):
         for appointment in self.__StoreManagerAppointments:
             if appointment.get_appointee().get_nickname() == manager_nickname:

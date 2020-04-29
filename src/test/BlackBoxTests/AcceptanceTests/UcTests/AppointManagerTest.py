@@ -38,3 +38,6 @@ class AppointManagerTest(ProjectTest):
     def tearDown(self) -> None:
         self.remove_user(self.__appointer_name)
         self.teardown_store(self.__store)
+
+    def __repr__(self):
+        return repr("AppointManagerTest")

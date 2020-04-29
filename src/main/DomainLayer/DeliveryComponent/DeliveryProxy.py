@@ -39,13 +39,11 @@ class DeliveryProxy(DeliverySubject):
     # need to check address details with system once a system is set
     def deliver_products(self, username, address) -> bool:
         try:
-            print("in try")
             if not self.__isConnected or not self.__check_valid_details(username, address):
                 return False
             else:
                 return True
         except Exception:
-            print ("in catch")
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 

@@ -35,6 +35,7 @@ class ShoppingCart:
                 return False
         return True
 
+    @logger
     def remove_store_basket(self, store_name: str):
         for s in self.__shopping_baskets:
             if s["store_name"] == store_name:
@@ -56,12 +57,14 @@ class ShoppingCart:
                 self.__shopping_baskets.append({"store_name": curr["store_name"], "basket": basket})
         return True
 
+    @logger
     def get_store_basket(self, store_name: str) -> ShoppingBasket:
         for store_basket in self.__shopping_baskets:
             if store_basket["store_name"] == store_name:
                 return store_basket["basket"]
         return None
 
+    @logger
     def view_shopping_cart(self):
         """
         :return: list: [{"store_name": str,

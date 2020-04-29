@@ -149,3 +149,6 @@ class ProjectTest(ABC, unittest.TestCase):
     @abstractmethod
     def tearDown(self) -> None:
         pass
+
+    def __repr__(self):
+        return repr("ProjectTest")

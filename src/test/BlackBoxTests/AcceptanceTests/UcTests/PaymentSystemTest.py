@@ -41,3 +41,6 @@ class PaymentSystemTest(ProjectTest):
         except ResourceWarning:
             errorLogger("System down warning")
             self.assertTrue(True, "System down warning")
+
+    def __repr__(self):
+        return repr("PaymentSystemTest")
