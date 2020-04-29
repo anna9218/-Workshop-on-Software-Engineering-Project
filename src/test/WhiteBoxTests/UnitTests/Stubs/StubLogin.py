@@ -1,4 +1,4 @@
-from src.main.DomainLayer.Login import Login
+from src.main.DomainLayer.UserComponent.Login import Login
 
 
 class StubLogin(Login):

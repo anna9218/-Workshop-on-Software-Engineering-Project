@@ -1,7 +1,7 @@
 from src.Logger import loggerStaticMethod
-from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
-from src.main.DomainLayer.FacadePayment import FacadePayment
-from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
+from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.ServiceLayer.GuestRole import GuestRole
 
 
@@ -13,12 +13,13 @@ class TradeControlService:
     # use case 1.1
     @staticmethod
     def init_system():
-        loggerStaticMethod("init_system",[])
-        if not FacadeDelivery.get_instance().is_connected() and not FacadePayment.get_instance().is_connected():
-            FacadeDelivery.get_instance().connect()
-            FacadePayment.get_instance().connect()
+        loggerStaticMethod("init_system", [])
+        if not DeliveryProxy.get_instance().is_connected() and not PaymentProxy.get_instance().is_connected():
+
             if GuestRole.register(GuestRole(), "TradeManager", "123456789"):
-                return TradeControl.get_instance().add_sys_manager(TradeControl.get_instance().get_subscriber("TradeManager"))
+                return DeliveryProxy.get_instance().connect() and \
+                       PaymentProxy.get_instance().connect() and \
+                       TradeControl.get_instance().add_system_manager("TradeManager", "123456789")
         return False
 
     def __repr__(self):

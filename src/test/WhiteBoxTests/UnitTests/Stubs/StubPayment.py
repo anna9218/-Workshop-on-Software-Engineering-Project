@@ -1,7 +1,7 @@
-from src.main.DomainLayer.FacadePayment import FacadePayment
+from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
 
 
-class StubPayment(FacadePayment):
+class StubPaymentProxy(PaymentProxy):
 
     def __init__(self):
         self.isConnected = False

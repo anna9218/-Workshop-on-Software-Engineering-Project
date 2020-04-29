@@ -1,18 +1,19 @@
 from src.Logger import logger
-from src.main.DomainLayer import Product
+from src.main.DomainLayer.StoreComponent import Product
+
 
 class StoreInventory:
 
     def __init__(self):
         # list of the pairs (product, amount)
-        self.__inventory = []
+        self.__inventory: [{"product": Product, "amount": int}] = []
         # list of search functions: __fun_map[0] = searchProductsByName(product_name)
         #                           __fun_map[1] = searchProductByKeyword(keyword)
         #                           __fun_map[2] = searchProductByCategory(category)
         #  all the functions returns list of products
-        self.__fun_map = [lambda product_name: list(filter(lambda product: product.get_name() == product_name, [x[0] for x in self.__inventory])),
-                          lambda keyword: list(filter(lambda product: keyword in product.get_name(), [x[0] for x in self.__inventory])),
-                          lambda category: list(filter(lambda product: product.get_category() == category, [x[0] for x in self.__inventory]))]
+        self.__fun_map = [lambda product_name: list(filter(lambda p: p.get_name() == product_name, [x["product"] for x in self.__inventory])),
+                          lambda keyword: list(filter(lambda p: keyword in p.get_name(), [x["product"] for x in self.__inventory])),
+                          lambda category: list(filter(lambda p: category == p.get_category(), [x["product"] for x in self.__inventory]))]
 
     def __iter__(self):
         self.__i = 0
@@ -38,11 +39,11 @@ class StoreInventory:
 
         products_ls = self.__fun_map[0](product.get_name())
         if len(products_ls):
-            old_product_amount = self.get_amount_of_product(product.get_name())
+            old_product_amount = self.get_amount(product.get_name())
             self.remove_product(product.get_name())
-            self.__inventory.append((product, amount + old_product_amount))
+            self.__inventory.append({"product": product, "amount": amount + old_product_amount})
         else:
-            self.__inventory.append((product, amount))
+            self.__inventory.append({"product": product, "amount": amount})
         return True
 
     @logger
@@ -69,7 +70,7 @@ class StoreInventory:
         :return: True if the inventory updated without the product
         """
         for p in self.__inventory:
-            if product_name == p[0].get_name():
+            if product_name == p["product"].get_name():
                 self.__inventory.remove(p)
                 return True
         return False
@@ -89,9 +90,8 @@ class StoreInventory:
             return False
 
         for i in self.__inventory:
-            if i[0].get_name() == product_name:
-                self.__inventory.remove(i)
-                self.__inventory.append((i[0], new_amount))
+            if i["product"].get_name() == product_name:
+                i["amount"] = new_amount
                 return True
         return False
 
@@ -103,11 +103,11 @@ class StoreInventory:
         return len(self.__inventory)
 
     @logger
-    def get_amount_of_product(self, product_name):
+    def get_amount(self, product_name: str):
         for i in self.__inventory:
-            if i[0].get_name() == product_name:
-                return i[1]
-        return None
+            if i["product"].get_name() == product_name:
+                return i["amount"]
+        return 0
 
     @logger
     def is_in_stock(self, product_name, requested_amount):
@@ -123,7 +123,7 @@ class StoreInventory:
         if requested_amount < 0:
             return False
 
-        amount_in_stock = self.get_amount_of_product(product_name)
+        amount_in_stock = self.get_amount(product_name)
         if amount_in_stock:
             if int(amount_in_stock) >= requested_amount:
                 return True

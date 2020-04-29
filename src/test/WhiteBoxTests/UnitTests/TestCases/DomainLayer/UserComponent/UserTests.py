@@ -1,8 +1,7 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.User import User
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
+from src.main.DomainLayer.UserComponent.User import User
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubRegistration import StubRegistration
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubShoppingCart import StubShoppingCart
@@ -86,35 +85,6 @@ class UserTests(unittest.TestCase):
         # test for subscriber
         self.__user.register(self.__valid_name, self.__valid_pass)
         self.assertTrue(self.__user.save_products_to_basket(self.__product_ls_to_add))
-
-    @logger
-    def test_view_shopping_cart(self):
-        # test for guest
-        self.__user.save_products_to_basket(self.__product_ls_to_add)
-        self.assertTrue(self.__user.view_shopping_cart())
-        # test for subscriber
-        self.__user.register(self.__valid_name, self.__valid_pass)
-        self.assertTrue(self.__user.view_shopping_cart())
-
-    @logger
-    def test_remove_from_shopping_cart(self):
-        # test for guest
-        self.__user.save_products_to_basket(self.__product_ls_to_add)
-        self.assertTrue(self.__user.remove_from_shopping_cart(self.__product))
-        # test for subscriber
-        self.__user.register(self.__valid_name, self.__valid_pass)
-        self.__user.save_products_to_basket(self.__product_ls_to_add)
-        self.assertTrue(self.__user.remove_from_shopping_cart(self.__product))
-
-    @logger
-    def test_update_quantity_in_shopping_cart(self):
-        # test for guest
-        self.__user.save_products_to_basket(self.__product_ls_to_add)
-        self.assertTrue(self.__user.update_quantity_in_shopping_cart(self.__product, 1))
-        # test for subscriber
-        self.__user.register(self.__valid_name, self.__valid_pass)
-        self.__user.save_products_to_basket(self.__product_ls_to_add)
-        self.assertTrue(self.__user.update_quantity_in_shopping_cart(self.__product, 1))
 
     @logger
     def tearDown(self):

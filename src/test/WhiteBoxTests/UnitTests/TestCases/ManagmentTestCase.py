@@ -1,11 +1,9 @@
 import unittest
 
 # from src.main.DomainLayer import ManagerPermission
-from src.main.DomainLayer.ManagerPermission import ManagerPermission
-from src.main.DomainLayer.Store import Store
-from src.main.DomainLayer.User import User
-from src.main.ServiceLayer.StoreManagerRole import StoreManagerRole
-from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.User import User
 
 # TODO-  can we delete it??
 class MyTestCase(unittest.TestCase):
@@ -14,7 +12,7 @@ class MyTestCase(unittest.TestCase):
         self._owner = User()
         self._owner.register("username", "1234")
         self._owner.login("username", "1234")
-        self._store.add_owner(self._owner)
+        self._store.add_owner("", self._owner)
         self._owner.get_appointment().appoint_manager(self._store)
         self._manager = User()
         self._manager.register("manager", "1234")

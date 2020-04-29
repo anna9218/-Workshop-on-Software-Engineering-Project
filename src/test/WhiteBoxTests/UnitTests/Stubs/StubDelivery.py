@@ -1,7 +1,7 @@
-from src.main.DomainLayer.FacadeDelivery import FacadeDelivery
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 
 
-class StubDelivery(FacadeDelivery):
+class StubDeliveryProxy(DeliveryProxy):
 
     def __init__(self):
         self.isConnected = False

@@ -1,8 +1,8 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.StoreInventory import StoreInventory
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 
 
 class StoreInventoryTests(unittest.TestCase):
@@ -16,9 +16,9 @@ class StoreInventoryTests(unittest.TestCase):
     @logger
     def test_add_product(self):
         self.assertTrue(self.inv.add_product(self.product1, 5))
-        self.assertEqual(self.inv.get_amount_of_product("Chair"), 5)
+        self.assertEqual(self.inv.get_amount("Chair"), 5)
         self.assertTrue(self.inv.add_product(self.product1, 5))
-        self.assertEqual(self.inv.get_amount_of_product("Chair"), 10)
+        self.assertEqual(self.inv.get_amount("Chair"), 10)
         self.assertTrue(self.inv.add_product(self.product2, 8))
         self.assertTrue(self.inv.add_product(self.product2, 8))
         self.assertFalse(self.inv.add_product(self.product2, -8))
@@ -72,8 +72,8 @@ class StoreInventoryTests(unittest.TestCase):
         self.inv.add_product(self.product2, 4)
         self.assertTrue(self.inv.change_amount("Chair", 16))
         self.assertFalse(self.inv.change_amount("Chair", -16))
-        self.assertEqual(self.inv.get_amount_of_product("Chair"), 16)
-        self.assertEqual(self.inv.get_amount_of_product("Sofa"), 4)
+        self.assertEqual(self.inv.get_amount("Chair"), 16)
+        self.assertEqual(self.inv.get_amount("Sofa"), 4)
 
     @logger
     def test_len(self):
@@ -86,10 +86,10 @@ class StoreInventoryTests(unittest.TestCase):
     @logger
     def test_get_amount_of_product(self):
         self.inv.add_product(self.product1, 4)
-        self.assertEqual(self.inv.get_amount_of_product("Chair"), 4)
+        self.assertEqual(self.inv.get_amount("Chair"), 4)
         self.inv.add_product(self.product2, 16)
-        self.assertEqual(self.inv.get_amount_of_product("Sofa"), 16)
-        self.assertEqual(self.inv.get_amount_of_product("Guitar"), None)
+        self.assertEqual(self.inv.get_amount("Sofa"), 16)
+        self.assertEqual(self.inv.get_amount("Guitar"), 0)
 
     @logger
     def test_is_in_stock(self):

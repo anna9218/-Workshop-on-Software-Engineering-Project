@@ -1,6 +1,6 @@
 from src.Logger import logger
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.UserType import UserType
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.UserComponent.UserType import UserType
 
 
 class DiscountPolicy:

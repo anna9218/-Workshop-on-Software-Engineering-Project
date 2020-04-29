@@ -1,12 +1,9 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.Product import Product
-from src.main.DomainLayer.Purchase import Purchase
-from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
-from src.main.ServiceLayer.StoreOwnerRole import StoreOwnerRole
-from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.ServiceLayer.GuestRole import TradeControl, Store
+from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
@@ -21,7 +18,7 @@ class StoreOwnerRoleTests(unittest.TestCase):
         self.__anna_as_store_owner = StubUser()
         self.__anna_as_store_owner.register(self.__nickname, "pass")
         (TradeControl.get_instance()).subscribe(self.__anna_as_store_owner)
-        self.__store_owner = StoreOwnerRole(self.__anna_as_store_owner)
+        self.__store_owner = StoreOwnerOrManagerRole(self.__anna_as_store_owner)
 
         self.__additional_owner = StubUser()
         self.__additional_owner.register("Mooncake", "chookity")
@@ -34,14 +31,14 @@ class StoreOwnerRoleTests(unittest.TestCase):
         store = TradeControl.get_instance().open_store(self.__store_name)
         if store is not None:
             self.__store: Store = store
-            store.add_owner(self.__anna_as_store_owner)
+            store.add_owner("", self.__anna_as_store_owner)
         else:
             self.__store: Store = (TradeControl.get_instance()).get_store(self.__store_name)
 
     @logger
     def test_add_products(self):
         # product_details = (product_name, product_price, product_amounts, product_category)
-        result = self.__store_owner.add_products(self.__nickname, self.__store_name, self.__product_details)
+        result = self.__store_owner.add_products(self.__store_name, self.__product_details)
         self.assertTrue(result)
 
         self.__inventory = self.__store.get_inventory().get_inventory()
@@ -55,20 +52,20 @@ class StoreOwnerRoleTests(unittest.TestCase):
 
     @logger
     def test_remove_products(self):
-        self.__store_owner.add_products(self.__nickname, self.__store_name, self.__product_details)
-        result = self.__store_owner.remove_products(self.__nickname, self.__store_name, self.__product_to_remove)
+        self.__store_owner.add_products(self.__store_name, self.__product_details)
+        result = self.__store_owner.remove_products(self.__store_name, self.__product_to_remove)
         self.assertTrue(result)
 
         self.__inventory = self.__store.get_inventory()
         self.assertEqual(1, self.__inventory.len())
 
-        self.__store_owner.remove_products(self.__nickname, self.__store_name, ["Sofa"])
+        self.__store_owner.remove_products(self.__store_name, ["Sofa"])
         self.assertEqual(0, self.__inventory.len())
 
     @logger
     def test_edit_product(self):
-        self.__store_owner.add_products(self.__nickname, self.__store_name, self.__product_details)
-        result = self.__store_owner.edit_product(self.__nickname, self.__store_name, self.__product_name, "name", "Rainbow Chair")
+        self.__store_owner.add_products(self.__store_name, self.__product_details)
+        result = self.__store_owner.edit_product(self.__store_name, self.__product_name, "name", "Rainbow Chair")
         self.assertTrue(result)
 
         self.__inventory = self.__store.get_inventory()
@@ -83,40 +80,40 @@ class StoreOwnerRoleTests(unittest.TestCase):
 
     @logger
     def test_appoint_additional_owner(self):
-        result = self.__store_owner.appoint_additional_owner("Mooncake", self.__store_name)
+        result = self.__store_owner.appoint_additional_owner(self.__store_name, )
         self.assertTrue(result)
 
-        result = self.__store_owner.appoint_additional_owner("Moon", self.__store_name)
+        result = self.__store_owner.appoint_additional_owner(self.__store_name, )
         self.assertFalse(result)
 
     @logger
     def test_appoint_store_manager(self):
-        result = self.__store_owner.appoint_store_manager("Gary", self.__store_name, [9, 10])
+        result = self.__store_owner.appoint_store_manager(self.__store_name, [9, 10], )
         self.assertTrue(result)
 
-        result = self.__store_owner.appoint_additional_owner("Moon", self.__store_name)
+        result = self.__store_owner.appoint_additional_owner(self.__store_name, )
         self.assertFalse(result)
 
     @logger
     def test_edit_manager_permissions(self):
-        result = self.__store_owner.edit_manager_permissions(self.__store_name, "Gary", [])
+        result = self.__store_owner.edit_manager_permissions("Gary", [], )
         self.assertTrue(result)
 
-        result = self.__store_owner.edit_manager_permissions(self.__store_name, "Mooncake", [])
+        result = self.__store_owner.edit_manager_permissions("Mooncake", [], )
         self.assertFalse(result)
 
     @logger
     def test_remove_manager(self):
-        self.__store_owner.appoint_store_manager("Gary", self.__store_name, [9, 10])
-        result = self.__store_owner.remove_manager(self.__store_name, "Gary", [9, 10])
+        self.__store_owner.appoint_store_manager(self.__store_name, [9, 10], )
+        result = self.__store_owner.remove_manager(str, str)
         self.assertTrue(result)
 
-        result = self.__store_owner.remove_manager(self.__store_name, "Gary", [9, 10])
+        result = self.__store_owner.remove_manager(str, str)
         self.assertFalse(result)
 
     @logger
     def test_display_store_purchases(self):
-        result = self.__store_owner.display_store_purchases(self.__nickname, self.__store_name)
+        result = self.__store_owner.display_store_purchases(self.__store_name)
         self.assertEqual([], result)  # currently empty
 
     @logger

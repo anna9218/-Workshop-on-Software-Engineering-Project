@@ -1,7 +1,7 @@
 import unittest
 
 from src.Logger import logger
-from src.main.DomainLayer.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.ServiceLayer.GuestRole import TradeControl, User, Store
 from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
@@ -12,7 +12,7 @@ class SystemManagerRoleTests(unittest.TestCase):
         self.__eytan_as_sys_manager = User()
         self.__eytan_as_sys_manager.register("eytan_as_sys_manager", "eytan's password")
         (TradeControl.get_instance()).subscribe(self.__eytan_as_sys_manager)
-        (TradeControl.get_instance()).add_sys_manager(self.__eytan_as_sys_manager)
+        (TradeControl.get_instance()).add_system_manager(self.__eytan_as_sys_manager)
 
         self.__eytan_as_store_owner = User()
         self.__eytan_as_store_owner.register("eytan_as_store_owner", "eytan's password")
