@@ -80,6 +80,7 @@ class StoreManagerRoleTests(unittest.TestCase):
                 self.assertEqual(record[0].get_category(), "Pet toy")
                 self.assertEqual(record[1], 10)
 
+    @logger
     def test_appoint_store_manager(self):
         eytan: User = User()
         eytan.register("eytan", "eytan's password")
@@ -100,6 +101,7 @@ class StoreManagerRoleTests(unittest.TestCase):
                                                             [ManagerPermission.WATCH_PURCHASE_HISTORY], )
         self.assertFalse(result)
 
+    @logger
     def test_edit_manager_permissions(self):
         result = self.__store_manager.edit_manager_permissions("Gary", [], )
         #self.assertTrue(result)
@@ -107,6 +109,7 @@ class StoreManagerRoleTests(unittest.TestCase):
         result = self.__store_manager.edit_manager_permissions("Mooncake", [], )
         self.assertFalse(result)
 
+    @logger
     def test_remove_manager(self):
         self.__store_owner.appoint_store_manager(self.__store_name, [9, 10], )
 
@@ -116,10 +119,12 @@ class StoreManagerRoleTests(unittest.TestCase):
         result = self.__store_manager.remove_manager(str, str)
         self.assertFalse(result)
 
+    @logger
     def test_display_store_purchases(self):
         result = self.__store_manager.display_store_purchases(self.__store_name)
         self.assertEqual([], result)  # currently empty
 
+    @logger
     def tearDown(self):
         self.__store.get_inventory().set_inventory([])
 

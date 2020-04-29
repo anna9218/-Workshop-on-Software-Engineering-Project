@@ -63,6 +63,7 @@ class GuestRoleTest(unittest.TestCase):
         guest_role = GuestRole()
         s = TradeControl.get_instance().get_store_info("Eytan's best store")
         print(s)
+
     @logger
     def display_stores_info_test(self):
         self.__guest_role.display_stores_info(self.__store_name, True, False)   # display store info

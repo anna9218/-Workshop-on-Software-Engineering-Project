@@ -1,4 +1,4 @@
-from src.Logger import loggerStaticMethod, logger
+from src.Logger import loggerStaticMethod, logger, errorLogger
 
 
 class Security:
@@ -16,6 +16,7 @@ class Security:
     def __init__(self):
         """ Virtually private constructor. """
         if Security.__instance is not None:
+            errorLogger("This class is a singleton!")
             raise Exception("This class is a singleton!")
         else:
             Security.__instance = self
