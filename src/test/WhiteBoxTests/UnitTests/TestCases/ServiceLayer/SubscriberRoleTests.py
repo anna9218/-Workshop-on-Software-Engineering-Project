@@ -6,22 +6,13 @@ from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
-# from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class SubscriberRoleTests(unittest.TestCase):
     @logger
     def setUp(self):
-        self.__nickname = "anna9218"
-        self.__password = "password"
-        self.__store_name = "Bambook"
-        self.__anna_as_subscriber_mock = Mock()
-        self.__anna_as_subscriber_mock.register = MagicMock(return_value=True)
-        self.__trade_control_mock: TradeControl = TradeControl().get_instance()
-        self.__trade_control_mock.get_instance().get_subscribers = MagicMock(returen_value=[self.__anna_as_subscriber_mock])
-        self.__subscriber = SubscriberRole()
-        self.__subscriber_mock = SubscriberRole()
-        self.__anna_as_subscriber_mock.login(self.__nickname, self.__password)
+        self.__subscriber: SubscriberRole = SubscriberRole()
+        self.__trade_control_mock: TradeControl = TradeControl.get_instance()
 
     @logger
     def test_logout(self):
@@ -29,7 +20,6 @@ class SubscriberRoleTests(unittest.TestCase):
         result = self.__subscriber.logout()
         self.assertTrue(result)
 
-        # check that can't logout if already logged out
         self.__trade_control_mock.get_instance().logout_subscriber = MagicMock(return_value=False)
         result = self.__subscriber.logout()
         self.assertFalse(result)
@@ -37,11 +27,11 @@ class SubscriberRoleTests(unittest.TestCase):
     @logger
     def test_open_store(self):
         self.__trade_control_mock.get_instance().open_store = MagicMock(return_value=True)
-        store = self.__subscriber.open_store(self.__store_name)
+        store = self.__subscriber.open_store("self.__store_name")
         self.assertTrue(store)
 
         self.__trade_control_mock.get_instance().open_store = MagicMock(return_value=False)
-        store = self.__subscriber.open_store(self.__store_name)
+        store = self.__subscriber.open_store("self.__store_name")
         self.assertFalse(store)
 
     @logger
@@ -62,7 +52,6 @@ class SubscriberRoleTests(unittest.TestCase):
 
     @logger
     def tearDown(self):
-        # self.__subscriber.logout()
         self.__trade_control_mock.__delete__()
         pass
 

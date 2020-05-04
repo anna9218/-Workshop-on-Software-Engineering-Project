@@ -14,7 +14,7 @@ class StoreOwnerOrManagerRole:
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
         # param products_details: list products details: [{"name": str, "price": int, "amount": int, "category": str},...]
-        :return: empty list if ALL products were added successfully, else list of products who weren't added
+        :return: True if products were added, False otherwise
         """
         return TradeControl.get_instance().add_products(store_name, products_details)
 
