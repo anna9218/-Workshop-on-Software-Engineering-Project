@@ -491,3 +491,7 @@ class TradeControl:
 
     def __repr__(self):
         return repr("TradeControl")
+
+
+    def __delete__(self):
+        TradeControl.__instance = None
