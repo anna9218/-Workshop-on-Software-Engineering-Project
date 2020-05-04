@@ -36,7 +36,7 @@ class SystemManagerRoleTests(unittest.TestCase):
 
     # @logger
     def test_view_user_purchases_history(self):
-        purchases = self.__store_owner.get_accepted_purchases()
+        # purchases = self.__store_owner.get_accepted_purchases()
 
         # All valid - store_owner has a single purchase
         result = self.__system_manager_role.view_user_purchase_history("store_owner")  # BUGBUG

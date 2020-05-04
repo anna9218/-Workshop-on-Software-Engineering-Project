@@ -20,9 +20,9 @@ class GuestRoleTest(unittest.TestCase):
         self.__store_name = "Eytan's best store"
         self.__store = Store(self.__store_name)
         self.__store.add_product("Eytan's Product", 100, "Eytan Category", 5)
-        self.__product1 = Product ("Eytan's Product", 100, "Eytan Category")
+        self.__product1 = Product("Eytan's Product", 100, "Eytan Category")
         self.__store.add_product("not Eytan's Product", 10, "Eytan Category", 2)
-        self.__product2 = Product ("Eytan's Product", 10, "Eytan Category")
+        self.__product2 = Product("Eytan's Product", 10, "Eytan Category")
         (TradeControl.get_instance()).get_stores().insert(0, self.__store)
         self.__guest_role = GuestRole()
 
@@ -92,7 +92,7 @@ class GuestRoleTest(unittest.TestCase):
 
         # byPriceRange
         full_output = self.__guest_role.filter_products_by((1, 9, 101), products)
-        self.assertEqual(2, len(full_output)) # contains the range
+        self.assertEqual(2, len(full_output))  # contains the range
         self.assertEqual([self.__product1, self.__product2], full_output)
         empty_output = self.__guest_role.filter_products_by((1, 11, 99),
                                                             [(self.__product1.get_name,
@@ -234,7 +234,8 @@ class GuestRoleTest(unittest.TestCase):
     #     self.assertFalse(result)
 
     def __repr__(self):
-        return repr ("GuestRoleTest")
+        return repr("GuestRoleTest")
 
     if __name__ == '__main__':
         unittest.main()
+

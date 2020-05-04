@@ -1,45 +1,49 @@
 import unittest
-
+from unittest.mock import Mock, patch, MagicMock
 from src.Logger import logger
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
-from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
-from src.main.ServiceLayer.TradeControlService import TradeControlService
+from src.main.ServiceLayer.TradeControlService import TradeFacadeService
 
 
 class TradeControlServiceTests(unittest.TestCase):
     # @logger
     def setUp(self):
-        self.__trade = TradeControlService()
+        self.__trade = TradeFacadeService()
 
-    # @logger
+        self.__delivery_proxy_mock = DeliveryProxy.get_instance()
+        self.__delivery_proxy_mock.is_connected = MagicMock(return_value=True)
+        self.__delivery_proxy_mock.connect = MagicMock(return_value=True)
+
+        self.__payment_proxy_mock = PaymentProxy.get_instance()
+        self.__payment_proxy_mock.is_connected = MagicMock(return_value=True)
+        self.__payment_proxy_mock.connect = MagicMock(return_value=True)
+
+        # self.__guest_role_mock = GuestRole()
+        # self.__guest_role_mock.register = MagicMock(return_value=False)
+
     def test_init_system(self):
         # test pre conditions:
-        self.assertFalse(DeliveryProxy.get_instance().is_connected())
-        self.assertFalse(PaymentProxy.get_instance().is_connected())
+        res = self.__trade.init_system()  # returns False - payment and delivery already connected
+        self.assertFalse(res)
 
-        res = self.__trade.init_system()
-        self.assertTrue(res)  # should succeed
+        self.__payment_proxy_mock.is_connected = MagicMock(return_value=False)
+        res = self.__trade.init_system()  # returns False - only payment isn't connected
+        self.assertFalse(res)
+
+        self.__delivery_proxy_mock.is_connected = MagicMock(return_value=False)
+        res = self.__trade.init_system()  # returns True - both aren't connected
+        self.assertTrue(res)
 
         res = self.__trade.init_system()
         self.assertFalse(res)  # should fail - DeliveryProxy & PaymentProxy are already connected
 
         # test post conditions:
-        self.assertTrue(DeliveryProxy.get_instance().is_connected())
-        self.assertTrue(PaymentProxy.get_instance().is_connected())
         self.assertTrue(TradeControl.get_instance().get_curr_user().is_registered())
         res = TradeControl.get_instance().get_curr_user() in TradeControl.get_instance().get_managers()
         self.assertTrue(res)
         self.assertEqual(len(TradeControl.get_instance().get_managers()), 1)
-
-    # TODO:
-    #     def test_init_system(self):
-    #         self.tradeControl.init_system() -> done
-    #         self.assertEqual(len(self.tradeControl.get_managers()), 1) -> done
-    #         self.assertEqual(self.tradeControl.get_delivery_system().isConnected, True) -> done
-    #         self.assertEqual(self.tradeControl.get_payment_system().isConnected, True) -> done
-    #         self.user = StubUser() -> ?
-    #         self.user.set_password_and_nickname("nickname", "password") ----> why? (Anna)
 
     def tearDown(self):
         pass

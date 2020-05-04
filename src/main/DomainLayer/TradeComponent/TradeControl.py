@@ -30,22 +30,31 @@ class TradeControl:
             self.__subscribers = []
             TradeControl.__instance = self
 
-    @logger
+    # @logger -> BOTH FUNCTIONS LOOK THE SAME, BUT THE FIRST CAUSES A BUG (??) (ANNA)
     # ------- TradeControlService function
+    # def add_system_manager(self, nickname, password):
+    #     for s in self.get_managers():
+    #         if s.get_nickname() == nickname:
+    #             return False
+    #     if self.get_subscriber(nickname):
+    #         self.get_managers.append(self.get_curr_user())
+    #         return True
+    #     else:
+    #         self.register_guest(nickname, password)
+    #         self.get_managers.append(self.get_curr_user())
+    #         return True
+
     def add_system_manager(self, nickname, password):
-        for s in self.get_managers():
+        for s in self.__managers:
             if s.get_nickname() == nickname:
                 return False
         if self.get_subscriber(nickname):
-            self.get_managers.append(self.get_curr_user())
+            self.__managers.append(self.__curr_user)
             return True
         else:
             self.register_guest(nickname, password)
-            self.get_managers.append(self.get_curr_user())
+            self.__managers.append(self.__curr_user)
             return True
-        # if self.register_guest(nickname, password):
-        #     self.get_managers.append(self.get_curr_user())
-        # return False
 
     @logger
     # ----   Guest functions   ----
@@ -466,6 +475,11 @@ class TradeControl:
     @logger
     def get_managers(self):
         return self.__managers
+
+    @logger
+    def get_guest(self):
+        guest = User()
+        return guest
 
     @logger
     def set_curr_user(self, curr: User):
