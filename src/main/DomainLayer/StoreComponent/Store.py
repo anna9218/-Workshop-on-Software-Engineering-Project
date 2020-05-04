@@ -244,31 +244,7 @@ class Store:
                 return False
         return True
 
-    @logger
-    def check_purchase_policy(self, amount_per_product: [], username: str) -> float:
-        """
-        This function should check if the user can/can't complete the purchase.
-        Due to the fact that we does'nt have the purchase policies requirements, this func is currently a stab.
 
-        If the user can complete the purchase, the function calculate its price without discount.
-
-        :param amount_per_product: param to check policy.
-        :param username: param to check policy.
-        :return: the price if possible.
-                 -1 else.
-        """
-        total_price: float = 0
-        for product_and_amount in amount_per_product:
-            try:
-                product: Product = self.__inventory.get_product(product_and_amount[0])
-                product_price = float(product.get_price())
-            except AttributeError:
-                product_price = -1
-            if product_price >= 0:
-                total_price = total_price + (product_price * product_and_amount[1])
-                total_price = total_price + (product_price * product_and_amount[1])
-
-        return total_price
 
     @logger
     def calc_discount(self, amount_per_product: [], price: float, username: str):
@@ -352,15 +328,79 @@ class Store:
             return self.__purchases
         return []
 
+
     # def print_inventory(self):
     #     f"The products of store {self.__name}:"
     #     i = 0
     #     for name, p in self.__inventory:
     #         f"For {name} press {i}" #TODO- check if contains \n
 
+    # @logger
+    # def check_purchase_policy(self, amount_per_product: [], username: str) -> float:
+    #     """
+    #     This function should check if the user can/can't complete the purchase.
+    #     Due to the fact that we does'nt have the purchase policies requirements, this func is currently a stab.
+    #
+    #     If the user can complete the purchase, the function calculate its price without discount.
+    #
+    #     :param amount_per_product: param to check policy.
+    #     :param username: param to check policy.
+    #     :return: the price if possible.
+    #              -1 else.
+    #     """
+    #     total_price: float = 0
+    #     for product_and_amount in amount_per_product:
+    #         try:
+    #             product: Product = self.__inventory.get_product(product_and_amount[0])
+    #             product_price = float(product.get_price())
+    #         except AttributeError:
+    #             product_price = -1
+    #         if product_price >= 0:
+    #             total_price = total_price + (product_price * product_and_amount[1])
+    #             total_price = total_price + (product_price * product_and_amount[1])
+    #
+    #     return total_price
     @logger
     def add_purchase(self, purchase: Purchase):
         self.__purchases.insert(0, purchase)
+
+    def check_purchase_policy(self, product_name: str) -> bool:
+        """
+        :param product_name: product name
+        :return: true if the user can purchase the product, otherwise false
+        """
+        for p in self.__purchase_policies:
+            if not p.check_policy(self.__name, product_name):
+                return False
+        return True
+
+    def check_discount_policy(self, product_name: str) -> bool:
+        """
+        :param product_name: product name
+        :return: true if the user can purchase the product, otherwise false
+        """
+        for d in self.__discount_policies:
+            if not d.check_discount(self.__name, product_name):
+                return False
+        return True
+
+    def can_purchase(self, product_name: str, amount: int):
+        if self.__inventory.get_amount(product_name) <= amount or \
+                not self.check_purchase_policy(product_name):
+            return False
+        return True
+
+    @staticmethod
+    def calculate_discount_price(product_name: str, price: int, amount: int):
+        # once we have functionality for discounts, here we will calculate the discounted price according to the policy
+        return price * amount
+
+    def complete_purchase(self, purchase_ls: [dict]):
+        for p in purchase_ls:
+            amount = self.__inventory.get_amount(p["product_name"]) - p["amount"]
+            if not self.__inventory.change_amount(p["product_name"], amount):
+                self.__inventory.remove_product(p["product_name"])
+        pass
 
     def __repr__(self):
         return repr("Store")

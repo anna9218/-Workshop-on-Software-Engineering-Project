@@ -1,3 +1,5 @@
+import jsonpickle
+
 from src.Logger import logger, secureLogger
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
@@ -16,7 +18,7 @@ class User:
         # self.__appointment = StoreManagerAppointment()
         self.__shoppingCart = ShoppingCart()
         self.__accepted_purchases = []
-        self.__unaccepted_purchases: [] = []
+        self.__unaccepted_purchases = []
 
     @secureLogger
     def register(self, username, password):
@@ -123,26 +125,39 @@ class User:
         self.__registrationState = registration
         return True
 
-    @logger
-    def set_shopping_cart(self, shopping_cart):
-        self.__shoppingCart = shopping_cart
-        return True
+    # --- Do we need this ?? ---
+
+    # @logger
+    # def set_shopping_cart(self, shopping_cart):
+    #     self.__shoppingCart = shopping_cart
+    #     return True
+    #
+    # @logger
+    # def set_login_state(self, login_state):
+    #     self.__loginState = login_state
 
     @logger
-    def set_login_state(self, login_state):
-        self.__loginState = login_state
+    def add_unaccepted_purchase(self, purchase: dict):
+        self.__unaccepted_purchases.append(jsonpickle.decode(purchase))
 
     @logger
-    def add_unaccepted_purchase(self, purchase: Purchase):
-        self.__unaccepted_purchases.insert(0, purchase)
+    def remove_unaccepted_purchase(self, purchase: dict):
+        self.__unaccepted_purchases.remove(jsonpickle.decode(purchase))
 
     @logger
-    def remove_unaccepted_purchase(self, purchase: Purchase):
-        self.__unaccepted_purchases.remove(purchase)
+    def add_accepted_purchase(self, purchase: dict):
+        self.__accepted_purchases.append(jsonpickle.decode(purchase))
 
     @logger
-    def add_accepted_purchase(self, purchase: Purchase):
-        self.__accepted_purchases.insert(0, purchase)
+    def complete_purchase(self, purchases: [dict]):
+        for p in purchases:
+            if p in self.__unaccepted_purchases:
+                self.remove_unaccepted_purchase(p)
+                self.add_accepted_purchase(p)
+
+    @logger
+    def get_shopping_cart(self):
+        return self.__shoppingCart
 
     def __repr__(self):
         return repr("User")

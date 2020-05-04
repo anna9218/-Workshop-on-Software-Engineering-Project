@@ -176,7 +176,47 @@ class TradeControl:
         for s in self.__stores:
             if s.get_name() == store_name:
                 return s
-        return None
+
+    # u.c 2.8
+    @logger
+    def purchase_products(self):
+        """
+        get purchases and price for shopping cart according to the policies
+        :return: json list {"total_price": float, "baskets": [purchase json object]]}
+        """
+        return self.__curr_user.get_shopping_cart().make_purchase()
+
+    @logger
+    def accepted_purchase(self, purchase_ls: {"total_price": float, "baskets": [dict]}):
+        # remove products from shopping cart (or update amount if needed)
+        self.__curr_user.get_shopping_cart().complete_purchase(purchase_ls)
+        # add products to users' accepted purchases list
+        self.__curr_user.complete_purchase(purchase_ls["baskets"])
+        # update store inventory
+        for basket in purchase_ls["baskets"]:
+            self.get_store(basket["store_name"]).complete_purchase(basket)
+        return True
+
+    # ----------- temp functions since we don't have purchase policy yet ------------
+    @staticmethod
+    @logger
+    def check_end_time(store_name: str, product_name: str):
+        # temp function since we don't have functionality for purchasing policy
+        return False
+
+    @staticmethod
+    @logger
+    def did_win_auction():
+        # temp function till we have the policy
+        return True
+
+    @staticmethod
+    @logger
+    def does_price_exceeds(price: int):
+        # temp function till we have the policy
+        return False
+    # ----------- temp functions since we don't have purchase policy yet (end) --------
+
     # ---------------------------------------------------
 
     # --------------   subscriber functions   --------------
@@ -407,8 +447,9 @@ class TradeControl:
     def get_managers(self):
         return self.__managers
 
+    @staticmethod
     @logger
-    def get_guest(self):
+    def get_guest():
         guest = User()
         return guest
 

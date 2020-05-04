@@ -42,9 +42,9 @@ class PaymentProxy(PaymentSubject):
 
     @logger
     # need to check payment details with system once a system is set
-    def commit_payment(self, username, amount, credit, date) -> bool:
+    def commit_payment(self, products_ls) -> bool:
         try:
-            if not self.__isConnected or not self.__check_valid_details(username, amount, credit, date):
+            if not self.__isConnected or not self.__check_valid_details(products_ls):
                 return False
             else:
                 return True
@@ -64,17 +64,17 @@ class PaymentProxy(PaymentSubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
+    def cancel_payment(self, purchase_ls):
+        return True
+
     @logger
     def is_connected(self) -> bool:
         return self.__isConnected
 
     @staticmethod
-    def __check_valid_details(name, amount, credit, date) -> bool:
-        loggerStaticMethod("__check_valid_details", [name, amount, credit, date])
-        if type(date) != date_time:
-            return False
-
-        if len(name) == 0 or len(credit) == 0 or (date_time.today().date() > date.date()) or amount <= 0:
+    def __check_valid_details(products_ls) -> bool:
+        loggerStaticMethod("__check_valid_details", [products_ls])
+        if len(products_ls) == 0 or products_ls["total_price"] == 0:
             return False
         else:
             return True

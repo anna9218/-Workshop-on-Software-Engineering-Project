@@ -1,7 +1,12 @@
+import jsonpickle
+
 from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
+from src.main.DomainLayer.UserComponent.User import User
 
 
 class ShoppingCart:
@@ -84,6 +89,30 @@ class ShoppingCart:
     @logger
     def get_shopping_baskets(self):
         return self.__shopping_baskets
+
+    @logger
+    def make_purchase(self):
+        """
+        :return: list of purchases according to baskets in the subscribers shopping cart
+                    [{total_price, store_name, [{product_name, price, amount}]}]
+        """
+        purchase_details = []
+        total_price = 0
+        user = TradeControl.get_instance().get_curr_user()
+        for basket in self.__shopping_baskets:
+            res_i = basket["basket"].make_purchase(basket["store_name"])
+            if res_i is not None:
+                p = Purchase(res_i["dict"], res_i["basket_price"], basket["store_name"], user.get_nickname())
+                user.add_unaccepted_purchase(jsonpickle.encode(p))
+                purchase_details.append(p)
+                total_price += res_i["basket_price"]
+        return {"total_price": total_price, "baskets": jsonpickle.encode(purchase_details)}
+
+    @logger
+    def complete_purchase(self, purchase_ls: {"total_price": float, "baskets": [dict]}):
+        for basket in purchase_ls["baskets"]:
+            # remove products from basket (or update amount if needed)
+            self.get_store_basket(basket["store_name"]).complete_purchase(basket["products_list"])
 
     def __repr__(self):
         return repr("ShoppingCart")

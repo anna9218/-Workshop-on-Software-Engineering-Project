@@ -151,82 +151,90 @@ class GuestRoleTest(unittest.TestCase):
 
     # --------------------------------------------------------------------
     # use case 2.8
-    @logger
-    def test_calculate_purchase_price_direct_approach(self):
-        # All valid
-        amount_per_product = [["Eytan's Product", 4], ["not Eytan's Product", 1]]
-        result = self.__guest_role.calculate_purchase_price_direct_approach(self.__store_name, amount_per_product,
-                                                                            self.__user.get_nickname())
-        self.assertEqual(result, 410)
+    def purchase_products_test(self):
 
-        # store name not valid
-        result = self.__guest_role.calculate_purchase_price_direct_approach("Eytan's worst store",
-                                                                            amount_per_product,
-                                                                            self.__user.get_nickname())
-        self.assertEqual(result, -1)
+        pass
 
-        # amount_per_product name not valid
-        result = self.__guest_role.calculate_purchase_price_direct_approach(self.__store_name, [],
-                                                                            self.__user.get_nickname())
-        self.assertEqual(result, -1)
+    def confirm_payment_test(self):
 
-    @logger
-    def test_calculate_purchase_price_walkaround_approach(self):
-        amount_per_product_per_store = [[self.__store_name, [["Eytan's Product", 4], ["not Eytan's Product", 1]]]]
-        # All valid
-        result = self.__guest_role.calculate_purchase_price_walkaround_approach(amount_per_product_per_store,
-                                                                                self.__user.get_nickname())
-        self.assertEqual(result, 410)
+        pass
 
-        # Only first store valid valid
-        result = self.__guest_role.calculate_purchase_price_walkaround_approach(
-            [[self.__store_name, [["Eytan's Product", 4],
-                                  ["not Eytan's Product", 20]]]],
-            self.__user.get_nickname())
-
-        self.assertEqual(result, -1)
-
-        # store name not valid
-        result = self.__guest_role.calculate_purchase_price_walkaround_approach([["Eytan's worst store",
-                                                                                  [["Eytan's Product", 4]]]],
-                                                                                self.__user.get_nickname())
-        self.assertEqual(result, -1)
-
-    @logger
-    def test_make_purchase(self):
-        amount_per_product = [["Eytan's Product", 4], ["not Eytan's Product", 1]]
-        # All valid
-        result: Purchase = self.__guest_role.make_purchase(self.__store, amount_per_product,
-                                                           self.__user.get_nickname())
-        self.assertEqual(result.get_price(), 410)
-
-        # amount_per_product name not valid
-        result = self.__guest_role.make_purchase(self.__store, [],
-                                                 self.__user.get_nickname())
-        self.assertIsNone(result)
-
-    @logger
-    def test_accepted_price_purchase(self):
-        purchase: Purchase = Purchase((TradeControl.get_instance()).get_next_purchase_id(),
-                                      [["Eytan's Product", 4], ["not Eytan's Product", 1]],
-                                      410, self.__store_name, self.__user.get_nickname())
-        self.__user.add_unaccepted_purchase(purchase)
-        # All valid
-        date = date_time(2021, 4, 19)
-        result = self.__guest_role.accepted_price_purchase(purchase, ["4230014", date])
-
-        # self.assertTrue(result)
-
-        # card not valid
-        result = self.__guest_role.accepted_price_purchase(purchase, ["4230014", date])
-        self.assertFalse(result)
-
-        # date not valid
-        result = self.__guest_role.accepted_price_purchase(purchase, ["4230014", date_time(1999, 4, 19)])
-        self.assertFalse(result)
+    # @logger
+    # def test_calculate_purchase_price_direct_approach(self):
+    #     # All valid
+    #     amount_per_product = [["Eytan's Product", 4], ["not Eytan's Product", 1]]
+    #     result = self.__guest_role.calculate_purchase_price_direct_approach(self.__store_name, amount_per_product,
+    #                                                                         self.__user.get_nickname())
+    #     self.assertEqual(result, 410)
+    #
+    #     # store name not valid
+    #     result = self.__guest_role.calculate_purchase_price_direct_approach("Eytan's worst store",
+    #                                                                         amount_per_product,
+    #                                                                         self.__user.get_nickname())
+    #     self.assertEqual(result, -1)
+    #
+    #     # amount_per_product name not valid
+    #     result = self.__guest_role.calculate_purchase_price_direct_approach(self.__store_name, [],
+    #                                                                         self.__user.get_nickname())
+    #     self.assertEqual(result, -1)
+    #
+    # @logger
+    # def test_calculate_purchase_price_walkaround_approach(self):
+    #     amount_per_product_per_store = [[self.__store_name, [["Eytan's Product", 4], ["not Eytan's Product", 1]]]]
+    #     # All valid
+    #     result = self.__guest_role.calculate_purchase_price_walkaround_approach(amount_per_product_per_store,
+    #                                                                             self.__user.get_nickname())
+    #     self.assertEqual(result, 410)
+    #
+    #     # Only first store valid valid
+    #     result = self.__guest_role.calculate_purchase_price_walkaround_approach(
+    #         [[self.__store_name, [["Eytan's Product", 4],
+    #                               ["not Eytan's Product", 20]]]],
+    #         self.__user.get_nickname())
+    #
+    #     self.assertEqual(result, -1)
+    #
+    #     # store name not valid
+    #     result = self.__guest_role.calculate_purchase_price_walkaround_approach([["Eytan's worst store",
+    #                                                                               [["Eytan's Product", 4]]]],
+    #                                                                             self.__user.get_nickname())
+    #     self.assertEqual(result, -1)
+    #
+    # @logger
+    # def test_make_purchase(self):
+    #     amount_per_product = [["Eytan's Product", 4], ["not Eytan's Product", 1]]
+    #     # All valid
+    #     result: Purchase = self.__guest_role.make_purchase(self.__store, amount_per_product,
+    #                                                        self.__user.get_nickname())
+    #     self.assertEqual(result.get_price(), 410)
+    #
+    #     # amount_per_product name not valid
+    #     result = self.__guest_role.make_purchase(self.__store, [],
+    #                                              self.__user.get_nickname())
+    #     self.assertIsNone(result)
+    #
+    # @logger
+    # def test_accepted_price_purchase(self):
+    #     purchase: Purchase = Purchase((TradeControl.get_instance()).get_next_purchase_id(),
+    #                                   [["Eytan's Product", 4], ["not Eytan's Product", 1]],
+    #                                   410, self.__store_name, self.__user.get_nickname())
+    #     self.__user.add_unaccepted_purchase(purchase)
+    #     # All valid
+    #     date = date_time(2021, 4, 19)
+    #     result = self.__guest_role.accepted_price_purchase(purchase, ["4230014", date])
+    #
+    #     # self.assertTrue(result)
+    #
+    #     # card not valid
+    #     result = self.__guest_role.accepted_price_purchase(purchase, ["4230014", date])
+    #     self.assertFalse(result)
+    #
+    #     # date not valid
+    #     result = self.__guest_role.accepted_price_purchase(purchase, ["4230014", date_time(1999, 4, 19)])
+    #     self.assertFalse(result)
 
     def __repr__(self):
         return repr ("GuestRoleTest")
 
-if __name__ == '__main__':
-    unittest.main()
+    if __name__ == '__main__':
+        unittest.main()
