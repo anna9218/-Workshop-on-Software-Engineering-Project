@@ -38,7 +38,7 @@ class ShoppingBasketTests(unittest.TestCase):
     @logger
     def test_remove_product(self):
         self.__basket.add_product(self.__product, 2, DiscountType.DEFAULT, PurchaseType.DEFAULT)
-        self.assertTrue(self.__basket.remove_product(self.__product))
+        self.assertTrue(self.__basket.remove_product(self.__product.get_name()))
         self.assertFalse(self.__basket.get_products())
         self.assertNotIn([self.__product, 2], self.__basket)
 

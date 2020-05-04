@@ -1,10 +1,9 @@
 from functools import reduce
 
 from src.Logger import loggerStaticMethod, errorLogger, logger
-from src.main.DomainLayer.StoreComponent.Store import Store
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.StoreComponent.Store import Store, User
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from src.main.DomainLayer.UserComponent.User import User
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 import jsonpickle
 
 
@@ -34,74 +33,72 @@ class TradeControl:
     @logger
     # ------- TradeControlService function
     def add_system_manager(self, nickname, password):
-        for s in self.__managers:
+        for s in self.get_managers():
             if s.get_nickname() == nickname:
                 return False
         if self.get_subscriber(nickname):
-            self.__managers.append(self.__curr_user)
+            self.get_managers.append(self.get_curr_user())
             return True
         else:
             self.register_guest(nickname, password)
-            self.__managers.append(self.__curr_user)
+            self.get_managers.append(self.get_curr_user())
             return True
         # if self.register_guest(nickname, password):
-        #     self.__managers.append(self.__curr_user)
-        return False
+        #     self.get_managers.append(self.get_curr_user())
+        # return False
 
     @logger
     # ----   Guest functions   ----
     def register_guest(self, nickname, password):
         return (self.validate_nickname(nickname) and \
-                self.__curr_user.register(nickname, password) and \
-                self.subscribe(self.__curr_user))
+                self.get_curr_user().register(nickname, password) and \
+                self.subscribe(self.get_curr_user()))
 
     @logger
     def login_subscriber(self, nickname, password):
         # subscriber: User = self.get_subscriber(nickname)
-        return (self.__curr_user.is_registered() and \
-               self.__curr_user.is_logged_out() and \
-               self.__curr_user.login(nickname, password))
+        return (self.get_curr_user().is_registered() and \
+                self.get_curr_user().is_logged_out() and \
+                self.get_curr_user().login(nickname, password))
 
     @logger
     def subscribe(self, user: User):
         if self.validate_nickname(user.get_nickname()):
-            self.__subscribers.append(user)
+            self.get_subscribers().append(user)
             return True
         return False
 
     @logger
     def unsubscribe(self, nickname):
-        for s in self.__subscribers:
+        for s in self.get_subscribers():
             if s.get_nickname() == nickname:
-                self.__subscribers.remove(s)
+                self.get_subscribers().remove(s)
                 return True
         return False
 
     @logger
     def close_store(self, store_name) -> bool:
-        for s in self.__stores:
+        for s in self.get_stores:
             if s.get_name() == store_name:
-                self.__stores.remove(s)
+                self.get_stores.remove(s)
                 return True
         return False
 
     @logger
     def validate_nickname(self, nickname):
-        for u in self.__subscribers:
+        for u in self.get_subscribers():
             if u.get_nickname() == nickname:
                 return False
         return True
 
     @logger
-    def get_subscriber(self, nickname):
-        for u in self.__subscribers:
-            if u.get_nickname() == nickname:
-                return u
-        return None
+    def get_subscriber(self, username):
+        return self.get_subscriber(username)
 
     @logger
     def get_products_by(self, search_opt: int, string: str):
-        list_of_lists = list(map(lambda store: store.get_products_by(search_opt, string), self.__stores))
+        list_of_lists = list(map(lambda store: store.get_products_by(search_opt, string),
+                                 self.get_stores))
         list_ = reduce(lambda acc, curr: acc + curr, list_of_lists)
         return list_
 
@@ -144,11 +141,11 @@ class TradeControl:
                                  "discount_type": x["discount_type"],
                                  "purchase_type": x["purchase_type"]},
                       products_stores_quantity_ls))
-        return self.__curr_user.save_products_to_basket(ls)
+        return self.get_curr_user().save_products_to_basket(ls)
 
     @logger
     def view_shopping_cart(self):
-        return self.__curr_user.view_shopping_cart()
+        return self.get_curr_user().view_shopping_cart()
 
     @logger
     def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
@@ -158,10 +155,11 @@ class TradeControl:
                                        "amount": int}, ...]
         :return: True on success, False when one of the products doesn't exist in the shopping cart
         """
-        return self.__curr_user.remove_from_shopping_cart(products_details)
+        return self.get_curr_user().remove_from_shopping_cart(products_details)
 
     @logger
-    def update_quantity_in_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+    def update_quantity_in_shopping_cart(self,
+                                         products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         """
         :param flag: action option - "remove"/"update"
         :param products_details: [{"product_name": str,
@@ -169,13 +167,11 @@ class TradeControl:
                                        "amount": int}, ...]
         :return: True on success, False when one of the products doesn't exist in the shopping cart
         """
-        return self.__curr_user.update_quantity_in_shopping_cart(products_details)
+        return self.get_curr_user().update_quantity_in_shopping_cart(products_details)
 
     @logger
     def get_store(self, store_name):
-        for s in self.__stores:
-            if s.get_name() == store_name:
-                return s
+        return self.get_store(store_name)
 
     # u.c 2.8
     @logger
@@ -184,14 +180,17 @@ class TradeControl:
         get purchases and price for shopping cart according to the policies
         :return: json list {"total_price": float, "baskets": [purchase json object]]}
         """
-        return self.__curr_user.get_shopping_cart().make_purchase()
+        return_value: {} = self.get_curr_user().get_shopping_cart().make_purchase()
+        for purchase in return_value['baskets']:
+            self.get_curr_user().add_unaccepted_purchase(purchase)
+        return return_value
 
     @logger
     def accepted_purchase(self, purchase_ls: {"total_price": float, "baskets": [dict]}):
         # remove products from shopping cart (or update amount if needed)
-        self.__curr_user.get_shopping_cart().complete_purchase(purchase_ls)
+        self.get_curr_user().get_shopping_cart().complete_purchase(purchase_ls)
         # add products to users' accepted purchases list
-        self.__curr_user.complete_purchase(purchase_ls["baskets"])
+        self.get_curr_user().complete_purchase(purchase_ls["baskets"])
         # update store inventory
         for basket in purchase_ls["baskets"]:
             self.get_store(basket["store_name"]).complete_purchase(basket)
@@ -215,6 +214,7 @@ class TradeControl:
     def does_price_exceeds(price: int):
         # temp function till we have the policy
         return False
+
     # ----------- temp functions since we don't have purchase policy yet (end) --------
 
     # ---------------------------------------------------
@@ -222,35 +222,36 @@ class TradeControl:
     # --------------   subscriber functions   --------------
     @logger
     def logout_subscriber(self):
-        if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
-            self.__curr_user.logout()
+        if self.get_curr_user().is_registered() and self.get_curr_user().is_logged_in():
+            self.get_curr_user().logout()
             return True
         return False
 
     @logger
     def open_store(self, store_name) -> bool:
-        if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
-            for s in self.__stores:
+        if self.get_curr_user().is_registered() and self.is_logged_in():
+            for s in self.get_stores:
                 if s.get_name() == store_name:
                     return False
             store = Store(store_name)
-            store.get_owners().append(self.__curr_user)
-            self.__stores.append(store)
+            store.get_owners().append(self.get_curr_user())
+            self.get_stores.append(store)
             return True
         return False
 
     @logger
     def view_personal_purchase_history(self):
-        if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
-            purchases = self.__curr_user.get_accepted_purchases()
+        if self.get_curr_user().is_registered() and self.get_curr_user().is_logged_in():
+            purchases = self.get_curr_user().get_accepted_purchases()
             return reduce(lambda acc, curr_product: acc + jsonpickle.encode(curr_product), purchases)
         return None
+
     # ----------------------------------
 
     # ---- system manager functions ----
     @logger
     def view_user_purchase_history(self, nickname):
-        if self.is_manager(self.__curr_user.get_nickname()):
+        if self.is_manager(self.get_curr_user().get_nickname()):
             viewed_user = self.get_subscriber(nickname)
             if viewed_user:
                 return reduce(lambda acc, curr_product: acc + jsonpickle.encode(curr_product),
@@ -260,7 +261,7 @@ class TradeControl:
 
     @logger
     def view_store_purchases_history(self, store_name):
-        if self.is_manager(self.__curr_user.get_nickname()):
+        if self.is_manager(self.get_curr_user().get_nickname()):
             viewed_store = self.get_store(store_name)
             if viewed_store:
                 return reduce(lambda acc, curr_product: acc + jsonpickle.encode(curr_product),
@@ -270,15 +271,21 @@ class TradeControl:
 
     @logger
     def is_manager(self, nickname):
-        for m in self.__managers:
+        for m in self.get_managers:
             if m.get_nickname() == nickname:
                 return True
         return False
-    # ----------------------------------
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+    @staticmethod
     @logger
-    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+    def get_guest():
+        guest = User()
+        return guest
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+    @logger
+    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "category": str,
+                                                                "amount": int}]) -> bool:
         """
         :param store_name: store's name
         :param products_details: list of JSONs, each JSON is one details record, for one product
@@ -434,6 +441,19 @@ class TradeControl:
             return jsonpickle.encode(store.get_purchases(self.__curr_user.get_nickname()))
         return []
 
+    @logger
+    def get_store(self, store_name):
+        for s in self.get_stores():
+            if s.get_name() == store_name:
+                return s
+
+    @logger
+    def get_subscriber(self, nickname):
+        for u in self.get_subscribers():
+            if u.get_nickname() == nickname:
+                return u
+        return None
+
     # ----------- Getters & Setters --------------
     @logger
     def get_subscribers(self):
@@ -447,16 +467,11 @@ class TradeControl:
     def get_managers(self):
         return self.__managers
 
-    @staticmethod
-    @logger
-    def get_guest():
-        guest = User()
-        return guest
-
     @logger
     def set_curr_user(self, curr: User):
         self.__curr_user = curr
 
+    @logger
     def get_curr_user(self):
         return self.__curr_user
 

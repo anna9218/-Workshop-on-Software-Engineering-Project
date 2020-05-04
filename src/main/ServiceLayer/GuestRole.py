@@ -2,6 +2,7 @@ from src.Logger import logger, loggerStaticMethod
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.SecurityComponent.Security import Security
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+# from src.main.DomainLayer.TradeComponent.TradeFacade import TradeFacade
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType

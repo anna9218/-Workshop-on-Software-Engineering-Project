@@ -5,7 +5,7 @@ from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.ServiceLayer.GuestRole import GuestRole
 
 
-class TradeControlService:
+class TradeFacadeService:
 
     def __init__(self):
         pass
@@ -22,4 +22,4 @@ class TradeControlService:
         return False
 
     def __repr__(self):
-        return repr("TradeControlService")
+        return repr("TradeFacadeService")

@@ -2,14 +2,13 @@
 from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.DiscountPolicy import DiscountPolicy
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
-from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
-from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from src.main.DomainLayer.UserComponent.User import User
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment, User
+# from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+# from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 
 
 class Store:

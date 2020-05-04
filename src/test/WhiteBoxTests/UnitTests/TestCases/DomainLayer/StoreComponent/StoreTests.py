@@ -110,15 +110,15 @@ class StoreTests(unittest.TestCase):
 
     @logger
     def test_add_owner(self):
-        user = StubUser()
-        user.set_password_and_nickname("eden", "password")
+        user = User()
+        user.register("eden", "password")
         self.assertTrue(self.store.add_owner("shani", user))
         self.assertEqual(len(self.store.get_owners()), 2)
 
     @logger
     def test_is_owner(self):
-        user = StubUser()
-        user.set_password_and_nickname("eden", "password")
+        user = User()
+        user.register("eden", "password")
         self.assertFalse(self.store.is_owner("eden"))
         self.store.add_owner("shani", user)
         self.assertTrue(self.store.is_owner("eden"))

@@ -104,7 +104,7 @@ class StoreOwnerOrManagerRole:
 
     # @staticmethod
     # def validate_store_name(self, store_name):
-    #     TradeControl.getInstance().validate_store_name(store_name)
+    #     TradeFacade.getInstance().validate_store_name(store_name)
 
     # @staticmethod
     # def display_purchase_info(self, purchase, store):

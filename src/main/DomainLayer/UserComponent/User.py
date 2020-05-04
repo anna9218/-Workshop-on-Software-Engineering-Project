@@ -1,13 +1,11 @@
 import jsonpickle
 
 from src.Logger import logger, secureLogger
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from src.main.DomainLayer.UserComponent.Registration import Registration
 from src.main.DomainLayer.UserComponent.Login import Login
-from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
+from src.main.DomainLayer.UserComponent.Registration import Registration
+from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
 from src.main.DomainLayer.UserComponent.UserType import UserType
-from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+# from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 
 
 class User:
@@ -127,10 +125,9 @@ class User:
 
     # --- Do we need this ?? ---
 
-    # @logger
-    # def set_shopping_cart(self, shopping_cart):
-    #     self.__shoppingCart = shopping_cart
-    #     return True
+    @logger
+    def set_shopping_cart(self, shopping_cart):
+        self.__shoppingCart = shopping_cart
     #
     # @logger
     # def set_login_state(self, login_state):

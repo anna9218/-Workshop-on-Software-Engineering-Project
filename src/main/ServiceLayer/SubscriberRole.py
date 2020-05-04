@@ -7,18 +7,19 @@ class SubscriberRole:
     def __init__(self):
         pass
 
-    # @logger
     @staticmethod
+    @logger
     # use case 3.1
     def logout():
         """
         logs the subscriber out of the system
         :return: True if succeeded, otherwise False
         """
-        loggerStaticMethod("SubscriberRole.logout",[])
+        loggerStaticMethod("SubscriberRole.logout", [])
         return TradeControl.get_instance().logout_subscriber()
 
     @staticmethod
+    @logger
     # 3.2 open store
     def open_store(store_name: str):
         """
@@ -30,6 +31,7 @@ class SubscriberRole:
         return TradeControl.get_instance().open_store(store_name)
 
     @staticmethod
+    @logger
     # use case 3.7
     def view_personal_purchase_history():
         """
