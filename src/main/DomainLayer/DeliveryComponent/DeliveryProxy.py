@@ -40,9 +40,9 @@ class DeliveryProxy(DeliverySubject):
 
     @logger
     # need to check address details with system once a system is set
-    def deliver_products(self, username, address) -> bool:
+    def deliver_products(self, products_ls) -> bool:
         try:
-            if not self.__isConnected or not self.__check_valid_details(username, address):
+            if not self.__isConnected or not self.__check_valid_details(products_ls):
                 return False
             else:
                 return True

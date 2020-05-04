@@ -26,5 +26,8 @@ class PurchasePolicy:
             return False
         return True
 
+    def check_policy(self, store_name: str, product_name: str):
+        return True
+
     def __repr__(self):
         return repr("PurchasePolicy")

@@ -26,5 +26,8 @@ class DiscountPolicy:
             return False
         return True
 
+    def check_discount(self, store_name: str, product_name: str):
+        return True
+
     def __repr__(self):
         return repr ("DiscountPolicy")
