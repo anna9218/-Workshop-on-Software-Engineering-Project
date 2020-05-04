@@ -79,5 +79,8 @@ class PaymentProxy(PaymentSubject):
         else:
             return True
 
+    def __delete__(self):
+        PaymentProxy.__instance = None
+
     def __repr__(self):
         return repr("FacadePayment")

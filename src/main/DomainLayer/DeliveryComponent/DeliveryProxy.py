@@ -74,5 +74,8 @@ class DeliveryProxy(DeliverySubject):
         else:
             return True
 
+    def __delete__(self):
+        DeliveryProxy.__instance = None
+
     def __repr__(self):
         return repr("FacadeDelivery")

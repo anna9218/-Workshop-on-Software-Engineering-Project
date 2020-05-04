@@ -112,7 +112,7 @@ class TradeControl:
         return list_
 
     @logger
-    def filter_products_by(self, filter_details, products_ls):
+    def filter_products_by(self, filter_details, products_ls: [{"name": str, "price": int, "category": str, "amount": int}]):
         """
         :param filter_details: list of filter details = "byPriceRange" (1, min_num, max_num)
                                                         "byCategory" (2, category)
@@ -133,7 +133,7 @@ class TradeControl:
                     return list(filter(lambda p: filter_details[1] == p.get_category(), products_list))
 
     @logger
-    def get_store_info(self, store_name):
+    def get_store_info(self, store_name: str) -> Store:
         return jsonpickle.encode(self.get_store(store_name))
 
     @logger
@@ -157,7 +157,7 @@ class TradeControl:
         return self.get_curr_user().view_shopping_cart()
 
     @logger
-    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]) -> bool:
         """
         :param products_details: [{"product_name": str,
                                        "store_name": str,
@@ -179,8 +179,12 @@ class TradeControl:
         return self.get_curr_user().update_quantity_in_shopping_cart(products_details)
 
     @logger
-    def get_store(self, store_name):
-        return self.get_store(store_name)
+    def get_store(self, store_name: str) -> bool:
+        for store in self.__stores:
+            if store.get_name == store_name:
+                return store
+        return None
+        # return self.get_store(store_name)
 
     # u.c 2.8
     @logger
@@ -491,7 +495,6 @@ class TradeControl:
 
     def __repr__(self):
         return repr("TradeControl")
-
 
     def __delete__(self):
         TradeControl.__instance = None

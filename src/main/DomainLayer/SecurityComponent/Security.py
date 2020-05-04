@@ -7,7 +7,7 @@ class Security:
     @staticmethod
     def get_instance():
         """ Static access method. """
-        loggerStaticMethod("SecurityComponent.get_instance",[])
+        loggerStaticMethod("SecurityComponent.get_instance", [])
         if Security.__instance is None:
             Security()
         return Security.__instance
@@ -23,8 +23,11 @@ class Security:
 
     @staticmethod
     def validated_password(password) -> bool:
-        loggerStaticMethod("SecurityComponent.validated_password",[password])
+        loggerStaticMethod("SecurityComponent.validated_password", [password])
         return len(password) != 0
 
     def __repr__(self):
         return repr("SecurityComponent")
+
+    def __delete__(self):
+        Security.__instance = None
