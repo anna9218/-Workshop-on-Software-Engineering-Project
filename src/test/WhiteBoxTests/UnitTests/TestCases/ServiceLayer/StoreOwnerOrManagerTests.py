@@ -6,7 +6,7 @@ from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRol
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 
 
-class MyTestCase(unittest.TestCase):
+class StoreOwnerOrManagerTests(unittest.TestCase):
     def setUp(self) -> None:
         self.__store_owner_or_manager_role: StoreOwnerOrManagerRole = StoreOwnerOrManagerRole()
         self.__trade_control_mock: TradeControl = TradeControl.get_instance()
