@@ -37,9 +37,15 @@ class TradeControl:
         for s in self.__managers:
             if s.get_nickname() == nickname:
                 return False
-        if self.register_guest(nickname, password):
+        if self.get_subscriber(nickname):
             self.__managers.append(self.__curr_user)
             return True
+        else:
+            self.register_guest(nickname, password)
+            self.__managers.append(self.__curr_user)
+            return True
+        # if self.register_guest(nickname, password):
+        #     self.__managers.append(self.__curr_user)
         return False
 
     @logger
@@ -409,6 +415,9 @@ class TradeControl:
     @logger
     def set_curr_user(self, curr: User):
         self.__curr_user = curr
+
+    def get_curr_user(self):
+        return self.__curr_user
 
     def __repr__(self):
         return repr("TradeControl")

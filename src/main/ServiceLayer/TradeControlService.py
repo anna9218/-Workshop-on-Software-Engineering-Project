@@ -15,7 +15,6 @@ class TradeControlService:
     def init_system():
         loggerStaticMethod("init_system", [])
         if not DeliveryProxy.get_instance().is_connected() and not PaymentProxy.get_instance().is_connected():
-
             if GuestRole.register(GuestRole(), "TradeManager", "123456789"):
                 return DeliveryProxy.get_instance().connect() and \
                        PaymentProxy.get_instance().connect() and \

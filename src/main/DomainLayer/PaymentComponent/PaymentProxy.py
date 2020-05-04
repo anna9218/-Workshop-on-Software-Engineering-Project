@@ -33,6 +33,9 @@ class PaymentProxy(PaymentSubject):
         try:
             if not self.__isConnected:
                 self.__isConnected = True
+                return True
+            else:
+                return False
         except Exception:
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
@@ -54,6 +57,9 @@ class PaymentProxy(PaymentSubject):
         try:
             if self.__isConnected:
                 self.__isConnected = False
+                return True
+            else:
+                return False
         except Exception:
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
@@ -74,4 +80,4 @@ class PaymentProxy(PaymentSubject):
             return True
 
     def __repr__(self):
-        return repr ("FacadePayment")
+        return repr("FacadePayment")

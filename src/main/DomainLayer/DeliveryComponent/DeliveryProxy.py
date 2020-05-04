@@ -9,7 +9,7 @@ class DeliveryProxy(DeliverySubject):
     @staticmethod
     def get_instance():
         """ Static access method. """
-        loggerStaticMethod("FacadeDelivery.get_instance",[])
+        loggerStaticMethod("FacadeDelivery.get_instance", [])
         if DeliveryProxy.__instance is None:
             DeliveryProxy()
         return DeliveryProxy.__instance
@@ -31,6 +31,9 @@ class DeliveryProxy(DeliverySubject):
         try:
             if not self.__isConnected:
                 self.__isConnected = True
+                return True
+            else:
+                return False
         except Exception:
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
@@ -52,6 +55,9 @@ class DeliveryProxy(DeliverySubject):
         try:
             if self.__isConnected:
                 self.__isConnected = False
+                return True
+            else:
+                return False
         except Exception:
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
