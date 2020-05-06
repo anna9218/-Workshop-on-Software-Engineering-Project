@@ -1,5 +1,6 @@
 from src.Logger import logger
 from src.main.DomainLayer.UserComponent.User import User
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 
 
 class StoreManagerAppointment:
@@ -25,8 +26,11 @@ class StoreManagerAppointment:
         return self.__appointee
 
     @logger
-    def has_permission(self, permission):
-        return permission in self.__permissions
+    def has_permission(self, permission: ManagerPermission):
+        for perm in self.__permissions:
+            if perm.value == permission.value:
+                return True
+        return False
 
     @logger
     def add_permission(self, permission):

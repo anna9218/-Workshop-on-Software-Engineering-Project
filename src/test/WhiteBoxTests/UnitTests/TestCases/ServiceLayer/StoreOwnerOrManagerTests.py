@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock
 
 from src.Logger import logger
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole, TradeControl
@@ -11,6 +11,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         self.__store_owner_or_manager_role: StoreOwnerOrManagerRole = StoreOwnerOrManagerRole()
         self.__trade_control_mock: TradeControl = TradeControl.get_instance()
 
+    @logger
     def test_add_products(self):
         TradeControl.get_instance().add_products = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.add_products("Eytan", {}))

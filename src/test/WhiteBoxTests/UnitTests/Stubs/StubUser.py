@@ -12,7 +12,8 @@ class StubUser(User):
         self.__password = ""
         self.__login = False
         self.__register = False
-        self.__accepted_purchases = [Purchase({35, 1, 29.99, "Some Store", "anna9218"})]
+        self.__accepted_purchases = [Purchase([{"product_name": "Eytan's Product", "product_price": 12.0, "amount": 10}]
+                                              , 120.0, "Eytan's store", "eytaniva")]
         self.__shoppingCart = ShoppingCart()
 
     def login(self, nickname, password):

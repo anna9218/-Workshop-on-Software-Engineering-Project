@@ -3,8 +3,6 @@ import unittest
 from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 

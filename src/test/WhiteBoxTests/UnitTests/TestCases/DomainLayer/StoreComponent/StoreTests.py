@@ -39,7 +39,6 @@ class StoreTests(unittest.TestCase):
     @logger
     def test_add_products(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
-        {"name": str, "price": int, "category": str, "amount": int}
         self.assertTrue(self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
                                                           {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}]))
         self.assertTrue(self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5}]))
@@ -159,7 +158,7 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(result)
 
         # Two product doesn't exist
-        amount_per_product = [["Eytan's social life", 5], ["Liverpool primer league title", 1]]
+        amount_per_product = [["Eytan's social life", 5], ["Liverpool's primer league title", 1]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 

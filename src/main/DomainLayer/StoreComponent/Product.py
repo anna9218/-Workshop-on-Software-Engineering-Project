@@ -3,6 +3,9 @@ from src.Logger import logger
 
 class Product:
     def __init__(self, name, price, category):
+        if price < 0:
+            raise ValueError("Price should be >=0")
+
         # self.__id = id
         self.__name = name
         self.__price = price
@@ -32,3 +35,9 @@ class Product:
     def set_name(self, new_name):
         self.__name = new_name
 
+    @logger
+    def __eq__(self, other):
+        if self.__name == other.get_name() and self.__price == other.get_price() and \
+                self.__category == other.get_category():
+            return True
+        return False
