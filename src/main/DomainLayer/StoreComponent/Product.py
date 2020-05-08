@@ -15,29 +15,30 @@ class Product:
     def __repr__(self):
         return repr("Product")
 
-    # @logger
+    @logger
     def get_price(self):
         return self.__price
 
-    # @logger
+    @logger
     def get_name(self):
         return self.__name
 
-    # @logger
+    @logger
     def get_category(self):
         return self.__category
 
-    # @logger
+    @logger
     def set_price(self, new_price):
         self.__price = new_price
 
-    # @logger
+    @logger
     def set_name(self, new_name):
         self.__name = new_name
 
     @logger
     def __eq__(self, other):
-        if self.__name == other.get_name() and self.__price == other.get_price() and \
-                self.__category == other.get_category():
-            return True
+        if other is Product:
+            if self.__name == other.get_name() and self.__price == other.get_price() and \
+                    self.__category == other.get_category():
+                return True
         return False

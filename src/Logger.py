@@ -27,10 +27,10 @@ def logger(f, name=None):
             result = f(*args, **kwargs)
             return result
         except Exception:
-            print("exception on function: name = " + name + ", arguments = " + str(args))
-            # print(str(Exception))
+            print("exception on function: func_name = " + name + ", arguments = " + str(args))
+            return f(*args, **kwargs)
 
-    wrapped.__doc__ = f.__doc__
+    # wrapped.__doc__ = f.__doc__
     return wrapped
 
 

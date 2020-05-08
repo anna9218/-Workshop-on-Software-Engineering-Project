@@ -8,7 +8,7 @@ from src.main.ServiceLayer.TradeControlService import TradeFacadeService
 
 
 class TradeControlServiceTests(unittest.TestCase):
-    # @logger
+    @logger
     def setUp(self):
         self.__trade = TradeFacadeService()
 
@@ -23,6 +23,7 @@ class TradeControlServiceTests(unittest.TestCase):
         # self.__guest_role_mock = GuestRole()
         # self.__guest_role_mock.register = MagicMock(return_value=False)
 
+    @logger
     def test_init_system(self):
         # test pre conditions:
         res = self.__trade.init_system()  # returns False - payment and delivery already connected

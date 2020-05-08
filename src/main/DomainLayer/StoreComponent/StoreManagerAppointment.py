@@ -8,27 +8,27 @@ class StoreManagerAppointment:
         self.__permissions = permissions
         self.__appointee = appointee
 
-    # @logger
+    @logger
     def set_permissions(self, permissions):
         self.__permissions = permissions
 
-    # @logger
+    @logger
     def get_permissions(self):
         return self.__permissions
 
-    # @logger
+    @logger
     def get_appointer(self):
         return self.__appointer
 
-    # @logger
+    @logger
     def get_appointee(self):
         return self.__appointee
 
-    # @logger
+    @logger
     def has_permission(self, permission):
         return permission in self.__permissions
 
-    # @logger
+    @logger
     def add_permission(self, permission):
         self.__permissions.append(permission)
         return True

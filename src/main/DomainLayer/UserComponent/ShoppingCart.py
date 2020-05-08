@@ -9,7 +9,7 @@ class ShoppingCart:
     def __init__(self):
         self.__shopping_baskets: [{"store_name": str, "basket": ShoppingBasket}] = []
 
-    # @logger
+    @logger
     def remove_products(self, products_details: [{"product_name": str, "store_name": str}]):
         """
         :param products_details: [{"product_name": str,
@@ -27,7 +27,7 @@ class ShoppingCart:
                 return False
         return True
 
-    # @logger
+    @logger
     def update_quantity(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         for curr in products_details:
             basket = self.get_store_basket(curr["store_name"])
@@ -37,7 +37,7 @@ class ShoppingCart:
                 return False
         return True
 
-    # @logger
+    @logger
     def remove_store_basket(self, store_name: str):
         for s in self.__shopping_baskets:
             if s["store_name"] == store_name:
@@ -45,7 +45,7 @@ class ShoppingCart:
                 return True
         return False
 
-    # @logger
+    @logger
     def add_products(self, products_stores_quantity_ls: [{"product": Product, "store_name": str,
                                                           "amount": int, "discount_type": DiscountType,
                                                           "purchase_type": PurchaseType}]) -> bool:
@@ -61,14 +61,14 @@ class ShoppingCart:
                 self.__shopping_baskets.append({"store_name": curr["store_name"], "basket": basket})
         return True
 
-    # @logger
+    @logger
     def get_store_basket(self, store_name: str) -> ShoppingBasket:
         for store_basket in self.__shopping_baskets:
             if store_basket["store_name"] == store_name:
                 return store_basket["basket"]
         return None
 
-    # @logger
+    @logger
     def view_shopping_cart(self):
         """
         :return: list: [{"store_name": str,
@@ -85,7 +85,7 @@ class ShoppingCart:
     #             return True
     #     return False
 
-    # @logger
+    @logger
     def get_shopping_baskets(self):
         return self.__shopping_baskets
 

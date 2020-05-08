@@ -26,7 +26,7 @@ class Store:
         self.__purchase_policies: [PurchasePolicy] = [PurchasePolicy()]
         self.__purchases = []
 
-    # @logger
+    @logger
     def add_products(self, user_nickname: str, products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         """
         :param user_nickname: owner's/manager's nickname
@@ -48,7 +48,7 @@ class Store:
                                products_details))
             return False not in results
 
-    # @logger
+    @logger
     def add_product(self, name: str, price: int, category: str, amount: int) -> bool:
         """
         :param name: name of the new product
@@ -59,7 +59,7 @@ class Store:
         """
         return self.__inventory.add_product(Product(name, price, category), amount)
 
-    # @logger
+    @logger
     def remove_products(self, user_nickname: str, products_names: list) -> bool:
         """
         :param user_nickname: owner's/manager's nickname
@@ -72,7 +72,7 @@ class Store:
             results = list(map(lambda p_name: self.remove_product(p_name), products_names))
             return False not in results
 
-    # @logger
+    @logger
     def remove_product(self, product_name: str) -> bool:
         """
         :param product_name: product's name to delete from inventory
@@ -81,7 +81,7 @@ class Store:
         # assume the product exists in the inventory
         return self.__inventory.remove_product(product_name)
 
-    # @logger
+    @logger
     def edit_product(self, user_nickname: str, product_name: str, op: str, new_value):  # new_value can be str or int
         """
         :param user_nickname: owner's/manager's nickname
@@ -103,7 +103,7 @@ class Store:
                 return False
         return True
 
-    # @logger
+    @logger
     def change_price(self, product_name: str, new_price: int) -> bool:
         """
        :param product_name: name of the product
@@ -119,7 +119,7 @@ class Store:
             return True
         return False
 
-    # @logger
+    @logger
     def change_name(self, product_name: str, new_name: str) -> bool:
         """
         :param product_name: name of the product
@@ -132,7 +132,7 @@ class Store:
             return True
         return False
 
-    # @logger
+    @logger
     def change_amount(self, product_name: str, new_amount: int) -> bool:
         """
        :param product_name: product
@@ -150,7 +150,7 @@ class Store:
     def product_in_inventory(self, product_name: str):
         return self.__inventory.get_product(product_name) is not None
 
-    # @logger
+    @logger
     def add_owner(self, appointer: str, appointee: User) -> bool:
         """
         :param appointer: owner's/manager's nickname
@@ -165,16 +165,16 @@ class Store:
             return True
         return False
 
-    # @logger
+    @logger
     def is_owner(self, user_nickname):
         return user_nickname in [owner.get_nickname() for owner in self.__owners]
 
-    # @logger
+    @logger
     def is_manager(self, user_nickname: str):
         return user_nickname in [appointment.get_appointee().get_nickname() for appointment in
                                  self.__StoreManagerAppointments]
 
-    # @logger
+    @logger
     def has_permission(self, user_nickname, permission):
         my_appointment = list(
             filter(lambda app: app.get_appointee().get_nickname() == user_nickname, self.__StoreManagerAppointments))
@@ -182,12 +182,12 @@ class Store:
             return my_appointment[0].has_permission(permission)
         return False
 
-    # @logger
+    @logger
     # eden added
     def get_products_by(self, opt, string):
         return self.__inventory.get_products_by(opt, string)
 
-    # @logger
+    @logger
     # eden added
     def get_product(self, product_name):
         return self.__inventory.get_product(product_name)
@@ -203,7 +203,7 @@ class Store:
     #     for name, p in self.__inventory:
     #         f"For {name} press {i}" #TODO- check if contains \n
 
-    # @logger
+    @logger
     def add_manager(self, appointer: User, appointee: User, permissions: list):
         """
         :param appointer: store's owner/manager
@@ -218,14 +218,14 @@ class Store:
             return True
         return False
 
-    # @logger
+    @logger
     def get_permissions(self, manager_nickname):
         for appointment in self.__StoreManagerAppointments:
             if appointment.get_appointee().get_nickname() == manager_nickname:
                 return appointment.get_permissions()
         return None
 
-    # @logger
+    @logger
     def get_info(self):
         if not self.__StoreManagerAppointments:  # empty list
             return "Store owners: %s" % (str(self.__owners.strip('[]')))
@@ -234,7 +234,7 @@ class Store:
                 return "Store owners: %s \n managers: $s" % (
                     str(self.__owners.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
 
-    # @logger
+    @logger
     def is_in_store_inventory(self, amount_per_product):
         """
         :param amount_per_product: [product name : str, amount:int]
@@ -250,7 +250,7 @@ class Store:
 
 
 
-    # @logger
+    @logger
     def calc_discount(self, amount_per_product: [], price: float, username: str):
         """
         This function should check if the user can/can't complete the purchase.
@@ -263,27 +263,27 @@ class Store:
         """
         return price
 
-    # @logger
+    @logger
     def empty_inventory(self):
         return self.__inventory.len() == 0
 
-    # @logger
+    @logger
     def get_inventory(self):
         return self.__inventory
 
-    # @logger
+    @logger
     def get_name(self):
         return self.__name
 
-    # @logger
+    @logger
     def get_owners(self):
         return self.__owners
 
-    # @logger
+    @logger
     def get_managers(self):
         return [t[0] for t in self.__StoreManagerAppointments]
 
-    # @logger
+    @logger
     def edit_manager_permissions(self, appointer: User, appointee_nickname: str, permissions: list) -> bool:
         """
         :param appointer: store's owner/manager
@@ -301,7 +301,7 @@ class Store:
                     return True
         return False
 
-    # @logger
+    @logger
     def remove_manager(self, appointer_nickname: str, appointee_nickname: str) -> bool:
         """
         :param appointer_nickname: store's owner/manager
@@ -319,11 +319,11 @@ class Store:
                     return True
         return False
 
-    # @logger
+    @logger
     def get_store_manager_appointments(self):
         return self.__StoreManagerAppointments
 
-    # @logger
+    @logger
     def get_purchases(self, appointer_nickname: str):
         # check permission to add owner - WATCH_PURCHASE_HISTORY
         if self.is_owner(appointer_nickname) or (self.is_manager(appointer_nickname) and
@@ -339,10 +339,11 @@ class Store:
     #     for name, p in self.__inventory:
     #         f"For {name} press {i}" #TODO- check if contains \n
 
-    # @logger
+    @logger
     def add_purchase(self, purchase: Purchase):
         self.__purchases.insert(0, purchase)
 
+    @logger
     def purchase_basket(self, basket: ShoppingBasket):
         """
         purchase user shopping basket
@@ -378,7 +379,7 @@ class Store:
             return {"store_name": self.__name, "basket_price": basket_price, "products": products_purchases}
 
     # u.c 2.8.1
-    # @logger
+    @logger
     def purchase_immediate(self, product_name: str, product_price: int, amount: int):
         """
         :param product_name: product name
@@ -392,7 +393,7 @@ class Store:
         return None
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
-    # @logger
+    @logger
     def purchase_auction(self, product_name: str, product_price: int, amount: int):
         """
         :param store_name: store name
@@ -411,7 +412,7 @@ class Store:
             return None
 
     # u.c 2.8.3 - mostly temp initialization since we don't have purchase policy functionality yet
-    # @logger
+    @logger
     def purchase_lottery(self, product_name: str, product_price: int, amount: int):
         """
         :param product_name: product name
@@ -432,6 +433,7 @@ class Store:
 
     # def complete_purchase(self, purchase: Purchase):
 
+    @logger
     def complete_purchase(self, purchase: Purchase):
         # add purchase to purchase history
         self.__purchases.append(purchase)
@@ -443,11 +445,13 @@ class Store:
             if not self.__inventory.change_amount(product["product_name"], amount):
                 self.__inventory.remove_product(product["product_name"])
 
+    @logger
     def remove_purchase(self, nickname: str, date: datetime):
         for p in self.__purchases:
             if p.get_nickname() == nickname and p.get_date() == date:
                 self.__purchases.remove(p)
 
+    @logger
     def check_purchase_policy(self, product_name: str) -> bool:
         """
         :param product_name: product name
@@ -458,6 +462,7 @@ class Store:
                 return False
         return True
 
+    @logger
     def check_discount_policy(self, product_name: str) -> bool:
         """
         :param product_name: product name
@@ -468,6 +473,7 @@ class Store:
                 return False
         return True
 
+    @logger
     def can_purchase(self, product_name: str, amount: int):
         if self.__inventory.get_amount(product_name) <= amount or \
                 not self.check_purchase_policy(product_name):
@@ -475,24 +481,25 @@ class Store:
         return True
 
     @staticmethod
+    @logger
     def calculate_discount_price(product_name: str, price: int, amount: int):
         # once we have functionality for discounts, here we will calculate the discounted price according to the policy
         return price * amount
 
     @staticmethod
-    # @logger
+    @logger
     def check_purchase_end_time(store_name: str, product_name: str):
         # temp function since we don't have functionality for purchasing policy
         return False
 
     @staticmethod
-    # @logger
+    @logger
     def did_win_auction():
         # temp function till we have the policy
         return True
 
     @staticmethod
-    # @logger
+    @logger
     def does_price_exceed(price: int):
         # temp function till we have the policy
         return False

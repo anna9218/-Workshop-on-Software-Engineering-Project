@@ -29,7 +29,7 @@ class PaymentProxy(PaymentSubject):
             else:
                 PaymentProxy.__instance = self
 
-    # @logger
+    @logger
     def connect(self):
         try:
             if not self.__isConnected:
@@ -41,7 +41,7 @@ class PaymentProxy(PaymentSubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     # need to check payment details with system once a system is set
     def commit_payment(self, products_ls: {"total_price": float, "purchases": [dict]}) -> bool:
         try:
@@ -53,7 +53,7 @@ class PaymentProxy(PaymentSubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     def disconnect(self):
         try:
             if self.__isConnected:
@@ -68,7 +68,7 @@ class PaymentProxy(PaymentSubject):
     def cancel_payment(self, purchase_ls):
         return True
 
-    # @logger
+    @logger
     def is_connected(self) -> bool:
         return self.__isConnected
 
