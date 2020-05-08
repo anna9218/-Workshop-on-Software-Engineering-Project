@@ -6,30 +6,36 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class SaveProductsTest(ProjectTest):
-    @logger
+    # @logger
     def setUp(self) -> None:
         super().setUp()
-        self.register_user("username", "password")
-        self.login("username", "password")
-        self.open_store("store")
-        self.add_products_to_store("username", "store", [("product", 10, "general", 5)])
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
+        self.open_store(self._store_name)
+        self.add_products_to_store(self._store_name,
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 5}])
 
-    @logger
+    # @logger
     def test_success(self):
-        # [ [product, quantity, store], .... ]
-        res = self.add_products_to_cart("username", [("product", 1, "store")])
-        self.assertEqual(True, res)
+        res = self.add_products_to_cart("product", self._store_name, 5, 0, 0)
+        self.assertTrue(res)
 
-    @logger
+    # @logger
     def test_fail(self):
-        res = self.add_products_to_cart("username", [("products", 1, "store")])
-        self.assertEqual(False, res)
+        # store doesn't exist
+        res = self.add_products_to_cart("product", "anotherStoreName", 5, 0, 0)
+        self.assertFalse(res)
+        # product doesn't exist in the store
+        res = self.add_products_to_cart("anotherProductName", self._store_name, 5, 0, 0)
+        self.assertFalse(res)
 
-    @logger
+    # @logger
     def tearDown(self) -> None:
-        self.remove_products_from_store("username", "store", ["product"])
-        self.teardown_store("store")
-        self.remove_user("username")
+        self.update_shopping_cart("remove",
+                                  [{"product_name": "product", "store_name": self._store_name, "amount": 5}])
+        self.remove_products_from_store(self._store_name, ["product"])
+        self.remove_store("store")
+        self.delete_user(self._username)
 
     def __repr__(self):
         return repr("SaveProductsTest")

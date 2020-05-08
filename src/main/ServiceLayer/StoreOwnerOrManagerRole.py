@@ -7,7 +7,7 @@ class StoreOwnerOrManagerRole:
     def __init__(self):
         pass
 
-    @logger
+    # @logger
     # use case 4.1.1
     def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         """
@@ -18,7 +18,7 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().add_products(store_name, products_details)
 
-    @logger
+    # @logger
     # use 4.1.2
     def remove_products(self, store_name: str, products_names: list) -> bool:
         """
@@ -28,7 +28,7 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().remove_products(store_name, products_names)
 
-    @logger
+    # @logger
     # use 4.1.3
     def edit_product(self, store_name: str, product_name: str, op: str, new_value: str) -> bool:
         """
@@ -40,7 +40,7 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().edit_product(store_name, product_name, op, new_value)
 
-    @logger
+    # @logger
     # use case 4.3
     def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> bool:
         """
@@ -50,7 +50,7 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
 
-    @logger
+    # @logger
     # use case 4.5
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> bool:
         """
@@ -61,7 +61,7 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_store_manager(appointee_nickname, store_name, permissions)
 
-    @logger
+    # @logger
     # use case 4.6
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
@@ -72,7 +72,7 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().edit_manager_permissions(store_name, appointee_nickname, permissions)
 
-    @logger
+    # @logger
     # use case 4.7
     def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
         """
@@ -82,7 +82,7 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().remove_manager(store_name, appointee_nickname)
 
-    @logger
+    # @logger
     # use case 4.10 - View store’s purchase history
     def display_store_purchases(self, store_name: str) -> list:
         """

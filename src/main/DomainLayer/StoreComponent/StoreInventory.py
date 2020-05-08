@@ -27,7 +27,7 @@ class StoreInventory:
         else:
             raise StopIteration
 
-    @logger
+    # @logger
     def add_product(self, product: Product, amount: int) -> bool:
         """
         :param product: Product
@@ -46,14 +46,14 @@ class StoreInventory:
             self.__inventory.append({"product": product, "amount": amount})
         return True
 
-    @logger
+    # @logger
     def get_product(self, product_name):
         products_list = self.__fun_map[0](product_name)
         if len(products_list):
             return products_list[0]
         return None
 
-    @logger
+    # @logger
     def get_products_by(self, opt, string):
         """
         :param opt: search option = 1-byName, 2- byKeyword, 3- byCategoru
@@ -63,7 +63,7 @@ class StoreInventory:
         ls = self.__fun_map[opt-1](string)
         return ls
 
-    @logger
+    # @logger
     def remove_product(self, product_name):
         """
         :param product_name: product to delete from inventory
@@ -75,7 +75,7 @@ class StoreInventory:
                 return True
         return False
 
-    @logger
+    # @logger
     def change_amount(self, product_name, new_amount) -> bool:
         """
         :param product_name: product name to edit
@@ -95,21 +95,21 @@ class StoreInventory:
                 return True
         return False
 
-    @logger
+    # @logger
     def len(self):
         """
         :return: amount of products on inventory
         """
         return len(self.__inventory)
 
-    @logger
-    def get_amount(self, product_name: str):
+    # @logger
+    def get_amount(self, product_name: str) -> int:
         for i in self.__inventory:
             if i["product"].get_name() == product_name:
                 return i["amount"]
         return 0
 
-    @logger
+    # @logger
     def is_in_stock(self, product_name, requested_amount):
         """
         This function check if the product exist in the store inventory.
@@ -129,13 +129,16 @@ class StoreInventory:
                 return True
         return False
 
-    @logger
+    # @logger
     def get_inventory(self):
         return self.__inventory
 
-    @logger
+    # @logger
     def set_inventory(self, new_inventory):
         self.__inventory = new_inventory
+
+    def is_empty(self):
+        return len(self.__inventory) == 0
 
     def __repr__(self):
         return repr("StoreInventory")

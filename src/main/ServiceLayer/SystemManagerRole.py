@@ -9,7 +9,7 @@ class SystemManagerRole:
 
 # ---------------------------------------------------- U.C 6.4 ---------------------------------------------------------
 
-    @logger
+    # @logger
     def view_user_purchase_history(self, viewed_user: str):
         """
         This function returns all the purchases that are done by a specific user.
@@ -18,7 +18,7 @@ class SystemManagerRole:
         """
         return TradeControl.get_instance().view_user_purchase_history(viewed_user)
 
-    @logger
+    # @logger
     def view_store_purchases_history(self, store_name: str):
         """
         :param store_name: the store to view

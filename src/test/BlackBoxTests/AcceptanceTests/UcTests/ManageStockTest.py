@@ -6,47 +6,46 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class ManageStockTest(ProjectTest):
-    @logger
+    # @logger
     def setUp(self) -> None:
         super().setUp()
-        self.__username = "username"
-        self.__pass = "password"
-        self.__store = "store"
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
+        self.open_store(self._store_name)
 
-    @logger
+    # @logger
     def test_success(self):
-        # add product to store
-        self.register_user(self.__username, self.__pass)
-        self.login(self.__username, self.__pass)
-        self.open_store(self.__store)
-        res = self.add_products_to_store(self.__username, self.__store, [("product", 10, 3, "general")])
-        self.assertEqual(True, res)
-        # edit products in store
-        res = self.edit_products_in_store(self.__username, self.__store, "product", "price", 12)
-        self.assertEqual(True, res)
-        # remove product from store
-        res = self.remove_products_from_store(self.__username, self.__store, ["product"])
-        self.assertEqual(True, res)
+        # add product to store, valid details
+        res = self.add_products_to_store(self._store_name, [{"name": "product", "price": 10, "category": "general", "amount": 5}])
+        self.assertTrue(res)
+        # edit products in store, valid details
+        res = self.edit_products_in_store(self._store_name, "product", "price", 12)
+        self.assertTrue(res)
+        # remove product from store, valid details
+        res = self.remove_products_from_store(self._store_name, ["product"])
+        self.assertTrue(res)
 
-    @logger
+    # @logger
     def test_fail(self):
-        pass
+        # store doesn't exist
+        res = self.add_products_to_store("anotherStoreName",
+                                         [{"name": "product", "price": 10, "category": "general", "amount": 5}])
+        self.assertFalse(res)
+        # store doesn't exist or product doesn't exist in store
+        res = self.edit_products_in_store("anotherStoreName", "product", "price", 12)
+        self.assertFalse(res)
+        res = self.edit_products_in_store(self._store_name, "pizza", "price", 12)
+        self.assertFalse(res)
+        # store doesn't exist or product doesn't exist in store
+        res = self.remove_products_from_store("anotherStoreName", ["product"])
+        self.assertFalse(res)
+        res = self.remove_products_from_store(self._store_name, ["pizza"])
+        self.assertFalse(res)
 
-    @logger
-    def test_add(self):
-        pass
-
-    @logger
-    def test_edit(self):
-        pass
-
-    @logger
-    def test_remove(self):
-        pass
-
-    @logger
+    # @logger
     def tearDown(self) -> None:
-        pass
+        self.delete_user(self._username)
+        self.remove_store(self._store_name)
 
     def __repr__(self):
         return repr("ManageStockTest")

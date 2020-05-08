@@ -16,7 +16,7 @@ def logger(f, name=None):
         logger.fhwr = open("EventLog.log", "w")
     if name is None:  # name = the name of the called function
         name = f.__qualname__
-
+#
     def wrapped(*args, **kwargs):
         try:
             logger.fhwr.write("The function " + str(name) + " was called\n"

@@ -12,7 +12,7 @@ class Security:
             Security()
         return Security.__instance
 
-    @logger
+    # @logger
     def __init__(self):
         """ Virtually private constructor. """
         if Security.__instance is not None:

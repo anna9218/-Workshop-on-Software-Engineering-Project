@@ -7,21 +7,45 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 class ManageStoreTest(ProjectTest):
 
-    @logger
+    # @logger
     def setUp(self) -> None:
-        pass
+        super().setUp()
+        self.subscribe_user("newManager", "newPassword")
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
+        self.open_store(self._store_name)
+        self.add_products_to_store(self._store_name,
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 10}])
+        self.appoint_additional_manager("newManager", self._store_name, [3])
+        self.logout()
+        self.set_user("newManager")
+        self.login("newManager", "newPassword")
 
-    @logger
+    # @logger
     def test_success(self):
-        pass
+        self.subscribe_user("newUser", "newerPassword")
+        # manager with permission to add owner
+        res = self.appoint_additional_owner("newManager", self._store_name)
+        self.assertTrue(res)
 
-    @logger
+    # @logger
     def test_fail(self):
-        pass
+        # manager without permissions
+        self.edit_manager_permissions(self._store_name, self._username, [])
+        res = self.edit_products_in_store(self._store_name, "product", "price", "100")
+        self.assertTrue(res)
 
-    @logger
+    # @logger
     def tearDown(self) -> None:
-        pass
+        self.logout()
+        self.update_shopping_cart("remove",
+                                  [{"product_name": "product", "store_name": self._store_name, "amount": 10}])
+        self.remove_products_from_store(self._store_name, ["product"])
+        self.remove_store("store")
+        self.delete_user(self._username)
+        self.delete_manager("newManager", self._store_name)
+        self.delete_user("newManager")
+        self.delete_user("newUser")
 
     def __repr__(self):
         return repr("ManageStoreTest")
