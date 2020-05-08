@@ -27,7 +27,7 @@ class DeliveryProxy(DeliverySubject):
             else:
                 DeliveryProxy.__instance = self
 
-    # @logger
+    @logger
     def connect(self):
         try:
             if not self.__isConnected:
@@ -39,7 +39,7 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     # need to check address details with system once a system is set
     def deliver_products(self, address: str, products_ls: []) -> bool:
         """
@@ -59,7 +59,7 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     def disconnect(self):
         try:
             if self.__isConnected:
@@ -71,7 +71,7 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     def is_connected(self) -> bool:
         return self.__isConnected
 

@@ -22,7 +22,7 @@ class ShoppingBasket:
         else:
             raise StopIteration
 
-    # @logger
+    @logger
     def add_product(self, product: Product, amount: int, discount_type: DiscountType, purchase_type: PurchaseType) -> bool:
         for product_amount in self.__products:
             if product.get_name() == product_amount["product"].get_name():
@@ -31,7 +31,7 @@ class ShoppingBasket:
         self.__products.append({"product": product, "amount": amount, "discountType": discount_type, "purchaseType": purchase_type})
         return True
 
-    # @logger
+    @logger
     def get_basket_info(self):
         """
         :return: list: [{"product_name": str
@@ -40,7 +40,7 @@ class ShoppingBasket:
         return list(map(lambda x: {"product_name": x["product"].get_name(),
                                    "amount": x["amount"]}, self.__products))
 
-    # @logger
+    @logger
     # eden
     def remove_product(self, product_name: str) -> bool:
         for p in self.__products:
@@ -49,7 +49,7 @@ class ShoppingBasket:
                 return True
         return False
 
-    # @logger
+    @logger
     # eden
     def update_amount(self, product_name: str, amount: int):
         for p in self.__products:
@@ -58,7 +58,7 @@ class ShoppingBasket:
                 return True
         return False
 
-    # @logger
+    @logger
     # eden
     def is_empty(self):
         return self.__products == []
@@ -77,26 +77,29 @@ class ShoppingBasket:
     #             return True
     #     return False
 
-    # @logger
+    @logger
     def get_products(self):
         return self.__products
 
-    # @logger
+    @logger
     def get_product_amount(self, product_name: str):
         for p in self.__products:
             if p["product"].get_name() == product_name:
                 return p["amount"]
         return 0
 
+    @logger
     def get_products(self):
         return self.__products
 
+    @logger
     def get_product(self, product_name: str):
         for p in self.__products:
             if p["product"].get_name() == product_name:
                 return p
         return None
 
+    @logger
     def complete_purchase(self, product_ls: [dict]):
         """
             update shopping basket after successful purchase

@@ -7,14 +7,14 @@ from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
 
 class SystemManagerRoleTests(unittest.TestCase):
-    # @logger
+    @logger
     def setUp(self):
         self.__system_manager_role = SystemManagerRole()
         self.__trade_control_mock = TradeControl().get_instance()
         self.__viewed_user = "anna9218"
         self.__store_name = "Some Store"
 
-    # @logger
+    @logger
     def test_view_user_purchases_history(self):
         self.__trade_control_mock.get_instance().view_user_purchase_history = MagicMock(return_value=True)
         res = self.__system_manager_role.view_user_purchase_history(self.__viewed_user)
@@ -24,7 +24,7 @@ class SystemManagerRoleTests(unittest.TestCase):
         res = self.__system_manager_role.view_user_purchase_history(self.__viewed_user)
         self.assertFalse(res)
 
-    # @logger
+    @logger
     def test_view_store_purchases_history(self):
         self.__trade_control_mock.get_instance().view_store_purchases_history = MagicMock(return_value=True)
         res = self.__system_manager_role.view_store_purchases_history(self.__store_name)
@@ -34,7 +34,7 @@ class SystemManagerRoleTests(unittest.TestCase):
         res = self.__system_manager_role.view_store_purchases_history(self.__store_name)
         self.assertFalse(res)
 
-    # @logger
+    @logger
     def tearDown(self):
         self.__trade_control_mock.__delete__()
 
