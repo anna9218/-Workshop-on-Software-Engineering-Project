@@ -1,4 +1,4 @@
-from src.main.DomainLayer.Registration import Registration
+from src.main.DomainLayer.UserComponent.Registration import Registration
 
 
 class StubRegistration(Registration):

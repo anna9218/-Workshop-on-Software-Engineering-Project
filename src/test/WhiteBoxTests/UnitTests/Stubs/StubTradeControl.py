@@ -1,6 +1,6 @@
-from src.main.DomainLayer.TradeControl import TradeControl
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubStore import StubStore
-from src.main.DomainLayer.FacadePayment import date_time
+from src.main.DomainLayer.PaymentComponent.PaymentProxy import date_time
 
 
 class StubTradeControl(TradeControl):

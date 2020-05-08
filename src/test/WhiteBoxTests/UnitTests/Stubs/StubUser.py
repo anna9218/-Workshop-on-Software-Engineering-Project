@@ -1,7 +1,7 @@
-from src.main.DomainLayer.Purchase import Purchase
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
+from src.main.DomainLayer.UserComponent.User import User
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
-from datetime import datetime as date_time
 
 
 class StubUser(User):
@@ -10,21 +10,29 @@ class StubUser(User):
         # super().__init__()
         self.__nickname = ""
         self.__password = ""
-        self.__loginState = StubLogin()
-        self.__accepted_purchases = [Purchase(35, 1, 29.99, "Some Store", "anna9218")]
+        self.__login = False
+        self.__register = False
+        self.__accepted_purchases = [Purchase([{"product_name": "Eytan's Product", "product_price": 12.0, "amount": 10}]
+                                              , 120.0, "Eytan's store", "eytaniva")]
+        self.__shoppingCart = ShoppingCart()
 
     def login(self, nickname, password):
-        return self.__loginState.login(nickname, password)
+        self.__login = True
+        return True
 
     def logout(self):
-        if self.is_logged_in():
-            self.__loginState.set_login(False)
-            return True
-        return False
+        self.__login = False
 
     def register(self, username, password):
+        self.__register = True
         self.__nickname = username
         self.__password = password
+
+    def is_registered(self):
+        return self.__register
+
+    def is_logged_in(self):
+        return self.__login
 
     def get_trade_control(self):
         return self.get_trade_control()
@@ -44,12 +52,6 @@ class StubUser(User):
     def set_password_and_nickname(self, name, password):
         self.__nickname = name
         self.__password = password
-
-    def is_registered(self):
-        return True
-
-    def is_logged_in(self):
-        return self.__loginState.is_logged_in()
 
     def get_accepted_purchases(self):
         return self.__accepted_purchases

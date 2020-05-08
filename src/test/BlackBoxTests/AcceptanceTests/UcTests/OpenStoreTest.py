@@ -1,30 +1,38 @@
 """
-    test class for use case 3.3 - open store
+    test class for use case 3.2 - open store
 """
+from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class OpenStoreTest(ProjectTest):
-
+    # @logger
     def setUp(self) -> None:
         super().setUp()
-        self.__username = "username"
-        self.__password = "password"
-        self.__store_name = "store"
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
 
+    # @logger
     def test_success(self):
-        self.register_user(self.__username, self.__password)
-        self.login(self.__username, self.__password)
-        res = self.open_store(self.__store_name)
-        self.assertEqual(True, res)
+        # valid store name that doesn't exist in the system
+        res = self.open_store(self._store_name)
+        self.assertTrue(res)
 
+    # @logger
     def test_fail(self):
-        self.register_user(self.__username, self.__password)
-        self.login(self.__username, self.__password)
-        self.open_store(self.__store_name)
-        res = self.open_store(self.__store_name)
-        self.assertEqual(False, res)
+        # valid store name + store name already exist in the system
+        self.open_store(self._store_name)
+        res = self.open_store(self._store_name)
+        self.assertFalse(res)
+        self.remove_store(self._store_name)
+        # invalid store name
+        res = self.open_store("")
+        self.assertFalse(res)
 
+    # @logger
     def tearDown(self) -> None:
-        self.remove_user(self.__username)
-        self.teardown_store(self.__store_name)
+        self.delete_user(self._username)
+        self.remove_store(self._store_name)
+
+    def __repr__(self):
+        return repr("OpenStoreTest")

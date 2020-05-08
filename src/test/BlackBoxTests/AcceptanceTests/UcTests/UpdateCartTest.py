@@ -1,19 +1,65 @@
 """
     test class for use case 2.7 - view and update shopping cart
 """
+from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
-class SaveProductsTest(ProjectTest):
+class UpdateCartTest(ProjectTest):
 
+    # @logger
     def setUp(self) -> None:
-        pass
+        super().setUp()
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
+        self.open_store(self._store_name)
+        self.add_products_to_store(self._store_name,
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 5}])
+        self.add_products_to_cart("product", self._store_name, 1, 0, 0)
 
+    # @logger
     def test_success(self):
-        pass
+        # view cart with valid details
+        res = self.view_shopping_cart()
+        self.assertTrue(res)
+        # update with valid details
+        res = self.update_shopping_cart("update",
+                                        [{"product_name": "product", "store_name": self._store_name, "amount": 10}])
+        self.assertTrue(res)
+        # delete with valid details
+        res = self.update_shopping_cart("remove",
+                                        [{"product_name": "product", "store_name": self._store_name, "amount": 1}])
+        self.assertTrue(res)
 
+    # @logger
     def test_fail(self):
-        pass
+        # store doesn't exist
+        res = self.update_shopping_cart("update",
+                                        [{"product_name": "product", "store_name": "anotherStoreName", "amount": 10}])
+        self.assertFalse(res)
+        res = self.update_shopping_cart("remove",
+                                        [{"product_name": "product", "store_name": "anotherStoreName", "amount": 1}])
+        self.assertFalse(res)
+        # product doesn't exist
+        res = self.update_shopping_cart("update",
+                                    [{"product_name": "anotherProduct", "store_name": self._store_name, "amount": 10}])
+        self.assertFalse(res)
+        res = self.update_shopping_cart("remove",
+                                    [{"product_name": "anotherProduct", "store_name": self._store_name, "amount": 1}])
+        self.assertFalse(res)
+        # empty shopping cart
+        self.update_shopping_cart("remove",
+                                    [{"product_name": "product", "store_name": self._store_name, "amount": 1}])
+        res = self.view_shopping_cart()
+        self.assertFalse(res)
 
+    # @logger
     def tearDown(self) -> None:
-        pass
+        self.update_shopping_cart("remove",
+                                  [{"product_name": "product", "store_name": self._store_name, "amount": 1}])
+        self.remove_products_from_store(self._store_name, ["product"])
+        self.remove_store("store")
+        self.delete_user(self._username)
+
+    def __repr__(self):
+        return repr("UpdateCartTest")

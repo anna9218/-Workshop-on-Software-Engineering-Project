@@ -1,6 +1,4 @@
-from src.main.DomainLayer.Store import Store
-from src.main.DomainLayer.StoreInventory import StoreInventory
-from src.main.DomainLayer.User import User
+from src.main.DomainLayer.StoreComponent.Store import Store
 
 
 class StubStore(Store):

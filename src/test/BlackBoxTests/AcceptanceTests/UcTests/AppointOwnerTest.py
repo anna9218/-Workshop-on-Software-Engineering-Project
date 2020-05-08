@@ -1,36 +1,49 @@
 """
     test class for use case 4.3 - appoint additional store owner
 """
+from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class AppointOwnerTest(ProjectTest):
 
+    # @logger
     def setUp(self) -> None:
         super().setUp()
-        self.__appointer_name = "username1"
-        self.__appointer_pass = "password1"
         self.__appointee_name = "username2"
         self.__appointee_pass = "password2"
-        self.register_user(self.__appointee_name, self.__appointee_pass)
-        self.__store = "store"
+        self.subscribe_user(self.__appointee_name, self.__appointee_pass)
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
+        self.open_store(self._store_name)
 
+    # @logger
     def test_success(self):
-        self.register_user(self.__appointer_name, self.__appointer_pass)
-        self.login(self.__appointer_name, self.__appointer_pass)
-        self.open_store(self.__store)
-        res = self.appoint_additional_owner(self.__appointee_name, self.__store)
-        self.assertEqual(True, res)
+        # valid details
+        res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
+        self.assertTrue(res)
 
+    # @logger
     def test_fail(self):
-        self.remove_user(self.__appointee_name)
-        self.register_user(self.__appointer_name, self.__appointer_pass)
-        self.login(self.__appointer_name, self.__appointer_pass)
-        self.open_store(self.__store)
-        res = self.appoint_additional_owner(self.__appointee_name, self.__store)
-        self.assertEqual(False, res)
+        # store doesn't exist
+        res = self.appoint_additional_owner(self.__appointee_name, "someOtherStore")
+        self.assertFalse(res)
+        # appointee doesn't exist
+        res = self.appoint_additional_owner("imaginaryAppointee", self._store_name)
+        self.assertFalse(res)
+        # appointee is already store owner of the shop
+        self.appoint_additional_owner(self.__appointee_name, self._store_name)
+        res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
+        self.assertFalse(res)
+        # appointee isn't registered
+        self.delete_user(self.__appointee_name)
+        res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
+        self.assertFalse(res)
 
+    # @logger
     def tearDown(self) -> None:
-        self.remove_user(self.__appointer_name)
-        self.teardown_store(self.__store)
+        self.delete_user(self._username)
+        self.remove_store(self._store_name)
 
+    def __repr__(self):
+        return repr("AppointOwnerTest")
