@@ -1,13 +1,48 @@
 from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.Leaves.MaxAmountPolicy import MaxAmountPolicy
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.Leaves.MinAmountPolicy import MinAmountPolicy
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.Leaves.ProhibitedDatePolicy import ProhibitedDatePolicy
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchaseComponent import PurchaseComponent
 from src.main.DomainLayer.UserComponent.UserType import UserType
 
 
 class PurchasePolicy:
 
     def __init__(self):
+        self.__policies = [PurchaseComponent]
+
         """-> list of ([user_type: UserType, price: float, list of [product: Product, amount: int]] """
+        self.policy_details = [{"type": str, "basic_rules": []}]
         self.__disallowed_purchases = list()
+    # max_amount, min_amount -> if we need min products or max products allowed
+    # products_together = [Product/product_name]
+
+    def add_purchase_policy(self, details: [dict]):
+        if not details["products"]:
+            return False
+
+        if details["min_amount"]:
+            self.__policies.append(MinAmountPolicy(details["min-amount"], details["products"]))
+            return True
+        elif details["max_amount"]:
+            self.__policies.append(MaxAmountPolicy(details["max_amount"], details["products"]))
+            return True
+        elif details["dates"]:
+            self.__policies.append(ProhibitedDatePolicy(details["dates"], details["products"]))
+            return True
+        elif details["products"]:
+            self.__policies.append(details["products"])
+            return True
+        else:
+            return False
+
+    def remove_purchase_policy(self, policy: PurchaseComponent):
+        self.__policies.remove(policy)
+
+    def update_purchase_policy(self, policy: PurchaseComponent, details: [str]):
+        pass
+
 
     # @logger
     def add_disallowed_purchasing(self, disallowed_purchase: list):
