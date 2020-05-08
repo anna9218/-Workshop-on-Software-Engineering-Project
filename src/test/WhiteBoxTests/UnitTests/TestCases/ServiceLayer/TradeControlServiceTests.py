@@ -4,13 +4,13 @@ from src.Logger import logger
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
-from src.main.ServiceLayer.TradeControlService import TradeFacadeService
+from src.main.ServiceLayer.TradeControlService import TradeControlService
 
 
 class TradeControlServiceTests(unittest.TestCase):
     @logger
     def setUp(self):
-        self.__trade = TradeFacadeService()
+        self.__trade = TradeControlService()
 
         self.__delivery_proxy_mock = DeliveryProxy.get_instance()
         self.__delivery_proxy_mock.is_connected = MagicMock(return_value=True)
