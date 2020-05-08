@@ -27,7 +27,8 @@ def logger(f, name=None):
             result = f(*args, **kwargs)
             return result
         except Exception:
-            errorLogger("Wrong input to log: name = " + name + ", arguments = " + str(args))
+            print("exception on function: name = " + name + ", arguments = " + str(args))
+            # print(str(Exception))
 
     wrapped.__doc__ = f.__doc__
     return wrapped
