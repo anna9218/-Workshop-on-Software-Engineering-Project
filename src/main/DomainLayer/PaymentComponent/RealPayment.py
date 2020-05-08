@@ -2,19 +2,19 @@ from src.Logger import logger
 from src.main.DomainLayer.PaymentComponent.PaymentSubject import PaymentSubject
 
 
-class RealPaymeny(PaymentSubject):
-    @logger
+class RealPayment(PaymentSubject):
+    # @logger
     def connect(self):
         pass
 
-    @logger
-    def commit_payment(self, username, amount, credit, date) -> bool:
+    # @logger
+    def commit_payment(self, products_ls: {"total_price": float, "products": [dict]}) -> bool:
         pass
 
-    @logger
+    # @logger
     def disconnect(self):
         pass
 
-    @logger
+    # @logger
     def is_connected(self) -> bool:
         pass

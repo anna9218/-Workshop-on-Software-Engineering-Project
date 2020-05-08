@@ -13,7 +13,7 @@ class PaymentSubject(ABC):
 
     @abstractmethod
     # need to check payment details with system once a system is set
-    def commit_payment(self, username, amount, credit, date) -> bool:
+    def commit_payment(self, products_ls: {"total_price": float, "products": [dict]}) -> bool:
         pass
 
     @abstractmethod

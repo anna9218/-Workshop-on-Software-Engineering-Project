@@ -7,36 +7,39 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 class DeliverySystemTest(ProjectTest):
 
-    @logger
+    # @logger
     def setUp(self) -> None:
         super().setUp()
-        super().connect_delivery_sys()
-        self.__username = "username"
-        self.__good_address = "some address 12"
-        self.__bad_input = ""
+        self.connect_delivery_sys()
+        self.__address = "some address 12"
 
-    @logger
+    # @logger
     def test_success(self):
         try:
-            result = super().deliver(self.__username, self.__good_address)
-            self.assertEqual(True, result)
+            # [{"product_name", "product_price", "amount"}]}]
+            res = self.deliver(self.__address, [{"product_name": "product", "product_price": 10, "amount": 2}])
+            self.assertTrue(res)
         except ResourceWarning:
             errorLogger("System down warning")
             self.assertTrue(True, "System down warning")
 
-    @logger
+    # @logger
     def test_fail(self):
         try:
-            result = super().deliver(self.__bad_input, self.__good_address)
-            self.assertEqual(False, result)
+            # invalid address
+            res = self.deliver("", [{"product_name": "product", "product_price": 10, "amount": 2}])
+            self.assertFalse(res)
+            # empty product list
+            res = self.deliver(self.__address, [])
+            self.assertFalse(res)
         except ResourceWarning:
             errorLogger("System down warning")
             self.assertTrue(True, "System down warning")
 
-    @logger
+    # @logger
     def tearDown(self) -> None:
         try:
-            super().disconnect_delivery_sys()
+            self.disconnect_delivery_sys()
         except ResourceWarning:
             errorLogger("System down warning")
             self.assertTrue(True, "System down warning")

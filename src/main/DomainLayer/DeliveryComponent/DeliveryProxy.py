@@ -20,13 +20,14 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("This class is a singleton!")
             raise Exception("This class is a singleton!")
         else:
+            super().__init__()
             self.__isConnected = False
             if DeliveryProxy.__realSubject:
                 DeliveryProxy.__instance = self.__realSubject
             else:
                 DeliveryProxy.__instance = self
 
-    @logger
+    # @logger
     def connect(self):
         try:
             if not self.__isConnected:
@@ -38,11 +39,19 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     # need to check address details with system once a system is set
-    def deliver_products(self, products_ls) -> bool:
+    def deliver_products(self, address: str, products_ls: []) -> bool:
+        """
+
+        :param address:
+        :param products_ls: list [{"store_name": str, "basket_price": float,
+                            "products": [{"product_name", "product_price", "amount"}]}]
+        :return:true if successful, otherwise false
+        """
         try:
-            if not self.__isConnected or not self.__check_valid_details(products_ls):
+            if not self.__isConnected or not \
+                    self.__check_valid_details(address, products_ls):
                 return False
             else:
                 return True
@@ -50,7 +59,7 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     def disconnect(self):
         try:
             if self.__isConnected:
@@ -62,14 +71,14 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     def is_connected(self) -> bool:
         return self.__isConnected
 
     @staticmethod
-    def __check_valid_details(username, address) -> bool:
-        loggerStaticMethod("__check_valid_details", [username, address])
-        if len(username) == 0 or len(address) == 0:
+    def __check_valid_details(address: str, products: []) -> bool:
+        loggerStaticMethod("__check_valid_details", [products, address])
+        if len(address) == 0 or len(products) == 0:
             return False
         else:
             return True
@@ -78,4 +87,4 @@ class DeliveryProxy(DeliverySubject):
         DeliveryProxy.__instance = None
 
     def __repr__(self):
-        return repr("FacadeDelivery")
+        return repr("DeliveryProxy")

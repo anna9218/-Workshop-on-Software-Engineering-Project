@@ -14,7 +14,7 @@ class DeliverySubject(ABC):
 
     @abstractmethod
     # need to check address details with system once a system is set
-    def deliver_products(self, username, address) -> bool:
+    def deliver_products(self, address: str, products_ls: []) -> bool:
         pass
 
     @abstractmethod

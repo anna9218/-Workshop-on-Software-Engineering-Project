@@ -1,35 +1,46 @@
 """
-    test class for use case 2.4 - view stores and stores' info
+    test class for use case 2.4 - view stores' info and products
 """
 from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class ViewStoreInfoTest(ProjectTest):
-    @logger
+    # @logger
     def setUp(self) -> None:
         super().setUp()
-        self.register_user("username", "password")
-        self.login("username", "password")
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
+        self.open_store(self._store_name)
+        self.add_products_to_store(self._store_name,
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 5}])
 
-    @logger
+    # @logger
     def test_success(self):
-        self.open_store("store")
-        self.add_products_to_store("username", "store", [("product", 10, 3, "general")])
-
+        # existing stores in the system
         res = self.view_stores()
-        self.assertEqual(True, res)
-        self.remove_products_from_store("username", "store", ["product"])
-        self.teardown_store("store")
+        self.assertTrue(res)
+        res = self.display_stores_or_products_info(self._store_name, True, False)
+        self.assertTrue(res)
+        res = self.display_stores_or_products_info(self._store_name, False, True)
+        self.assertTrue(res)
 
-    @logger
+    # @logger
     def test_fail(self):
-        res = self.view_stores()
-        self.assertEqual(False, res)
+        # no products exist in the store
+        self.remove_products_from_store(self._store_name, ["product"])
+        res = self.display_stores_or_products_info(self._store_name, False, True)
+        self.assertFalse(res)
+        # no stores exists in the system
+        self.remove_store(self._store_name)
+        res = self.display_stores_or_products_info(self._store_name, True, False)
+        self.assertFalse(res)
 
-    @logger
+    # @logger
     def tearDown(self) -> None:
-        self.remove_user("username")
+        self.delete_user(self._username)
+        self.remove_products_from_store(self._store_name, ["product"])
+        self.remove_store(self._store_name)
 
     def __repr__(self):
         return repr("ViewStoreInfoTest")

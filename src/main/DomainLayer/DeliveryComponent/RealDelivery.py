@@ -2,19 +2,19 @@ from src.Logger import logger
 from src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubject
 
 
-class RealPayment(DeliverySubject):
-    @logger
+class RealDelivery(DeliverySubject):
+    # @logger
     def connect(self):
         pass
 
-    @logger
-    def deliver_products(self, username, address) -> bool:
+    # @logger
+    def deliver_products(self, address: str, products_ls: []) -> bool:
         pass
 
-    @logger
+    # @logger
     def disconnect(self):
         pass
 
-    @logger
+    # @logger
     def is_connected(self) -> bool:
         pass

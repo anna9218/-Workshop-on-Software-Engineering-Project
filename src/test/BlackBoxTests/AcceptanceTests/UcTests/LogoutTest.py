@@ -7,29 +7,27 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 class LogoutTest(ProjectTest):
 
-    @logger
+    # @logger
     def setUp(self) -> None:
         super().setUp()
-        self.__valid_username = "username"
-        self.__valid_password = "password"
-        self.__invalid_input = ""
+        self.register_user(self._username, self._password)
+        self.login(self._username, self._password)
 
-    @logger
+    # @logger
     def test_success(self):
-        self.register_user(self.__valid_username, self.__valid_password)
-        self.login(self.__valid_username, self.__valid_password)
         res = self.logout()
-        self.assertEqual(True, res)
+        self.assertTrue(res)
 
-    @logger
+    # @logger
     def test_fail(self):
-        self.register_user(self.__valid_username, self.__valid_password)
+        # user not logged in
+        self.logout()
         res = self.logout()
-        self.assertEqual(False, res)
+        self.assertFalse(res)
 
-    @logger
+    # @logger
     def tearDown(self) -> None:
-        self.remove_user(self.__valid_username)
+        self.delete_user(self._username)
 
     def __repr__(self):
         return repr("LogoutTest")

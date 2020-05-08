@@ -1,6 +1,7 @@
-import jsonpickle
+from datetime import datetime
 
 from src.Logger import logger, secureLogger
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.Registration import Registration
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
@@ -15,69 +16,64 @@ class User:
         self.__loginState = Login()
         # self.__appointment = StoreManagerAppointment()
         self.__shoppingCart = ShoppingCart()
-        self.__accepted_purchases = []
-        self.__unaccepted_purchases = []
+        self.__purchase_history = []
 
-    @secureLogger
+    # @secureLogger
     def register(self, username, password):
         self.__registrationState.register(username, password)
         return True
 
-    @secureLogger
+    # @secureLogger
     def login(self, nickname, password):
         if self.check_nickname(nickname) and self.check_password(password):
             self.__loginState.login()
             return True
         return False
 
-    @logger
+    # @logger
     def logout(self):
         self.__loginState.logout()
         return True
 
-    @secureLogger
+    # @secureLogger
     def check_password(self, password):
         return self.__registrationState.get_password() == password
 
-    @logger
+    # @logger
     def check_nickname(self, nickname):
         return self.__registrationState.get_nickname() == nickname
 
-    @logger
+    # @logger
     def is_logged_in(self):
         return self.__loginState.is_logged_in()
 
-    @logger
+    # @logger
     def is_logged_out(self):
         return not self.__loginState.is_logged_in()
 
-    @logger
+    # @logger
     def get_login(self):
         return self.__loginState
 
-    @logger
+    # @logger
     def is_registered(self):
         return self.__registrationState.is_registered()
 
-    @logger
+    # @logger
     def get_nickname(self):
         return self.__registrationState.get_nickname()
 
-    @logger
-    def get_accepted_purchases(self):
-        return self.__accepted_purchases
+    # @logger
+    def get_purchase_history(self):
+        return self.__purchase_history
 
-    @logger
-    def get_unaccepted_purchases(self):
-        return self.__unaccepted_purchases
-
-    @logger
+    # @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
                                                                      "amount": int, "discount_type": DiscountType,
                                                                      "purchase_type": PurchaseType}]):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
 
-    @logger
+    # @logger
     def view_shopping_cart(self):
         """
         :return: list: [{"store_name": str,
@@ -87,7 +83,7 @@ class User:
         """
         return self.__shoppingCart.view_shopping_cart()
 
-    @logger
+    # @logger
     def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         """
         :param products_details: [{"product_name": str,
@@ -97,7 +93,7 @@ class User:
         """
         return self.__shoppingCart.remove_products(products_details)
 
-    @logger
+    # @logger
     def update_quantity_in_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         """
         :param flag: action option - "remove"/"update"
@@ -111,14 +107,14 @@ class User:
     # def get_appointment (self):
     #     return self.__appointment
 
-    @logger
+    # @logger
     def get_user_type(self):
         if self.is_logged_in():
             return UserType.Subscriber
         else:
             return UserType.Guest
 
-    @logger
+    # @logger
     def set_registration_state(self, registration):
         self.__registrationState = registration
         return True
@@ -133,26 +129,19 @@ class User:
     # def set_login_state(self, login_state):
     #     self.__loginState = login_state
 
-    @logger
-    def add_unaccepted_purchase(self, purchase: dict):
-        self.__unaccepted_purchases.append(jsonpickle.decode(purchase))
+    # @logger
+    def complete_purchase(self, purchase: Purchase):
+        # add purchase to purchase history
+        self.__purchase_history.append(purchase)
+        # delete purchase from shopping cart
+        self.__shoppingCart.get_store_basket(purchase.get_store_name()).complete_purchase(purchase.get_products())
 
-    @logger
-    def remove_unaccepted_purchase(self, purchase: dict):
-        self.__unaccepted_purchases.remove(jsonpickle.decode(purchase))
+    def remove_purchase(self, store_name: str, date: datetime):
+        for p in self.__purchase_history:
+            if p.get_store_name() == store_name and p.get_date() == date:
+                self.__purchase_history.remove(p)
 
-    @logger
-    def add_accepted_purchase(self, purchase: dict):
-        self.__accepted_purchases.append(jsonpickle.decode(purchase))
-
-    @logger
-    def complete_purchase(self, purchases: [dict]):
-        for p in purchases:
-            if p in self.__unaccepted_purchases:
-                self.remove_unaccepted_purchase(p)
-                self.add_accepted_purchase(p)
-
-    @logger
+    # @logger
     def get_shopping_cart(self):
         return self.__shoppingCart
 

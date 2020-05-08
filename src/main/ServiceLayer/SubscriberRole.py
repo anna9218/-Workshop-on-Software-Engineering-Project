@@ -8,7 +8,7 @@ class SubscriberRole:
         pass
 
     @staticmethod
-    @logger
+    # @logger
     # use case 3.1
     def logout():
         """
@@ -19,7 +19,7 @@ class SubscriberRole:
         return TradeControl.get_instance().logout_subscriber()
 
     @staticmethod
-    @logger
+    # @logger
     # 3.2 open store
     def open_store(store_name: str):
         """
@@ -31,14 +31,14 @@ class SubscriberRole:
         return TradeControl.get_instance().open_store(store_name)
 
     @staticmethod
-    @logger
+    # @logger
     # use case 3.7
     def view_personal_purchase_history():
         """
         View the subscriber's purchase history
         :return: list of json objects containing the subscriber's purchase history or None if none exist
         """
-        loggerStaticMethod("SubscriberRole.view_personal_purchase_history",[])
+        loggerStaticMethod("SubscriberRole.view_personal_purchase_history", [])
         return TradeControl.get_instance().view_personal_purchase_history()
 
     def __repr__(self):
