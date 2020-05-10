@@ -7,11 +7,11 @@ from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
-from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment, User
+from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
-from src.main.DomainLayer.UserComponent.User import User
 
 
 class Store:
@@ -27,12 +27,14 @@ class Store:
         self.__purchases = []
 
     @logger
-    def add_products(self, user_nickname: str, products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+    def add_products(self, user_nickname: str,
+                     products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         """
         :param user_nickname: owner's/manager's nickname
         :param products_details: list of tuples (product_name, product_price, product_category, product_amount) / JSON
         :return: True if all products were added to the inventory
         """
+
         # check permission to add - EDIT_INV
         if self.is_owner(user_nickname) or (self.is_manager(user_nickname) and
                                             self.has_permission(user_nickname, ManagerPermission.EDIT_INV)):
@@ -40,6 +42,10 @@ class Store:
                 if d["price"] < 0:
                     return False
                 if d["amount"] < 0:
+                    return False
+                if d['name'].strip() == "":
+                    return False
+                if d['category'].strip() == "":
                     return False
             results = list(map(lambda details: self.add_product(details["name"],
                                                                 details["price"],
@@ -49,7 +55,7 @@ class Store:
             return False not in results
 
     @logger
-    def add_product(self, name: str, price: int, category: str, amount: int) -> bool:
+    def add_product(self, name: str, price: float, category: str, amount: int) -> bool:
         """
         :param name: name of the new product
         :param price: price of the new product
@@ -57,6 +63,8 @@ class Store:
         :param category: category of the new product
         :return: True if product was added to the inventory
         """
+        if name == "".strip() or price < 0.0 or category == "".strip() or amount < 0.0:
+            return False
         return self.__inventory.add_product(Product(name, price, category), amount)
 
     @logger
@@ -85,32 +93,32 @@ class Store:
     def edit_product(self, user_nickname: str, product_name: str, op: str, new_value):  # new_value can be str or int
         """
         :param user_nickname: owner's/manager's nickname
-        :param product_name:
-        :param op:
-        :param new_value:
-        :return:
+        :param product_name: the name of the product to change
+        :param op: "name" -> change name, "price" -> change price, "amount" -> change amount
+        :param new_value: the new value of the product in the attribute that corresponded with the op.
+        :return: True if successful,
+                 False else.
         """
         # check permission to remove - EDIT_INV
         if self.is_owner(user_nickname) or (self.is_manager(user_nickname) and
                                             self.has_permission(user_nickname, ManagerPermission.EDIT_INV)):
             if op == "name":
-                self.change_name(product_name, new_value)
+                return self.change_name(product_name, new_value)
             elif op == "price":
-                self.change_price(product_name, new_value)
+                return self.change_price(product_name, new_value)
             elif op == "amount":
-                self.change_amount(product_name, new_value)
+                return self.change_amount(product_name, new_value)
             else:
                 return False
-        return True
 
     @logger
-    def change_price(self, product_name: str, new_price: int) -> bool:
+    def change_price(self, product_name: str, new_price: float) -> bool:
         """
        :param product_name: name of the product
        :param new_price: new price to replace with
        :return: True if price was updated
        """
-        if new_price < 0:
+        if new_price < 0.0:
             return False
 
         product = self.get_product(product_name)
@@ -126,6 +134,9 @@ class Store:
         :param new_name: name to replace with
         :return: True if name was updated
         """
+        if new_name.strip() == "":
+            return False
+
         product = self.get_product(product_name)
         if product is not None:
             product.set_name(new_name)
@@ -143,7 +154,7 @@ class Store:
             return False
 
         product = self.get_product(product_name)
-        if product is not None and new_amount > 0:
+        if product is not None:
             return self.__inventory.change_amount(product_name, new_amount)
         return False
 
@@ -153,26 +164,40 @@ class Store:
     @logger
     def add_owner(self, appointer: str, appointee: User) -> bool:
         """
-        :param appointer: owner's/manager's nickname
-        :param appointee: new manager's nickname
+        appointee has to be registered.
+        appointee can't be owner already.
+        if appointee is already manager, we will remove him from being manager.
+
+        :param appointer: owner's/manager's nickname.
+        :param appointee: new manager from type User.
         :return: True if owner has been added
+                 False else.
         """
-        # first case: appointing first owner he when opens the
-        # check permission to add owner - APPOINT_OWNER
-        if self.is_owner(appointer) or (self.is_manager(appointer) and
-                                        self.has_permission(appointer, ManagerPermission.APPOINT_MANAGER)):
+
+        if not appointee.is_registered():
+            return False
+
+        if appointee in self.__owners:
+            return False
+
+        managers = [manager_appointment.get_appointee() for manager_appointment in self.__StoreManagerAppointments]
+        if self.is_owner(appointer):
             self.__owners.append(appointee)
+            if appointee in managers:
+                appointment = [manager_appointment for manager_appointment in self.__StoreManagerAppointments
+                               if manager_appointment.get_appointee() == appointee]
+                self.__StoreManagerAppointments.remove(appointment[0])
             return True
         return False
 
     @logger
-    def is_owner(self, user_nickname):
+    def is_owner(self, user_nickname: str):
         return user_nickname in [owner.get_nickname() for owner in self.__owners]
 
     @logger
     def is_manager(self, user_nickname: str):
-        return user_nickname in [appointment.get_appointee().get_nickname() for appointment in
-                                 self.__StoreManagerAppointments]
+        managers = [man.get_nickname() for man in self.get_managers()]
+        return user_nickname in managers
 
     @logger
     def has_permission(self, user_nickname, permission):
@@ -212,8 +237,15 @@ class Store:
         :return: True on success, else False
         """
         # check permission to add owner - APPOINT_MANAGER
-        if self.is_owner(appointer.get_nickname()) or (self.is_manager(appointer) and
-                                        self.has_permission(appointer, ManagerPermission.APPOINT_OWNER)):
+        if not appointee.is_registered():
+            return False
+
+        if appointee in self.__owners or appointee in self.get_managers():
+            return False
+
+        if (self.is_owner(appointer.get_nickname()) or
+                ((self.is_manager(appointer.get_nickname())) and
+                 self.has_permission(appointer.get_nickname(), ManagerPermission.APPOINT_MANAGER))):
             self.__StoreManagerAppointments.append(StoreManagerAppointment(appointer, appointee, permissions))
             return True
         return False
@@ -248,8 +280,6 @@ class Store:
                 return False
         return True
 
-
-
     @logger
     def calc_discount(self, amount_per_product: [], price: float, username: str):
         """
@@ -281,19 +311,20 @@ class Store:
 
     @logger
     def get_managers(self):
-        return [t[0] for t in self.__StoreManagerAppointments]
+        return [manager_appointment.get_appointee() for manager_appointment in self.__StoreManagerAppointments]
 
     @logger
     def edit_manager_permissions(self, appointer: User, appointee_nickname: str, permissions: list) -> bool:
         """
         :param appointer: store's owner/manager
-        :param appointee_nickname: manager who's permissions will be editted
+        :param appointee_nickname: manager who's permissions will be edited
         :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
         :return: True on success, else False
         """
         # check permission to add owner - EDIT_MANAGER_PER
-        if self.is_owner(appointer) or (self.is_manager(appointer) and
-                                        self.has_permission(appointer, ManagerPermission.EDIT_MANAGER_PER)):
+        if self.is_owner(appointer.get_nickname()) or (self.is_manager(appointer.get_nickname()) and
+                                                       self.has_permission(appointer.get_nickname(),
+                                                                           ManagerPermission.EDIT_MANAGER_PER)):
             for appointment in self.__StoreManagerAppointments:
                 if appointment.get_appointee().get_nickname() == appointee_nickname and \
                         appointment.get_appointer().get_nickname() == appointer.get_nickname():
@@ -332,7 +363,6 @@ class Store:
             return self.__purchases
         return []
 
-
     # def print_inventory(self):
     #     f"The products of store {self.__name}:"
     #     i = 0
@@ -359,14 +389,14 @@ class Store:
             if self.can_purchase(product["product"].get_name(), product["amount"]):
                 if product["purchaseType"] == PurchaseType.DEFAULT:
                     purchase = self.purchase_immediate(product["product"].get_name(),
-                                                   product["product"].get_price(), product["amount"])
+                                                       product["product"].get_price(), product["amount"])
 
                 elif product["purchaseType"] == PurchaseType.AUCTION:
                     purchase = self.purchase_auction(product["product"].get_name(),
-                                                 product["product"].get_price(), product["amount"])
+                                                     product["product"].get_price(), product["amount"])
                 else:
                     purchase = self.purchase_lottery(product["product"].get_name(),
-                                                 product["product"].get_price(), product["amount"])
+                                                     product["product"].get_price(), product["amount"])
             # else:
             #     return None
 

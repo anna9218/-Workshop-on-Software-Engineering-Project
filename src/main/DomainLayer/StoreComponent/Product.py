@@ -37,8 +37,10 @@ class Product:
 
     @logger
     def __eq__(self, other):
-        if other is Product:
+        try:
             if self.__name == other.get_name() and self.__price == other.get_price() and \
                     self.__category == other.get_category():
                 return True
-        return False
+            return False
+        except Exception:
+            return False
