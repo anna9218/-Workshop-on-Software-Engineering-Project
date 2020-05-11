@@ -97,7 +97,7 @@ class TradeControl:
 
     @logger
     def validate_nickname(self, nickname):
-        if nickname == "":
+        if nickname.strip() == "":
             return False
         for u in self.__subscribers:
             if u.get_nickname() == nickname:

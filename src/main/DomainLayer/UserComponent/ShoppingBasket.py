@@ -155,3 +155,14 @@ class ShoppingBasket:
 
     def __repr__(self):
         return repr("ShoppingBasket")
+
+    def __eq__(self, other):
+        try:
+            if len(self.__products) != len(other.get_products()):
+                return False
+            for product in self.__products:
+                if product not in other.get_products():
+                    return False
+            return True
+        except Exception:
+            return False

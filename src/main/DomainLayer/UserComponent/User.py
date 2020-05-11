@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from src.Logger import logger, secureLogger
+from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.Registration import Registration
@@ -19,19 +20,25 @@ class User:
         self.__purchase_history = []
 
     @secureLogger
-    def register(self, username, password):
+    def register(self, username: str, password: str):
+        if username.strip() == "" or password.strip() == "":
+            return False
         self.__registrationState.register(username, password)
         return True
 
     @secureLogger
-    def login(self, nickname, password):
-        if self.check_nickname(nickname) and self.check_password(password):
+    def login(self, nickname: str, password: str):
+        if self.check_nickname(nickname) and self.check_password(password) and not self.is_logged_in():
             self.__loginState.login()
             return True
         return False
 
     @logger
     def logout(self):
+        if not self.is_logged_in():
+            return False
+
+        # Else
         self.__loginState.logout()
         return True
 
@@ -68,7 +75,7 @@ class User:
         return self.__purchase_history
 
     @logger
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"product": Product, "store_name": str,
                                                                      "amount": int, "discount_type": DiscountType,
                                                                      "purchase_type": PurchaseType}]):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
