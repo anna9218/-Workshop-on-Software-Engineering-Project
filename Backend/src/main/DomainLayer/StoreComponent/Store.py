@@ -117,7 +117,7 @@ class Store:
                 return self.change_amount(product_name, new_value)
             else:
                 return False
-        return True
+        return False
 
     # @logger
     def change_price(self, product_name: str, new_price: float) -> bool:

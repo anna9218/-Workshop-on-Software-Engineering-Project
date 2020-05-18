@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from Backend.src.Logger import logger, secureLogger
+from Backend.src.main.DomainLayer.StoreComponent.Product import Product
 from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from Backend.src.main.DomainLayer.UserComponent.Login import Login
 from Backend.src.main.DomainLayer.UserComponent.Registration import Registration

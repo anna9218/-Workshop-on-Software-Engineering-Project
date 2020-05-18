@@ -28,6 +28,11 @@ class StubUser(User):
         self.__nickname = username
         self.__password = password
 
+    def unregistered(self):
+        self.__register = False
+        self.__nickname = None
+        self.__password = None
+
     def is_registered(self):
         return self.__register
 

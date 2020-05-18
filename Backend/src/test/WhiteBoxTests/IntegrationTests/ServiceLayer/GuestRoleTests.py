@@ -3,27 +3,23 @@ from unittest.mock import MagicMock
 
 import jsonpickle
 
-from src.Logger import logger
-from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
-from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
-from src.main.DomainLayer.SecurityComponent.Security import Security
-from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from src.main.DomainLayer.StoreComponent.Product import Product
-from src.main.DomainLayer.StoreComponent.Store import Store
-from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
-from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
-from src.main.DomainLayer.UserComponent.User import User
-from src.main.ServiceLayer.GuestRole import GuestRole
+from Backend.src.Logger import logger
+from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from Backend.src.main.DomainLayer.StoreComponent.Product import Product
+from Backend.src.main.DomainLayer.StoreComponent.Store import Store
+from Backend.src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from Backend.src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from Backend.src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
+from Backend.src.main.DomainLayer.UserComponent.User import User
+from Backend.src.main.ServiceLayer.GuestRole import GuestRole
 
 
 class GuestRoleTest(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self) -> None:
         self.__guest_role = GuestRole()
 
-    @logger
+    # @logger
     # use case 2.2
     def test_register(self):
         # All valid
@@ -61,7 +57,7 @@ class GuestRoleTest(unittest.TestCase):
         user.register("Invalid", "")
         self.assertNotIn(user, (TradeControl.get_instance()).get_subscribers())
 
-    @logger
+    # @logger
     # use case 2.3
     def test_login(self):
         (TradeControl.get_instance()).register_guest("Valid", "Valid")
@@ -85,7 +81,7 @@ class GuestRoleTest(unittest.TestCase):
         self.assertFalse(self.__guest_role.login("user.get_nickname()", "Valid"))
         self.assertFalse(user.is_logged_in())
 
-    @logger
+    # @logger
     # use case 2.4
     def test_display_stores_or_products_info(self):
         product = Product("Eytan's product", 12, "Eytan's category")
@@ -131,7 +127,7 @@ class GuestRoleTest(unittest.TestCase):
         # None flags-
         self.assertIsNone(self.__guest_role.display_stores_or_products_info(store.get_name()))
 
-    @logger
+    # @logger
     # use case 2.5.1
     def test_search_products_by(self):
         user = User()
@@ -259,7 +255,7 @@ class GuestRoleTest(unittest.TestCase):
         self.assertFalse((store.get_name(), diff_product.get_name()) in ls)
         self.assertTrue((not_store.get_name(), diff_product.get_name()) in ls)
 
-    @logger
+    # @logger
     def test_filter_products_by(self):
         user = User()
         user_nickname = "Eytan"
@@ -409,7 +405,7 @@ class GuestRoleTest(unittest.TestCase):
                   self.__guest_role.filter_products_by(product_ls, 3, min_price=12.2, max_price=43)]
         self.assertListEqual([], result)
 
-    @logger
+    # @logger
     # use case 2.6
     def test_save_products_to_basket(self):
         # TODO: Maybe add a test to check if try to purchase more amount then the store have.
@@ -477,7 +473,7 @@ class GuestRoleTest(unittest.TestCase):
         self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
                                  shopping_cart.get_shopping_baskets()])
 
-    @logger
+    # @logger
     # use case 2.7
     def test_view_shopping_cart(self):
         # Empty shopping_cart
@@ -512,7 +508,7 @@ class GuestRoleTest(unittest.TestCase):
         lst = [(store.get_name(), element['product_name'], element['amount']) for element in basket_lst]
         self.assertListEqual(expected, lst)
 
-    @logger
+    # @logger
     # use case 2.7
     def test_update_shopping_cart(self):
         product = Product("Eytan's product", 12, "Eytan's category")
@@ -631,12 +627,12 @@ class GuestRoleTest(unittest.TestCase):
             (product_details_as_dictionary2['product_name'])))
 
     # use case 2.8
-    @logger
+    # @logger
     def test_purchase_products(self):
         # TODO: this
         self.assertTrue(False)
 
-    @logger
+    # @logger
     def test_confirm_payment_test(self):
         # TODO: this
         self.assertTrue(False)

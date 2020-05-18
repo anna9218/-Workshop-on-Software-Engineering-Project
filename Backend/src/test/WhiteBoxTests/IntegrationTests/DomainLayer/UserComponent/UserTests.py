@@ -1,15 +1,15 @@
 import unittest
 
-from src.Logger import logger
-from src.main.DomainLayer.StoreComponent.Product import Product
-from src.main.DomainLayer.StoreComponent.Store import Store
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from src.main.DomainLayer.UserComponent.User import User
+from Backend.src.Logger import logger
+from Backend.src.main.DomainLayer.StoreComponent.Product import Product
+from Backend.src.main.DomainLayer.StoreComponent.Store import Store
+from Backend.src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from Backend.src.main.DomainLayer.UserComponent.User import User
 
 
 class UserTests(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self):
         self.__valid_name = "anna9218"
         self.__valid_password = "password"
@@ -22,7 +22,7 @@ class UserTests(unittest.TestCase):
                                    "amount": 1, "discount_type": DiscountType.DEFAULT,
                                    "purchase_type": PurchaseType.DEFAULT}]  # products_stores_quantity_ls
 
-    @logger
+    # @logger
     def test_register(self):
         # All valid
         guest1 = User()
@@ -55,7 +55,7 @@ class UserTests(unittest.TestCase):
         self.assertFalse(guest1.register("not valid", "not valid"))
         self.assertEqual(guest1.get_nickname(), "valid")
 
-    @logger
+    # @logger
     def test_login(self):
         # All Valid
         self.assertTrue(self.__user.login(self.__valid_name, self.__valid_password))
@@ -99,7 +99,7 @@ class UserTests(unittest.TestCase):
         self.assertTrue(self.__user.is_logged_in())
         self.assertFalse(self.__user.is_logged_out())
 
-    @logger
+    # @logger
     def test_logout(self):
         self.__user.login(self.__valid_name, self.__valid_password)
 
@@ -120,7 +120,7 @@ class UserTests(unittest.TestCase):
         self.assertTrue(guest.is_logged_out())
         self.assertFalse(guest.is_logged_in())
 
-    @logger
+    # @logger
     def test_check_password(self):
         # All valid
         self.assertTrue(self.__user.check_password(self.__valid_password))
@@ -134,7 +134,7 @@ class UserTests(unittest.TestCase):
         # Invalid - password exist but isn't corresponding with the username
         self.assertFalse(registered.check_password(self.__valid_password))
 
-    @logger
+    # @logger
     def test_check_nickname(self):
         # All valid
         self.assertTrue(self.__user.check_nickname(self.__valid_name))
@@ -148,7 +148,7 @@ class UserTests(unittest.TestCase):
         # Invalid - password exist but isn't corresponding with the username
         self.assertFalse(registered.check_nickname(self.__valid_name))
 
-    @logger
+    # @logger
     def test_is_logged_in(self):
         guest = User()
         subscriber = User()
@@ -164,7 +164,7 @@ class UserTests(unittest.TestCase):
         # Not valid - user isn't registered
         self.assertFalse(guest.is_logged_in())
 
-    @logger
+    # @logger
     def test_is_logged_out(self):
         guest = User()
         subscriber = User()
@@ -181,7 +181,7 @@ class UserTests(unittest.TestCase):
         # Not valid - user isn't registered
         self.assertTrue(guest.is_logged_out())
 
-    @logger
+    # @logger
     def test_is_registered(self):
         guest = User()
         self.__user.logout()
@@ -192,7 +192,7 @@ class UserTests(unittest.TestCase):
         # All valid - user isn't registered
         self.assertFalse(guest.is_registered())
 
-    @logger
+    # @logger
     def test_get_nickname(self):
         guest = User()
         self.__user.logout()
@@ -203,7 +203,7 @@ class UserTests(unittest.TestCase):
         # All valid - user isn't registered
         self.assertIsNone(guest.get_nickname())
 
-    @logger
+    # @logger
     def test_save_products_to_basket(self):
         guest = User()
 
@@ -251,7 +251,7 @@ class UserTests(unittest.TestCase):
                     guest.get_shopping_cart().get_store_basket(self.__store.get_name()).get_products()]
         self.assertIn(self.__product, products)
 
-    @logger
+    # @logger
     def tearDown(self):
         # maybe delete the registered user resulted from this test
         pass
