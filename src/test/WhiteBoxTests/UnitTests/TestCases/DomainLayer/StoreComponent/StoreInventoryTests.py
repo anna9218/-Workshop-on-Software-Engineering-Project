@@ -6,14 +6,14 @@ from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 
 
 class StoreInventoryTests(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self):
         self.inv = StoreInventory()
         self.product1 = Product("Chair", 100, "Furniture")
         self.product2 = Product("Sofa", 100, "Furniture")
         self.product3 = Product("Guitar", 100, "Musical Instruments")
 
-    @logger
+    # @logger
     def test_add_product(self):
         self.assertTrue(self.inv.add_product(self.product1, 5))
         self.assertEqual(self.inv.get_amount("Chair"), 5)
@@ -23,7 +23,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertTrue(self.inv.add_product(self.product2, 8))
         self.assertFalse(self.inv.add_product(self.product2, -8))
 
-    @logger
+    # @logger
     def test_get_product(self):
         self.inv.add_product(self.product1, 5)
         product = self.inv.get_product("Chair")
@@ -33,7 +33,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertEqual(product.get_category(), "Furniture")
         self.assertEqual(self.inv.get_product("Sofa"), None)
 
-    @logger
+    # @logger
     def test_get_products_by(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 5)
@@ -58,7 +58,7 @@ class StoreInventoryTests(unittest.TestCase):
         products_list = self.inv.get_products_by(3, "Musical Instruments bbbb")
         self.assertEqual(len(products_list), 0)
 
-    @logger
+    # @logger
     def test_remove_product(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 4)
@@ -67,7 +67,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertFalse(self.inv.remove_product("eden"))
         self.assertEqual(len(self.inv.get_products_by(2, "")), 1)
 
-    @logger
+    # @logger
     def test_change_amount(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 4)
@@ -76,7 +76,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertEqual(self.inv.get_amount("Chair"), 16)
         self.assertEqual(self.inv.get_amount("Sofa"), 4)
 
-    @logger
+    # @logger
     def test_len(self):
         self.assertEqual(self.inv.len(), 0)
         self.inv.add_product(self.product1, 4)
@@ -84,7 +84,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.inv.add_product(self.product2, 4)
         self.assertEqual(self.inv.len(), 2)
 
-    @logger
+    # @logger
     def test_get_amount_of_product(self):
         self.inv.add_product(self.product1, 4)
         self.assertEqual(self.inv.get_amount("Chair"), 4)
@@ -92,7 +92,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertEqual(self.inv.get_amount("Sofa"), 16)
         self.assertEqual(self.inv.get_amount("Guitar"), 0)
 
-    @logger
+    # @logger
     def test_is_in_stock(self):
         self.inv.add_product(self.product1, 10)
 

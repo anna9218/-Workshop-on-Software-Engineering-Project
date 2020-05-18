@@ -118,15 +118,15 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertTrue(self.tradeControl.login_subscriber("eden", "passwoed"))
         self.assertTrue(self.tradeControl.logout_subscriber())
 
-    @logger
+    # @logger
     def test_view_personal_purchase_history(self):
         pass
 
-    @logger
-    def test_view_user_purchase_history(self, nickname):
+    # @logger
+    def test_view_user_purchase_history(self):
         pass
 
-    @logger
+    # @logger
     def test_view_store_purchases_history(self):
         pass
 
@@ -149,29 +149,31 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertNotEqual(store1.get_product("Chair"), None)
         self.assertEqual(store1.get_product("Sofa"), None)
 
-    @logger
+    # @logger
     def test_edit_product(self):
         pass
 
-    @logger
+    # @logger
     def test_appoint_additional_owner(self):
         pass
 
-    @logger
+    # @logger
     def test_appoint_store_manager(self):
         pass
 
-    @logger
+    # @logger
     def test_edit_manager_permissions(self):
         pass
 
-    @logger
+    # @logger
     def test_remove_manager(self):
         pass
 
     def tearDown(self):
-        pass
-        # self.tradeControl = TradeControl.get_instance()
+        # pass
+        self.tradeControl.logout_subscriber()
+        self.tradeControl.unsubscribe("nickname")
+        self.tradeControl.unsubscribe("eden")
 
     def __repr__(self):
         return repr ("TradeControlTestCase")

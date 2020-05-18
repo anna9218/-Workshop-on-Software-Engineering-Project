@@ -134,26 +134,28 @@ class GuestRoleTest(unittest.TestCase):
 
     # --------------------------------------------------------------------
     # use case 2.8
+    # @logger
     def test_purchase_products(self):
         self.__trade_control_mock.get_instance().purchase_products = MagicMock(return_value=[])
         res = self.__guest_role.purchase_products()
         self.assertEqual([], res)
 
+    # @logger
     def test_confirm_payment_test(self):
         # self.__trade_control_mock.get_instance().purchase_products = MagicMock(return_value=[])
         self.__payment_proxy_mock.get_instance().commit_payment = MagicMock(return_value=True)
         self.__delivery_proxy_mock.get_instance().deliver_products = MagicMock(return_value=True)
         self.__trade_control_mock.get_instance().accepted_purchase = MagicMock(return_value=True)
-        res = self.__guest_role.confirm_payment([])
+        res = self.__guest_role.confirm_payment("a", [])
         self.assertTrue(res)
 
         self.__delivery_proxy_mock.get_instance().deliver_products = MagicMock(return_value=False)
         self.__payment_proxy_mock.get_instance().cancel_payment = MagicMock(return_value=True)
-        res = self.__guest_role.confirm_payment([])
+        res = self.__guest_role.confirm_payment("a", [])
         self.assertFalse(res)
 
         self.__payment_proxy_mock.get_instance().commit_payment = MagicMock(return_value=False)
-        res = self.__guest_role.confirm_payment([])
+        res = self.__guest_role.confirm_payment("a", [])
         self.assertFalse(res)
 
     def tearDown(self):

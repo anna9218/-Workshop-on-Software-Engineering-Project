@@ -9,7 +9,7 @@ class DeliveryProxy(DeliverySubject):
     @staticmethod
     def get_instance():
         """ Static access method. """
-        loggerStaticMethod("FacadeDelivery.get_instance", [])
+        # loggerStaticMethod("FacadeDelivery.get_instance", [])
         if DeliveryProxy.__instance is None:
             DeliveryProxy()
         return DeliveryProxy.__instance
@@ -50,8 +50,8 @@ class DeliveryProxy(DeliverySubject):
         :return:true if successful, otherwise false
         """
         try:
-            if not self.__isConnected or not \
-                    self.__check_valid_details(address, products_ls):
+            if not self.__isConnected or \
+                   not self.__check_valid_details(address, products_ls):
                 return False
             else:
                 return True
@@ -77,7 +77,7 @@ class DeliveryProxy(DeliverySubject):
 
     @staticmethod
     def __check_valid_details(address: str, products: []) -> bool:
-        loggerStaticMethod("__check_valid_details", [products, address])
+        # loggerStaticMethod("__check_valid_details", [products, address])
         if len(address) == 0 or len(products) == 0:
             return False
         else:

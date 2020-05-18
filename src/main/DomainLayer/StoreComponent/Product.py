@@ -35,9 +35,12 @@ class Product:
     def set_name(self, new_name):
         self.__name = new_name
 
-    @logger
+    # @logger
     def __eq__(self, other):
-        if self.__name == other.get_name() and self.__price == other.get_price() and \
-                self.__category == other.get_category():
-            return True
-        return False
+        try:
+            if self.__name == other.get_name() and self.__price == other.get_price() and \
+                    self.__category == other.get_category():
+                return True
+            return False
+        except Exception:
+            return False

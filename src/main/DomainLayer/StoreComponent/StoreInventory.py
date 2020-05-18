@@ -56,7 +56,7 @@ class StoreInventory:
     # @logger
     def get_products_by(self, opt, string):
         """
-        :param opt: search option = 1-byName, 2- byKeyword, 3- byCategoru
+        :param opt: search option = 1-byName, 2- byKeyword, 3- byCategory
         :param string: for opt: 1 -> productName, 2 -> string, 3 -> category
         :return: list of products according to the selected searching option
         """
@@ -137,8 +137,24 @@ class StoreInventory:
     def set_inventory(self, new_inventory):
         self.__inventory = new_inventory
 
+    # @logger
     def is_empty(self):
         return len(self.__inventory) == 0
 
     def __repr__(self):
         return repr("StoreInventory")
+
+    def __eq__(self, other):
+        if type(other) is not StoreInventory:
+            return False
+
+        my_products_as_tuples = [(element['product'], element['amount']) for element in self.__inventory]
+        other_products_as_tuples = [(element['product'], element['amount']) for element in other.get_inventory()]
+
+        if len(my_products_as_tuples) != len(other_products_as_tuples):
+            return False
+        for product_as_tuple in other_products_as_tuples:
+            if product_as_tuple not in my_products_as_tuples:
+                return False
+
+        return True

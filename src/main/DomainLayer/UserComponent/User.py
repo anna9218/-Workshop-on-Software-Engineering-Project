@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from src.Logger import logger, secureLogger
+from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.Registration import Registration
@@ -19,19 +20,32 @@ class User:
         self.__purchase_history = []
 
     # @secureLogger
-    def register(self, username, password):
+    def register(self, username: str, password: str):
+        # if self.__registrationState.get_nickname() is not None:
+        #     return False
+        if self.is_registered():
+            return False
+        if username.strip() == "" or password.strip() == "":
+            return False
         self.__registrationState.register(username, password)
         return True
 
+    def unregistered(self):
+        self.__registrationState.unregistered()
+
     # @secureLogger
-    def login(self, nickname, password):
-        if self.check_nickname(nickname) and self.check_password(password):
+    def login(self, nickname: str, password: str):
+        if self.check_nickname(nickname) and self.check_password(password) and not self.is_logged_in():
             self.__loginState.login()
             return True
         return False
 
     # @logger
     def logout(self):
+        if not self.is_logged_in():
+            return False
+
+        # Else
         self.__loginState.logout()
         return True
 
@@ -68,7 +82,8 @@ class User:
         return self.__purchase_history
 
     # @logger
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str,
+                                                                     "product": Product,
                                                                      "amount": int, "discount_type": DiscountType,
                                                                      "purchase_type": PurchaseType}]):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
@@ -84,11 +99,10 @@ class User:
         return self.__shoppingCart.view_shopping_cart()
 
     # @logger
-    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]):
         """
         :param products_details: [{"product_name": str,
-                                       "store_name": str,
-                                       "amount": int}, ...]
+                                       "store_name": str}, ...]
         :return: True on success, False when one of the products doesn't exist in the shopping cart
         """
         return self.__shoppingCart.remove_products(products_details)
@@ -121,7 +135,7 @@ class User:
 
     # --- Do we need this ?? ---
 
-    @logger
+    # @logger
     def set_shopping_cart(self, shopping_cart):
         self.__shoppingCart = shopping_cart
     #
@@ -136,14 +150,21 @@ class User:
         # delete purchase from shopping cart
         self.__shoppingCart.get_store_basket(purchase.get_store_name()).complete_purchase(purchase.get_products())
 
+    # @logger
     def remove_purchase(self, store_name: str, date: datetime):
         for p in self.__purchase_history:
             if p.get_store_name() == store_name and p.get_date() == date:
                 self.__purchase_history.remove(p)
 
     # @logger
-    def get_shopping_cart(self):
+    def get_shopping_cart(self) -> ShoppingCart:
         return self.__shoppingCart
 
     def __repr__(self):
         return repr("User")
+
+    def __eq__(self, other):
+        try:
+            return self.get_nickname() == other.get_nickname()
+        except Exception:
+            return False
