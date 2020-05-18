@@ -30,8 +30,6 @@ class ShoppingCart:
     # @logger
     def update_quantity(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         """
-        TODO: Too much dependency with ShoppingBasket.update_amount(self, product_name: str, amount: int):
-
         The function take a list of {"product_name": str, "store_name": str, "amount": int}.
         The function checks if the basket in the store exist, if the product exist in the basket and the amount isn't
                                                                                                                negative.
@@ -63,8 +61,10 @@ class ShoppingCart:
         return False
 
     # @logger
-    def add_products(self, products_stores_quantity_ls: [{"product": Product, "store_name": str,
-                                                          "amount": int, "discount_type": DiscountType,
+    def add_products(self, products_stores_quantity_ls: [{"store_name": str,
+                                                          "product": Product,
+                                                          "amount": int,
+                                                          "discount_type": DiscountType,
                                                           "purchase_type": PurchaseType}]) -> bool:
         """
         The function iterate over the list to see if all the arguments are valid.

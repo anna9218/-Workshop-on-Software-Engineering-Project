@@ -34,15 +34,16 @@ class GuestRole:
         return TradeControl.get_instance().get_stores_names()
 
     @staticmethod
-    # store_info_flag = true if user wants to display store info
-    # products_flag = true if user wants to display product info
-    def display_stores_or_products_info(store_name, store_info_flag, products_info_flag):
+    def display_stores_or_products_info(store_name, store_info_flag=False, products_info_flag=False):
+        # store_info_flag = true if user wants to display store info
+        # products_flag = true if user wants to display product info
+        # TODO: fix flags - make it 1-flag, that get either store or product. and fix the test after.
         loggerStaticMethod("GuestRole.display_stores_info", [store_name, store_info_flag, products_info_flag])
         if store_info_flag:
             return TradeControl.get_instance().get_store_info(store_name)
         if products_info_flag:
             return TradeControl.get_instance().get_store_inventory(store_name)
-        return []
+        return None
 
     # use case 2.5.1
     @staticmethod
@@ -58,15 +59,44 @@ class GuestRole:
 
     # use case 2.5.2
     @staticmethod
-    def filter_products_by(filter_details, products_ls):
+    def filter_products_by(products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
+                           filter_by_option: int, min_price: (float or None) = None,
+                           max_price: (float or None) = None, category: (str or None) = None):
         """
-        :param filter_details: list of filter details = "byPriceRange" (1, min_num, max_num)
-                                                        "byCategory" (2, category)
-        :param products_ls: list of string: [(product_name, store_name), ...]
-        :return: list of filtered products
+        This function have two options:
+            Either filter_by_option == 1, and then the function should get min price and max price.
+            Or filter_by_option == 2, and then the function should get category.
+
+        The other parameters should be None, but this isn't a constraint. If they are not none, the program will ignore
+                                                                                                                   them.
+
+        Any other option should return an empty list(A.K.A Error).
+
+        :param products_ls: list of product to filter. the user should get them by searching products.
+                            Each element in the list should be a dictionary:
+                                {"store_name": str, "product_name": str, "price": float, "category": str}
+                                :key store_name: the name( A.K.A Unique id) of the store that sells the product.
+                                :key product_name: the name( A.K.A Unique id) of the product.
+                                :key price: the price of the product with the id @product_name
+                                                        in the store with the id @ store_name.
+                                :key category: the category of the product with the id @product_name
+                                                        in the store with the id @ store_name.
+
+        :param filter_by_option: which filter to apply. either 1: by price or
+                                                               2: by category
+        :param min_price: only used with option 1. this is the minimum price to filter by.
+        :param max_price: only used with option 1. this is the maximum price to filter by.
+        :param category: only used with option 2. this is the category to filter by.
+        :return: a list of the filtered product.
+                 an empty list if an error occurs.
         """
-        loggerStaticMethod("GuestRole.filter_products_by", [filter_details, products_ls])
-        return TradeControl.get_instance().filter_products_by(filter_details, products_ls)
+        loggerStaticMethod("GuestRole.filter_products_by", [products_ls, filter_by_option, min_price, max_price,
+                                                            category])
+        return TradeControl.get_instance().filter_products_by(products_ls=products_ls,
+                                                              filter_by_option=filter_by_option,
+                                                              min_price=min_price,
+                                                              max_price=max_price,
+                                                              category=category)
 
     # @logger
     # use case 2.6
@@ -100,10 +130,13 @@ class GuestRole:
         :return: True on success, False when one of the products doesn't exist in the shopping cart
         """
         if flag == "remove":
-            return TradeControl.get_instance().remove_from_shopping_cart(products_details)
+            lst = [{'product_name': element['product_name'], 'store_name': element['store_name']} for element in
+                   products_details]
+            return TradeControl.get_instance().remove_from_shopping_cart(lst)
         elif flag == "update":
             return TradeControl.get_instance().update_quantity_in_shopping_cart(products_details)
-        # return True
+        else:
+            return False
 
     # ---------------------------------------------------- U.C 2.8-----------------------------------------------------
 

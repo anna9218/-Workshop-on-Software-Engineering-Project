@@ -47,6 +47,7 @@ class Store:
                     return False
                 if d['category'].strip() == "":
                     return False
+
             results = list(map(lambda details: self.add_product(details["name"],
                                                                 details["price"],
                                                                 details["category"],
@@ -214,7 +215,7 @@ class Store:
 
     @logger
     # eden added
-    def get_product(self, product_name):
+    def get_product(self, product_name) -> Product:
         return self.__inventory.get_product(product_name)
 
     # def get_purchase_info(self, purchase: Purchase):
@@ -536,3 +537,14 @@ class Store:
 
     def __repr__(self):
         return repr("Store")
+
+    def __eq__(self, other):
+        # TODO: for v3 & catching, maybe improve this.
+        if type(other) is not Store:
+            return False
+
+        if not self.__name == other.get_name():
+            return False
+
+        return True
+

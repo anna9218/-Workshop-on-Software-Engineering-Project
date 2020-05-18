@@ -132,9 +132,6 @@ class StoreTests(unittest.TestCase):
 
         # All valid
 
-        # Empty inv
-        self.assertEqual(self.store.get_inventory().len(), 0)
-
         # First Addition
         self.assertTrue(self.store.add_product("Chair", 100, "Furniture", 5))
         self.assertEqual(self.store.get_inventory().len(), 1)

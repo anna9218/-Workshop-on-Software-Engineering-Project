@@ -157,11 +157,16 @@ class ShoppingBasket:
         return repr("ShoppingBasket")
 
     def __eq__(self, other):
+        # self.__products: [{"product": Product, "amount": int, "discountType": DiscountType, "purchaseType": PurchaseType}] = []
         try:
+            lst = other.get_products()
             if len(self.__products) != len(other.get_products()):
                 return False
-            for product in self.__products:
-                if product not in other.get_products():
+            for product in \
+                    [(product1['product'], product1['amount'], product1['discountType'], product1['purchaseType']) for
+                     product1 in self.__products]:
+                if product not in [(product1['product'], product1['amount'], product1['discountType'], product1['purchaseType']) for
+                     product1 in other.get_products()]:
                     return False
             return True
         except Exception:

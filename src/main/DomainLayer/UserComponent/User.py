@@ -21,6 +21,9 @@ class User:
 
     @secureLogger
     def register(self, username: str, password: str):
+        if self.__registrationState.get_nickname() is not None:
+            return False
+
         if username.strip() == "" or password.strip() == "":
             return False
         self.__registrationState.register(username, password)
@@ -75,7 +78,8 @@ class User:
         return self.__purchase_history
 
     @logger
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"product": Product, "store_name": str,
+    def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str,
+                                                                     "product": Product,
                                                                      "amount": int, "discount_type": DiscountType,
                                                                      "purchase_type": PurchaseType}]):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
@@ -91,11 +95,10 @@ class User:
         return self.__shoppingCart.view_shopping_cart()
 
     @logger
-    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]):
         """
         :param products_details: [{"product_name": str,
-                                       "store_name": str,
-                                       "amount": int}, ...]
+                                       "store_name": str}, ...]
         :return: True on success, False when one of the products doesn't exist in the shopping cart
         """
         return self.__shoppingCart.remove_products(products_details)
@@ -150,8 +153,14 @@ class User:
                 self.__purchase_history.remove(p)
 
     @logger
-    def get_shopping_cart(self):
+    def get_shopping_cart(self) -> ShoppingCart:
         return self.__shoppingCart
 
     def __repr__(self):
         return repr("User")
+
+    def __eq__(self, other):
+        try:
+            return self.get_nickname() == other.get_nickname()
+        except Exception:
+            return False

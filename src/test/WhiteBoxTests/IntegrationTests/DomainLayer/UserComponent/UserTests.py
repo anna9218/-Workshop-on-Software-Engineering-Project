@@ -51,6 +51,10 @@ class UserTests(unittest.TestCase):
         self.assertTrue(guest2.is_logged_out())
         self.assertFalse(guest2.is_logged_in())
 
+        # Invalid - user already exist
+        self.assertFalse(guest1.register("not valid", "not valid"))
+        self.assertEqual(guest1.get_nickname(), "valid")
+
     @logger
     def test_login(self):
         # All Valid
