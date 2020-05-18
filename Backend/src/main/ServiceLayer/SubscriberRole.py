@@ -15,7 +15,7 @@ class SubscriberRole:
         logs the subscriber out of the system
         :return: True if succeeded, otherwise False
         """
-        loggerStaticMethod("SubscriberRole.logout", [])
+        # loggerStaticMethod("SubscriberRole.logout", [])
         return TradeControl.get_instance().logout_subscriber()
 
     @staticmethod
@@ -27,7 +27,7 @@ class SubscriberRole:
         :param store_name: String
         :return: true if the store is created, else false
         """
-        loggerStaticMethod("SubscriberRole.open_store",["store_name"])
+        # loggerStaticMethod("SubscriberRole.open_store",["store_name"])
         return TradeControl.get_instance().open_store(store_name)
 
     @staticmethod
@@ -38,7 +38,7 @@ class SubscriberRole:
         View the subscriber's purchase history
         :return: list of json objects containing the subscriber's purchase history or None if none exist
         """
-        loggerStaticMethod("SubscriberRole.view_personal_purchase_history", [])
+        # loggerStaticMethod("SubscriberRole.view_personal_purchase_history", [])
         return TradeControl.get_instance().view_personal_purchase_history()
 
     def __repr__(self):

@@ -36,3 +36,20 @@ class Purchase(object):
     # @logger
     def get_products(self):
         return self.__products
+
+    # @logger
+    def __eq__(self, other):
+        try:
+            if (self.get_total_price != other.get_total_price
+                and self.get_nickname() != other.get_nickname()
+                and self.__store_name == other.get_store_name()
+                and self.__curr_date == other.get_date()
+                and len(self.__products) != len(other.get_products())):
+                    for i in other.get_products():
+                        if i not in self.__products:
+                            return False
+                    return True
+            return False
+        except Exception:
+            return False
+

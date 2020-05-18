@@ -11,7 +11,7 @@ class PaymentProxy(PaymentSubject):
     @staticmethod
     def get_instance():
         """ Static access method. """
-        loggerStaticMethod("FacadePayment.get_instance", [])
+        # loggerStaticMethod("FacadePayment.get_instance", [])
         if PaymentProxy.__instance is None:
             PaymentProxy()
         return PaymentProxy.__instance
@@ -74,7 +74,7 @@ class PaymentProxy(PaymentSubject):
 
     @staticmethod
     def __check_valid_details(products_ls) -> bool:
-        loggerStaticMethod("__check_valid_details", [products_ls])
+        # loggerStaticMethod("__check_valid_details", [products_ls])
         if len(products_ls["purchases"]) == 0 or products_ls["total_price"] == 0:
             return False
         else:

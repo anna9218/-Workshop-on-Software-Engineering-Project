@@ -29,12 +29,27 @@ class ShoppingCart:
 
     # @logger
     def update_quantity(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+        """
+        The function take a list of {"product_name": str, "store_name": str, "amount": int}.
+        The function checks if the basket in the store exist, if the product exist in the basket and the amount isn't
+                                                                                                               negative.
+        If any one of the above is false, the function returns false and DOES NOT CHANGE ANY AMOUNT.
+        Else, update the amount and return true.
+
+        :param products_details: list of {"product_name": str, "store_name": str, "amount": int}
+        :return: If any one of the above is false, the function returns false.
+                 else, return true.
+        """
         for curr in products_details:
             basket = self.get_store_basket(curr["store_name"])
-            if basket:
-                return basket.update_amount(curr["product_name"], curr["amount"])
-            else:
+            if not basket:
                 return False
+            if basket.get_product(curr['product_name']) is None or curr['amount'] < 0:
+                return False
+
+        for curr in products_details:
+            basket = self.get_store_basket(curr["store_name"])
+            basket.update_amount(curr["product_name"], curr["amount"])
         return True
 
     # @logger
@@ -46,12 +61,37 @@ class ShoppingCart:
         return False
 
     # @logger
-    def add_products(self, products_stores_quantity_ls: [{"product": Product, "store_name": str,
-                                                          "amount": int, "discount_type": DiscountType,
+    def add_products(self, products_stores_quantity_ls: [{"store_name": str,
+                                                          "product": Product,
+                                                          "amount": int,
+                                                          "discount_type": DiscountType,
                                                           "purchase_type": PurchaseType}]) -> bool:
+        """
+        The function iterate over the list to see if all the arguments are valid.
+        If all the arguments are valid, and the basket exist, the function add the products the corresponding basket.
+        If all the arguments are valid, and the basket doesn't exist, the function create the basket and then
+                                                                        add the products the corresponding basket.
+        If not all the arguments are valid, the function do nothing and return false.
+
+        :param products_stores_quantity_ls: list of products to add.
+        :return:
+                If all the arguments are valid, and the basket exist, the function add the products the corresponding
+                                                                                                                basket.
+                If all the arguments are valid, and the basket doesn't exist, the function create the basket and then
+                                                                        add the products the corresponding basket.
+                If not all the arguments are valid, the function do nothing and return false.
+        """
+
+        # Check if the arguments are valid.
         for curr in products_stores_quantity_ls:
-            if curr is None or curr["product"] is None:
+            if curr is None:
                 return False
+            else:
+                if curr['product'] is None or curr['amount'] <= 0:
+                    return False
+
+        # Rest of the function
+        for curr in products_stores_quantity_ls:
             basket = self.get_store_basket(curr["store_name"])
             if basket:
                 basket.add_product(curr["product"], curr["amount"], curr["discount_type"], curr["purchase_type"])

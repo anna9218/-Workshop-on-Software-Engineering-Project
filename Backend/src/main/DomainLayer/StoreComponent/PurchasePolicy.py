@@ -26,6 +26,7 @@ class PurchasePolicy:
             return False
         return True
 
+    # @logger
     def check_policy(self, store_name: str, product_name: str):
         return True
 

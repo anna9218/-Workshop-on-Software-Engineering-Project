@@ -14,6 +14,11 @@ class Registration:
         self.__username = username
         self.__password = password
 
+    def unregistered(self):
+        self.__isRegistered = False
+        self.__username = None
+        self.__password = None
+
     # @logger
     def get_nickname(self):
         return self.__username

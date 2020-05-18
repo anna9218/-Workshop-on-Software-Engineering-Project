@@ -5,7 +5,7 @@ from Backend.src.main.DomainLayer.DeliveryComponent.DeliveryProxy import Deliver
 
 
 class FacadeDeliveryTests(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self) -> None:
         self.__delivery_sys = DeliveryProxy.get_instance()
         self.__delivery_sys.connect()
@@ -13,7 +13,7 @@ class FacadeDeliveryTests(unittest.TestCase):
         self.__valid_address = "my awesome address 04/20"
         self.__wrong_input = ""
 
-    @logger
+    # @logger
     def test_connection(self):
         # test that system is connected fine
         self.assertEqual(True, self.__delivery_sys.is_connected())
@@ -21,7 +21,7 @@ class FacadeDeliveryTests(unittest.TestCase):
         self.__delivery_sys.disconnect()
         self.assertEqual(False, self.__delivery_sys.is_connected())
 
-    @logger
+    # @logger
     def test_wrong_input(self):
         # valid user + invalid address
         res = self.__delivery_sys.deliver_products(self.__valid_username, self.__wrong_input)
@@ -38,14 +38,14 @@ class FacadeDeliveryTests(unittest.TestCase):
         self.assertEqual(False, res)
         return
 
-    @logger
+    # @logger
     def test_correct_input(self):
         # valid user + valid address
         res = self.__delivery_sys.deliver_products(self.__valid_username, self.__valid_address)
         self.assertEqual(True, res)
         return
 
-    @logger
+    # @logger
     def tearDown(self) -> None:
         self.__delivery_sys.disconnect()
 

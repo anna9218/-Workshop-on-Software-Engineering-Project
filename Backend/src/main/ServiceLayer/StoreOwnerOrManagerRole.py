@@ -30,7 +30,7 @@ class StoreOwnerOrManagerRole:
 
     # @logger
     # use 4.1.3
-    def edit_product(self, store_name: str, product_name: str, op: str, new_value: str) -> bool:
+    def edit_product(self, store_name: str, product_name: str, op: str, new_value: (str or float or int)) -> bool:
         """
         :param store_name: store's name
         :param product_name: product's name to edit
@@ -90,6 +90,18 @@ class StoreOwnerOrManagerRole:
         :return: purchases list
         """
         return TradeControl.get_instance().display_store_purchases(store_name)
+
+    def close_store(self, store_name: str):
+        """
+        This function check if the curr_user logged in and own the store with the name (:param store_name).
+        If the above condition is true, the function delete the store.
+        Else, return False
+
+        :param store_name: the store name to delete. Curr_user Have to own the store.
+        :return: True if deleted successfully
+                 False else.
+        """
+        return TradeControl.get_instance().close_store(store_name)
 
     def __repr__(self):
         return repr("StoreOwnerRole")

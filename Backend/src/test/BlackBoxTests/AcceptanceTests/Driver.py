@@ -15,7 +15,7 @@ class Driver(ABC):
 
     @staticmethod
     def get_bridge() -> Bridge:
-        loggerStaticMethod("Driver.get_bridge",[])
+        # loggerStaticMethod("Driver.get_bridge",[])
         real = RealBridge()
         return ProxyBridge(real)
 

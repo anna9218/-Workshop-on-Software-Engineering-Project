@@ -11,7 +11,7 @@ from Backend.src.test.WhiteBoxTests.UnitTests.Stubs.StubStore import StubStore
 
 
 class ShoppingCartTests(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self):
         self.__shopping_cart = ShoppingCart()
         self.__product = StubProduct()
@@ -19,7 +19,7 @@ class ShoppingCartTests(unittest.TestCase):
         self.__product_ls_to_add = {"product": self.__product, "amount": 4, "store_name": self.__store.get_name(),
                                     "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
-    @logger
+    # @logger
     def test_add_products(self):
         self.__shopping_cart.add_products([self.__product_ls_to_add])
         basket_pair = self.__shopping_cart.get_shopping_baskets()[0]
@@ -30,7 +30,7 @@ class ShoppingCartTests(unittest.TestCase):
         self.assertEqual(basket["discountType"], DiscountType.DEFAULT)
         self.assertEqual(basket["purchaseType"], PurchaseType.DEFAULT)
 
-    @logger
+    # @logger
     def test_remove_product(self):
         self.__shopping_cart.add_products([{"product": self.__product, "amount": 4, "store_name": self.__store.get_name(),
                                             "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT},
@@ -46,7 +46,7 @@ class ShoppingCartTests(unittest.TestCase):
         self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 0)
 
 
-    @logger
+    # @logger
     def test_update_quantity(self):
         self.__shopping_cart.add_products([{"product": self.__product, "amount": 4, "store_name": self.__store.get_name(),
                                             "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT},
