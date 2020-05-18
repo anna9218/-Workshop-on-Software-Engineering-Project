@@ -30,7 +30,7 @@ class GuestRole:
     # use case 2.4
     @staticmethod
     def display_stores():
-        loggerStaticMethod("GuestRole.display_stores", [])
+        # loggerStaticMethod("GuestRole.display_stores", [])
         return TradeControl.get_instance().get_stores_names()
 
     @staticmethod
@@ -38,7 +38,7 @@ class GuestRole:
         # store_info_flag = true if user wants to display store info
         # products_flag = true if user wants to display product info
         # TODO: fix flags - make it 1-flag, that get either store or product. and fix the test after.
-        loggerStaticMethod("GuestRole.display_stores_info", [store_name, store_info_flag, products_info_flag])
+        # loggerStaticMethod("GuestRole.display_stores_info", [store_name, store_info_flag, products_info_flag])
         if store_info_flag:
             return TradeControl.get_instance().get_store_info(store_name)
         if products_info_flag:
@@ -53,7 +53,7 @@ class GuestRole:
         :param string: for opt: 0 -> productName, 1 -> string, 2 -> category
         :return: list of products according to the selected searching option
         """
-        loggerStaticMethod("GuestRole.search_products_by", [search_option, string])
+        # loggerStaticMethod("GuestRole.search_products_by", [search_option, string])
         products_ls = TradeControl.get_instance().get_products_by(search_option, string)
         return products_ls
 
@@ -90,8 +90,8 @@ class GuestRole:
         :return: a list of the filtered product.
                  an empty list if an error occurs.
         """
-        loggerStaticMethod("GuestRole.filter_products_by", [products_ls, filter_by_option, min_price, max_price,
-                                                            category])
+        # loggerStaticMethod("GuestRole.filter_products_by", [products_ls, filter_by_option, min_price, max_price,
+        #                                                     category])
         return TradeControl.get_instance().filter_products_by(products_ls=products_ls,
                                                               filter_by_option=filter_by_option,
                                                               min_price=min_price,

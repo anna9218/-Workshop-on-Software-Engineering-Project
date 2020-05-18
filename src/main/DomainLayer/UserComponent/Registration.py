@@ -8,21 +8,26 @@ class Registration:
         self.__username = None
         self.__password = None
 
-    @secureLogger
+    # @secureLogger
     def register(self, username, password):
         self.__isRegistered = True
         self.__username = username
         self.__password = password
 
-    @logger
+    def unregistered(self):
+        self.__isRegistered = False
+        self.__username = None
+        self.__password = None
+
+    # @logger
     def get_nickname(self):
         return self.__username
 
-    @secureLogger
+    # @secureLogger
     def get_password(self):
         return self.__password
 
-    @logger
+    # @logger
     def is_registered(self):
         return self.__isRegistered
 

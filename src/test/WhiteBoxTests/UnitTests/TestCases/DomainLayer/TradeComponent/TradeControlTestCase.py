@@ -7,7 +7,7 @@ from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class TradeControlTestCase(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self):
         self.tradeControl = TradeControl.get_instance()
         self.user = StubUser()
@@ -23,19 +23,19 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.add_system_manager("nickname", "password"))
         self.assertEqual(len(self.tradeControl.get_managers()), managers_num + 1)
 
-    @logger
+    # @logger
     def test_register_guest(self):
         self.assertTrue(self.tradeControl.register_guest("eden", "passwoed"))
         self.assertFalse(self.tradeControl.register_guest("eden", "passwoed"))
 
-    @logger
+    # @logger
     def test_login_guest(self):
         self.assertFalse(self.tradeControl.login_subscriber("eden", "passwoed"))
         self.assertTrue(self.tradeControl.register_guest("eden", "passwoed"))
         self.assertTrue(self.tradeControl.login_subscriber("eden", "passwoed"))
         self.assertFalse(self.tradeControl.login_subscriber("eden", "passwoed"))
 
-    @logger
+    # @logger
     def test_subscribe_success_and_fail(self):
         subscribers_num = len(self.tradeControl.get_subscribers())
         self.assertTrue(self.tradeControl.subscribe(self.user))
@@ -44,7 +44,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertTrue(self.tradeControl.get_subscriber(self.user.get_nickname()))
         self.tradeControl.unsubscribe(self.user)
 
-    @logger
+    # @logger
     def test_unsubscribe_success_and_fail(self):
         self.tradeControl.subscribe(self.user)
         subscribers_num = len(self.tradeControl.get_subscribers())
@@ -52,7 +52,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.unsubscribe("nickname"))
         self.assertEqual(len(self.tradeControl.get_subscribers()), subscribers_num - 1)
 
-    @logger
+    # @logger
     def test_close_and_open_store(self):
         stores_num = len(self.tradeControl.get_stores())
         self.tradeControl.set_curr_user(self.user)
@@ -66,21 +66,21 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.close_store("myFirstStore"))
         self.assertEqual(len(self.tradeControl.get_stores()), stores_num)
 
-    @logger
+    # @logger
     def test_validate_nickname(self):
         self.assertTrue(self.tradeControl.validate_nickname("nickname"))
         self.tradeControl.subscribe(self.user)
         self.assertFalse(self.tradeControl.validate_nickname("nickname"))
         self.tradeControl.unsubscribe("nickname")
 
-    @logger
+    # @logger
     def test_get_subscriber(self):
         self.assertEqual(self.tradeControl.get_subscriber("nickname"), None)
         self.tradeControl.subscribe(self.user)
         self.assertEqual(self.tradeControl.get_subscriber("nickname"), self.user)
         self.tradeControl.unsubscribe("nickname")
 
-    @logger
+    # @logger
     def test_get_products_by(self):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
@@ -111,26 +111,26 @@ class TradeControlTestCase(unittest.TestCase):
     #
     #     self.assertEqual(id1+1, id2)
 
-    @logger
+    # @logger
     def test_logout_subscriber(self):
         self.assertFalse(self.tradeControl.logout_subscriber())
         self.assertTrue(self.tradeControl.register_guest("eden", "passwoed"))
         self.assertTrue(self.tradeControl.login_subscriber("eden", "passwoed"))
         self.assertTrue(self.tradeControl.logout_subscriber())
 
-    @logger
+    # @logger
     def test_view_personal_purchase_history(self):
         pass
 
-    @logger
-    def test_view_user_purchase_history(self, nickname):
+    # @logger
+    def test_view_user_purchase_history(self):
         pass
 
-    @logger
+    # @logger
     def test_view_store_purchases_history(self):
         pass
 
-    @logger
+    # @logger
     def test_add_and_remove_products(self):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
@@ -149,29 +149,31 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertNotEqual(store1.get_product("Chair"), None)
         self.assertEqual(store1.get_product("Sofa"), None)
 
-    @logger
+    # @logger
     def test_edit_product(self):
         pass
 
-    @logger
+    # @logger
     def test_appoint_additional_owner(self):
         pass
 
-    @logger
+    # @logger
     def test_appoint_store_manager(self):
         pass
 
-    @logger
+    # @logger
     def test_edit_manager_permissions(self):
         pass
 
-    @logger
+    # @logger
     def test_remove_manager(self):
         pass
 
     def tearDown(self):
-        pass
-        # self.tradeControl = TradeControl.get_instance()
+        # pass
+        self.tradeControl.logout_subscriber()
+        self.tradeControl.unsubscribe("nickname")
+        self.tradeControl.unsubscribe("eden")
 
     def __repr__(self):
         return repr ("TradeControlTestCase")

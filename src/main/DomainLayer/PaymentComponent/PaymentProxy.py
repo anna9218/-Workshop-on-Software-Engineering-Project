@@ -11,7 +11,7 @@ class PaymentProxy(PaymentSubject):
     @staticmethod
     def get_instance():
         """ Static access method. """
-        loggerStaticMethod("FacadePayment.get_instance", [])
+        # loggerStaticMethod("FacadePayment.get_instance", [])
         if PaymentProxy.__instance is None:
             PaymentProxy()
         return PaymentProxy.__instance
@@ -29,7 +29,7 @@ class PaymentProxy(PaymentSubject):
             else:
                 PaymentProxy.__instance = self
 
-    @logger
+    # @logger
     def connect(self):
         try:
             if not self.__isConnected:
@@ -41,7 +41,7 @@ class PaymentProxy(PaymentSubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     # need to check payment details with system once a system is set
     def commit_payment(self, products_ls: {"total_price": float, "purchases": [dict]}) -> bool:
         try:
@@ -53,7 +53,7 @@ class PaymentProxy(PaymentSubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     def disconnect(self):
         try:
             if self.__isConnected:
@@ -68,13 +68,13 @@ class PaymentProxy(PaymentSubject):
     def cancel_payment(self, purchase_ls):
         return True
 
-    @logger
+    # @logger
     def is_connected(self) -> bool:
         return self.__isConnected
 
     @staticmethod
     def __check_valid_details(products_ls) -> bool:
-        loggerStaticMethod("__check_valid_details", [products_ls])
+        # loggerStaticMethod("__check_valid_details", [products_ls])
         if len(products_ls["purchases"]) == 0 or products_ls["total_price"] == 0:
             return False
         else:

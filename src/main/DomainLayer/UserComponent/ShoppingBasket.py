@@ -22,7 +22,7 @@ class ShoppingBasket:
         else:
             raise StopIteration
 
-    @logger
+    # @logger
     def add_product(self, product: Product, amount: int, discount_type: DiscountType, purchase_type: PurchaseType) -> \
             bool:
         """
@@ -49,7 +49,7 @@ class ShoppingBasket:
                                 "purchaseType": purchase_type})
         return True
 
-    @logger
+    # @logger
     def get_basket_info(self):
         """
         :return: list: [{"product_name": str
@@ -58,7 +58,7 @@ class ShoppingBasket:
         return list(map(lambda x: {"product_name": x["product"].get_name(),
                                    "amount": x["amount"]}, self.__products))
 
-    @logger
+    # @logger
     def remove_product(self, product_name: str) -> bool:
         """
         This function remove the product from the basket.
@@ -73,7 +73,7 @@ class ShoppingBasket:
                 return True
         return False
 
-    @logger
+    # @logger
     # eden
     def update_amount(self, product_name: str, amount: int):
         """
@@ -94,7 +94,7 @@ class ShoppingBasket:
                 return True
         return False
 
-    @logger
+    # @logger
     # eden
     def is_empty(self):
         return len(self.__products) == 0
@@ -113,25 +113,25 @@ class ShoppingBasket:
     #             return True
     #     return False
 
-    @logger
+    # @logger
     def get_products(self):
         return self.__products
 
-    @logger
+    # @logger
     def get_product_amount(self, product_name: str):
         for p in self.__products:
             if p["product"].get_name() == product_name:
                 return p["amount"]
         return 0
 
-    @logger
+    # @logger
     def get_product(self, product_name: str):
         for p in self.__products:
             if p["product"].get_name() == product_name:
                 return p
         return None
 
-    @logger
+    # @logger
     def complete_purchase(self, product_ls: [dict]):
         """
         Update shopping basket after successful purchase.

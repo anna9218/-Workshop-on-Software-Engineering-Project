@@ -9,7 +9,7 @@ class DeliveryProxy(DeliverySubject):
     @staticmethod
     def get_instance():
         """ Static access method. """
-        loggerStaticMethod("FacadeDelivery.get_instance", [])
+        # loggerStaticMethod("FacadeDelivery.get_instance", [])
         if DeliveryProxy.__instance is None:
             DeliveryProxy()
         return DeliveryProxy.__instance
@@ -27,7 +27,7 @@ class DeliveryProxy(DeliverySubject):
             else:
                 DeliveryProxy.__instance = self
 
-    @logger
+    # @logger
     def connect(self):
         try:
             if not self.__isConnected:
@@ -39,7 +39,7 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     # need to check address details with system once a system is set
     def deliver_products(self, address: str, products_ls: []) -> bool:
         """
@@ -50,8 +50,8 @@ class DeliveryProxy(DeliverySubject):
         :return:true if successful, otherwise false
         """
         try:
-            if not self.__isConnected or not \
-                    self.__check_valid_details(address, products_ls):
+            if not self.__isConnected or \
+                   not self.__check_valid_details(address, products_ls):
                 return False
             else:
                 return True
@@ -59,7 +59,7 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     def disconnect(self):
         try:
             if self.__isConnected:
@@ -71,13 +71,13 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    @logger
+    # @logger
     def is_connected(self) -> bool:
         return self.__isConnected
 
     @staticmethod
     def __check_valid_details(address: str, products: []) -> bool:
-        loggerStaticMethod("__check_valid_details", [products, address])
+        # loggerStaticMethod("__check_valid_details", [products, address])
         if len(address) == 0 or len(products) == 0:
             return False
         else:

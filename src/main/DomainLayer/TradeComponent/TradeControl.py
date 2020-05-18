@@ -16,7 +16,7 @@ class TradeControl:
     @staticmethod
     def get_instance():
         """ Static access method. """
-        loggerStaticMethod("TradeControl.get_instance", [])
+        # loggerStaticMethod("TradeControl.get_instance", [])
         if TradeControl.__instance is None:
             TradeControl()
         return TradeControl.__instance
@@ -33,7 +33,7 @@ class TradeControl:
             self.__subscribers = []
             TradeControl.__instance = self
 
-    @logger
+    # @logger
     # ------- TradeControlService function
     def add_system_manager(self, nickname: str, password: str):
         for s in self.__managers:
@@ -53,7 +53,7 @@ class TradeControl:
             else:
                 return False
 
-    @logger
+    # @logger
     def register_test_user(self, nickname: str, password: str):
         """
         TODO: I think its for AT
@@ -65,7 +65,7 @@ class TradeControl:
         user.register(nickname, password)
         self.subscribe(user)
 
-    @logger
+    # @logger
     # ----   Guest functions   ----
     def register_guest(self, nickname: str, password: str):
         if not self.validate_nickname(nickname):
@@ -73,28 +73,29 @@ class TradeControl:
 
         return self.__curr_user.register(nickname, password) and self.subscribe(self.__curr_user)
 
-    @logger
+    # @logger
     def login_subscriber(self, nickname: str, password: str):
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_out():
             return self.__curr_user.login(nickname, password)
         return False
 
-    @logger
+    # @logger
     def subscribe(self, user: User):
         if self.validate_nickname(user.get_nickname()):
             self.__subscribers.append(user)
             return True
         return False
 
-    @logger
+    # @logger
     def unsubscribe(self, nickname):
         for s in self.__subscribers:
             if s.get_nickname() == nickname:
                 self.__subscribers.remove(s)
+                s.unregistered()
                 return True
         return False
 
-    @logger
+    # @logger
     def open_store(self, store_name) -> bool:
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in() and not store_name.strip() == "":
             for store in self.__stores:
@@ -107,7 +108,7 @@ class TradeControl:
             return True
         return False
 
-    @logger
+    # @logger
     def close_store(self, store_name) -> bool:
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in() and not store_name.strip() == "":
             store: Store = self.get_store(store_name)
@@ -121,7 +122,7 @@ class TradeControl:
             return True
         return False
 
-    @logger
+    # @logger
     def validate_nickname(self, nickname: str) -> bool:
         if nickname.strip() == "":
             return False
@@ -130,14 +131,14 @@ class TradeControl:
                 return False
         return True
 
-    @logger
+    # @logger
     def get_subscriber(self, nickname: str) -> User:
         for u in self.__subscribers:
             if u.get_nickname() == nickname:
                 return u
         return None
 
-    @logger
+    # @logger
     def get_products_by(self, search_opt: int, string: str):
         list_of_products = []
         for s in self.__stores:
@@ -148,7 +149,7 @@ class TradeControl:
                                                               "category": product.get_category()}), products))
         return list_of_products
 
-    @logger
+    # @logger
     def filter_products_by(self,
                            products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
                            filter_by_option: int, min_price: (float or None) = None,
@@ -209,13 +210,13 @@ class TradeControl:
             except Exception:
                 return []
 
-    @logger
+    # @logger
     def get_store_info(self, store_name):
         if self.get_store(store_name) is None:
             return None
         return jsonpickle.encode(self.get_store(store_name))
 
-    @logger
+    # @logger
     def get_store_inventory(self, store_name):
         if self.get_store(store_name) is None:
             return None
@@ -224,7 +225,7 @@ class TradeControl:
             return None
         return jsonpickle.encode(self.get_store(store_name).get_inventory())
 
-    @logger
+    # @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
                                                                      "amount": int, "discount_type": DiscountType,
                                                                      "purchase_type": PurchaseType}]):
@@ -244,11 +245,11 @@ class TradeControl:
                       products_stores_quantity_ls))
         return self.__curr_user.save_products_to_basket(ls)
 
-    @logger
+    # @logger
     def view_shopping_cart(self):
         return self.__curr_user.view_shopping_cart()
 
-    @logger
+    # @logger
     def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]):
         """
         :param products_details: [{"product_name": str,
@@ -257,7 +258,7 @@ class TradeControl:
         """
         return self.__curr_user.remove_from_shopping_cart(products_details)
 
-    @logger
+    # @logger
     def update_quantity_in_shopping_cart(self,
                                          products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         """
@@ -268,21 +269,21 @@ class TradeControl:
         """
         return self.__curr_user.update_quantity_in_shopping_cart(products_details)
 
-    @logger
+    # @logger
     def get_store(self, store_name) -> Store:
         for s in self.__stores:
             if s.get_name() == store_name:
                 return s
         return None
 
-    @logger
+    # @logger
     def get_stores_names(self):
         stores = []
         list(map(lambda store: stores.append(store.get_name()), self.__stores))
         return stores
 
     # u.c 2.8
-    @logger
+    # @logger
     def purchase_products(self):
         """
             purchase all products in shopping cart according to the policies
@@ -312,7 +313,7 @@ class TradeControl:
             return None
         return {"total_price": total_price, "purchases": purchase_baskets}
 
-    @logger
+    # @logger
     def purchase_basket(self, store_name: str):
         """
             purchase single basket from user cart by given store name, according to the policies
@@ -335,7 +336,7 @@ class TradeControl:
         # {"store_name": self.__name, "basket_price": basket_price, "products": products_purchases}
         return {"total_price": purchase["basket_price"], "purchases": [purchase]}
 
-    @logger
+    # @logger
     def accept_purchases(self, purchase_ls: dict):
         """
             after payment confirmation, add purchases to user and store history
@@ -347,6 +348,9 @@ class TradeControl:
                 }
         :return: void
         """
+        if purchase_ls is None or len(purchase_ls) == 0:
+            return False
+
         nickname = self.__curr_user.get_nickname()
         # purchase ->
         # [{"store_name": str, "basket_price": float, "products": [{"product_name", "product_price", "amount"}]}]
@@ -358,7 +362,7 @@ class TradeControl:
             self.get_store(purchase["store_name"]).complete_purchase(new_purchase)
         return True
 
-    @logger
+    # @logger
     def remove_purchase(self, store_name: str, purchase_date: datetime):
         self.get_store(store_name).remove_purchase(self.__curr_user.get_nickname(), purchase_date)
         self.__curr_user.remove_purchase(store_name, purchase_date)
@@ -366,7 +370,7 @@ class TradeControl:
     # ---------------------------------------------------
 
     # --------------   subscriber functions   --------------
-    @logger
+    # @logger
     def logout_subscriber(self):
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             self.__curr_user.logout()
@@ -374,7 +378,7 @@ class TradeControl:
             return True
         return False
 
-    @logger
+    # @logger
     def view_personal_purchase_history(self):
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             purchases = self.__curr_user.get_purchase_history()
@@ -386,7 +390,7 @@ class TradeControl:
     # ----------------------------------
 
     # ---- system manager functions ----
-    @logger
+    # @logger
     def view_user_purchase_history(self, nickname: str):
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_user = self.get_subscriber(nickname)
@@ -397,7 +401,7 @@ class TradeControl:
         else:
             return None
 
-    @logger
+    # @logger
     def view_store_purchases_history(self, store_name):
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_store = self.get_store(store_name)
@@ -409,7 +413,7 @@ class TradeControl:
         else:
             return None
 
-    @logger
+    # @logger
     def is_manager(self, nickname):
         for m in self.__managers:
             if m.get_nickname() == nickname:
@@ -419,7 +423,7 @@ class TradeControl:
     # ----------------------------------
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-    @logger
+    # @logger
     def add_products(self, store_name: str,
                      products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         """
@@ -436,7 +440,7 @@ class TradeControl:
             return store.add_products(self.__curr_user.get_nickname(), products_details)
         return False
 
-    @logger
+    # @logger
     def remove_products(self, store_name: str, products_names: list) -> bool:
         """
         :param store_name: store's name
@@ -456,7 +460,7 @@ class TradeControl:
             return store.remove_products(self.__curr_user.get_nickname(), products_names)
         return False
 
-    @logger
+    # @logger
     def edit_product(self, store_name: str, product_name: str, op: str, new_value) -> bool:
         """
         :param store_name: store's name
@@ -468,10 +472,10 @@ class TradeControl:
         store: Store = self.get_store(store_name)
         if store is not None and \
                 self.__curr_user.is_registered() and \
-                self.__curr_user.is_logged_in() and \
-                (store.is_owner(self.__curr_user.get_nickname()) or
-                 store.is_manager(self.__curr_user.get_nickname())) and \
-                store.product_in_inventory(product_name):
+                self.__curr_user.is_logged_in():
+                # (store.is_owner(self.__curr_user.get_nickname()) or
+                #  store.is_manager(self.__curr_user.get_nickname())) and \
+                # store.product_in_inventory(product_name):
             # Check if the new name is already exist in the sore. if does, return false.
             if op.lower() == "name":
                 if (store.get_name(), new_value) in [(e['store_name'], e['product_name']) for e in
@@ -481,7 +485,7 @@ class TradeControl:
             return store.edit_product(self.__curr_user.get_nickname(), product_name, op, new_value)
         return False
 
-    @logger
+    # @logger
     def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> bool:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
@@ -502,7 +506,7 @@ class TradeControl:
             return store.add_owner(self.__curr_user.get_nickname(), appointee)
         return False
 
-    @logger
+    # @logger
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> bool:
         """
         :param appointee_nickname: nickname of the new manager that will be appointed
@@ -525,7 +529,7 @@ class TradeControl:
             return store.add_manager(self.__curr_user, appointee, permissions)
         return False
 
-    @logger
+    # @logger
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
         :param store_name: store's name
@@ -546,7 +550,7 @@ class TradeControl:
             return store.edit_manager_permissions(self.__curr_user, appointee_nickname, permissions)
         return False
 
-    @logger
+    # @logger
     def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
         """
         :param store_name: store's name
@@ -566,7 +570,7 @@ class TradeControl:
             return store.remove_manager(self.__curr_user.get_nickname(), appointee_nickname)
         return False
 
-    @logger
+    # @logger
     def display_store_purchases(self, store_name: str) -> list:
         """
         :param store_name: store's name
@@ -586,33 +590,33 @@ class TradeControl:
         return []
 
     # ----------- Getters & Setters --------------
-    @logger
+    # @logger
     def get_subscribers(self):
         return self.__subscribers
 
-    @logger
+    # @logger
     def get_stores(self):
         return self.__stores
 
-    @logger
+    # @logger
     def get_managers(self):
         return self.__managers
 
     @staticmethod
-    @logger
+    # @logger
     def get_guest():
         guest = User()
         return guest
 
-    @logger
+    # @logger
     def set_curr_user(self, curr: User):
         self.__curr_user = curr
 
-    @logger
+    # @logger
     def set_curr_user_by_name(self, nickname: str):
         self.__curr_user = self.get_subscriber(nickname)
 
-    @logger
+    # @logger
     def get_curr_user(self):
         return self.__curr_user
 

@@ -9,7 +9,7 @@ class DiscountPolicy:
         """-> list of ([user_type: UserType, price: float, list of [product: Product, amount: int]] """
         self.__discounts = list()
 
-    @logger
+    # @logger
     def add_disallowed_purchasing(self, discounts: list):
         if type(discounts) != [UserType, Product, list]:
             return
@@ -20,13 +20,13 @@ class DiscountPolicy:
             return
         self.__discounts.insert(0, discounts)
 
-    @logger
+    # @logger
     def is_deserve_to_discount(self, amount_per_product_per_user_type: []):
         if amount_per_product_per_user_type in self.__discounts:
             return False
         return True
 
-    @logger
+    # @logger
     def check_discount(self, store_name: str, product_name: str):
         return True
 

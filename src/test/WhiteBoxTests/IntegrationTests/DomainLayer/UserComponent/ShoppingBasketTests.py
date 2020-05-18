@@ -8,12 +8,12 @@ from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 
 
 class ShoppingBasketTests(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self):
         self.__basket = ShoppingBasket()
         self.__product = Product("Eytan's product", 12, "Eytan's category")
 
-    @logger
+    # @logger
     # eden
     def test_update_amount(self):
         # def update_amount(self, product_name: str, amount: int):
@@ -35,7 +35,7 @@ class ShoppingBasketTests(unittest.TestCase):
         self.assertFalse(self.__basket.update_amount("self.__product.get_name()", 121))
         self.assertEqual(self.__basket.get_product_amount("self.__product.get_name()"), 0)
 
-    @logger
+    # @logger
     def test_is_empty(self):
         # Is empty
         self.assertTrue(self.__basket.is_empty())
@@ -44,7 +44,7 @@ class ShoppingBasketTests(unittest.TestCase):
         self.__basket.add_product(self.__product, 2, DiscountType.DEFAULT, PurchaseType.DEFAULT)
         self.assertFalse(self.__basket.is_empty())
 
-    @logger
+    # @logger
     def test_add_product(self):
 
         # All valid - edge case - amount = 0
@@ -63,7 +63,7 @@ class ShoppingBasketTests(unittest.TestCase):
         self.assertIn({"product": self.__product, "amount": 2, "discountType": DiscountType.DEFAULT,
                        "purchaseType": PurchaseType.DEFAULT}, self.__basket.get_products())
 
-    @logger
+    # @logger
     def test_remove_product(self):
         # All valid
         self.__basket.add_product(self.__product, 2, DiscountType.DEFAULT, PurchaseType.DEFAULT)
@@ -82,7 +82,7 @@ class ShoppingBasketTests(unittest.TestCase):
         self.assertFalse(self.__basket.remove_product(""))
         self.assertEqual(len(self.__basket.get_products()), 0)
 
-    @logger
+    # @logger
     def test_get_product(self):
         self.__basket.remove_product(self.__product.get_name())
         self.__basket.add_product(self.__product, 12, DiscountType.DEFAULT, PurchaseType.DEFAULT)
@@ -97,7 +97,7 @@ class ShoppingBasketTests(unittest.TestCase):
         # Invalid - product doesn't exist
         self.assertIsNone(self.__basket.get_product("Eytan's very very bad product"))
 
-    @logger
+    # @logger
     def test_get_product_amount(self):
         # def get_product_amount(self, product_name: str):
         self.__basket.add_product(self.__product, 12, DiscountType.DEFAULT, PurchaseType.DEFAULT)
@@ -175,7 +175,7 @@ class ShoppingBasketTests(unittest.TestCase):
         self.assertEqual(self.__basket.get_product_amount(self.__product.get_name()), 9)
         self.assertNotIn(product2, self.__basket.get_products())
 
-    @logger
+    # @logger
     def tearDown(self):
         self.__basket.remove_product(self.__product.get_name())
 

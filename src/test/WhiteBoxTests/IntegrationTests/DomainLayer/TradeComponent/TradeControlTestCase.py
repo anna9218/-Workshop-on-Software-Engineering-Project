@@ -661,18 +661,18 @@ class TradeControlTestCase(unittest.TestCase):
     def test_update_quantity_in_shopping_cart(self):
         product = Product("Eytan's product", 12, "Eytan's category")
         store: Store = Store("myStore")
-        store.add_product("Eytan's product", 12, "Eytan's category", 5)
+        store.add_product("Eytan", "Eytan's product", 12, "Eytan's category", 5)
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 4, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         product1: Product = Product("not Eytan's product", 9, "Eytan's category")
         product2: Product = Product("maybe Eytan's product", 8, "Eytan's category")
-        store.add_product("not Eytan's product", 9, "Eytan's category", 3)
+        store.add_product("Eytan", "not Eytan's product", 9, "Eytan's category", 3)
         store1: Store = Store("Not my store")
-        store1.add_product("Eytan's product", 12, "Eytan's category", 5)
-        store1.add_product("not Eytan's product", 9, "Eytan's category", 12)
-        store1.add_product("maybe Eytan's product", 8, "Eytan's category", 5)
+        store1.add_product("Eytan", "Eytan's product", 12, "Eytan's category", 5)
+        store1.add_product("Eytan", "not Eytan's product", 9, "Eytan's category", 12)
+        store1.add_product("Eytan", "maybe Eytan's product", 8, "Eytan's category", 5)
         (TradeControl.get_instance()).get_stores().append(store1)
         product_as_dictionary_var1 = {"product_name": product1.get_name(), "amount": 3, "store_name": store.get_name(),
                                       "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}

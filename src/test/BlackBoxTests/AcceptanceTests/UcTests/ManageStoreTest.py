@@ -25,7 +25,7 @@ class ManageStoreTest(ProjectTest):
     def test_success(self):
         self.subscribe_user("newUser", "newerPassword")
         # manager with permission to add owner
-        res = self.appoint_additional_owner("newManager", self._store_name)
+        res = self.appoint_additional_owner("newUser", self._store_name)
         self.assertTrue(res)
 
     # @logger
@@ -33,7 +33,7 @@ class ManageStoreTest(ProjectTest):
         # manager without permissions
         self.edit_manager_permissions(self._store_name, self._username, [])
         res = self.edit_products_in_store(self._store_name, "product", "price", "100")
-        self.assertTrue(res)
+        self.assertFalse(res)
 
     # @logger
     def tearDown(self) -> None:
@@ -44,8 +44,8 @@ class ManageStoreTest(ProjectTest):
         self.remove_store("store")
         self.delete_user(self._username)
         self.delete_manager("newManager", self._store_name)
-        self.delete_user("newManager")
-        self.delete_user("newUser")
+        # self.delete_user("newManager")
+        # self.delete_user("newUser")
 
     def __repr__(self):
         return repr("ManageStoreTest")

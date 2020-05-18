@@ -17,7 +17,7 @@ class TradeControlService:
     # use case 1.1
     @staticmethod
     def init_system():
-        loggerStaticMethod("init_system", [])
+        # loggerStaticMethod("init_system", [])
         if not DeliveryProxy.get_instance().is_connected() and not PaymentProxy.get_instance().is_connected():
             if TradeControl.get_instance().register_guest("TradeManager", "123456789"):
                 return DeliveryProxy.get_instance().connect() and \
