@@ -67,6 +67,37 @@ export async function updateShoppingCart(option_flag, product){
 
 
 
+//--------------------------- SUBSCRIBER ROLE ---------------------------------------//
+export async function openStore(store_name){
+    return axios.post('http://localhost:5000/open_store', {
+        store_name: store_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function logout(){
+    return axios.get('http://localhost:5000/logout')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function fetchPersonalPurchaseHistory(){
+    return axios.get('http://localhost:5000/view_personal_purchase_history')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+//--------------------------- END OF SUBSCRIBER ROLE --------------------------------//
+
+
+
+//TODO
+export async function getManagerPermissions(){
+    return axios.post('http://localhost:5000/XXXXXXXX', {
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+
+
 
 
 

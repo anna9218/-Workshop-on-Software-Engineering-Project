@@ -1,35 +1,23 @@
 import React, {useState} from 'react';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
+import {Link, Redirect, Router} from 'react-router-dom'
 import * as registerService from '../../services/register';
 
-// WHAT'S LEFT TO DO HERE:
-// Available guest's actions in the Service Layer:
-// register - done (except going back, can add a button)
-// login - almost done (except going back, can add a button. Need to display new page for logged in user)
-// display_stores_or_products_info - need to get handle response and display
-// search_products_by,      filter_products_by,     save_products_to_basket
-// view_shopping_cart - done, need to decide if products have info to view
-// update_shopping_cart
-// purchase_products,       confirm_payment
+
+// WHAT A SUBSCRIBER CAN DO?
+// Guest actions - display_stores_or_products_info, search_products_by, view_shopping_cart, update_shopping_cart, purchase_products
+//
+// Logout (3.1)
+// Open store (3.2)
+// View personal purchase history (3.7)
 
 
+function SubscriberAPI(){
 
-//     // STYLING //
-//     btnStyle = {
-//         borderRadius: "5px",
-//         borderWidth: "1px",
-//         borderColor: "rgba(117, 116, 116, 0.3)",
-//         margin: "0 5% 0 5%",
-//         //backgroundColor: "rgba(84, 148, 103, 0.5)"
-//     }
-
-
-function GuestRoleAPI(){
 
     const [searchOption, setSearchOption] = useState(0);
     const [searchInput, setSearchInput] = useState('');
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState([])
 
     const byNameHandler = () =>{
         setSearchOption(1);
@@ -43,40 +31,50 @@ function GuestRoleAPI(){
     };
     const searchInputHandler = (event) =>{
         setSearchInput(event.target.value);
-    };
+    }
 
     // for the search functionality
     const fetchCategories = async () =>{
         const promise = registerService.getCategories(); // goes to register.js and sends to backend
     promise.then((data) => {setCategories(data["data"])});
+    }
+
+
+
+
+    const logoutHandler = async () =>{
+        const promise = registerService.logout(); // goes to register.js and sends to backend
+        promise.then((data) => {
+          alert(data["msg"]);
+
+        //   <Router>
+        //   <Redirect to='/subscriber' />
+        //   </Router>
+              {/* </Redirect> */}
+
+
+
+        });
     };
-    
+
+
+
 
     return(
         <Container>
-        <Jumbotron fluid>
+            <div>
+                <h1>Welcome Dear Subscriber!</h1>
+            </div>
+
+            
+
+
+
             <Row>
-                <Col />
-                <Col xs={7}>
-                    <h1 style={{textAlign: "center"}}>Welcome to the Trade Contol Where dreams come true!</h1>
-                </Col>
-                <Col>
-                <Link to='/register'>
-                    <Button variant="dark" id="regbtn">Register</Button>
-                </Link>
-                <Link to='/login'>
-                    <Button variant="dark" id="loginbtn">Login</Button>
-                </Link>
-                </Col>
-            </Row>
-        </Jumbotron>
-
-
-        <Row>
             <Link to='/stores'>
                 <Button variant="dark" id="displaystores">Display Stores</Button>
             </Link>
-                    
+    
             <Link to='/purchase'>
                 <Button variant="dark" id="purchasesbtn">Purchase Products</Button>
             </Link>
@@ -122,28 +120,37 @@ function GuestRoleAPI(){
                         }
                         }}>
                         <Button variant="dark">Search</Button>
-                        </Link>
+                    </Link>
 
                 </Form>
             </Row>
-            </Container>
+ 
+
+
+
+
+
+
+
+
+
+
+    
+            <Link to='/openstore'>
+                <Button variant="dark" id="open_store">Open Store</Button>
+            </Link>
+
+            <Link to='/history'>
+                <Button variant="dark" id="view_personal_history">View personal purchase history</Button>
+            </Link>
+
+            {/* <Link to='/'> */}
+                <Button variant="dark" id="logout" onClick={logoutHandler}>Logout</Button>
+            {/* </Link> */}
+
+        </Container>
     );
+
 }
 
-
-export default GuestRoleAPI;
-
-
-
-
-
-
-
-{/* <Form.Group as={Col} controlId="formGridState">
-<Form.Label>State</Form.Label>
-<Form.Control as="select" value="Choose...">
-    <option>Choose...</option>
-    <option>By name</option>
-    <option>By name</option>
-</Form.Control>
-</Form.Group> */}
+export default SubscriberAPI;

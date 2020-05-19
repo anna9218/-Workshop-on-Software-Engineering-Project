@@ -3,6 +3,7 @@ from flask import Flask, escape, request
 from flask_cors import CORS
 from flask import jsonify
 from Backend.src.main.ServiceLayer.GuestRole import GuestRole
+from Backend.src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
 app = Flask(__name__)
 CORS(app)
@@ -110,7 +111,31 @@ def purchase_products():
 
 # ------------------------------ SUBSCRIBER ROLE SERVICES -------------------------------------------------#
 
-# ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
+@app.route('/logout', methods=['GET'])
+def logout():
+    response = SubscriberRole.logout()
+    if response:
+        return jsonify(msg="Logged out successfully")
+    return jsonify(msg="Logout failed")
 
+
+@app.route('/open_store', methods=['POST'])
+def open_store():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        response = SubscriberRole.open_store(store_name)
+        if response:
+            return jsonify(msg="Congrats! Store was opened!")
+    return jsonify(msg="Oops, store wasn't opened")
+
+
+@app.route('/view_personal_purchase_history', methods=['GET'])
+def view_personal_purchase_history():
+    # response = SubscriberRole.view_personal_purchase_history()
+    # return jsonify(msg="Logged out successfully", data=response) # NEED TO BE CHEKED, STAM ASITI
+
+
+# ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 

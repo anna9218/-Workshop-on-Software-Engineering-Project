@@ -51,10 +51,10 @@ class Login extends React.Component{
         <form className='login'>
          <input id="email" type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
              <input id="password" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
-             {/* <Link to='/'> */}
-                 {/* <Button variant="dark" id="regbtn">Register</Button> */}
+             <Link to='/'>
+                 {/* <Button variant="dark" id="regbtn" onClick={this.handleLogin}>Login</Button> */}
              <button type="button" onClick={this.handleLogin}>Login</button>
-             {/* </Link> */}
+             </Link>
          </form>
          </div>);
   }
