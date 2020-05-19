@@ -29,7 +29,7 @@ function App(){
         <Route path="/login" exact component={Login} />
         <Route path="/displayproducts" exact component={DisplayProducts} />
         <Route path="/stores" exact component={DisplayStores} />
-        <Route path="/search" exact component={Search} />
+        {/* <Route path="/search" exact component={Search} /> */}
         <Route path="/purchase" exact component={PurchaseProducts} />
         <Route path="/viewcart" exact component={ShoppingCart} />
         <Route path="/stores/:store" exact component={StoreDetail} />

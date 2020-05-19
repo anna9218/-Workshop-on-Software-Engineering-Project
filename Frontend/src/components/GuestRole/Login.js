@@ -6,12 +6,15 @@ import * as registerService from '../../services/register';
 
 
 class Login extends React.Component{
-  constructor(props) {
-    super(props);
-    this.state = {
+  // constructor(props) {
+    // super(props);
+    constructor() {
+      super();
+      this.state = {
         nickname: '',
         password: '',
     };
+
     this.handleLogin = this.handleLogin.bind(this);
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -45,9 +48,9 @@ class Login extends React.Component{
     return (
       <div>
         <h1>Login</h1>
-        <form>
-         <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
-             <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
+        <form className='login'>
+         <input id="email" type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
+             <input id="password" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
              {/* <Link to='/'> */}
                  {/* <Button variant="dark" id="regbtn">Register</Button> */}
              <button type="button" onClick={this.handleLogin}>Login</button>

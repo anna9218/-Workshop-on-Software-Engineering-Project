@@ -97,6 +97,13 @@ def update_shopping_cart():
     return jsonify(msg="Updated successfully!")
 
 
+@app.route('/purchase_products', methods=['POST'])
+def purchase_products():
+    # if request.is_json:
+        # TODO
+    return jsonify(msg="Updated successfully!")
+
+
 # AND MANY MORE OTHER FUNCTIONS ..... TODO
 
 # ------------------------------ STORE OWNER AND MANAGER ROLE SERVICES ------------------------------------#
