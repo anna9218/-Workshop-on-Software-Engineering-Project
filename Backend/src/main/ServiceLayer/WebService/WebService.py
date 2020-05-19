@@ -38,10 +38,10 @@ def login():
 
 @app.route('/display_stores', methods=['GET'])
 def display_stores():
-    # response = GuestRole.display_stores()  # BUG
-    # return jsonify(data=response)  # should be list of Store objects (maybe)
+    response = GuestRole.display_stores()  # BUG
+    return jsonify(data=response)  # should be list of Store objects (maybe)
     # LETS RETURN JUST THE STORE'S NAME (INSTEAD OF STORE OBJECTS)
-    return jsonify(data=["STORE1", "STORE2"])
+    # return jsonify(data=["STORE1", "STORE2"])
 
 
 @app.route('/view_shopping_cart', methods=['GET'])
