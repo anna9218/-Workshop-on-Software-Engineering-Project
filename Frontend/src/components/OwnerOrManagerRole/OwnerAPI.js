@@ -8,7 +8,7 @@ import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
 
 //---------- WHAT AN OWNER CAN DO? ----------//
 // Guest actions 
-// Subscriber actions
+// Subscriber actions - Logout, Open store, View personal purchase history
 // Manage stock (4.1) 
 // (4.2)
 // Appoint additional owner (4.3)
@@ -28,6 +28,22 @@ function OwnerAPI(){
             <div>
                 <h1>Welcome Dear Owner!</h1>
             </div>
+
+
+            <Link to='/openstore'>
+                <Button variant="dark" id="open_store">Open Store</Button>
+            </Link>
+
+            <Link to='/history'>
+                <Button variant="dark" id="view_personal_history">View personal purchase history</Button>
+            </Link>
+
+            <Link to='/'>
+                <Button variant="dark" id="logout">Logout</Button>
+            </Link>
+
+
+
 
             <Link to='/managestock'>
                 <Button variant="dark" id="manage_stock">Manage Stock</Button>

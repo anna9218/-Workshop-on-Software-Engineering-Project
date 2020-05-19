@@ -135,6 +135,8 @@ def view_personal_purchase_history():
     # response = SubscriberRole.view_personal_purchase_history()
     # return jsonify(msg="Logged out successfully", data=response) # NEED TO BE CHEKED, STAM ASITI
 
+    return jsonify(data=["purchase1", "purchase2"])
+
 
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
