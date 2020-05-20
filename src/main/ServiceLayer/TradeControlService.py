@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from Backend.src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
-from Backend.src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
 
 class TradeControlService:

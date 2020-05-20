@@ -1,10 +1,10 @@
 import unittest
 
-from Backend.src.main.DomainLayer.StoreComponent.Product import Product
-from Backend.src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from Backend.src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
-from Backend.src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubStore import StubStore
 
 

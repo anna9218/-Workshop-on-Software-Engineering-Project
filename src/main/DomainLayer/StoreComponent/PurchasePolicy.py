@@ -1,6 +1,6 @@
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.StoreComponent.Product import Product
-from Backend.src.main.DomainLayer.UserComponent.UserType import UserType
+from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.UserComponent.UserType import UserType
 
 
 class PurchasePolicy:

@@ -3,12 +3,12 @@ from unittest.mock import MagicMock
 
 import jsonpickle
 
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from Backend.src.main.DomainLayer.StoreComponent.Store import Store
-from Backend.src.main.DomainLayer.UserComponent.User import User
-from Backend.src.main.ServiceLayer.GuestRole import TradeControl
-from Backend.src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
+from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.User import User
+from src.main.ServiceLayer.GuestRole import TradeControl
+from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
 
 class SystemManagerRoleTests(unittest.TestCase):

@@ -2,18 +2,18 @@
     test suite class - used to organize the tests and run them together
 """
 import unittest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.InitSystemTest import InitSystemTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.RegisterTest import RegisterTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.LoginTest import LoginTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.LogoutTest import LogoutTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.OpenStoreTest import OpenStoreTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.ManageStockTest import ManageStockTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointOwnerTest import AppointOwnerTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.InitSystemTest import InitSystemTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.RegisterTest import RegisterTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.LoginTest import LoginTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.LogoutTest import LogoutTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.OpenStoreTest import OpenStoreTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.ManageStockTest import ManageStockTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointOwnerTest import AppointOwnerTest
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointManagerTest import AppointManagerTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.RemoveStoreManagerTest import RemoveStoreManagerTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.DeliverySystemTest import DeliverySystemTest
-from Backend.src.test.BlackBoxTests.AcceptanceTests.UcTests.PaymentSystemTest import PaymentSystemTest
-# from Backend.src.test.BlackBoxTests.AcceptanceTests import UcTests
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.RemoveStoreManagerTest import RemoveStoreManagerTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.DeliverySystemTest import DeliverySystemTest
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.PaymentSystemTest import PaymentSystemTest
+# from src.test.BlackBoxTests.AcceptanceTests import UcTests
 
 
 class BlackBoxTestsRunner:

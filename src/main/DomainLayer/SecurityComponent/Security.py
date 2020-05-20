@@ -1,4 +1,4 @@
-from Backend.src.Logger import loggerStaticMethod, logger, errorLogger
+from src.Logger import loggerStaticMethod, logger, errorLogger
 
 
 class Security:

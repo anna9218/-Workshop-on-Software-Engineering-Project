@@ -1,19 +1,16 @@
 """
     test class for use case 4.1 - manage stock (store)
 """
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class ManageStockTest(ProjectTest):
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
         self.login(self._username, self._password)
         self.open_store(self._store_name)
 
-    # @logger
     def test_success(self):
         # add product to store, valid details
         res = self.add_products_to_store(self._store_name, [{"name": "product", "price": 10, "category": "general", "amount": 5}])
@@ -25,7 +22,6 @@ class ManageStockTest(ProjectTest):
         res = self.remove_products_from_store(self._store_name, ["product"])
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.add_products_to_store("anotherStoreName",
@@ -42,7 +38,6 @@ class ManageStockTest(ProjectTest):
         res = self.remove_products_from_store(self._store_name, ["pizza"])
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.delete_user(self._username)
         self.remove_store(self._store_name)

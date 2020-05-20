@@ -1,9 +1,9 @@
 import unittest
 
-from Backend.src.main.DomainLayer.UserComponent.User import User
-from Backend.src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
-from Backend.src.test.WhiteBoxTests.UnitTests.Stubs.StubRegistration import StubRegistration
-from Backend.src.test.WhiteBoxTests.UnitTests.Stubs.StubShoppingCart import StubShoppingCart
+from src.main.DomainLayer.UserComponent.User import User
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubRegistration import StubRegistration
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubShoppingCart import StubShoppingCart
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubStore import StubStore
 
 

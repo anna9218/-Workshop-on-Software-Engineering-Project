@@ -1,4 +1,4 @@
-from Backend.src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 
 
 class StubDeliveryProxy(DeliveryProxy):

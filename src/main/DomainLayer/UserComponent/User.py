@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from Backend.src.Logger import logger, secureLogger
-from Backend.src.main.DomainLayer.StoreComponent.Product import Product
-from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from Backend.src.main.DomainLayer.UserComponent.Login import Login
-from Backend.src.main.DomainLayer.UserComponent.Registration import Registration
-from Backend.src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
-from Backend.src.main.DomainLayer.UserComponent.UserType import UserType
+from src.Logger import logger, secureLogger
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.UserComponent.Login import Login
+from src.main.DomainLayer.UserComponent.Registration import Registration
+from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
+from src.main.DomainLayer.UserComponent.UserType import UserType
 # from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
 
 

@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import MagicMock
-from Backend.src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
-from Backend.src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.main.ServiceLayer.TradeControlService import TradeControlService
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
 
 

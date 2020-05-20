@@ -1,5 +1,5 @@
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.StoreComponent import Product
+from src.Logger import logger
+from src.main.DomainLayer.StoreComponent import Product
 
 
 class StoreInventory:

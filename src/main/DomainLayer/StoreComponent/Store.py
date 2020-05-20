@@ -1,15 +1,15 @@
 from datetime import datetime
 
-from Backend.src.main.DomainLayer.StoreComponent.DiscountPolicy import DiscountPolicy
-from Backend.src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
-from Backend.src.main.DomainLayer.StoreComponent.Product import Product
-from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from Backend.src.main.DomainLayer.StoreComponent.PurchasePolicy import PurchasePolicy
+from src.main.DomainLayer.StoreComponent.DiscountPolicy import DiscountPolicy
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
-from Backend.src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
-from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from Backend.src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
-from Backend.src.main.DomainLayer.UserComponent.User import User
+from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
+from src.main.DomainLayer.UserComponent.User import User
 
 
 class Store:

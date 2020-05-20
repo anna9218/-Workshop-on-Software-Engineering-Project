@@ -1,13 +1,11 @@
 """
     test class for use case 4.3 - appoint additional store owner
 """
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class AppointOwnerTest(ProjectTest):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.__appointee_name = "username2"
@@ -17,13 +15,11 @@ class AppointOwnerTest(ProjectTest):
         self.login(self._username, self._password)
         self.open_store(self._store_name)
 
-    # @logger
     def test_success(self):
         # valid details
         res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.appoint_additional_owner(self.__appointee_name, "someOtherStore")
@@ -40,7 +36,6 @@ class AppointOwnerTest(ProjectTest):
         res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.delete_user(self._username)
         self.remove_store(self._store_name)

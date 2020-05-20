@@ -2,10 +2,10 @@ import unittest
 from unittest.mock import Mock
 from unittest.mock import MagicMock
 
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from Backend.src.main.ServiceLayer.SubscriberRole import SubscriberRole
-from Backend.src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
 
 class SubscriberRoleTests(unittest.TestCase):

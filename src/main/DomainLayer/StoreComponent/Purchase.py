@@ -1,6 +1,6 @@
 from datetime import datetime as date_time
 
-from Backend.src.Logger import logger
+from src.Logger import logger
 
 
 class Purchase(object):

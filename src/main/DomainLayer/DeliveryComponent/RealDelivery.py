@@ -1,5 +1,5 @@
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubject
+from src.Logger import logger
+from src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubject
 
 
 class RealDelivery(DeliverySubject):

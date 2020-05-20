@@ -1,4 +1,4 @@
-from Backend.src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.StoreComponent.Store import Store
 
 
 class StubStore(Store):

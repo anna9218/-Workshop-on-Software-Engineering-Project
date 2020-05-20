@@ -1,9 +1,9 @@
 import unittest
 
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.StoreComponent.Store import Store
-from Backend.src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
-from Backend.src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
+from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class TradeControlTestCase(unittest.TestCase):

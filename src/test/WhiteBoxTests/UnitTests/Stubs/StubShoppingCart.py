@@ -1,6 +1,6 @@
-from Backend.src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
-from Backend.src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 
 
 class StubShoppingCart(ShoppingCart):

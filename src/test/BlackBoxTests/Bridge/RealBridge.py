@@ -6,15 +6,15 @@
 """
 from datetime import datetime
 
-from Backend.src.test.BlackBoxTests.Bridge.Bridge import Bridge
-from Backend.src.main.ServiceLayer.GuestRole import GuestRole
-from Backend.src.main.ServiceLayer.TradeControlService import TradeControlService
-from Backend.src.main.ServiceLayer.SubscriberRole import SubscriberRole
-from Backend.src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
-from Backend.src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
-from Backend.src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from Backend.src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.test.BlackBoxTests.Bridge.Bridge import Bridge
+from src.main.ServiceLayer.GuestRole import GuestRole
+from src.main.ServiceLayer.TradeControlService import TradeControlService
+from src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
+from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 
 
 class RealBridge(Bridge):

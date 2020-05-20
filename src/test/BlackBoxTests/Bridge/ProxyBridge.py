@@ -5,9 +5,9 @@
 """
 from datetime import datetime
 
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.Bridge.Bridge import Bridge
-from Backend.src.test.BlackBoxTests.Bridge.RealBridge import RealBridge
+from src.Logger import logger
+from src.test.BlackBoxTests.Bridge.Bridge import Bridge
+from src.test.BlackBoxTests.Bridge.RealBridge import RealBridge
 
 
 class ProxyBridge(Bridge):

@@ -1,7 +1,7 @@
 import unittest
 
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
+from src.Logger import logger
+from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 
 
 class FacadeDeliveryTests(unittest.TestCase):

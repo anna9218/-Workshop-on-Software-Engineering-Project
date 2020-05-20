@@ -1,13 +1,11 @@
 """
     test class for use case 2.7 - view and update shopping cart
 """
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class UpdateCartTest(ProjectTest):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
@@ -17,7 +15,6 @@ class UpdateCartTest(ProjectTest):
                                    [{"name": "product", "price": 10, "category": "general", "amount": 5}])
         self.add_products_to_cart("product", self._store_name, 1, 0, 0)
 
-    # @logger
     def test_success(self):
         # view cart with valid details
         res = self.view_shopping_cart()
@@ -31,7 +28,6 @@ class UpdateCartTest(ProjectTest):
                                         [{"product_name": "product", "store_name": self._store_name, "amount": 1}])
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.update_shopping_cart("update",
@@ -53,7 +49,6 @@ class UpdateCartTest(ProjectTest):
         res = self.view_shopping_cart()
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 1}])

@@ -1,12 +1,10 @@
 """
     test class for use case 4.7 - remove store manager
 """
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class RemoveStoreManagerTest(ProjectTest):
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.__appointee_name = "username2"
@@ -17,13 +15,11 @@ class RemoveStoreManagerTest(ProjectTest):
         self.open_store(self._store_name)
         self.appoint_additional_manager(self.__appointee_name, self._store_name, [])
 
-    # @logger
     def test_success(self):
         # valid details
         res = self.remove_manager(self._store_name, self.__appointee_name)
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.remove_manager("someOtherStore", self.__appointee_name)
@@ -36,7 +32,6 @@ class RemoveStoreManagerTest(ProjectTest):
         res = self.remove_manager(self._store_name, self.__appointee_name)
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.delete_user(self._username)
         self.delete_manager(self.__appointee_name, self._store_name)

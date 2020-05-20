@@ -1,5 +1,5 @@
 # from src.main.DomainLayer.User import User
-from Backend.src.Logger import logger, secureLogger
+from src.Logger import logger, secureLogger
 
 
 class Registration:

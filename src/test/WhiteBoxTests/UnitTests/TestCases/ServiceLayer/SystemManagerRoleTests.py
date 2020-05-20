@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import MagicMock
 
-from Backend.src.Logger import logger
-from Backend.src.main.ServiceLayer.GuestRole import TradeControl
-from Backend.src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
+from src.Logger import logger
+from src.main.ServiceLayer.GuestRole import TradeControl
+from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
 
 class SystemManagerRoleTests(unittest.TestCase):

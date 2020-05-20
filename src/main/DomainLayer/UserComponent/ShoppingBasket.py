@@ -1,7 +1,7 @@
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.StoreComponent.Product import Product
-from Backend.src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 
 
 class ShoppingBasket:

@@ -1,6 +1,6 @@
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.UserComponent.User import User
-from Backend.src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.Logger import logger
+from src.main.DomainLayer.UserComponent.User import User
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 
 class StoreManagerAppointment:
     def __init__(self, appointer: User, appointee: User, permissions: list):

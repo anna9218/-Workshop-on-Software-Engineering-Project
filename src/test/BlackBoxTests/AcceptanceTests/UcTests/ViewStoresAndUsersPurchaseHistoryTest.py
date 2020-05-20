@@ -3,12 +3,10 @@
 """
 from datetime import datetime
 
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class ViewStoresAndUsersPurchaseHistoryTest(ProjectTest):
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.__manager = "TradeManager"
@@ -23,14 +21,12 @@ class ViewStoresAndUsersPurchaseHistoryTest(ProjectTest):
         self.confirm_purchase("my address 12", self.__purchase_ls)
         self.__date = datetime.now()
 
-    # @logger
     def test_success(self):
         res = self.manager_view_user_purchases(self.__manager)
         self.assertTrue(res)
         res = self.manager_view_shop_purchase_history(self._store_name)
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.manager_view_shop_purchase_history("anotherStoreName")
@@ -39,7 +35,6 @@ class ViewStoresAndUsersPurchaseHistoryTest(ProjectTest):
         res = self.manager_view_user_purchases("anotheUserName")
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.remove_purchase(self._store_name, self.__date)
         self.update_shopping_cart("remove",

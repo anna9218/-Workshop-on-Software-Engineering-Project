@@ -1,12 +1,12 @@
 import unittest
 
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
-from Backend.src.main.DomainLayer.StoreComponent.Product import Product
-from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from Backend.src.main.DomainLayer.StoreComponent.Store import Store
-from Backend.src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
-from Backend.src.main.DomainLayer.UserComponent.User import User
+from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.UserComponent.User import User
 
 
 class StoreTests(unittest.TestCase):

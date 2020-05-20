@@ -2,13 +2,10 @@
     test class for use case 2.5 - search and filter products
 """
 from datetime import datetime
-
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class SearchProductsTest(ProjectTest):
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
@@ -19,7 +16,6 @@ class SearchProductsTest(ProjectTest):
         self.add_products_to_cart("product", self._store_name, 5, 0, 0)
         self.__date = datetime.now()
 
-    # @logger
     def test_success(self):
         # search by name
         res = self.search_products_by(1, "product")
@@ -34,7 +30,6 @@ class SearchProductsTest(ProjectTest):
         res = self.filter_products_by([2, "general"], [("product", "store")])
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         self.remove_products_from_store(self._store_name, ["product"])
         # search by name
@@ -47,7 +42,6 @@ class SearchProductsTest(ProjectTest):
         res = self.search_products_by(3, "general")
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.remove_purchase(self._store_name, self.__date)
         self.update_shopping_cart("remove",

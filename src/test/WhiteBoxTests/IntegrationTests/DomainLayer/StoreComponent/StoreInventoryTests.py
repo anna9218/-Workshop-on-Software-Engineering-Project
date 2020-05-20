@@ -1,6 +1,6 @@
 import unittest
 
-from Backend.src.main.DomainLayer.StoreComponent.Product import Product
+from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 
 

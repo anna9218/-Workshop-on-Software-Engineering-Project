@@ -1,5 +1,5 @@
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.Logger import logger
+from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
 
 class SystemManagerRole:

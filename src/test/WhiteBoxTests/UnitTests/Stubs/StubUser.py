@@ -1,7 +1,7 @@
-from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from Backend.src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
-from Backend.src.main.DomainLayer.UserComponent.User import User
-from Backend.src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
+from src.main.DomainLayer.UserComponent.User import User
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
 
 
 class StubUser(User):

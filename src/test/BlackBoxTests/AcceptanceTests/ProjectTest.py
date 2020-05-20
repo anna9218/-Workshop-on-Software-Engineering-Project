@@ -4,8 +4,8 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from Backend.src.Logger import logger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.Driver import Driver
+from src.Logger import logger
+from src.test.BlackBoxTests.AcceptanceTests.Driver import Driver
 import unittest
 
 

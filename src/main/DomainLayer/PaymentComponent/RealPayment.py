@@ -1,5 +1,5 @@
-from Backend.src.Logger import logger
-from Backend.src.main.DomainLayer.PaymentComponent.PaymentSubject import PaymentSubject
+from src.Logger import logger
+from src.main.DomainLayer.PaymentComponent.PaymentSubject import PaymentSubject
 
 
 class RealPayment(PaymentSubject):

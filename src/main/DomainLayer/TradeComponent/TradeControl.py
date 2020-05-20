@@ -1,12 +1,12 @@
 from functools import reduce
 from datetime import datetime
 
-from Backend.src.Logger import loggerStaticMethod, errorLogger, logger
-from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from Backend.src.main.DomainLayer.StoreComponent.Store import Store
-from Backend.src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from Backend.src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from Backend.src.main.DomainLayer.UserComponent.User import User
+from src.Logger import loggerStaticMethod, errorLogger, logger
+from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
+from src.main.DomainLayer.UserComponent.User import User
 import jsonpickle
 
 

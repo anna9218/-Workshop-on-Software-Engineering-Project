@@ -1,24 +1,19 @@
 """
     test class for use case 7 - commit transaction via payment system
 """
-from Backend.src.Logger import logger, errorLogger
-from Backend.src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
-from datetime import datetime as date_time
+from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class PaymentSystemTest(ProjectTest):
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.connect_payment_sys()
 
-    # @logger
     def test_success(self):
         try:
             res = self.commit_payment({"total_price": 10, "purchases": ["product"]})
             self.assertTrue(res)
         except ResourceWarning:
-            errorLogger("System down warning")
             self.assertTrue(True, "System down warning")
 
     # @logger
@@ -34,7 +29,6 @@ class PaymentSystemTest(ProjectTest):
             self.cause_connection_err_payment()
             self.assertFalse(True)
         except ResourceWarning:
-            errorLogger("System down warning")
             self.assertTrue(True, "System down warning")
 
     # @logger
@@ -42,7 +36,6 @@ class PaymentSystemTest(ProjectTest):
         try:
             self.disconnect_payment_sys()
         except ResourceWarning:
-            errorLogger("System down warning")
             self.assertTrue(True, "System down warning")
 
     def __repr__(self):

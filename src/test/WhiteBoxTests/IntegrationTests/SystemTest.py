@@ -2,10 +2,10 @@
     test suite class - used to test the entire system.
 """
 import unittest
-from Backend.src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SystemManagerRoleTests import SystemManagerRoleTests
-from Backend.src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SubscriberRoleTests import SubscriberRoleTests
-from Backend.src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.StoreOwnerOrManagerTests import StoreOwnerOrManagerTests
-from Backend.src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.GuestRoleTests import GuestRoleTest
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SystemManagerRoleTests import SystemManagerRoleTests
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SubscriberRoleTests import SubscriberRoleTests
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.StoreOwnerOrManagerTests import StoreOwnerOrManagerTests
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.GuestRoleTests import GuestRoleTest
 
 
 class WhiteBoxTestsRunner:

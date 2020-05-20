@@ -1,7 +1,7 @@
 from datetime import datetime as date_time
 
-from Backend.src.Logger import logger, loggerStaticMethod, errorLogger
-from Backend.src.main.DomainLayer.PaymentComponent.PaymentSubject import PaymentSubject
+from src.Logger import logger, loggerStaticMethod, errorLogger
+from src.main.DomainLayer.PaymentComponent.PaymentSubject import PaymentSubject
 
 
 class PaymentProxy(PaymentSubject):

@@ -1,5 +1,5 @@
-from Backend.src.Logger import logger, errorLogger, loggerStaticMethod
-from Backend.src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubject
+from src.Logger import logger, errorLogger, loggerStaticMethod
+from src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubject
 
 
 class DeliveryProxy(DeliverySubject):

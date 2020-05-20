@@ -4,11 +4,9 @@
                                     - target in the adapter pattern
                                     - subject in the proxy pattern  
 """
-# from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import datetime
-
-from Backend.src.Logger import logger
+from src.Logger import logger
 
 
 class Bridge(ABC):
