@@ -136,6 +136,28 @@ class RealBridge(Bridge):
     def remove_products_from_store(self, store_name: str, products_names: list) -> bool:
         return self.__store_owner_or_manager.remove_products(store_name, products_names)
 
+    # 4.2 add and update purchase and discount policies
+    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
+        return self.__store_owner_or_manager.define_and_update_policies(type, store_name)
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self.__store_owner_or_manager.update_purchase_policy(store_name, details)
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self.__store_owner_or_manager.define_purchase_policy(store_name, details)
+
+    def update_discount_policy(self):
+        pass
+
+    def define_discount_policy(self):
+        pass
+
     # uc 4.3
     def appoint_additional_owner(self, nickname: str, store_name: str) -> bool:
         return self.__store_owner_or_manager.appoint_additional_owner(nickname, store_name)

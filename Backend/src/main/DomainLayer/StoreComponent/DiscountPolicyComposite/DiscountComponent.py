@@ -5,18 +5,18 @@ from abc import ABC, abstractmethod
 
 
 class DiscountComponent(ABC):
+
+    def __init__(self):
+        self._name = ""
+
     @abstractmethod
-    def operation(self):
+    def get_discount(self, details):
         pass
 
     @abstractmethod
-    def add_leaf(self, component):
+    def equals(self, details):
         pass
 
     @abstractmethod
-    def remove_leaf(self, component):
+    def update(self, details):
         pass
-
-    @abstractmethod
-    def is_composite(self):
-        return False

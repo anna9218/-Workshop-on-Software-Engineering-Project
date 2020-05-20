@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from Backend.src.Logger import logger
 from Backend.src.main.DomainLayer.StoreComponent.DiscountPolicy import DiscountPolicy
@@ -22,8 +22,8 @@ class Store:
         # list of StoreManagerAppointment (manager: User, permissions: ManagerPermissions[], appointer:User)
         self.__StoreManagerAppointments = []
         self.__inventory = StoreInventory()
-        self.__discount_policies: [DiscountPolicy] = [DiscountPolicy()]
-        self.__purchase_policies: [PurchasePolicy] = [PurchasePolicy()]
+        self.__discount_policies: [DiscountPolicy] = []
+        self.__purchase_policies: [PurchasePolicy] = []
         self.__purchases = []
 
     # @logger
@@ -34,7 +34,6 @@ class Store:
         :param products_details: list of tuples (product_name, product_price, product_category, product_amount) / JSON
         :return: True if all products were added to the inventory
         """
-
         # check permission to add - EDIT_INV
         # if self.is_owner(user_nickname) or (self.is_manager(user_nickname) and
         #                                     self.has_permission(user_nickname, ManagerPermission.EDIT_INV)):
@@ -299,19 +298,6 @@ class Store:
         return True
 
     # @logger
-    def calc_discount(self, amount_per_product: [], price: float, username: str):
-        """
-        This function should check if the user can/can't complete the purchase.
-        Due to the fact that we does'nt have the purchase policies requirements, this func is currently a stab.
-
-        :param amount_per_product: param to check policy.
-        :param price: param to check policy.
-        :param username: param to check policy.
-        :return: the price after discount. if no discount is available, return the price.
-        """
-        return price
-
-    # @logger
     def empty_inventory(self):
         return self.__inventory.len() == 0
 
@@ -386,15 +372,16 @@ class Store:
             return self.__purchases
         return []
 
+
     # def print_inventory(self):
     #     f"The products of store {self.__name}:"
     #     i = 0
     #     for name, p in self.__inventory:
     #         f"For {name} press {i}" #TODO- check if contains \n
 
-    # @logger
-    def add_purchase(self, purchase: Purchase):
-        self.__purchases.insert(0, purchase)
+    # # @logger
+    # def add_purchase(self, purchase: Purchase):
+    #     self.__purchases.insert(0, purchase)
 
     # @logger
     def purchase_basket(self, basket: ShoppingBasket):
@@ -405,27 +392,32 @@ class Store:
             {"store_name": str, "basket_price": float, "products":
                                                         [{"product_name": str, "product_price": float, "amount": int}]]}
         """
+        products = []
+        list(map(lambda curr_product:
+                 products.append({"product_name": curr_product["product"].get_name(), "amount": curr_product["amount"]}),
+                 basket.get_products()))
+
+        if len(products) == 0 or not self.can_purchase(products, datetime.date.today()):
+            return None
+
         products_purchases = []
-        purchase = None
         basket_price = 0
         for product in basket.get_products():
-            if self.can_purchase(product["product"].get_name(), product["amount"]):
-                if product["purchaseType"] == PurchaseType.DEFAULT:
-                    purchase = self.purchase_immediate(product["product"].get_name(),
-                                                       product["product"].get_price(), product["amount"])
+            if product["purchaseType"] == PurchaseType.DEFAULT:
+                purchase = self.purchase_immediate(product["product"].get_name(),
+                                               product["product"].get_price(), product["amount"])
 
-                elif product["purchaseType"] == PurchaseType.AUCTION:
-                    purchase = self.purchase_auction(product["product"].get_name(),
-                                                     product["product"].get_price(), product["amount"])
-                else:
-                    purchase = self.purchase_lottery(product["product"].get_name(),
-                                                     product["product"].get_price(), product["amount"])
-            # else:
-            #     return None
+            elif product["purchaseType"] == PurchaseType.AUCTION:
+                purchase = self.purchase_auction(product["product"].get_name(),
+                                             product["product"].get_price(), product["amount"])
+            else:
+                purchase = self.purchase_lottery(product["product"].get_name(),
+                                             product["product"].get_price(), product["amount"])
 
             if purchase is not None:
                 products_purchases.append(purchase)
                 basket_price += purchase["product_price"]
+
         if len(products_purchases) == 0:
             return None
         else:
@@ -440,10 +432,10 @@ class Store:
         :param amount: product amount
         :return: dictionary {"product_name": str, "product_price": float, "amount": int} or None
         """
-        if self.check_discount_policy(product_name):
-            price = self.calculate_discount_price(product_name, product_price, amount)
-            return {"product_name": product_name, "product_price": price, "amount": amount}
-        return None
+        # if self.check_discount_policy(product_name):
+        price = self.calculate_discount_price(product_name, product_price, amount)
+        return {"product_name": product_name, "product_price": price, "amount": amount}
+        # return None
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
     # @logger
@@ -484,9 +476,6 @@ class Store:
             # since we don't have auction yet, we return None for now
             return None
 
-    # def complete_purchase(self, purchase: Purchase):
-
-    # @logger
     def complete_purchase(self, purchase: Purchase):
         # add purchase to purchase history
         self.__purchases.append(purchase)
@@ -498,24 +487,28 @@ class Store:
             if not self.__inventory.change_amount(product["product_name"], amount):
                 self.__inventory.remove_product(product["product_name"])
 
-    # @logger
     def remove_purchase(self, nickname: str, date: datetime):
         for p in self.__purchases:
             if p.get_nickname() == nickname and p.get_date() == date:
                 self.__purchases.remove(p)
 
-    # @logger
-    def check_purchase_policy(self, product_name: str) -> bool:
+    def check_purchase_policy(self, details: [{"product_name": str, "amount": int}], curr_date: datetime) -> bool:
         """
-        :param product_name: product name
+        :param curr_date:
+        :param details: list [{"product_name": str, "amount": int}]
         :return: true if the user can purchase the product, otherwise false
         """
-        for p in self.__purchase_policies:
-            if not p.check_policy(self.__name, product_name):
+        for policy in self.__purchase_policies:
+            if not policy.can_purchase(details, curr_date):
                 return False
         return True
 
-    # @logger
+    def can_purchase(self, details: [{"product_name": str, "amount": int}], curr_date: datetime):
+        for product in details:
+            if self.__inventory.get_amount(product["product_name"]) < product["amount"]:
+                return False
+        return self.check_purchase_policy(details, curr_date)
+
     def check_discount_policy(self, product_name: str) -> bool:
         """
         :param product_name: product name
@@ -526,15 +519,7 @@ class Store:
                 return False
         return True
 
-    # @logger
-    def can_purchase(self, product_name: str, amount: int):
-        if self.__inventory.get_amount(product_name) <= amount or \
-                not self.check_purchase_policy(product_name):
-            return False
-        return True
-
     @staticmethod
-    # @logger
     def calculate_discount_price(product_name: str, price: int, amount: int):
         # once we have functionality for discounts, here we will calculate the discounted price according to the policy
         return price * amount
@@ -556,6 +541,66 @@ class Store:
     def does_price_exceed(price: int):
         # temp function till we have the policy
         return False
+
+    # ------------- 4.2 --------------
+    def purchase_policy_exists(self, details: {"name": str, "operator": str, "products": [str],
+                                               "min_amount": int or None, "max_amount": int or None,
+                                               "dates": [dict] or None, "bundle": bool or None}):
+        """
+        :param details: {"name": str,                            -> policy name
+                        "operator": str,                         -> and/or/xor
+                        "products": [str],                       -> list of product names
+                        "min_amount": int or None,               -> minimum amount of products required
+                        "max_amount": int or None,               -> maximum amount of products required
+                        "dates": [dict] or None,                 -> list of prohibited dated for the given products
+                        "bundle": bool or None}                  -> true if the products are bundled together
+        :return: true if policy exists, otherwise false
+        """
+        for policy in self.__purchase_policies:
+            if policy.equals(details):
+                return True
+        return False
+
+    def define_purchase_policy(self, details: {"name": str, "operator": str, "products": [str],
+                                               "min_amount": int or None, "max_amount": int or None,
+                                               "dates": [dict] or None, "bundle": bool or None}):
+        """
+        :param details: {"name": str,                            -> policy name
+                        "operator": str,                         -> and/or/xor
+                        "products": [str],                       -> list of product names
+                        "min_amount": int or None,               -> minimum amount of products required
+                        "max_amount": int or None,               -> maximum amount of products required
+                        "dates": [dict] or None,                 -> list of prohibited dated for the given products
+                        "bundle": bool or None}                  -> true if the products are bundled together
+        :return: true if successful, otherwise false
+        """
+        policy = PurchasePolicy()
+        res = policy.add_purchase_policy(details)
+        if res:
+            self.__purchase_policies.append(policy)
+        return res
+
+    def update_purchase_policy(self, details: {"name": str, "operator": str or None, "products": [str],
+                                               "min_amount": int or None, "max_amount": int or None,
+                                               "dates": [dict] or None, "bundle": bool or None}):
+        policy = self.get_policy(details["name"])
+        if policy:
+            policy.update(details)
+            return True
+        return False
+
+    def get_purchase_policies(self):
+        ls = []
+        for policy in self.__purchase_policies:
+            ls.append(policy.get_details())
+        return ls
+
+    def get_policy(self, policy_name: str):
+        for policy in self.__purchase_policies:
+            if policy.get_name() == policy_name:
+                return policy
+        return None
+    # ------------- 4.2 --------------
 
     def __repr__(self):
         return repr("Store")
