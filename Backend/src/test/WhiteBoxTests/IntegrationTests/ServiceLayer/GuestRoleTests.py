@@ -86,9 +86,12 @@ class GuestRoleTest(unittest.TestCase):
     def test_display_stores_or_products_info(self):
         product = Product("Eytan's product", 12, "Eytan's category")
         product2 = Product("eytan as product", 10, "Eytan's category")
+        user = User()
+        user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.add_product("Eytan's product", 12, "Eytan's category", 5)
-        store.add_product("eytan as product", 10, "Eytan's category", 100)
+        store.get_owners().append(user)
+        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
+        store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100)
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 100, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
@@ -410,8 +413,11 @@ class GuestRoleTest(unittest.TestCase):
     def test_save_products_to_basket(self):
         # TODO: Maybe add a test to check if try to purchase more amount then the store have.
         product = Product("Eytan's product", 12, "Eytan's category")
+        user = User()
+        user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.add_product("Eytan's product", 12, "Eytan's category", 5)
+        store.get_owners().append(user)
+        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 4, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
@@ -481,9 +487,12 @@ class GuestRoleTest(unittest.TestCase):
 
         product = Product("Eytan's product", 12, "Eytan's category")
         product2 = Product("eytan as product", 10, "Eytan's category")
+        user = User()
+        user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.add_product("Eytan's product", 12, "Eytan's category", 5)
-        store.add_product("eytan as product", 10, "Eytan's category", 100)
+        store.get_owners().append(user)
+        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
+        store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100)
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 100, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
@@ -513,9 +522,12 @@ class GuestRoleTest(unittest.TestCase):
     def test_update_shopping_cart(self):
         product = Product("Eytan's product", 12, "Eytan's category")
         product2 = Product("eytan as product", 10, "Eytan's category")
+        user = User()
+        user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.add_product("Eytan's product", 12, "Eytan's category", 5)
-        store.add_product("eytan as product", 10, "Eytan's category", 100)
+        store.get_owners().append(user)
+        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
+        store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100)
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 100, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
