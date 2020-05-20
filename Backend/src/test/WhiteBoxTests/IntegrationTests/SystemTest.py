@@ -8,7 +8,7 @@ from Backend.src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.StoreOwnerOrMa
 from Backend.src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.GuestRoleTests import GuestRoleTest
 
 
-class WhiteBoxTestsRunner:
+class SystemTestsRunner:
     # Build test suit
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
