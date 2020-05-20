@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Route, Link } from 'react-router-dom'
 // import { browserHistory } from "react-router";
 import {Container, Button} from 'react-bootstrap'
-import * as registerService from '../services/register';
+import * as theService from '../services/communication';
 
 
 function StoreProducts(props) {
@@ -24,7 +24,7 @@ function StoreProducts(props) {
   };
 
   const fetchStoreProducts = async () => {
-    const promise = registerService.displayShoppingCart()
+    const promise = theService.displayShoppingCart()
     promise.then((data) => {
       data["data"].map(storeName =>
       setStoreProducts(data["data"]))

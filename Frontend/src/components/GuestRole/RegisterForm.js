@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {browserHistory} from 'react-router';
 import {Container, Button, Form} from 'react-bootstrap'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 import {Link, useHistory, Redirect} from 'react-router-dom'
 
 // function RegisterForm(){
@@ -34,7 +34,7 @@ class RegisterForm extends React.Component{
 
     handleRegister = event =>{
         event.preventDefault();
-        const promise = registerService.register(this.state.nickname, this.state.password) // goes to register.js and sends to backend
+        const promise = theService.register(this.state.nickname, this.state.password) // goes to register.js and sends to backend
         promise.then((data) => {alert(data["msg"])})
         // alert("msg")
         // this.state.history.push("/");

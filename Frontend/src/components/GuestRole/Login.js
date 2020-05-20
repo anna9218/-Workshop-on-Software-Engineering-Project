@@ -2,7 +2,7 @@ import React from 'react';
 import {Container, Button, Jumbotron, Form} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 
 
 class Login extends React.Component{
@@ -22,7 +22,7 @@ class Login extends React.Component{
 
   handleLogin = event =>{
     event.preventDefault();
-        const promise = registerService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend
+        const promise = theService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
           if(data["data"]){ // if logged in

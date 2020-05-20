@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask import jsonify
 from Backend.src.main.ServiceLayer.GuestRole import GuestRole
 from Backend.src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from Backend.src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
 app = Flask(__name__)
 CORS(app)
@@ -139,5 +140,30 @@ def view_personal_purchase_history():
 
 
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
+
+@app.route('/view_user_purchase_history', methods=['POST'])
+def view_user_purchase_history():
+    if request.is_json:
+        request_dict = request.get_json()
+        viewed_user = request_dict.get('nickname')
+    #     response = SystemManagerRole.view_user_purchase_history(viewed_user)
+    #     if response:  # if not None
+    #         return jsonify(msg="success", data=response)
+    # return jsonify(msg="fail", data=response)
+    return jsonify(data=["user_purchase1", "user_purchase2"])
+
+
+@app.route('/view_store_purchases_history', methods=['POST'])
+def view_store_purchases_history():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+    #     response = SystemManagerRole.view_store_purchases_history(store_name)
+    #     if response:  # if not None
+    #         return jsonify(msg="success", data=response)
+    # return jsonify(msg="fail", data=response)
+    return jsonify(data=["store_purchase1", "store_purchase2"])
+
+
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 

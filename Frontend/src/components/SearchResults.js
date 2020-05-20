@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container, Col, Row, Checkbox} from 'react-bootstrap'
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
-import * as registerService from '../services/register';
+import * as theService from '../services/communication';
 
 
 function SearchResults(props){
@@ -67,12 +67,12 @@ function SearchResults(props){
 
     // request the corresponding products from the server
     const fetchProducts = async () => {
-      const promise = registerService.searchProductsBy(searchOption, input); // goes to register.js and sends to backend
+      const promise = theService.searchProductsBy(searchOption, input); // goes to register.js and sends to backend
       promise.then((data) => {setProducts(data["data"])});
     };
 
     const fetchCategories = async () =>{
-        const promise = registerService.getCategories(); // goes to register.js and sends to backend
+        const promise = theService.getCategories(); // goes to register.js and sends to backend
     promise.then((data) => {setCategories(data["data"])});
     }
 
@@ -80,20 +80,20 @@ function SearchResults(props){
         event.preventDefault();
         if(filterOption === 1){
             setFilterDetails({min: minValueInput, max: maxValueInput});    
-            const promise = registerService.filterProductsBy(products, filterOption, filterDetails); // goes to register.js and sends to backend
+            const promise = theService.filterProductsBy(products, filterOption, filterDetails); // goes to register.js and sends to backend
             promise.then((data) => {setProducts(data["data"])});     
         }
         else if(filterOption === 2){
             // console.log("got here");
             setFilterDetails(category);
             // console.log([products, filterOption, filterDetails]);
-            const promise = registerService.filterProductsBy(products, filterOption, filterDetails); // goes to register.js and sends to backend
+            const promise = theService.filterProductsBy(products, filterOption, filterDetails); // goes to register.js and sends to backend
             promise.then((data) => {setProducts(data["data"])});
         }
     };
 
     const onAddToCartClickHandler = (event) => {
-        const promise = registerService.addToProductsCart(selectedProducts); // goes to register.js and sends to backend
+        const promise = theService.addToProductsCart(selectedProducts); // goes to register.js and sends to backend
         promise.then((data) => {
         alert(data["msg"]);
     });

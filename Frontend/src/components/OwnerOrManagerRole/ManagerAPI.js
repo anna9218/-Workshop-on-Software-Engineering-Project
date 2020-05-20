@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 
 
 
@@ -33,7 +33,7 @@ function ManagerAPI(){
 
   // get the manager's permissions
   const fetchPermissions = async () => {
-    const promise = registerService.getManagerPermissions(); // goes to register.js and sends to backend
+    const promise = theService.getManagerPermissions(); // goes to register.js and sends to backend
     promise.then((data) => {
         setPermissions(data["data"])
       // TODO - how do we get the permissions? need to think here

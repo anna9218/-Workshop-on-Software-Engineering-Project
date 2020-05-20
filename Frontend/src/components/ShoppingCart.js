@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import * as registerService from '../services/register';
+import * as theService from '../services/communication';
 import {Button, Jumbotron, Form, Row, Col, Container} from 'react-bootstrap'
 
 
@@ -15,7 +15,7 @@ function ShoppingCart(){
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   const fetchShoppingCart = async () => {
-    const promise = registerService.displayShoppingCart()
+    const promise = theService.displayShoppingCart()
     // const stores = await promise.json();
     promise.then((data) => {
       setShoppingCart(data["data"])
@@ -28,7 +28,7 @@ function ShoppingCart(){
   };
 
   const removeProductHandler = (event) => {
-    const promise = registerService.updateShoppingCart("remove", event.target.value); // goes to register.js and sends to backend
+    const promise = theService.updateShoppingCart("remove", event.target.value); // goes to register.js and sends to backend
     promise.then((data) => {
       alert(data["msg"])
     });
@@ -36,7 +36,7 @@ function ShoppingCart(){
   }
 
   const updateProductAmountHandler = (event) => {
-    const promise = registerService.updateShoppingCart("update", event.target.value); // goes to register.js and sends to backend
+    const promise = theService.updateShoppingCart("update", event.target.value); // goes to register.js and sends to backend
     promise.then((data) => {
       alert(data["msg"])
     });

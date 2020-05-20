@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import {Button, Jumbotron} from 'react-bootstrap'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 
 
 function DisplayStores(){
@@ -15,7 +15,7 @@ function DisplayStores(){
   const [stores, setStores] = useState([]); // Declare a new state variable, which we'll call "stores"
 
   const fetchStores = async () => {
-    const promise = registerService.displayStores(); // goes to register.js and sends to backend
+    const promise = theService.displayStores(); // goes to register.js and sends to backend
     promise.then((data) => {
       setStores(data["data"])
     });

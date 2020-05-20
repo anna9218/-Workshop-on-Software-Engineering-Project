@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 
 
 // TODO - call the server, get the purchases, display
@@ -16,7 +16,7 @@ function PersonalPurchaseHistory(){
   const [purchaseHistory, setPurchaseHistory] = useState([]); 
 
   const fetchPersonalPurchaseHistory = async () => {
-    const promise = registerService.fetchPersonalPurchaseHistory(); // goes to register.js and sends to backend
+    const promise = theService.fetchPersonalPurchaseHistory(); // goes to register.js and sends to backend
     promise.then((data) => {
       setPurchaseHistory(data["data"])
     });

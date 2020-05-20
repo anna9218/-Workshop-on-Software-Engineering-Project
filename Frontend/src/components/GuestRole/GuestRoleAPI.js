@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
+
 
 // WHAT'S LEFT TO DO HERE:
 // Available guest's actions in the Service Layer:
-// register - done (except going back, can add a button)
+// register - done
 // login - almost done (except going back, can add a button. Need to display new page for logged in user)
-// display_stores_or_products_info - need to get handle response and display
+// display_stores_or_products_info 
 // search_products_by,      filter_products_by,     save_products_to_basket
 // view_shopping_cart - done, need to decide if products have info to view
 // update_shopping_cart
@@ -47,7 +48,7 @@ function GuestRoleAPI(){
 
     // for the search functionality
     const fetchCategories = async () =>{
-        const promise = registerService.getCategories(); // goes to register.js and sends to backend
+        const promise = theService.getCategories(); // goes to register.js and sends to backend
     promise.then((data) => {setCategories(data["data"])});
     };
     
@@ -81,50 +82,12 @@ function GuestRoleAPI(){
                 <Button variant="dark" id="purchasesbtn">Purchase Products</Button>
             </Link>
                     
-            <Link to='/viewcart'>
+            {/* <Link to='/viewcart'>
                 <Button variant="dark" id="viewcartbtn">View Shopping Cart</Button>
-            </Link>
+            </Link> */}
 
 
-            <Form inline>
-                <Form.Control type="text" placeholder="Search" className="search" onChange={searchInputHandler}/>
-                <Dropdown>
-                <Dropdown.Toggle variant="dark" id="dropdown-searchby">
-                    By
-                </Dropdown.Toggle>
-                <Dropdown.Menu variant="dark">
-                    {/* <Link to='/search'> */}
-                    <Dropdown.Item href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
-                            
 
-                    <Dropdown drop='right' onClick={fetchCategories}>
-                    <Dropdown.Toggle variant="dark" id="dropdown-searchby">
-                        By Category
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu variant="dark">
-                        {categories.map(category => (
-                            <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
-                        ))}
-                    </Dropdown.Menu>
-
-                    </Dropdown>
-                </Dropdown.Menu>
-                </Dropdown>
-
-                    <Link to={{
-                        pathname:'/searchresults', 
-                        state: {
-                            searchOption: searchOption,
-                            input: searchInput,
-                            categories: categories
-                        }
-                        }}>
-                        <Button variant="dark">Search</Button>
-                        </Link>
-
-                </Form>
             </Row>
             </Container>
     );
@@ -147,3 +110,47 @@ export default GuestRoleAPI;
     <option>By name</option>
 </Form.Control>
 </Form.Group> */}
+
+
+
+
+//SEARCH
+{/* <Form inline>
+<Form.Control type="text" placeholder="Search" className="search" onChange={searchInputHandler}/>
+<Dropdown>
+<Dropdown.Toggle variant="dark" id="dropdown-searchby">
+    By
+</Dropdown.Toggle>
+<Dropdown.Menu variant="dark">
+    <Link to='/search'>
+    <Dropdown.Item href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
+    <Dropdown.Item href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
+            
+
+    <Dropdown drop='right' onClick={fetchCategories}>
+    <Dropdown.Toggle variant="dark" id="dropdown-searchby">
+        By Category
+    </Dropdown.Toggle>
+
+    <Dropdown.Menu variant="dark">
+        {categories.map(category => (
+            <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
+        ))}
+    </Dropdown.Menu>
+
+    </Dropdown>
+</Dropdown.Menu>
+</Dropdown>
+
+    <Link to={{
+        pathname:'/searchresults', 
+        state: {
+            searchOption: searchOption,
+            input: searchInput,
+            categories: categories
+        }
+        }}>
+        <Button variant="dark">Search</Button>
+        </Link>
+
+</Form> */}

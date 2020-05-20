@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import {Link, Redirect, Router} from 'react-router-dom'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 
 
 // WHAT A SUBSCRIBER CAN DO?
@@ -35,7 +35,7 @@ function SubscriberAPI(){
 
     // for the search functionality
     const fetchCategories = async () =>{
-        const promise = registerService.getCategories(); // goes to register.js and sends to backend
+        const promise = theService.getCategories(); // goes to register.js and sends to backend
     promise.then((data) => {setCategories(data["data"])});
     }
 
@@ -43,7 +43,7 @@ function SubscriberAPI(){
 
 
     const logoutHandler = async () =>{
-        const promise = registerService.logout(); // goes to register.js and sends to backend
+        const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
 

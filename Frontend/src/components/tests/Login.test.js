@@ -16,8 +16,8 @@ describe('Login Test Suite', () => {
         const wrapper = shallow(<Login />);  // shallow renders a single component each time. In other words, Enzyme won’t consider the child elements for the test.
 
         expect(wrapper.find('form.login').exists()).toBeDefined(); // check that the component renders ok
-        expect(wrapper.find('#email').length).toEqual(1);
-        expect(wrapper.find('#password').length).toEqual(1);
+        expect(wrapper.find('#email').length).toEqual(1);   // id syntax - searched for email id
+        expect(wrapper.find('#password').length).toEqual(1);    // id syntax - searched for password id
     })
 });
 

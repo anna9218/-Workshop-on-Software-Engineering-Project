@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
 
 
