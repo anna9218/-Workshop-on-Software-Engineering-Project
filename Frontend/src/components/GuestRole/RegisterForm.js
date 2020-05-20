@@ -1,8 +1,18 @@
 import React, {useState} from 'react';
 import {browserHistory} from 'react-router';
 import {Container, Button, Form} from 'react-bootstrap'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 import {Link, useHistory, Redirect} from 'react-router-dom'
+
+// function RegisterForm(){
+//     useEffect(() => {
+//         setCount(count + 1);
+//         fetchStores();
+//       }, []);
+
+    
+//     const [count, setCount] = useState(1);
+// }
 
 
 class RegisterForm extends React.Component{
@@ -24,7 +34,7 @@ class RegisterForm extends React.Component{
 
     handleRegister = event =>{
         event.preventDefault();
-        const promise = registerService.register(this.state.nickname, this.state.password) // goes to register.js and sends to backend
+        const promise = theService.register(this.state.nickname, this.state.password) // goes to register.js and sends to backend
         promise.then((data) => {alert(data["msg"])})
         // alert("msg")
         // this.state.history.push("/");
@@ -56,14 +66,14 @@ class RegisterForm extends React.Component{
         return (
             <div>
             <h1>Registration</h1>
-            <form>
-         <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
-             <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
-             <Link to='/'>
+            <form className='register'>
+              <input type="text" id="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
+              <input type="password" id="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
+              <Link to='/'>
                  {/* <Button variant="dark" id="regbtn">Register</Button> */}
-             <button type="button" onClick={this.handleRegister}>Register</button>
-             </Link>
-         </form>
+              <button type="button" onClick={this.handleRegister}>Register</button>
+              </Link>
+            </form>
 
 
 

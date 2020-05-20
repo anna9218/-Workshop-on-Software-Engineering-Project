@@ -2,16 +2,19 @@ import React from 'react';
 import {Container, Button, Jumbotron, Form} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import * as registerService from '../../services/register';
+import * as theService from '../../services/communication';
 
 
 class Login extends React.Component{
-  constructor(props) {
-    super(props);
-    this.state = {
+  // constructor(props) {
+    // super(props);
+    constructor() {
+      super();
+      this.state = {
         nickname: '',
         password: '',
     };
+
     this.handleLogin = this.handleLogin.bind(this);
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -19,7 +22,7 @@ class Login extends React.Component{
 
   handleLogin = event =>{
     event.preventDefault();
-        const promise = registerService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend
+        const promise = theService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
           if(data["data"]){ // if logged in
@@ -45,13 +48,13 @@ class Login extends React.Component{
     return (
       <div>
         <h1>Login</h1>
-        <form>
-         <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
-             <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
-             {/* <Link to='/'> */}
-                 {/* <Button variant="dark" id="regbtn">Register</Button> */}
+        <form className='login'>
+         <input id="email" type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
+             <input id="password" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
+             <Link to='/'>
+                 {/* <Button variant="dark" id="regbtn" onClick={this.handleLogin}>Login</Button> */}
              <button type="button" onClick={this.handleLogin}>Login</button>
-             {/* </Link> */}
+             </Link>
          </form>
          </div>);
   }

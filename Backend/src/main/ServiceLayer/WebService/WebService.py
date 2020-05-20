@@ -3,6 +3,8 @@ from flask import Flask, escape, request
 from flask_cors import CORS
 from flask import jsonify
 from Backend.src.main.ServiceLayer.GuestRole import GuestRole
+from Backend.src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from Backend.src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
 app = Flask(__name__)
 CORS(app)
@@ -37,10 +39,10 @@ def login():
 
 @app.route('/display_stores', methods=['GET'])
 def display_stores():
-    # response = GuestRole.display_stores()  # BUG
-    # return jsonify(data=response)  # should be list of Store objects (maybe)
+    response = GuestRole.display_stores()  # BUG
+    return jsonify(data=response)  # should be list of Store objects (maybe)
     # LETS RETURN JUST THE STORE'S NAME (INSTEAD OF STORE OBJECTS)
-    return jsonify(data=["STORE1", "STORE2"])
+    # return jsonify(data=["STORE1", "STORE2"])
 
 
 @app.route('/view_shopping_cart', methods=['GET'])
@@ -97,13 +99,71 @@ def update_shopping_cart():
     return jsonify(msg="Updated successfully!")
 
 
+@app.route('/purchase_products', methods=['POST'])
+def purchase_products():
+    # if request.is_json:
+        # TODO
+    return jsonify(msg="Updated successfully!")
+
+
 # AND MANY MORE OTHER FUNCTIONS ..... TODO
 
 # ------------------------------ STORE OWNER AND MANAGER ROLE SERVICES ------------------------------------#
 
 # ------------------------------ SUBSCRIBER ROLE SERVICES -------------------------------------------------#
 
+@app.route('/logout', methods=['GET'])
+def logout():
+    response = SubscriberRole.logout()
+    if response:
+        return jsonify(msg="Logged out successfully")
+    return jsonify(msg="Logout failed")
+
+
+@app.route('/open_store', methods=['POST'])
+def open_store():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        response = SubscriberRole.open_store(store_name)
+        if response:
+            return jsonify(msg="Congrats! Store was opened!")
+    return jsonify(msg="Oops, store wasn't opened")
+
+
+@app.route('/view_personal_purchase_history', methods=['GET'])
+def view_personal_purchase_history():
+    # response = SubscriberRole.view_personal_purchase_history()
+    # return jsonify(msg="Logged out successfully", data=response) # NEED TO BE CHEKED, STAM ASITI
+
+    return jsonify(data=["purchase1", "purchase2"])
+
+
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
+
+@app.route('/view_user_purchase_history', methods=['POST'])
+def view_user_purchase_history():
+    if request.is_json:
+        request_dict = request.get_json()
+        viewed_user = request_dict.get('nickname')
+    #     response = SystemManagerRole.view_user_purchase_history(viewed_user)
+    #     if response:  # if not None
+    #         return jsonify(msg="success", data=response)
+    # return jsonify(msg="fail", data=response)
+    return jsonify(data=["user_purchase1", "user_purchase2"])
+
+
+@app.route('/view_store_purchases_history', methods=['POST'])
+def view_store_purchases_history():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+    #     response = SystemManagerRole.view_store_purchases_history(store_name)
+    #     if response:  # if not None
+    #         return jsonify(msg="success", data=response)
+    # return jsonify(msg="fail", data=response)
+    return jsonify(data=["store_purchase1", "store_purchase2"])
+
 
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 

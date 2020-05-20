@@ -30,6 +30,8 @@ class TradeControl:
             self.__curr_user = User()
             self.__managers = []
             self.__stores = []
+            # self.__stores.append(Store("einat"))
+            # self.__stores.append(Store("Eden"))
             self.__subscribers = []
             TradeControl.__instance = self
 
