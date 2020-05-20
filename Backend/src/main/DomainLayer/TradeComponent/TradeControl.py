@@ -589,6 +589,96 @@ class TradeControl:
             return lst
         return []
 
+    # ------------------- 4.2 --------------------
+    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
+        """
+                according to the given type, displays a list of policies for the store
+        :param type: can be "purchase" or "discount"
+        :param store_name:
+        :return: list of policies or empty list, returns None if user is not owner of the store or if invalid flag
+        """
+        store = self.get_store(store_name)
+        if store is None or not store.is_owner(self.__curr_user.get_nickname()):
+            return None
+
+        if type == "purchase":
+            return store.get_purchase_policies()
+        elif type == "discount":
+            return store.get_discount_policies()
+        return None
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "operator": str, "products": [str],
+                                                                "min_amount": int or None, "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        """
+            define requires valid and unique policy name, none empty list of products and at least one more detail
+        :param store_name:
+        :param details: {"name": str,                             -> policy name
+                        "operator": str,                         -> and/or/xor
+                        "products": [str],                       -> list of product names
+                        "min_amount": int or None,               -> minimum amount of products required
+                        "max_amount": int or None,               -> maximum amount of products required
+                        "dates": [dict] or None,                 -> list of prohibited dated for the given products
+                        "bundle": bool or None}                  -> true if the products are bundled together
+           i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
+        :return: true if successful, otherwise false
+        """
+        store = self.get_store(store_name)
+        if store is None \
+                or details.get("products") is None \
+                or details.get("name") is None \
+                or not self.at_least_one(details, False) \
+                or store.purchase_policy_exists(details) \
+                or not store.is_owner(self.__curr_user.get_nickname()):
+            return False
+        return store.define_purchase_policy(details)
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "operator": str or None, "products": [str],
+                                                                "min_amount": int or None, "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        """
+            update must have valid policy name of an existing policy and at least one more detail
+        :param store_name:
+        :param details: {"name": str,                            -> policy name
+                        "operator": str,                         -> and/or/xor
+                        "products": [str] or None,               -> list of product names
+                        "min_amount": int or None,               -> minimum amount of products required
+                        "max_amount": int or None,               -> maximum amount of products required
+                        "dates": [dict] or None,                 -> list of prohibited dated for the given products
+                        "bundle": bool or None}                  -> true if the products are bundled together
+           i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
+        :return: true if successful, otherwise false
+        """
+        store = self.get_store(store_name)
+        if store is None \
+                or details.get("name") is None \
+                or not self.at_least_one(details, True) \
+                or not store.purchase_policy_exists(details) \
+                or not store.is_owner(self.__curr_user.get_nickname()):
+            return False
+        return store.update_purchase_policy(details)
+
+    def define_discount_policy(self, store_name: str, details):
+        pass
+
+    def update_discount_policy(self, store_name: str, details):
+        pass
+
+    @staticmethod
+    def at_least_one(details: {"name": str, "operator": str, "products": [str], "min_amount": int or None,
+                               "max_amount": int or None, "dates": [dict] or None, "bundle": bool or None},
+                     check_product: bool):
+
+        res = details.get("min_amount") is not None \
+              or details.get("max_amount") is not None \
+              or details.get("dates") is not None \
+              or details.get("bundle") is not None
+        if check_product:
+            res = res or details.get("products") is not None
+        return res
+
+    # ------------------- 4.2 --------------------
+
     # ----------- Getters & Setters --------------
     # @logger
     def get_subscribers(self):
