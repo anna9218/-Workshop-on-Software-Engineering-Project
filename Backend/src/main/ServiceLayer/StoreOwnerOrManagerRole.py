@@ -30,7 +30,7 @@ class StoreOwnerOrManagerRole:
 
     # @logger
     # use 4.1.3
-    def edit_product(self, store_name: str, product_name: str, op: str, new_value: (str or float or int)) -> bool:
+    def edit_product(self, store_name: str, product_name: str, op: str, new_value: str) -> bool:
         """
         :param store_name: store's name
         :param product_name: product's name to edit
@@ -102,6 +102,38 @@ class StoreOwnerOrManagerRole:
                  False else.
         """
         return TradeControl.get_instance().close_store(store_name)
+
+    # -------- UC 4.2 -------------------
+    # uc 4.2
+    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
+        """
+            according to the given type, displays a list of policies for the store
+        :param type: can be "purchase" or "discount"
+        :param store_name:
+        :return: list of policies or empty list, returns None if user is not owner of the store
+        """
+        return TradeControl.get_instance().define_and_update_policies(type, store_name)
+
+    # uc 4.2.1
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None, "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return TradeControl.get_instance().update_purchase_policy(store_name, details)
+
+    # uc 4.2.2
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None, "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return TradeControl.get_instance().define_purchase_policy(store_name, details)
+
+    # uc 4.2.3
+    def update_discount_policy(self):
+        return TradeControl.get_instance().update_discount_policy()
+
+    # uc 4.2.4
+    def define_discount_policy(self):
+        return TradeControl.get_instance().define_discount_policy()
+    # ------------------------------------
 
     def __repr__(self):
         return repr("StoreOwnerRole")
