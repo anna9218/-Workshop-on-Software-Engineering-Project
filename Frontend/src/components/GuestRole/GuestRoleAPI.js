@@ -74,13 +74,13 @@ function GuestRoleAPI(){
 
 
         <Row>
-            <Link to='/stores'>
+            {/* <Link to='/stores'>
                 <Button variant="dark" id="displaystores">Display Stores</Button>
-            </Link>
+            </Link> */}
                     
-            <Link to='/purchase'>
+            {/* <Link to='/purchase'>
                 <Button variant="dark" id="purchasesbtn">Purchase Products</Button>
-            </Link>
+            </Link> */}
                     
             {/* <Link to='/viewcart'>
                 <Button variant="dark" id="viewcartbtn">View Shopping Cart</Button>
