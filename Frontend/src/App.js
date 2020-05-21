@@ -25,6 +25,7 @@ import OpenStore from './components/SubscriberRole/OpenStore'
 import PersonalPurchaseHistory from './components/SubscriberRole/PersonalPurchaseHistory'
 
 import OwnerAPI from './components/OwnerOrManagerRole/OwnerAPI'
+import ManageInventory from './components/OwnerOrManagerRole/ManageInventory'
 
 import ManagerAPI from './components/OwnerOrManagerRole/ManagerAPI'
 
@@ -153,6 +154,7 @@ function App(){
         <Route path="/history" exact component={PersonalPurchaseHistory} />
 
         <Route path="/owner" exact component={OwnerAPI} />
+        <Route path="/manageinventory" exact component={ManageInventory} />
 
         <Route path="/manager" exact component={ManagerAPI} />
 
@@ -201,7 +203,7 @@ function NavSubscriberDropDown(props){
 function NavStoreOwnerDropDown(props){
   return <NavDropdown id="basic-nav-dropdown" title="Store Owner">
           <div>
-            <NavDropdown.Item as={Link} to="/stores" >Manage Inventory</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/manageinventory" >Manage Inventory</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/displayproducts" >Manage Policies</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/displayproducts" >Appoint Store Owner</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/displayproducts" >Appoint Store Manager</NavDropdown.Item>
