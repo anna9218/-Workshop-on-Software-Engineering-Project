@@ -110,7 +110,18 @@ def purchase_products():
 
 # ------------------------------ STORE OWNER AND MANAGER ROLE SERVICES ------------------------------------#
 
+@app.route('/add_product', methods=['POST'])
+def add_product():
+    if request.is_json:
+        request_dict = request.get_json()
+        # product_name = request_dict.get('product_name')
+        response = SubscriberRole.add_product(request_dict)
+        if response:
+            return jsonify(msg="Congrats! Product was added!")
+    return jsonify(msg="Oops, product wasn't added")
+
 # ------------------------------ SUBSCRIBER ROLE SERVICES -------------------------------------------------#
+
 
 @app.route('/logout', methods=['GET'])
 def logout():

@@ -73,7 +73,7 @@ function ShoppingCart(){
                     <Col />
                     <Col xs={14}>
                         <Row>
-            <Button variant="dark" onClick={onButtonClickHandler}>{product}</Button>
+            <Button id="product-button" variant="dark" onClick={onButtonClickHandler}>{product}</Button>
             <Form.Check label="select" value={product} 
                             onChange={selectedProductsHandler} type='checkbox' id={`inline-radio-1`} />
             <Button variant="dark" onClick={removeProductHandler}>Remove</Button>
@@ -86,7 +86,7 @@ function ShoppingCart(){
            
           </h1>
         ))}
-        <Button variant="dark" block onClick={purchaseProductsHandler}>Purchase Products</Button>
+        <Button id="purchase-button" variant="dark" block onClick={purchaseProductsHandler}>Purchase Products</Button>
 
       </Container>
       </div>

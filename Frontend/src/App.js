@@ -25,6 +25,7 @@ import OpenStore from './components/SubscriberRole/OpenStore'
 import PersonalPurchaseHistory from './components/SubscriberRole/PersonalPurchaseHistory'
 
 import OwnerAPI from './components/OwnerOrManagerRole/OwnerAPI'
+import ManageInventory from './components/OwnerOrManagerRole/ManageInventory'
 
 import ManagerAPI from './components/OwnerOrManagerRole/ManagerAPI'
 
@@ -68,20 +69,19 @@ function App(){
     <Router>
       <div className="App">
         {/* Navigation Bar */}
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand as={Link} to="/">Trade Control</Navbar.Brand>
-          <Nav className="mr-auto">
+        <Navbar id="navbar" bg="dark" variant="dark">
+          <Navbar.Brand as={Link} id="navbar-logo" to="/">Trade Control</Navbar.Brand>
+          <Nav id="navbar-nav" className="mr-auto">
             {/* <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#features">Features</Nav.Link>
             <Nav.Link href="#pricing">Pricing</Nav.Link> */}
              <NavGuestDropDown/>
              <NavSubscriberDropDown/>
              <NavStoreOwnerDropDown/>
-             <NavStoreManagerDropDown />
              <NavSystemManagerDropDown/>
                           
              <Link to='/viewcart'>
-              <Button variant="outline-info" id="view_personal_history">Shopping Cart</Button>
+              <Button variant="outline-info" id="navbar-shopping-cart">Shopping Cart</Button>
              </Link>
              {/* <Nav.Link as={Link} to="/stores" >Stores</Nav.Link>
              <Nav.Link as={Link} to="/displayproducts" >Products</Nav.Link>
@@ -95,24 +95,24 @@ function App(){
           </Form> */}
 
                 
-                <Form inline>
-                <Form.Control type="text" placeholder="Search" className="search" onChange={searchInputHandler}/>
+                <Form inline id="form">
+                <Form.Control id="form-search-text" type="text" placeholder="Search" className="search" value={searchInput} onChange={searchInputHandler}/>
                 <Dropdown>
                 <Dropdown.Toggle variant="outline-info" id="dropdown-searchby">
                     By
                 </Dropdown.Toggle>
-                <Dropdown.Menu variant="outline-info">
+                <Dropdown.Menu variant="outline-info" id="form-dropdown-menu">
                     {/* <Link to='/search'> */}
-                    <Dropdown.Item href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
+                    <Dropdown.Item id="form-dropdown-item1" href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
+                    <Dropdown.Item id="form-dropdown-item2" href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
                             
 
                     <Dropdown drop='left' onClick={fetchCategories}>
-                    <Dropdown.Toggle variant="outline-info" id="dropdown-searchby">
+                    <Dropdown.Toggle variant="outline-info" id="form-dropdown-item3">
                         By Category
                     </Dropdown.Toggle>
 
-                    <Dropdown.Menu variant="dark">
+                    <Dropdown.Menu id="form-category-dropdown" variant="dark">
                         {categories.map(category => (
                             <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
                         ))}
@@ -130,7 +130,7 @@ function App(){
                             categories: categories
                         }
                         }}>
-                        <Button variant="outline-info">Search</Button>
+                        <Button id="form-search-button" variant="outline-info">Search</Button>
                         </Link>
 
                 </Form>
@@ -154,6 +154,7 @@ function App(){
         <Route path="/history" exact component={PersonalPurchaseHistory} />
 
         <Route path="/owner" exact component={OwnerAPI} />
+        <Route path="/manageinventory" exact component={ManageInventory} />
 
         <Route path="/manager" exact component={ManagerAPI} />
 
@@ -182,7 +183,7 @@ function NavGuestDropDown(props){
   //       </NavDropdown>
   return <NavDropdown id="basic-nav-dropdown" title="Guest">
           <div>
-            <NavDropdown.Item as={Link} to="/stores" >Search Stores</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/stores" >Display Stores</NavDropdown.Item>
             {/* <NavDropdown.Item as={Link} to="/displayproducts">Search Products</NavDropdown.Item> */}
             {/* <NavDropdown.Item as={Link} to="/viewcart" >Shoping Cart</NavDropdown.Item> */}
             {/* <NavDropdown.Item as={Link} to="/PurchaseProducts" >Purchase Products</NavDropdown.Item> */}
@@ -202,7 +203,7 @@ function NavSubscriberDropDown(props){
 function NavStoreOwnerDropDown(props){
   return <NavDropdown id="basic-nav-dropdown" title="Store Owner">
           <div>
-            <NavDropdown.Item as={Link} to="/stores" >Manage Inventory</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/manageinventory" >Manage Inventory</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/displayproducts" >Manage Policies</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/displayproducts" >Appoint Store Owner</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/displayproducts" >Appoint Store Manager</NavDropdown.Item>
@@ -213,13 +214,13 @@ function NavStoreOwnerDropDown(props){
          </NavDropdown>
 }
 
-function NavStoreManagerDropDown(props){
-  return <NavDropdown id="basic-nav-dropdown" title="Store Manager">
-          <div>
-            <NavDropdown.Item as={Link} to="/allhistory" >Manage Store</NavDropdown.Item>
-          </div>
-         </NavDropdown>
-}
+// function NavStoreManagerDropDown(props){
+//   return <NavDropdown id="basic-nav-dropdown" title="Store Manager">
+//           <div>
+//             <NavDropdown.Item as={Link} to="/allhistory" >Manage Store</NavDropdown.Item>
+//           </div>
+//          </NavDropdown>
+// }
 
 
 function NavSystemManagerDropDown(props){

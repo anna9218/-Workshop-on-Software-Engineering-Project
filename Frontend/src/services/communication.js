@@ -88,6 +88,20 @@ export async function fetchPersonalPurchaseHistory(){
 
 //--------------------------- END OF SUBSCRIBER ROLE --------------------------------//
 
+//--------------------------- OWNER ROLE --------------------------------------------//
+
+export async function addProduct(product_name, product_price, product_category, product_amount){
+    return axios.post('http://localhost:5000/add_product', {
+        product_name: product_name,
+        product_price: product_price,
+        product_category: product_category,
+        product_amount: product_amount
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+//--------------------------- END OF OWNER ROLE -------------------------------------//
+
 
 //--------------------------- SYSTEM MANAGER ROLE -----------------------------------//
 
