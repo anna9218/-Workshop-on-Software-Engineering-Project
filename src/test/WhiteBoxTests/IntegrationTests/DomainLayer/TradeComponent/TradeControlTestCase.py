@@ -36,14 +36,16 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
 
         # Invalid - already a manager.
-        self.assertFalse((TradeControl.get_instance()).add_system_manager(self.__user_nickname, self.__user_password)['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_system_manager(self.__user_nickname, self.__user_password)['response'])
         self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
         self.assertIn(self.__user, (TradeControl.get_instance()).get_managers())
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
 
         # Invalid - user doesn't exist
         self.assertFalse(
-            (TradeControl.get_instance()).add_system_manager("self.__user_nickname", "self.__user_password")['response'])
+            (TradeControl.get_instance()).add_system_manager("self.__user_nickname", "self.__user_password")[
+                'response'])
         self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
         self.assertIn(self.__user, (TradeControl.get_instance()).get_managers())
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
@@ -52,7 +54,8 @@ class TradeControlTestCase(unittest.TestCase):
         user.register("I want it", "That way")
 
         # Invalid -Incorrect password
-        self.assertFalse((TradeControl.get_instance()).add_system_manager(user.get_nickname(), self.__user_password)['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_system_manager(user.get_nickname(), self.__user_password)['response'])
         self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
         self.assertIn(self.__user, (TradeControl.get_instance()).get_managers())
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
@@ -398,7 +401,8 @@ class TradeControlTestCase(unittest.TestCase):
                    product_as_dictionary['product_name'],
                    product_as_dictionary['price'],
                    product_as_dictionary['category']) for product_as_dictionary in
-                  (TradeControl.get_instance()).filter_products_by(product_ls, 1, min_price=0, max_price=101)['response']]
+                  (TradeControl.get_instance()).filter_products_by(product_ls, 1, min_price=0, max_price=101)[
+                      'response']]
         self.assertListEqual(expected, result)
 
         product_ls = (TradeControl.get_instance()).get_products_by(2, "")['response']
@@ -412,7 +416,8 @@ class TradeControlTestCase(unittest.TestCase):
                    product_as_dictionary['product_name'],
                    product_as_dictionary['price'],
                    product_as_dictionary['category']) for product_as_dictionary in
-                  (TradeControl.get_instance()).filter_products_by(product_ls, 1, min_price=1, max_price=100)['response']]
+                  (TradeControl.get_instance()).filter_products_by(product_ls, 1, min_price=1, max_price=100)[
+                      'response']]
 
         self.assertListEqual(expected, result)
 
@@ -428,7 +433,8 @@ class TradeControlTestCase(unittest.TestCase):
                    product_as_dictionary['product_name'],
                    product_as_dictionary['price'],
                    product_as_dictionary['category']) for product_as_dictionary in
-                  (TradeControl.get_instance()).filter_products_by(product_ls, 1, min_price=5, max_price=200)['response']]
+                  (TradeControl.get_instance()).filter_products_by(product_ls, 1, min_price=5, max_price=200)[
+                      'response']]
 
         self.assertListEqual(expected, result)
 
@@ -489,7 +495,8 @@ class TradeControlTestCase(unittest.TestCase):
                    product_as_dictionary['product_name'],
                    product_as_dictionary['price'],
                    product_as_dictionary['category']) for product_as_dictionary in
-                  (TradeControl.get_instance()).filter_products_by(product_ls, 2, category="Eytan's category")['response']]
+                  (TradeControl.get_instance()).filter_products_by(product_ls, 2, category="Eytan's category")[
+                      'response']]
         self.assertListEqual([], result)
 
         # Invalid - empty product_ls
@@ -515,7 +522,8 @@ class TradeControlTestCase(unittest.TestCase):
                    product_as_dictionary['product_name'],
                    product_as_dictionary['price'],
                    product_as_dictionary['category']) for product_as_dictionary in
-                  (TradeControl.get_instance()).filter_products_by(product_ls, 3, min_price=12.2, max_price=43)['response']]
+                  (TradeControl.get_instance()).filter_products_by(product_ls, 3, min_price=12.2, max_price=43)[
+                      'response']]
         self.assertListEqual([], result)
 
     def test_logout_subscriber(self):
@@ -533,7 +541,8 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).open_store("myStore")
-        (TradeControl.get_instance()).add_products("myStore", [{"name": "Eytan's product", "price": 12, "category": "Eytan's category", "amount": 5}])
+        (TradeControl.get_instance()).add_products("myStore", [
+            {"name": "Eytan's product", "price": 12, "category": "Eytan's category", "amount": 5}])
         product = Product("Eytan's product", 12, "Eytan's category")
         # store: Store = Store("myStore")
         # store.add_product("", "Eytan's product", 12, "Eytan's category", 5)
@@ -564,7 +573,8 @@ class TradeControlTestCase(unittest.TestCase):
                                  shopping_cart.get_shopping_baskets()])
 
         # invalid - basket = None
-        self.assertFalse((TradeControl.get_instance()).save_products_to_basket([product_as_dictionary, None])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).save_products_to_basket([product_as_dictionary, None])['response'])
         self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
         self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
                                  shopping_cart.get_shopping_baskets()])
@@ -589,7 +599,7 @@ class TradeControlTestCase(unittest.TestCase):
         bad_basket = {"product_name": product.get_name(), "amount": -4, "store_name": "myStore",
                       "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
-        bad_basket = {"product_name": product, "amount": 0, "store_name":"myStore",
+        bad_basket = {"product_name": product, "amount": 0, "store_name": "myStore",
                       "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         # invalid - Edge case - amount = 0
@@ -602,8 +612,9 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).open_store("myStore")
-        (TradeControl.get_instance()).add_products("myStore", [{"name": "Eytan's product", "price": 12, "category": "Eytan's category", "amount": 5},
-                                                               {"name": "eytan as product", "price": 10, "category": "Eytan's category", "amount": 100}])
+        (TradeControl.get_instance()).add_products("myStore", [
+            {"name": "Eytan's product", "price": 12, "category": "Eytan's category", "amount": 5},
+            {"name": "eytan as product", "price": 10, "category": "Eytan's category", "amount": 100}])
 
         product = Product("Eytan's product", 12, "Eytan's category")
         product2 = Product("eytan as product", 10, "Eytan's category")
@@ -612,7 +623,7 @@ class TradeControlTestCase(unittest.TestCase):
         product_as_dictionary = {"product_name": product.get_name(), "amount": 100, "store_name": store_name,
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
-        product_as_dictionary2 = {"product_name": product2.get_name(), "amount": 100, "store_name":store_name,
+        product_as_dictionary2 = {"product_name": product2.get_name(), "amount": 100, "store_name": store_name,
                                   "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         (TradeControl.get_instance()).save_products_to_basket([product_as_dictionary, product_as_dictionary2])
@@ -640,24 +651,25 @@ class TradeControlTestCase(unittest.TestCase):
                                          "amount": 15}
 
         # Invalid - store doesn't exist
-        self.assertFalse((TradeControl.get_instance()).remove_from_shopping_cart([product_details_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).remove_from_shopping_cart([product_details_as_dictionary])['response'])
 
         product_details_as_dictionary = {"product_name": "product2.get_name()",
                                          "store_name": store_name,
                                          "amount": 15}
 
         # Invalid - product doesn't exist
-        self.assertFalse((TradeControl.get_instance()).remove_from_shopping_cart([product_details_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).remove_from_shopping_cart([product_details_as_dictionary])['response'])
 
         # Valid - empty product_details
         self.assertTrue((TradeControl.get_instance()).remove_from_shopping_cart([])['response'])
 
     def test_update_quantity_in_shopping_cart(self):
-
         product = Product("Eytan's product", 12, "Eytan's category")
         store: Store = Store("myStore")
         user: User = User()
-        user.register('Eytan','12')
+        user.register('Eytan', '12')
         store.get_owners().append(user)
         store.add_product("Eytan", "Eytan's product", 12, "Eytan's category", 5)
         (TradeControl.get_instance()).get_stores().append(store)
@@ -691,54 +703,34 @@ class TradeControlTestCase(unittest.TestCase):
             (TradeControl.get_instance()).update_quantity_in_shopping_cart([{"product_name": product.get_name(),
                                                                              "store_name": store.get_name(),
                                                                              "amount": 123}])['response'])
-        product_as_dictionary_lst_self_store = \
-            shopping_cart.get_store_basket(store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == product.get_name()]
-        self.assertEqual(123, product_amount_as_lst_self_store[0])
+        self.assertEqual(123, TradeControl.get_instance().get_curr_user().get_shopping_cart().
+                         get_store_basket(store.get_name()).get_product_amount(product.get_name()))
 
         # All Valid - product in two stores, but change only in one
         self.assertTrue(
             (TradeControl.get_instance()).update_quantity_in_shopping_cart([{"product_name": product1.get_name(),
                                                                              "store_name": store.get_name(),
                                                                              "amount": 234}])['response'])
-        product_as_dictionary_lst_self_store = \
-            shopping_cart.get_store_basket(store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == product1.get_name()]
-        product_as_dictionary_lst_store1 = \
-            shopping_cart.get_store_basket(store1.get_name()).get_products()
-        product_amount_as_lst_store1 = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_store1
-             if product_as_dictionary['product'].get_name() == product1.get_name()]
-        self.assertEqual(234, product_amount_as_lst_self_store[0])
-        self.assertEqual(12, product_amount_as_lst_store1[0])
+        self.assertEqual(234, TradeControl.get_instance().get_curr_user().get_shopping_cart().
+                         get_store_basket(store.get_name()).get_product_amount(product1.get_name()))
+        self.assertEqual(12, TradeControl.get_instance().get_curr_user().get_shopping_cart().
+                         get_store_basket(store1.get_name()).get_product_amount(product1.get_name()))
 
         # Invalid - product not in store
         self.assertFalse(
             (TradeControl.get_instance()).update_quantity_in_shopping_cart([{"product_name": product2.get_name(),
                                                                              "store_name": store.get_name(),
                                                                              "amount": 234}])['response'])
-        product_as_dictionary_lst_store1 = \
-            shopping_cart.get_store_basket(store1.get_name()).get_products()
-        product_amount_as_lst_store1 = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_store1
-             if product_as_dictionary['product'].get_name() == product2.get_name()]
-        self.assertNotEqual(234, product_amount_as_lst_store1[0])
+        self.assertNotEqual(234, TradeControl.get_instance().get_curr_user().get_shopping_cart().
+                            get_store_basket(store1.get_name()).get_product_amount(product2.get_name()))
 
         # Invalid - negative amount
         self.assertFalse(
             (TradeControl.get_instance()).update_quantity_in_shopping_cart([{"product_name": product.get_name(),
                                                                              "store_name": store.get_name(),
                                                                              "amount": -999}])['response'])
-        product_as_dictionary_lst_self_store = \
-            shopping_cart.get_store_basket(store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == product.get_name()]
-        self.assertNotEqual(-999, product_amount_as_lst_self_store[0])
+        self.assertNotEqual(-999, TradeControl.get_instance().get_curr_user().get_shopping_cart().
+                            get_store_basket(store.get_name()).get_product_amount(product.get_name()))
 
     def test_add_products(self):
         # def add_products(self, store_name: str,
@@ -786,7 +778,8 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": -99}
 
         # Invalid - negative amount
-        self.assertFalse((TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
         self.assertIsNone((TradeControl.get_instance()).get_store(store.get_name()).
                           get_product(product_as_dictionary['name']))
 
@@ -796,7 +789,8 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 99}
 
         # Invalid - store doesn't exist
-        self.assertFalse((TradeControl.get_instance()).add_products("store.get_name()", [product_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_products("store.get_name()", [product_as_dictionary])['response'])
 
         (TradeControl.get_instance()).logout_subscriber()
         product_as_dictionary = {"name": "N is for Never said goodbye",
@@ -805,7 +799,8 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 15}
 
         # Invalid - curr_user is logged out
-        self.assertFalse((TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
         self.assertIsNone((TradeControl.get_instance()).get_store(store.get_name()).
                           get_product(product_as_dictionary['name']))
 
@@ -844,7 +839,8 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": -99}
 
         # Invalid - negative amount
-        self.assertFalse((TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
         self.assertIsNone((TradeControl.get_instance()).get_store(store.get_name()).
                           get_product(product_as_dictionary['name']))
 
@@ -854,7 +850,8 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 99}
 
         # Invalid - store doesn't exist
-        self.assertFalse((TradeControl.get_instance()).add_products("store.get_name()", [product_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_products("store.get_name()", [product_as_dictionary])['response'])
 
         product_as_dictionary = {"name": "Name a better striker then RvP. I dare you.",
                                  "price": 3,
@@ -864,7 +861,8 @@ class TradeControlTestCase(unittest.TestCase):
             edit_manager_permissions(self.__user, manager.get_nickname(), [ManagerPermission.USERS_QUESTIONS])
 
         # Invalid- not right permissions:
-        self.assertFalse((TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
         self.assertIsNone((TradeControl.get_instance()).get_store(store.get_name()).
                           get_product(product_as_dictionary['name']))
 
@@ -876,7 +874,8 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 15}
 
         # Invalid - curr_user is logged out
-        self.assertFalse((TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
+        self.assertFalse(
+            (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])['response'])
         self.assertIsNone((TradeControl.get_instance()).get_store(store.get_name()).
                           get_product(product_as_dictionary['name']))
 
@@ -1592,7 +1591,8 @@ class TradeControlTestCase(unittest.TestCase):
         # Invalid - new_manager is already a manager
         self.assertFalse((TradeControl.get_instance()).appoint_store_manager(new_manager.get_nickname(),
                                                                              store.get_name(),
-                                                                             [ManagerPermission.USERS_QUESTIONS])['response'])
+                                                                             [ManagerPermission.USERS_QUESTIONS])[
+                             'response'])
         self.assertIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
         self.assertTrue((TradeControl.get_instance()).get_store(store.get_name()).has_permission(
             new_manager.get_nickname(), ManagerPermission.WATCH_PURCHASE_HISTORY))
@@ -1688,7 +1688,8 @@ class TradeControlTestCase(unittest.TestCase):
         # All valid
         self.assertTrue((TradeControl.get_instance()).appoint_store_manager(new_manager.get_nickname(),
                                                                             store.get_name(),
-                                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])['response'])
+                                                                            [ManagerPermission.WATCH_PURCHASE_HISTORY])[
+                            'response'])
         self.assertIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
         self.assertTrue((TradeControl.get_instance()).get_store(store.get_name()).has_permission(
             new_manager.get_nickname(), ManagerPermission.WATCH_PURCHASE_HISTORY))
@@ -1696,7 +1697,8 @@ class TradeControlTestCase(unittest.TestCase):
         # Invalid - new_manager is already a manager
         self.assertFalse((TradeControl.get_instance()).appoint_store_manager(new_manager.get_nickname(),
                                                                              store.get_name(),
-                                                                             [ManagerPermission.USERS_QUESTIONS])['response'])
+                                                                             [ManagerPermission.USERS_QUESTIONS])[
+                             'response'])
         self.assertIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
         self.assertTrue((TradeControl.get_instance()).get_store(store.get_name()).has_permission(
             new_manager.get_nickname(), ManagerPermission.WATCH_PURCHASE_HISTORY))
@@ -1878,7 +1880,6 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).set_curr_user(manager)
         (TradeControl.get_instance()).login_subscriber(manager.get_nickname(), "manager")
 
-
         # Invalid - manager doesn't have permissions
         self.assertFalse((TradeControl.get_instance()).edit_manager_permissions(store.get_name(),
                                                                                 new_manager.get_nickname(),
@@ -1907,7 +1908,8 @@ class TradeControlTestCase(unittest.TestCase):
         # Invalid - not a manager or an owner
         self.assertFalse((TradeControl.get_instance()).edit_manager_permissions(store.get_name(),
                                                                                 new_manager.get_nickname(),
-                                                                                [ManagerPermission.WATCH_PURCHASE_HISTORY]))
+                                                                                [
+                                                                                    ManagerPermission.WATCH_PURCHASE_HISTORY]))
         self.assertTrue((TradeControl.get_instance()).get_store(store.get_name()).has_permission(
             new_manager.get_nickname(), ManagerPermission.EDIT_MANAGER_PER))
         self.assertFalse((TradeControl.get_instance()).get_store(store.get_name()).has_permission(
