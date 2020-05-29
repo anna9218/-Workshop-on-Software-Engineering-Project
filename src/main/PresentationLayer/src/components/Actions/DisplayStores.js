@@ -17,14 +17,19 @@ function DisplayStores(){
   const fetchStores = async () => {
     const promise = theService.displayStores(); // goes to register.js and sends to backend
     promise.then((data) => {
-      setStores(data["data"])
+        if (data["data"]["response"].length > 0){   // if there are stores to display
+            setStores(data["data"]["response"]);
+        }
+        else{
+          alert(data["data"]["msg"]);      // no stores to display
+        }
     });
   };
 
   return (
     //SET SOME KIND OF COUNTER ID FOR LINK - SOLVED IT WITH STORE NAME
       <div>
-        <h1>Display Stores</h1>
+        <h1>All Stores</h1>
         {stores.map(store => (
           <h1>
           <Link to={{
