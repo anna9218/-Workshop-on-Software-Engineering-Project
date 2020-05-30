@@ -45,3 +45,7 @@ class SubscriberRole:
 
     def __repr__(self):
         return repr("SubscriberRole")
+
+    @logger
+    def username(self): # TODO -delete?
+        return TradeControl.get_instance().get_curr_username()

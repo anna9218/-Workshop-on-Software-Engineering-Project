@@ -150,6 +150,10 @@ class StoreOwnerOrManagerRole:
     def __repr__(self):
         return repr("StoreOwnerRole")
 
+    @logger
+    def username(self): # TODO - delete?
+        return TradeControl.get_instance().get_curr_username()
+
     # def check_if_owns_the_store(self, user_name, store_name) -> bool:
     #     user = TradeControl.get_instance().getUser(user_name)
     #     if user is None or not user.is_loggedIn():

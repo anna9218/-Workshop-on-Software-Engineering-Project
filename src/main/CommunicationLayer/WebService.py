@@ -2,6 +2,8 @@ from flask import Flask, request
 # import os
 from flask_cors import CORS
 from flask import jsonify
+
+from src.main.CommunicationLayer import WebSocketService
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
@@ -136,6 +138,7 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
+        WebSocketService.open_store(store_name, SubscriberRole.username, result)
         # if response:
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened")
