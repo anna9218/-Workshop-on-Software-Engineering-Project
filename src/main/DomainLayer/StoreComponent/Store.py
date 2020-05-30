@@ -17,13 +17,13 @@ class Store:
     def __init__(self, store_name):
         # self.__id = id
         self.__name = store_name
-        self.__owners = []
+        self.__owners: [User] = []
         # list of StoreManagerAppointment (manager: User, permissions: ManagerPermissions[], appointer:User)
         self.__StoreManagerAppointments = []
         self.__inventory = StoreInventory()
         self.__discount_policies: [DiscountPolicy] = []
         self.__purchase_policies: [PurchasePolicy] = []
-        self.__purchases = []
+        self.__purchases: [Purchase] = []
 
     @logger
     def add_products(self, user_nickname: str,
@@ -371,7 +371,6 @@ class Store:
         #                                          self.has_permission(appointer_nickname,
         #                                                              ManagerPermission.WATCH_PURCHASE_HISTORY)):
         if self.has_permission(appointer_nickname, ManagerPermission.WATCH_PURCHASE_HISTORY):
-
             return self.__purchases
         return []
 
