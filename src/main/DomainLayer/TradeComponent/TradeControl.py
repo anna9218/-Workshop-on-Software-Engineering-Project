@@ -803,6 +803,17 @@ class TradeControl:
     def get_curr_username(self):
         return self.__curr_user.get_nickname()
 
+    @logger
+    def get_owned_stores(self):
+        stores = []
+        for store in self.__stores:
+            owners = store.get_owners()
+            if self.__curr_user.get_nickname() in owners:
+                stores.append(store.get_name())
+        if len(stores) == 0:
+            return {'response': [], 'msg': "There are no stores"}
+        return {'response': stores, 'msg': "Stores were retrieved successfully"}
+
     def __repr__(self):
         return repr("TradeControl")
 

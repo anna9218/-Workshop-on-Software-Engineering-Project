@@ -100,7 +100,7 @@ class ShoppingCart:
                 if curr['product'] is None:
                     return {'response': False, 'msg': "Error! invalid input"}
                 if curr['amount'] <= 0:
-                    return {'response': False, 'msg': "Error! the amount of product " +curr['product'].get_name() +
+                    return {'response': False, 'msg': "Error! the amount of product " + curr['product'].get_name() +
                                                       "is >= 0. A product amount must be bigger than 0"}
 
         # Rest of the function

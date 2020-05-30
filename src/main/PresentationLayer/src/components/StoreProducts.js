@@ -8,9 +8,10 @@ import * as theService from '../services/communication';
 
 function StoreProducts(props) {
   useEffect(() => {
-    console.log(props)
+    console.log(props.location.state.storeName)
     setStoreName(props.location.state.storeName)
-    fetchStoreProducts();
+    console.log(storeName);
+    fetchStoreProducts(props.location.state.storeName);
     // setHistory(useHistory());
   }, []);
 
@@ -23,24 +24,30 @@ function StoreProducts(props) {
     //TODO, ADD OPTION TO VIEW PRICE, POLICIES
   };
 
-  const fetchStoreProducts = async () => {
-    const promise = theService.displayShoppingCart()
+  const fetchStoreProducts = async (storeName) => {
+    const promise = theService.displayStoresProducts(storeName)
     promise.then((data) => {
-      data["data"].map(storeName =>
-      setStoreProducts(data["data"]))
-    });
-  };
+      //TODO make sure this works, maybe bug with response - products are returned as Product objects from the server
+      console.log(data["data"]["response"]);
+      if (data["data"]["response"].length > 0){   // if there are stores to display
+          setStoreProducts(data["data"]["response"]);
+      }
+      else{
+        alert(data["data"]["msg"]);      // no products to display
+      }
+  });
+};
 
   
 
   return (
       <div>
         <h1>{storeName} - Products</h1>
-        {storeProducts.map(storeProduct => (
+        {/* {storeProducts.map(storeProduct => (
           <h1>
             <Button variant="dark" onClick={onButtonClickHandler}>{storeProduct}</Button>
           </h1>
-        ))}
+        ))} */}
         {/* <Link to={{
                   pathname:'/stores/'+storeName
                   }}> */}
