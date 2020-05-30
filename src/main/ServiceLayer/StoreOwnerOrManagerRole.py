@@ -9,7 +9,7 @@ class StoreOwnerOrManagerRole:
 
     @logger
     # use case 4.1.1
-    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
+    def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
         int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
@@ -145,7 +145,18 @@ class StoreOwnerOrManagerRole:
     @logger
     def define_discount_policy(self):
         return TradeControl.get_instance().define_discount_policy()
+
     # ------------------------------------
+
+    # -------------------------------------------------------------
+
+
+    @staticmethod
+    # for managing inventory - uc 4.1
+    def get_owned_stores():
+        return TradeControl.get_instance().get_stores_names()
+
+    # -------------------------------------------------------------
 
     def __repr__(self):
         return repr("StoreOwnerRole")

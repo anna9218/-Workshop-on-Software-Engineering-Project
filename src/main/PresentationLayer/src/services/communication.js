@@ -22,6 +22,15 @@ export async function displayStores(){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function displayStoresProducts(store_name){
+    return axios.post('http://localhost:5000/display_stores_products', {
+        store_name: store_name, 
+        store_info_flag: false,
+        products_info_flag: true
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function displayShoppingCart(){
     return axios.get('http://localhost:5000/view_shopping_cart')
     .then((response) => (response.data), (error) => {console.log(error)});
@@ -90,12 +99,22 @@ export async function fetchPersonalPurchaseHistory(){
 
 //--------------------------- OWNER ROLE --------------------------------------------//
 
-export async function addProduct(product_name, product_price, product_category, product_amount){
+export async function fetchOwnedStores(){
+    return axios.get('http://localhost:5000/get_owned_stores')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function addProduct(store_name, product_name, product_price, product_category, product_amount){
     return axios.post('http://localhost:5000/add_product', {
-        product_name: product_name,
-        product_price: product_price,
-        product_category: product_category,
-        product_amount: product_amount
+        store_name: store_name,
+        products_details:
+        [{
+            name: product_name,
+            price: parseInt(product_price),
+            category: product_category,
+            amount: parseInt(product_amount)
+        }]
+        
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
