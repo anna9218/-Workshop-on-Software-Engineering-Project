@@ -126,8 +126,8 @@ class RealBridge(Bridge):
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 4.1
-    def add_products_to_store(self, store_name: str, products_details:
-    [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+    def add_products_to_store(self, store_name: str,
+                              products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         return self.__store_owner_or_manager.add_products(store_name, products_details)
 
     def edit_products_in_store(self, store_name: str, product_name: str, op: str, new_value: str):
@@ -137,20 +137,25 @@ class RealBridge(Bridge):
         return self.__store_owner_or_manager.remove_products(store_name, products_names)
 
     # 4.2 add and update purchase and discount policies
-    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
-        return self.__store_owner_or_manager.define_and_update_policies(type, store_name)
+    def set_purchase_operator(self, store_name: str, operator: str):
+        self.__store_owner_or_manager.set_purchase_operator(store_name, operator)
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        return self.__store_owner_or_manager.get_policies(type, store_name)
 
     def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None,
                                                                 "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None}):
-        return self.__store_owner_or_manager.update_purchase_policy(store_name, details)
+        res_dict = self.__store_owner_or_manager.update_purchase_policy(store_name, details)
+        return res_dict["response"]
 
     def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None,
                                                                 "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None}):
-        return self.__store_owner_or_manager.define_purchase_policy(store_name, details)
+        res_dict = self.__store_owner_or_manager.define_purchase_policy(store_name, details)
+        return res_dict["response"]
 
     def update_discount_policy(self):
         pass

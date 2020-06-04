@@ -24,6 +24,8 @@ class Store:
         self.__discount_policies: [DiscountPolicy] = []
         self.__purchase_policies: [PurchasePolicy] = []
         self.__purchases = []
+        # default operator is 'and'
+        self.__operator = "and"
 
     @logger
     def add_products(self, user_nickname: str,
@@ -387,7 +389,7 @@ class Store:
         self.__purchases.insert(0, purchase)
 
     @logger
-    def purchase_basket(self, basket: ShoppingBasket):
+    def purchase_basket(self, basket: ShoppingBasket) -> {'response': dict, 'msg': str}:
         """
         purchase user shopping basket
         :param basket:
@@ -400,8 +402,11 @@ class Store:
                  products.append({"product_name": curr_product["product"].get_name(), "amount": curr_product["amount"]}),
                  basket.get_products()))
 
-        if len(products) == 0 or not self.can_purchase(products, datetime.date.today()):
-            return None
+        if len(products) == 0:
+            return {'response': None, 'msg': "No products added"}
+        can_purchase = self.can_purchase(products, datetime.date.today())
+        if not can_purchase["response"]:
+            return {'response': None, 'msg': "Purchase failed: " + can_purchase["msg"]}
 
         products_purchases = []
         basket_price = 0
@@ -422,9 +427,10 @@ class Store:
                 basket_price += purchase["product_price"]
 
         if len(products_purchases) == 0:
-            return None
+            return {'response': None, 'msg': " No purchases can be made"}
         else:
-            return {"store_name": self.__name, "basket_price": basket_price, "products": products_purchases}
+            return {'response': {"store_name": self.__name, "basket_price": basket_price, "products": products_purchases},
+                    'msg': "Success"}
 
     # u.c 2.8.1
     @logger
@@ -497,22 +503,42 @@ class Store:
                 self.__purchases.remove(p)
 
     @logger
-    def check_purchase_policy(self, details: [{"product_name": str, "amount": int}], curr_date: datetime) -> bool:
+    def check_purchase_policy(self, details: [{"product_name": str, "amount": int}], curr_date: datetime) \
+            -> {'response': bool, 'msg': str}:
         """
         :param curr_date:
         :param details: list [{"product_name": str, "amount": int}]
         :return: true if the user can purchase the product, otherwise false
         """
-        for policy in self.__purchase_policies:
-            if not policy.can_purchase(details, curr_date):
-                return False
-        return True
+        xor_flag = False
+        if self.__operator == "and":
+            for policy in self.__purchase_policies:
+                if not policy.can_purchase(details, curr_date):
+                    return {'response': False, 'msg': "Policy: " + policy.get_name() + ", rule not met - for type 'all'"}
+            return {'response': True, 'msg': "Great Success! Good Job!"}
+
+        elif self.__operator == "or":
+            for policy in self.__purchase_policies:
+                if policy.can_purchase(details, curr_date):
+                    return {'response': True, 'msg': "Great Success! Good Job!"}
+            return {'response': False, 'msg': "All policies rule not met - for type: 'at least one'"}
+
+        elif self.__operator == "xor":
+            for policy in self.__purchase_policies:
+                if policy.can_purchase(details, curr_date):
+                    if not xor_flag:
+                        xor_flag = True
+                    else:
+                        return {'response': False, 'msg': "More than one policy rules - for type: 'only one'"}
+        return {'response': True, 'msg': "Great Success! Good Job!"}
 
     @logger
-    def can_purchase(self, details: [{"product_name": str, "amount": int}], curr_date: datetime):
+    def can_purchase(self, details: [{"product_name": str, "amount": int}], curr_date: datetime) \
+            -> {'response': bool, 'msg': str}:
         for product in details:
             if self.__inventory.get_amount(product["product_name"]) < product["amount"]:
-                return False
+                return {'response': False, 'msg': "Requested amount for product: "
+                                                  + product.get_name() + ", exceeds amount in inventory"}
         return self.check_purchase_policy(details, curr_date)
 
     @logger
@@ -551,10 +577,15 @@ class Store:
         return False
 
     # ------------- 4.2 --------------
-    def purchase_policy_exists(self, details: {"name": str, "operator": str, "products": [str],
+    # ------------- purchase policy --------------
+    def set_purchase_operator(self, operator: str):
+        self.__operator = operator
+
+    def purchase_policy_exists(self, details: {"name": str, "products": [str],
                                                "min_amount": int or None, "max_amount": int or None,
                                                "dates": [dict] or None, "bundle": bool or None}):
         """
+            only used in trade control -> no need for returned msg
         :param details: {"name": str,                            -> policy name
                         "operator": str,                         -> and/or/xor
                         "products": [str],                       -> list of product names
@@ -570,9 +601,10 @@ class Store:
         return False
 
     @logger
-    def define_purchase_policy(self, details: {"name": str, "operator": str, "products": [str],
+    def define_purchase_policy(self, details: {"name": str, "products": [str],
                                                "min_amount": int or None, "max_amount": int or None,
-                                               "dates": [dict] or None, "bundle": bool or None}):
+                                               "dates": [dict] or None, "bundle": bool or None})\
+            -> {'response': bool, 'msg': str}:
         """
         :param details: {"name": str,                            -> policy name
                         "operator": str,                         -> and/or/xor
@@ -585,19 +617,20 @@ class Store:
         """
         policy = PurchasePolicy()
         res = policy.add_purchase_policy(details)
-        if res:
+        if res.get("response"):
             self.__purchase_policies.append(policy)
         return res
 
     @logger
-    def update_purchase_policy(self, details: {"name": str, "operator": str or None, "products": [str],
+    def update_purchase_policy(self, details: {"name": str, "products": [str],
                                                "min_amount": int or None, "max_amount": int or None,
-                                               "dates": [dict] or None, "bundle": bool or None}):
+                                               "dates": [dict] or None, "bundle": bool or None})\
+            -> {'response': bool, 'msg': str}:
         policy = self.get_policy(details["name"])
         if policy:
             policy.update(details)
-            return True
-        return False
+            return {'response': True, 'msg': "Great Success! Policy updated"}
+        return {'response': True, 'msg': "Oops...no policy exist by the given name"}
 
     @logger
     def get_purchase_policies(self):
@@ -612,6 +645,7 @@ class Store:
             if policy.get_name() == policy_name:
                 return policy
         return None
+    # ------------- purchase policy end --------------
     # ------------- 4.2 --------------
 
     def __repr__(self):
