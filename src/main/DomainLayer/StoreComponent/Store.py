@@ -566,6 +566,5 @@ class Store:
 
         if not self.__name == other.get_name():
             return False
-
         return True
 
