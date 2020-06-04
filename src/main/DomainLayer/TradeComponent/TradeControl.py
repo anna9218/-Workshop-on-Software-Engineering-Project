@@ -182,7 +182,8 @@ class TradeControl:
     def filter_products_by(self,
                            products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
                            filter_by_option: int, min_price: (float or None) = None,
-                           max_price: (float or None) = None, category: (str or None) = None) -> {'response': list, 'msg': str}:
+                           max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
+                                                                                                  'msg': str}:
         """
         This function have two options:
             Either filter_by_option == 1, and then the function should get min price and max price.
@@ -229,7 +230,7 @@ class TradeControl:
         if filter_by_option == 1:
             try:
                 ls = list(filter(lambda product_dictionary: min_price <= product_dictionary['price'] <= max_price,
-                                   products_ls))
+                                 products_ls))
                 return {'response': ls, 'msg': "Action Filter by price range was successful"}
             except Exception:
                 return {'response': [], 'msg': "Error in filter action"}
@@ -237,7 +238,7 @@ class TradeControl:
         else:
             try:
                 ls = list(filter(lambda product_dictionary: category == product_dictionary['category'],
-                                   products_ls))
+                                 products_ls))
                 return {'response': ls, 'msg': "Action Filter by category was successful"}
 
             except Exception:
@@ -251,7 +252,8 @@ class TradeControl:
         """
         if self.get_store(store_name) is None:
             return {'response': None, 'msg': "Store" + store_name + " doesn't exist"}
-        return {'response': jsonpickle.encode(self.get_store(store_name)), 'msg': "Store info was retrieved successfully"}
+        return {'response': jsonpickle.encode(self.get_store(store_name)),
+                'msg': "Store info was retrieved successfully"}
 
     @logger
     def get_store_inventory(self, store_name):
@@ -260,12 +262,14 @@ class TradeControl:
 
         if self.get_store(store_name).get_inventory().is_empty():
             return {'response': None, 'msg': "Store inventory is empty"}
-        return {'response': jsonpickle.encode(self.get_store(store_name).get_inventory()), 'msg': "Store inventory was retrieved successfully"}
+        return {'response': jsonpickle.encode(self.get_store(store_name).get_inventory()),
+                'msg': "Store inventory was retrieved successfully"}
 
     @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
                                                                      "amount": int, "discount_type": DiscountType,
-                                                                     "purchase_type": PurchaseType}]) -> {'response': bool, 'msg': str}:
+                                                                     "purchase_type": PurchaseType}]) -> {
+        'response': bool, 'msg': str}:
         for element in products_stores_quantity_ls:
             if element is None:
                 return {'response': False, 'msg': "Error! Invalid input"}
@@ -294,7 +298,8 @@ class TradeControl:
         return self.__curr_user.view_shopping_cart()
 
     @logger
-    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]) -> {'response': bool, 'msg': str}:
+    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]) -> {
+        'response': bool, 'msg': str}:
         """
         :param products_details: [{"product_name": str,
                                        "store_name": str}, ...]
@@ -305,7 +310,7 @@ class TradeControl:
 
     @logger
     def update_quantity_in_shopping_cart(self,
-                                         products_details: [{"product_name": str, "store_name": str, "amount": int}])\
+                                         products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
             -> {'response': bool, 'msg': str}:
         """
         :param products_details: [{"product_name": str,
@@ -356,15 +361,16 @@ class TradeControl:
             #                 }]
             #         }
             purchase_ls = self.purchase_basket(basket["store_name"])
-            if purchase_ls is not None:
-                purchase_baskets += purchase_ls["purchases"]
-                total_price += purchase_ls["total_price"]
+            if purchase_ls["response"] is not None:
+                purchase_res = purchase_ls["response"]
+                purchase_baskets += purchase_res["purchases"]
+                total_price += purchase_res["total_price"]
         if len(purchase_baskets) == 0:
             return []
         return {"total_price": total_price, "purchases": purchase_baskets}
 
     @logger
-    def purchase_basket(self, store_name: str):
+    def purchase_basket(self, store_name: str) -> {'response': dict, 'msg': str}:
         """
             purchase single basket from user cart by given store name, according to the policies
         :param store_name: store name
@@ -377,14 +383,15 @@ class TradeControl:
         """
         basket = self.__curr_user.get_shopping_cart().get_store_basket(store_name)
         if basket is None:
-            return None
+            return {'response': None, 'msg': "Store basket doesn't exist"}
 
         purchase = self.get_store(store_name).purchase_basket(basket)
-        if purchase is None:
-            return None
+        if purchase["response"] is None:
+            return {'response': None, 'msg': purchase["msg"]}
 
         # {"store_name": self.__name, "basket_price": basket_price, "products": products_purchases}
-        return {"total_price": purchase["basket_price"], "purchases": [purchase]}
+        return {'response': {"total_price": purchase["response"]["basket_price"], "purchases": [purchase["response"]]},
+                'msg': "Great Success! Purchase products successful"}
 
     @logger
     def accept_purchases(self, purchase_ls: dict):
@@ -399,7 +406,7 @@ class TradeControl:
         :return: void
         """
         if purchase_ls is None or len(purchase_ls) == 0:
-            return False
+            return {'response': False, 'msg': "Empty purchase list provided"}
 
         nickname = self.__curr_user.get_nickname()
         # purchase ->
@@ -410,7 +417,7 @@ class TradeControl:
             self.__curr_user.complete_purchase(new_purchase)
             # update store inventory and add purchases to purchase history
             self.get_store(purchase["store_name"]).complete_purchase(new_purchase)
-        return True
+        return {'response': True, 'msg': "Great Success! Purchase complete"}
 
     @logger
     def remove_purchase(self, store_name: str, purchase_date: datetime):
@@ -486,7 +493,8 @@ class TradeControl:
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     @logger
     def add_products(self, store_name: str,
-                     products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> {'response': bool, 'msg': str}:
+                     products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> {
+        'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of JSONs, each JSON is one details record, for one product
@@ -536,9 +544,9 @@ class TradeControl:
         if store is not None and \
                 self.__curr_user.is_registered() and \
                 self.__curr_user.is_logged_in():
-                # (store.is_owner(self.__curr_user.get_nickname()) or
-                #  store.is_manager(self.__curr_user.get_nickname())) and \
-                # store.product_in_inventory(product_name):
+            # (store.is_owner(self.__curr_user.get_nickname()) or
+            #  store.is_manager(self.__curr_user.get_nickname())) and \
+            # store.product_in_inventory(product_name):
             # Check if the new name is already exist in the sore. if does, return false.
             if op.lower() == "name":
                 if (store.get_name(), new_value) in [(e['store_name'], e['product_name']) for e in
@@ -568,9 +576,9 @@ class TradeControl:
         if store.is_owner(appointee_nickname):
             return {'response': False, 'msg': "appointee " + appointee_nickname + " is already a store owner"}
         if self.__curr_user.is_registered() and \
-           appointee.is_registered() and \
-           self.__curr_user.is_logged_in() and \
-           (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
+                appointee.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
             result = store.add_owner(self.__curr_user.get_nickname(), appointee)
             if result:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
@@ -578,7 +586,8 @@ class TradeControl:
         return {'response': False, 'msg': "User has no permissions"}
 
     @logger
-    def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
+    def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool,
+                                                                                                     'msg': str}:
         """
         :param appointee_nickname: nickname of the new manager that will be appointed
         :param store_name: store's name
@@ -599,9 +608,9 @@ class TradeControl:
             return {'response': False, 'msg': "appointee " + appointee_nickname + " is already a store manager"}
 
         if self.__curr_user.is_registered() and appointee.is_registered() and \
-           self.__curr_user.is_logged_in() and \
-           (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
-                 self.__curr_user.get_nickname())):
+                self.__curr_user.is_logged_in() and \
+                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
+                    self.__curr_user.get_nickname())):
             result = store.add_manager(self.__curr_user, appointee, permissions)
             if result:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store manager"}
@@ -674,74 +683,97 @@ class TradeControl:
 
     # ------------------- 4.2 --------------------
     @logger
-    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
+    def get_policies(self, purchase_type: str, store_name: str) -> [dict] or None:
         """
                 according to the given type, displays a list of policies for the store
-        :param type: can be "purchase" or "discount"
+        :param purchase_type: can be "purchase" or "discount"
         :param store_name:
         :return: list of policies or empty list, returns None if user is not owner of the store or if invalid flag
         """
         store = self.get_store(store_name)
         if store is None or not store.is_owner(self.__curr_user.get_nickname()):
-            return None
+            return {'response': None, 'msg': "Store doesn't exist, or user un-authorized for this action"}
 
-        if type == "purchase":
-            return store.get_purchase_policies()
-        elif type == "discount":
-            return store.get_discount_policies()
-        return None
+        if purchase_type == "purchase":
+            return {'response': store.get_purchase_policies(), 'msg': "Great Success! Purchase policies retrieved"}
+        elif purchase_type == "discount":
+            return {'response': store.get_discount_policies(), 'msg': "Great Success! Purchase policies retrieved"}
+        return {'response': None, 'msg': "Not a valid choice of purchase type"}
 
     @logger
-    def define_purchase_policy(self, store_name: str, details: {"name": str, "operator": str, "products": [str],
-                                                                "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}):
+    def define_store_purchase_operator(self, store_name: str, operator: str):
+        """
+            set operator for store purchase policies
+        :param store_name:
+        :param operator: and/or/xor
+        :return: none
+        """
+        store: Store = self.get_store(store_name)
+        store.set_purchase_operator(operator)
+
+    @logger
+    def define_purchase_policy(self, store_name: str,
+                               details: {"name": str, "products": [str], "min_amount": int or None,
+                                         "max_amount": int or None, "dates": [dict] or None, "bundle": bool or None}) \
+            -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
         :param store_name:
         :param details: {"name": str,                             -> policy name
-                        "operator": str,                         -> and/or/xor
                         "products": [str],                       -> list of product names
                         "min_amount": int or None,               -> minimum amount of products required
                         "max_amount": int or None,               -> maximum amount of products required
                         "dates": [dict] or None,                 -> list of prohibited dated for the given products
                         "bundle": bool or None}                  -> true if the products are bundled together
            i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
-        :return: true if successful, otherwise false
+        :return: true if successful, otherwise false with details for failure
         """
         store = self.get_store(store_name)
-        if store is None \
-                or details.get("products") is None \
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+
+        if details.get("products") is None \
                 or details.get("name") is None \
-                or not self.at_least_one(details, False) \
-                or store.purchase_policy_exists(details) \
-                or not store.is_owner(self.__curr_user.get_nickname()):
-            return False
+                or not self.at_least_one(details, False):
+            return {'response': False, 'msg': "Policy name, product(s) and at least one rule must be added"}
+
+        if store.purchase_policy_exists(details):
+            return {'response': False, 'msg': "A policy by the given name already exist"}
+
+        if not store.is_owner(self.__curr_user.get_nickname()):
+            return {'response': False, 'msg': "Oopsie poopsie...User un-authorized for this action"}
         return store.define_purchase_policy(details)
 
     @logger
-    def update_purchase_policy(self, store_name: str, details: {"name": str, "operator": str or None, "products": [str],
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}):
+                                                                "dates": [dict] or None, "bundle": bool or None}) \
+            -> {'response': bool, 'msg': str}:
         """
             update must have valid policy name of an existing policy and at least one more detail
         :param store_name:
         :param details: {"name": str,                            -> policy name
-                        "operator": str,                         -> and/or/xor
                         "products": [str] or None,               -> list of product names
                         "min_amount": int or None,               -> minimum amount of products required
                         "max_amount": int or None,               -> maximum amount of products required
                         "dates": [dict] or None,                 -> list of prohibited dated for the given products
                         "bundle": bool or None}                  -> true if the products are bundled together
            i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
-        :return: true if successful, otherwise false
+        :return: true if successful, otherwise false with details for failure
         """
         store = self.get_store(store_name)
-        if store is None \
-                or details.get("name") is None \
-                or not self.at_least_one(details, True) \
-                or not store.purchase_policy_exists(details) \
-                or not store.is_owner(self.__curr_user.get_nickname()):
-            return False
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+
+        if details.get("name") is None \
+                or not self.at_least_one(details, True):
+            return {'response': False, 'msg': "Policy name and at least one rule must be added"}
+
+        if not store.purchase_policy_exists(details):
+            return {'response': False, 'msg': "Purchase policy doesn't exist"}
+
+        if not store.is_owner(self.__curr_user.get_nickname()):
+            return {'response': False, 'msg': "User un-authorized for this action"}
         return store.update_purchase_policy(details)
 
     @logger
@@ -757,7 +789,12 @@ class TradeControl:
     def at_least_one(details: {"name": str, "operator": str, "products": [str], "min_amount": int or None,
                                "max_amount": int or None, "dates": [dict] or None, "bundle": bool or None},
                      check_product: bool):
-
+        """
+            check if at least one of the given details is not none
+        :param details:
+        :param check_product:
+        :return:
+        """
         res = details.get("min_amount") is not None \
               or details.get("max_amount") is not None \
               or details.get("dates") is not None \

@@ -16,7 +16,7 @@ class PurchasePolicy(PurchaseComponent):
     def __init__(self):
         super().__init__()
         self.__children: [PurchaseComponent] = []
-        self.__operator = ""
+        # self.__operator = ""
 
     def can_purchase(self, details: [{"product_name": str, "amount": int}], curr_date: datetime):
         """
@@ -24,31 +24,18 @@ class PurchasePolicy(PurchaseComponent):
         :param details: list [{"product_name": str, "amount": int}]
         :return: True if the user can purchase the products, else False
         """
-        xor_flag = False
         for policy in self.__children:
-            can_purchase = policy.can_purchase(details, curr_date)
-            if self.__operator == "and" and not can_purchase:
-                return False
-            elif self.__operator == "xor":
-                if can_purchase:
-                    if not xor_flag:
-                        xor_flag = True
-                    else:
-                        return False
-            elif self.__operator == "or" and can_purchase:
-                return True
-            else:
+            if not policy.can_purchase(details, curr_date):
                 return False
         return True
 
-    def add_purchase_policy(self, details: {"name": str, "operator": str, "products": [str], "min_amount": int or None,
+    def add_purchase_policy(self, details: {"name": str, "products": [str], "min_amount": int or None,
                                             "max_amount": int or None, "dates": [dict] or None,
-                                            "bundle": bool or None}) -> bool:
+                                            "bundle": bool or None}) -> {'response': bool, 'msg': str}:
         """
             add new purchase policy. current policies available are: grouped products, prohibited dates,
             min amount and max amount
         :param details: {"name": str,                             -> policy name
-                        "operator": str,                         -> and/or/xor
                         "products": [str],                       -> list of product names
                         "min_amount": int or None,               -> minimum amount of products required
                         "max_amount": int or None,               -> maximum amount of products required
@@ -57,21 +44,19 @@ class PurchasePolicy(PurchaseComponent):
                 i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
         :return: true if successful, otherwise false
         """
-        if not details.get("products") or not details.get("name") or not details.get("operator"):
-            return False
-
         policies = self.__get_policy_type(details)
 
         if len(policies) > 0:
             for policy in policies:
                 self.__children.append(policy)
             self._name = details["name"]
-            self.__operator = details["operator"]
-            return True
-        return False
+            # self.__operator = details["operator"]
+            return {'response': True, 'msg': "Great Success! Policy added"}
+        return {'response': False, 'msg': "Oops...failed to add policy, please check all details are correct and try "
+                                          "again"}
 
     @staticmethod
-    def __get_policy_type(details: {"name": str, "operator": str, "products": [str], "min_amount": int or None, "max_amount": int or None,
+    def __get_policy_type(details: {"name": str, "products": [str], "min_amount": int or None, "max_amount": int or None,
                                     "dates": [dict] or None, "bundle": bool or None}) -> [PurchaseComponent] or []:
         """
         :param details:{"name": str,                             -> policy name
@@ -95,7 +80,7 @@ class PurchasePolicy(PurchaseComponent):
         return policies
 
     @logger
-    def equals(self, details: {"name": str, "operator": str or None, "products": [str], "min_amount": int or None, "max_amount": int or None,
+    def equals(self, details: {"name": str, "products": [str], "min_amount": int or None, "max_amount": int or None,
                                "dates": [dict] or None, "bundle": bool or None}) -> bool:
         if details.get("name") and self._name == details["name"]:
             return True
@@ -103,7 +88,7 @@ class PurchasePolicy(PurchaseComponent):
 
     @logger
     def get_details(self) -> dict:
-        dictionary = {"name": self._name, "operator": self.__operator}
+        dictionary = {"name": self._name}
         for policy in self.__children:
             dictionary = policy.get_details(dictionary)
         return dictionary
@@ -113,11 +98,11 @@ class PurchasePolicy(PurchaseComponent):
         return self._name
 
     @logger
-    def update(self, details: {"name": str, "operator": str or None, "products": [str], "min_amount": int or None, "max_amount": int or None,
+    def update(self, details: {"name": str, "products": [str], "min_amount": int or None, "max_amount": int or None,
                                "dates": [dict] or None, "bundle": bool or None}):
         for policy in self.__children:
             policy.update(details)
-        return True
+        return {'response': True, 'msg': "Great Success! Policy updated"}
 
     def __repr__(self):
         return repr("PurchasePolicy")

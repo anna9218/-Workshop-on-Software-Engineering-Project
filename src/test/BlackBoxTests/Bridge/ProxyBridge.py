@@ -126,8 +126,11 @@ class ProxyBridge(Bridge):
         return self._realbridge.remove_products_from_store(store_name, products_names)
 
     # 4.2
-    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
-        return self._realbridge.define_and_update_policies(type, store_name)
+    def set_purchase_operator(self, store_name: str, operator: str):
+        self._realbridge.set_purchase_operator(store_name, operator)
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        return self._realbridge.define_and_update_policies(policy_type, store_name)
 
     def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None,
