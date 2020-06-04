@@ -39,13 +39,13 @@ class RealDbTests(unittest.TestCase):
             pass
 
     def test_is_connected(self):
-        database.connect = MagicMock(return_value=True)
+        database.is_closed = MagicMock(return_value=True)
         self.assertFalse(self.real_db.is_connected())
 
-        database.connect = MagicMock(return_value=False)
+        database.is_closed = MagicMock(return_value=False)
         self.assertTrue(self.real_db.is_connected())
 
-        database.connect = MagicMock(return_value=AttributeError())
+        database.is_closed = MagicMock(return_value=AttributeError())
         try:
             self.real_db.is_connected()
             self.fail()

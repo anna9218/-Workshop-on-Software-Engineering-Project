@@ -53,11 +53,7 @@ class RealDb(DbSubject):
     @logger
     def is_connected(self) -> bool:
         try:
-            output = database.connect(reuse_if_open=True)
-            if output:
-                database.close()
-                return False
-            return True
+            return not database.is_closed()
         except Exception:
             return False
 
@@ -69,10 +65,7 @@ class RealDb(DbSubject):
         :return: list of RealDb.tbl
         """
         # todo: try to select specific columns via the db.
-        if where_expr is None:
-            return tbl.select().execute()
-        else:
-            return tbl.select().where(where_expr).execute()
+        return tbl.select().where(where_expr).execute()
 
     def write(self, tbl, attributes_as_dictionary: {}):
         """

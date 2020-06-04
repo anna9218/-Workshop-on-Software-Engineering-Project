@@ -8,6 +8,7 @@ Represent the table of users.
 NOT the domain users.
 """
 
+
 class UserData:
     __instance = None
 
