@@ -1,10 +1,10 @@
 """
     test class for use case 2.2 - registration
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class RegisterTest(ProjectTest):
+class RegisterTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
 

@@ -828,8 +828,66 @@ class StoreTests(unittest.TestCase):
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
+    def test_purchase_policy_exists(self):
+        self.store.define_purchase_policy({"name": "policy1", "products": ["product1"], "min_amount": 8})
+        # policy exists
+        res = self.store.purchase_policy_exists({"name": "policy1", "products": ["product1"], "min_amount": 8})
+        self.assertTrue(res)
+
+        # policy doesn't exist
+        res = self.store.purchase_policy_exists({"name": "policy2", "products": ["product1"], "min_amount": 8})
+        self.assertFalse(res)
+
+        res = self.store.purchase_policy_exists({"products": ["product1"], "min_amount": 8})
+        self.assertFalse(res)
+
+        res = self.store.purchase_policy_exists({"name": "policy1", "products": ["product1", "product2"], "min_amount": 8})
+        self.assertFalse(res)
+
+        res = self.store.purchase_policy_exists({"name": "policy2", "products": ["product1"], "min_amount": 10})
+        self.assertFalse(res)
+
+    def test_add_purchase_policy(self):
+        # valid details
+        res = self.store.define_purchase_policy({"name": "policy1",
+                                                 "products": ["product1"], "min_amount": 8})["response"]
+        self.assertTrue(res)
+
+        # invalid details
+        res = self.store.define_purchase_policy({"name": "policy2",
+                                                 "products": ["product1"]})["response"]
+        self.assertFalse(res)
+
+        res = self.store.define_purchase_policy({"products": ["product1"], "min_amount": 8})["response"]
+        self.assertFalse(res)
+
+    def test_update_purchase_policy(self):
+        self.store.define_purchase_policy({"name": "policy1",
+                                           "products": ["product1"], "min_amount": 8})
+        # valid update
+        res = self.store.update_purchase_policy({"name": "policy1",
+                                           "products": ["product1"], "min_amount": 4})["response"]
+        self.assertTrue(res)
+
+        # invalid update
+        res = self.store.update_purchase_policy({"name": "policy2",
+                                                 "products": ["product1"], "min_amount": 4})["response"]
+        self.assertFalse(res)
+
+    def test_get_purchase_policies(self):
+        # no policies exist
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) == 0)
+
+        # policies exist
+        self.store.define_purchase_policy({"name": "policy1",
+                                           "products": ["product1"], "min_amount": 8})
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) > 0)
+
     # # @logger
     def tearDown(self) -> None:
+        self.store.reset_policies()
         self.store = None
 
     def __repr__(self):

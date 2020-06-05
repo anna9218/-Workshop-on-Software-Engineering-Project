@@ -8,7 +8,7 @@ from src.test.BlackBoxTests.AcceptanceTests.Driver import Driver
 import unittest
 
 
-class ProjectTest(ABC, unittest.TestCase):
+class ProjectAT(ABC, unittest.TestCase):
 
     # setup for all tests
     @abstractmethod
@@ -232,4 +232,4 @@ class ProjectTest(ABC, unittest.TestCase):
         pass
 
     def __repr__(self):
-        return repr("ProjectTest")
+        return repr("ProjectAT")
