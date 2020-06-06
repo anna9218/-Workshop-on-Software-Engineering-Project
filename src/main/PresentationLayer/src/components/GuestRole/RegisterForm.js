@@ -64,7 +64,7 @@ class RegisterForm extends React.Component{
         
     render(){
         return (
-            <div>
+            <div style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
             <h1>Registration</h1>
             <form className='register'>
               <input type="text" id="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
@@ -74,6 +74,10 @@ class RegisterForm extends React.Component{
               <button type="button" onClick={this.handleRegister}>Register</button>
               </Link>
             </form>
+
+            <Button variant="secondary" style={{marginTop: "1%"}} as={Link} to="./login">
+                Login
+            </Button>
 
 
 

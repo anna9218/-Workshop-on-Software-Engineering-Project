@@ -15,7 +15,10 @@ function StoreDetail(props) {
   const [storeName, setStoreName]= useState('');
 
   const onStoreInfoClickHandler = () => {
-    alert('Store info bla bla')
+    const promise = theService.displayStoresStores(storeName)
+    promise.then((data) => {
+      alert(data["data"])
+    })
   };
 
   return (
@@ -28,7 +31,7 @@ function StoreDetail(props) {
                   state: {
                       storeName: storeName               
                     }}}>
-                <Button variant="dark" id="productsbtn" block>Products</Button>
+                <Button variant="dark" id="productsbtn" block>Products Info</Button>
             </Link>
             <Link to={{
                   pathname:'/stores'

@@ -52,10 +52,9 @@ function AddProductsForm(props){
 
 
   return (
-      <div>
+      <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
 
         <Container>
-        <Jumbotron fluid>
         <h1>Add a New Product</h1>
         <Form className='add_product'>
           <Form.Label>Choose the product name:</Form.Label>
@@ -84,7 +83,6 @@ function AddProductsForm(props){
         </Form>
 
         <Button variant="dark" id="open-store-button" onClick={addProductHandler}>Add Product!</Button>
-        </Jumbotron>
         </Container>
 
       </div>

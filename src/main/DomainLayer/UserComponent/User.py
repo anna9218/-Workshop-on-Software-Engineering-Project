@@ -44,6 +44,8 @@ class User:
             return {'response': False, 'msg': "Subscriber " +nickname+ " is already logged in"}
         if self.check_nickname(nickname):
             self.__loginState.login()
+            if self.__registrationState.get_nickname() == "TradeManager":
+                return {'response': True, 'msg': "SYS_MANAGER"}
             return {'response': True, 'msg': "Subscriber logged in successfully"}
         return {'response': False, 'msg': "Incorrect nickname"}
 

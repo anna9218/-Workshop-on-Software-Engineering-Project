@@ -7,9 +7,10 @@ class StoreOwnerOrManagerRole:
     def __init__(self):
         pass
 
-    @logger
+    # @logger
     # use case 4.1.1
-    def add_products(self, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
+    @staticmethod
+    def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
         int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
