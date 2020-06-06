@@ -164,56 +164,35 @@ class ShoppingCartTests(unittest.TestCase):
                                            product_as_dictionary_var1,
                                            product_as_dictionary_var2,
                                            product_as_dictionary_var3])
-
         # All Valid - product only in one store
         self.assertTrue(self.__shopping_cart.update_quantity([{"product_name": self.__product.get_name(),
                                                                "store_name": self.__store.get_name(),
                                                                "amount": 123}])['response'])
-        product_as_dictionary_lst_self_store = \
-            self.__shopping_cart.get_store_basket(self.__store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == self.__product.get_name()]
-        self.assertEqual(123, product_amount_as_lst_self_store[0])
+        self.assertEqual(123, self.__shopping_cart.get_store_basket(self.__store.get_name()).get_product_amount(
+            self.__product.get_name()))
 
         # All Valid - product in two stores, but change only in one
         self.assertTrue(self.__shopping_cart.update_quantity([{"product_name": product1.get_name(),
                                                                "store_name": self.__store.get_name(),
                                                                "amount": 234}])['response'])
-        product_as_dictionary_lst_self_store = \
-            self.__shopping_cart.get_store_basket(self.__store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == product1.get_name()]
-        product_as_dictionary_lst_store1 = \
-            self.__shopping_cart.get_store_basket(store1.get_name()).get_products()
-        product_amount_as_lst_store1 = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_store1
-             if product_as_dictionary['product'].get_name() == product1.get_name()]
-        self.assertEqual(234, product_amount_as_lst_self_store[0])
-        self.assertEqual(12, product_amount_as_lst_store1[0])
+        self.assertEqual(234,  self.__shopping_cart.get_store_basket(self.__store.get_name()).get_product_amount(
+            product1.get_name()))
+        self.assertEqual(12,  self.__shopping_cart.get_store_basket(store1.get_name()).get_product_amount(
+            product1.get_name()))
 
         # Invalid - product not in store
         self.assertFalse(self.__shopping_cart.update_quantity([{"product_name": product2.get_name(),
                                                                 "store_name": self.__store.get_name(),
                                                                 "amount": 234}])['response'])
-        product_as_dictionary_lst_store1 = \
-            self.__shopping_cart.get_store_basket(store1.get_name()).get_products()
-        product_amount_as_lst_store1 = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_store1
-             if product_as_dictionary['product'].get_name() == product2.get_name()]
-        self.assertNotEqual(234, product_amount_as_lst_store1[0])
+        self.assertNotEqual(234, self.__shopping_cart.get_store_basket(store1.get_name()).get_product_amount(
+            product2.get_name()))
 
         # Invalid - negative amount
         self.assertFalse(self.__shopping_cart.update_quantity([{"product_name": self.__product.get_name(),
                                                                 "store_name": self.__store.get_name(),
                                                                 "amount": -999}])['response'])
-        product_as_dictionary_lst_self_store = \
-            self.__shopping_cart.get_store_basket(self.__store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == self.__product.get_name()]
-        self.assertNotEqual(-999, product_amount_as_lst_self_store[0])
+        self.assertNotEqual(-999, self.__shopping_cart.get_store_basket(self.__store.get_name()).get_product_amount(
+            self.__product.get_name()))
 
     def test_remove_store_basket(self):
         expected_basket = ShoppingBasket()

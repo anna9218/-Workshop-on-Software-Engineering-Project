@@ -134,7 +134,10 @@ class Bridge(ABC):
         pass
 
     # 4.2 add and update purchase and discount policies
-    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
+    def set_purchase_operator(self, store_name: str, operator: str):
+        pass
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
         pass
 
     def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,

@@ -202,8 +202,7 @@ class GuestRole:
                 PaymentProxy.get_instance().cancel_payment(purchase_ls)
                 return {'response': False, 'msg': deliver_success['msg'] + " Payment was canceled."}
             else:
-                TradeControl.get_instance().accept_purchases(purchase_ls)
-                return {'response': True, 'msg': "Payment and Delivery were successful"}
+                return TradeControl.get_instance().accept_purchases(purchase_ls)
         return pay_success
     # ------------------------------------------------- END OF U.C 2.8 ----------------------------------------------
 

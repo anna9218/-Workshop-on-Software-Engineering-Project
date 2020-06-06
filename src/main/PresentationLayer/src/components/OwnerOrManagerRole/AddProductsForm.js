@@ -1,12 +1,23 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 
-function AddProductsForm(){
+
+function AddProductsForm(props){
+  useEffect(() => {
+    console.log(props);
+    setStoreName(props.storeName);
+    // setShowAddFormFunction(props.showForm);
+  }, []);
+
+  const [storeName, setStoreName]= useState("");
+  // const [showAddFormFunction, setShowAddFormFunction]= useState();
 
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState();
@@ -14,9 +25,28 @@ function AddProductsForm(){
   const [productAmount, setProductAmount] = useState();
 
   const addProductHandler = async () =>{
-    const promise = theService.addProduct(productName, productPrice, productCategory, productAmount); // goes to register.js and sends to backend
+    const promise = theService.addProduct(storeName, productName, productPrice, productCategory, productAmount); // goes to register.js and sends to backend
     promise.then((data) => {
-      alert(data["msg"]);
+
+        confirmAlert({
+        title: data["msg"],
+        buttons: [
+          {
+            label: 'Add another product',
+            onClick: () => { // reset the form in order to add another product
+              setProductName("");
+              setProductPrice("");
+              setProductCategory("");
+              setProductAmount("");
+            }
+          },
+          {
+            label: 'Done',
+            onClick: () => alert('Click No')  //TODO - add an option to go back (need to disable addProductForm)
+          }
+        ]
+      });
+
     });
   };
 

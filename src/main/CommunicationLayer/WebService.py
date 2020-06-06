@@ -2,7 +2,9 @@ from flask import Flask, request
 # import os
 from flask_cors import CORS
 from flask import jsonify
+
 from src.main.ServiceLayer.GuestRole import GuestRole
+from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 
 app = Flask(__name__)
@@ -39,9 +41,18 @@ def login():
 @app.route('/display_stores', methods=['GET'])
 def display_stores():
     response = GuestRole.display_stores()  # BUG
-    return jsonify(data=response)  # should be list of Store objects (maybe)
-    # LETS RETURN JUST THE STORE'S NAME (INSTEAD OF STORE OBJECTS)
-    # return jsonify(data=["STORE1", "STORE2"])
+    return jsonify(data=response)
+
+
+@app.route('/display_stores_products', methods=['POST'])
+def display_stores_products():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        store_info_flag = request_dict.get('store_info_flag')
+        products_info_flag = request_dict.get('products_info_flag')
+        response = GuestRole.display_stores_or_products_info(store_name, store_info_flag, products_info_flag)
+        return jsonify(data=response)
 
 
 @app.route('/view_shopping_cart', methods=['GET'])
@@ -109,12 +120,20 @@ def purchase_products():
 
 # ------------------------------ STORE OWNER AND MANAGER ROLE SERVICES ------------------------------------#
 
+
+@app.route('/get_owned_stores', methods=['GET'])
+def get_owned_stores():
+    response = StoreOwnerOrManagerRole.get_owned_stores()
+    return jsonify(data=response)
+
+
 @app.route('/add_product', methods=['POST'])
 def add_product():
     if request.is_json:
         request_dict = request.get_json()
-        # product_name = request_dict.get('product_name')
-        response = SubscriberRole.add_product(request_dict)
+        store_name = request_dict.get('store_name')  # str
+        products_details = request_dict.get('products_details')  # list of tuples
+        response = StoreOwnerOrManagerRole.add_products(store_name, products_details)
         if response:
             return jsonify(msg="Congrats! Product was added!")
     return jsonify(msg="Oops, product wasn't added")

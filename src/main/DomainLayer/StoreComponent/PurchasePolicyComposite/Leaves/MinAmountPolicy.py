@@ -41,3 +41,9 @@ class MinAmountPolicy(PurchaseComponent):
         if details.get("min_amount"):
             self.__products = details["products"]
             self.__amount = details["min_amount"]
+
+    def get_min_amount(self):
+        return self.__amount
+
+    def get_products(self):
+        return self.__products

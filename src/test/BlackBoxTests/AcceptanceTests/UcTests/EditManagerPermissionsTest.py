@@ -1,10 +1,10 @@
 """
     test class for use case 4.6 - edit managers' permissions
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class EditManagerPermissionsTest(ProjectTest):
+class EditManagerPermissionsTest(ProjectAT):
 
     # @logger
     def setUp(self) -> None:

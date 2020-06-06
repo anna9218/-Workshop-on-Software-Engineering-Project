@@ -3,10 +3,10 @@
 """
 from datetime import datetime
 
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class PurchaseProductsTest(ProjectTest):
+class PurchaseProductsTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)

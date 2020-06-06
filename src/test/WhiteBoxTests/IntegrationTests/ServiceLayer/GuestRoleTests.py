@@ -425,7 +425,7 @@ class GuestRoleTest(unittest.TestCase):
         shopping_cart = (TradeControl.get_instance()).get_curr_user().get_shopping_cart()
 
         # All valid
-        self.assertTrue(self.__guest_role.save_products_to_basket([product_as_dictionary]))
+        self.assertTrue(self.__guest_role.save_products_to_basket([product_as_dictionary])['response'])
         self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
         self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
                                  shopping_cart.get_shopping_baskets()])

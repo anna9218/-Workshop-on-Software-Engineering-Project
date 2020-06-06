@@ -2,13 +2,13 @@
     test suite class - used to test V1 Features.
 """
 import unittest
-from Backend.src.test.WhiteBoxTests.RegressionTests.Version1.SystemManagerRoleTests import SystemManagerRoleTests as \
+from src.test.WhiteBoxTests.RegressionTests.Version1.SystemManagerRoleTests import SystemManagerRoleTests as \
     SystemManagerRoleTests_V1
-from Backend.src.test.WhiteBoxTests.RegressionTests.Version1.SubscriberRoleTests import SubscriberRoleTests as \
+from src.test.WhiteBoxTests.RegressionTests.Version1.SubscriberRoleTests import SubscriberRoleTests as \
     SubscriberRoleTests_V1
-from Backend.src.test.WhiteBoxTests.RegressionTests.Version1.StoreOwnerOrManagerTests import StoreOwnerOrManagerTests \
+from src.test.WhiteBoxTests.RegressionTests.Version1.StoreOwnerOrManagerTests import StoreOwnerOrManagerTests \
     as StoreOwnerOrManagerTests_V1
-from Backend.src.test.WhiteBoxTests.RegressionTests.Version1.GuestRoleTests import GuestRoleTest as \
+from src.test.WhiteBoxTests.RegressionTests.Version1.GuestRoleTests import GuestRoleTest as \
     GuestRoleTests_V1
 
 
