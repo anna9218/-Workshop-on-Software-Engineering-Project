@@ -1,6 +1,5 @@
 import unittest
 
-from src.Logger import logger
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 
 
@@ -25,24 +24,24 @@ class FacadeDeliveryTests(unittest.TestCase):
     def test_wrong_input(self):
         # valid user + invalid address
         res = self.__delivery_sys.deliver_products(self.__valid_username, self.__wrong_input)
-        self.assertEqual(False, res)
+        self.assertEqual(False, res['response'])
         # invalid user + valid address
         res = self.__delivery_sys.deliver_products(self.__wrong_input, self.__valid_address)
-        self.assertEqual(False, res)
+        self.assertEqual(False, res['response'])
         # invalid user + invalid address
         res = self.__delivery_sys.deliver_products(self.__wrong_input, self.__wrong_input)
-        self.assertEqual(False, res)
+        self.assertEqual(False, res['response'])
         # system disconnect + valid input
         self.__delivery_sys.disconnect()
         res = self.__delivery_sys.deliver_products(self.__valid_username, self.__valid_address)
-        self.assertEqual(False, res)
+        self.assertEqual(False, res['response'])
         return
 
     # @logger
     def test_correct_input(self):
         # valid user + valid address
         res = self.__delivery_sys.deliver_products(self.__valid_username, self.__valid_address)
-        self.assertEqual(True, res)
+        self.assertEqual(True, res['response'])
         return
 
     # @logger

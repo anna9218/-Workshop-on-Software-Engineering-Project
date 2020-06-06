@@ -3,12 +3,10 @@
 """
 from datetime import datetime
 
-from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class ViewPersonalHistoryTest(ProjectTest):
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
@@ -23,20 +21,17 @@ class ViewPersonalHistoryTest(ProjectTest):
         self.confirm_purchase("my address 12", self.__purchase_ls)
         self.__date = datetime.now()
 
-    # @logger
     def test_success(self):
         # none empty shopping cart
         res = self.view_personal_purchase_history()
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # empty shopping cart
         self.remove_purchase(self._store_name, self.__date)
         res = self.view_personal_purchase_history()
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.remove_purchase(self._store_name, self.__date)
         self.update_shopping_cart("remove",

@@ -1,13 +1,11 @@
 """
     test class for use case 2.7 - view and update shopping cart
 """
-from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class UpdateCartTest(ProjectTest):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
@@ -17,7 +15,6 @@ class UpdateCartTest(ProjectTest):
                                    [{"name": "product", "price": 10, "category": "general", "amount": 5}])
         self.add_products_to_cart("product", self._store_name, 1, 0, 0)
 
-    # @logger
     def test_success(self):
         # view cart with valid details
         res = self.view_shopping_cart()
@@ -31,29 +28,27 @@ class UpdateCartTest(ProjectTest):
                                         [{"product_name": "product", "store_name": self._store_name, "amount": 1}])
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.update_shopping_cart("update",
                                         [{"product_name": "product", "store_name": "anotherStoreName", "amount": 10}])
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         res = self.update_shopping_cart("remove",
                                         [{"product_name": "product", "store_name": "anotherStoreName", "amount": 1}])
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # product doesn't exist
         res = self.update_shopping_cart("update",
                                     [{"product_name": "anotherProduct", "store_name": self._store_name, "amount": 10}])
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         res = self.update_shopping_cart("remove",
                                     [{"product_name": "anotherProduct", "store_name": self._store_name, "amount": 1}])
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # empty shopping cart
         self.update_shopping_cart("remove",
                                     [{"product_name": "product", "store_name": self._store_name, "amount": 1}])
         res = self.view_shopping_cart()
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 1}])

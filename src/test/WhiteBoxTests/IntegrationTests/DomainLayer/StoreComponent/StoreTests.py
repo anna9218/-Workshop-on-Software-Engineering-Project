@@ -1,6 +1,5 @@
 import unittest
 
-from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
@@ -90,7 +89,7 @@ class StoreTests(unittest.TestCase):
         # Invalid Product - negative price
         self.assertFalse(
             self.store.add_products("Eytan",
-                                    [{"name": "Eytan's Toy", "price": -99, "category": "Furniture", "amount": 5}]))
+                                    [{"name": "Eytan's Toy", "price": -99, "category": "Furniture", "amount": 5}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("Eytan's Toy" in products_names)
@@ -100,7 +99,7 @@ class StoreTests(unittest.TestCase):
         # Invalid amount - negative amount
         self.assertFalse(
             self.store.add_products("Eytan",
-                                    [{"name": "Eytan's Toy", "price": 1, "category": "Furniture", "amount": -5}]))
+                                    [{"name": "Eytan's Toy", "price": 1, "category": "Furniture", "amount": -5}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("Eytan's Toy" in products_names)
@@ -109,7 +108,7 @@ class StoreTests(unittest.TestCase):
 
         # Invalid Product - invalid name
         self.assertFalse(
-            self.store.add_products("Eytan", [{"name": "", "price": 100, "category": "Furniture", "amount": 5}]))
+            self.store.add_products("Eytan", [{"name": "", "price": 100, "category": "Furniture", "amount": 5}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("" in products_names)
@@ -118,7 +117,7 @@ class StoreTests(unittest.TestCase):
 
         # Invalid Product - invalid category
         self.assertFalse(
-            self.store.add_products("Eytan", [{"name": "Eytan's Toy", "price": 100, "category": "", "amount": 5}]))
+            self.store.add_products("Eytan", [{"name": "Eytan's Toy", "price": 100, "category": "", "amount": 5}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("Eytan's Toy" in products_names)

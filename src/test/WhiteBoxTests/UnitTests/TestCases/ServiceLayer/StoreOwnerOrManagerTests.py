@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.Logger import logger
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole, TradeControl
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 

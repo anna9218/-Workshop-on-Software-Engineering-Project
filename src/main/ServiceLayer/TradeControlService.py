@@ -4,9 +4,6 @@ from src.Logger import loggerStaticMethod
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
-from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from src.main.ServiceLayer.GuestRole import GuestRole
 
 
 class TradeControlService:
@@ -17,13 +14,18 @@ class TradeControlService:
     # use case 1.1
     @staticmethod
     def init_system():
-        # loggerStaticMethod("init_system", [])
+        loggerStaticMethod("init_system", [])
         if not DeliveryProxy.get_instance().is_connected() and not PaymentProxy.get_instance().is_connected():
             if TradeControl.get_instance().register_guest("TradeManager", "123456789"):
-                return DeliveryProxy.get_instance().connect() and \
-                       PaymentProxy.get_instance().connect() and \
-                       TradeControl.get_instance().add_system_manager("TradeManager", "123456789")
-        return False
+                if not DeliveryProxy.get_instance().connect():
+                    return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
+                if not PaymentProxy.get_instance().connect():
+                    return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
+                res = TradeControl.get_instance().add_system_manager("TradeManager", "123456789")
+                if res['response']:
+                    return {'response': True, 'msg': "Init system was successful!"}
+                return {'response': False, 'msg': "Init system failed! " + res['msg']}
+        return {'response': False, 'msg': "Init system failed!"}
 
     # functions for tests???
     @staticmethod

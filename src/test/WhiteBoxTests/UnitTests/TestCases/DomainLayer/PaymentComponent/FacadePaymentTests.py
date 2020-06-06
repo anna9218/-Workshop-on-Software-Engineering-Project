@@ -1,6 +1,5 @@
 import unittest
 
-from src.Logger import logger
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
 from datetime import datetime as date_time
 
@@ -30,10 +29,10 @@ class FacadePaymentTests(unittest.TestCase):
     # TODO: complete this test
     def test_wrong_input(self):
         pass
-        # # valid user, amount, credit + invalid date
-        # #  [{"store_name": str, "basket_price": float, "products": [{"product_name", "product_price", "amount"}]}]
+        # valid user, amount, credit + invalid date
+        #  [{"store_name": str, "basket_price": float, "products": [{"product_name", "product_price", "amount"}]}]
         # res = self.__payment_sys.commit_payment(self.__valid_username, 10, self.__valid_credit, self.__wrong_input)
-        # self.assertEqual(False, res)
+        # self.assertEqual(False, res['response'])
         # # valid user, amount, credit + invalid date
         # res = self.__payment_sys.commit_payment(self.__valid_username, 10, self.__valid_credit, self.__passed_date)
         # self.assertEqual(False, res)

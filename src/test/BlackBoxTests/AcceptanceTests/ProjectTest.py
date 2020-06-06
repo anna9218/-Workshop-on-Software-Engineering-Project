@@ -4,7 +4,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.Driver import Driver
 import unittest
 
@@ -141,6 +140,29 @@ class ProjectTest(ABC, unittest.TestCase):
     # @logger
     def remove_products_from_store(self, store_name: str, products_names: list) -> bool:
         return self.__bridge.remove_products_from_store(store_name, products_names)
+
+    # 4.2 add and update purchase and discount policies
+    def set_purchase_operator(self, store_name: str, operator: str):
+        self.__bridge.set_purchase_operator(store_name, operator)
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        return self.__bridge.get_policies(policy_type, store_name)
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None, "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self.__bridge.update_purchase_policy(store_name, details)
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None, "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self.__bridge.define_purchase_policy(store_name, details)
+
+    def update_discount_policy(self):
+        return self.__bridge.update_discount_policy()
+
+    def define_discount_policy(self):
+        return self.__bridge.define_discount_policy()
 
     # @logger
     # 4.3 add store owner functions

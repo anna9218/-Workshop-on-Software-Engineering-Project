@@ -8,8 +8,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from src.Logger import logger
-
 
 class Bridge(ABC):
 
@@ -133,6 +131,31 @@ class Bridge(ABC):
 
     @abstractmethod
     def remove_products_from_store(self, store_name: str, products_names: list):
+        pass
+
+    # 4.2 add and update purchase and discount policies
+    def set_purchase_operator(self, store_name: str, operator: str):
+        pass
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        pass
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        pass
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        pass
+
+    def update_discount_policy(self):
+        pass
+
+    def define_discount_policy(self):
         pass
 
     # add store owner functions

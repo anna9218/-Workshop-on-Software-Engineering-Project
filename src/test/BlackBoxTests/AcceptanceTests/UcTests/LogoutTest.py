@@ -1,7 +1,6 @@
 """
     test class for use case 3.1 - logout
 """
-from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
@@ -23,7 +22,7 @@ class LogoutTest(ProjectTest):
         # user not logged in
         self.logout()
         res = self.logout()
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
 
     # @logger
     def tearDown(self) -> None:

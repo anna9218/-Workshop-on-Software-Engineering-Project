@@ -5,7 +5,6 @@
 """
 from datetime import datetime
 
-from src.Logger import logger
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
 from src.test.BlackBoxTests.Bridge.RealBridge import RealBridge
 
@@ -125,6 +124,31 @@ class ProxyBridge(Bridge):
     # @logger
     def remove_products_from_store(self, store_name: str, products_names: list):
         return self._realbridge.remove_products_from_store(store_name, products_names)
+
+    # 4.2
+    def set_purchase_operator(self, store_name: str, operator: str):
+        self._realbridge.set_purchase_operator(store_name, operator)
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        return self._realbridge.define_and_update_policies(policy_type, store_name)
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self._realbridge.update_purchase_policy(store_name, details)
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self._realbridge.define_purchase_policy(store_name, details)
+
+    def update_discount_policy(self):
+        return self._realbridge.update_discount_policy()
+
+    def define_discount_policy(self):
+        return self._realbridge.define_discount_policy()
 
     # 4.3
     # @logger

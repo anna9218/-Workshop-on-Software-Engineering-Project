@@ -1,9 +1,7 @@
 import unittest
-from unittest.mock import MagicMock
 
 import jsonpickle
 
-from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.UserComponent.User import User
@@ -12,7 +10,6 @@ from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 
 
 class SystemManagerRoleTests(unittest.TestCase):
-    @logger
     def setUp(self):
         self.__system_manager_role = SystemManagerRole()
         (TradeControl.get_instance()).register_guest("eytan", "eytan as password")
@@ -27,48 +24,45 @@ class SystemManagerRoleTests(unittest.TestCase):
                                                      "category": "eytan as category",
                                                      "amount": 21}])
 
-    @logger
     def test_view_user_purchases_history(self):
         # Empty purchases
-        self.assertListEqual([], self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname()))
+        self.assertListEqual([], self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname())['response'])
 
         (TradeControl.get_instance()).get_curr_user().get_purchase_history().append(Purchase(
             [{"product_name": "eytan", "product_price": 12, "amount": 1}], 12, self.__store.get_name(),
             self.__user.get_nickname()))
 
         # Not empty
-        self.assertEqual(1, len(self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname())))
+        self.assertEqual(1, len(self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname())['response']))
         purchases_lst = [jsonpickle.decode(e).get_products() for e in
-                         self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname())]
+                         self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname())['response']]
         self.assertListEqual([{"product_name": "eytan", "product_price": 12, "amount": 1}], purchases_lst[0])
 
         (TradeControl.get_instance()).get_managers().remove(self.__user)
 
         # Not a manager -> return's None
-        self.assertIsNone(self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname()))
+        self.assertIsNone(self.__system_manager_role.view_user_purchase_history(self.__user.get_nickname())['response'])
 
-    @logger
     def test_view_store_purchases_history(self):
         # Empty purchases
-        self.assertListEqual([], self.__system_manager_role.view_store_purchases_history(self.__store.get_name()))
+        self.assertListEqual([], self.__system_manager_role.view_store_purchases_history(self.__store.get_name())['response'])
 
         (TradeControl.get_instance()).get_store(self.__store.get_name()).add_purchase \
             (Purchase([{"product_name": "eytan", "product_price": 12, "amount": 1}], 12, self.__store.get_name(),
                       self.__user.get_nickname()))
 
         # Not empty
-        lst = self.__system_manager_role.view_store_purchases_history(self.__store.get_name())
+        lst = self.__system_manager_role.view_store_purchases_history(self.__store.get_name())['response']
         self.assertEqual(1, len(lst))
         purchases_lst = [jsonpickle.decode(e).get_products() for e in
-                         self.__system_manager_role.view_store_purchases_history(self.__store.get_name())]
+                         self.__system_manager_role.view_store_purchases_history(self.__store.get_name())['response']]
         self.assertListEqual([{"product_name": "eytan", "product_price": 12, "amount": 1}], purchases_lst[0])
 
         (TradeControl.get_instance()).get_managers().remove(self.__user)
 
         # Not a manager -> return's None
-        self.assertIsNone((TradeControl.get_instance()).view_store_purchases_history(self.__store.get_name()))
+        self.assertIsNone((TradeControl.get_instance()).view_store_purchases_history(self.__store.get_name())['response'])
 
-    @logger
     def tearDown(self):
         (TradeControl.get_instance()).__delete__()
 

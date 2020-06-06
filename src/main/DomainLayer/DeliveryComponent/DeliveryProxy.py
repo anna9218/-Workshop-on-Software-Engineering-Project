@@ -1,4 +1,4 @@
-from src.Logger import logger, errorLogger, loggerStaticMethod
+from src.Logger import errorLogger, loggerStaticMethod, logger
 from src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubject
 
 
@@ -9,7 +9,7 @@ class DeliveryProxy(DeliverySubject):
     @staticmethod
     def get_instance():
         """ Static access method. """
-        # loggerStaticMethod("FacadeDelivery.get_instance", [])
+        loggerStaticMethod("FacadeDelivery.get_instance", [])
         if DeliveryProxy.__instance is None:
             DeliveryProxy()
         return DeliveryProxy.__instance
@@ -27,7 +27,7 @@ class DeliveryProxy(DeliverySubject):
             else:
                 DeliveryProxy.__instance = self
 
-    # @logger
+    @logger
     def connect(self):
         try:
             if not self.__isConnected:
@@ -39,27 +39,29 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     # need to check address details with system once a system is set
-    def deliver_products(self, address: str, products_ls: []) -> bool:
+    def deliver_products(self, address: str, products_ls: []) -> {'response': bool, 'msg': str}:
         """
-
         :param address:
         :param products_ls: list [{"store_name": str, "basket_price": float,
                             "products": [{"product_name", "product_price", "amount"}]}]
-        :return:true if successful, otherwise false
+        :return: dict = {'response': bool, 'msg': str}:
+                 response = true if successful, otherwise false
         """
         try:
-            if not self.__isConnected or \
-                   not self.__check_valid_details(address, products_ls):
-                return False
+            if not self.__isConnected:
+                return {'response': False, 'msg': "Delivery failed. Delivery system is not connected"}
+            if not self.__check_valid_details(address, products_ls):
+                return {'response': False, 'msg': "Delivery failed. invalid payment details"}
+
             else:
-                return True
+                return {'response': True, 'msg': "Delivery was successful"}
         except Exception:
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     def disconnect(self):
         try:
             if self.__isConnected:
@@ -71,13 +73,13 @@ class DeliveryProxy(DeliverySubject):
             errorLogger("System is down!")
             raise ResourceWarning("System is down!")
 
-    # @logger
+    @logger
     def is_connected(self) -> bool:
         return self.__isConnected
 
     @staticmethod
     def __check_valid_details(address: str, products: []) -> bool:
-        # loggerStaticMethod("__check_valid_details", [products, address])
+        loggerStaticMethod("__check_valid_details", [products, address])
         if len(address) == 0 or len(products) == 0:
             return False
         else:

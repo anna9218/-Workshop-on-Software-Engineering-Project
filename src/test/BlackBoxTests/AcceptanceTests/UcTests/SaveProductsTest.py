@@ -1,12 +1,10 @@
 """
     test class for use case 2.6 - save products to basket
 """
-from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class SaveProductsTest(ProjectTest):
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
@@ -15,21 +13,18 @@ class SaveProductsTest(ProjectTest):
         self.add_products_to_store(self._store_name,
                                    [{"name": "product", "price": 10, "category": "general", "amount": 5}])
 
-    # @logger
     def test_success(self):
         res = self.add_products_to_cart("product", self._store_name, 5, 0, 0)
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.add_products_to_cart("product", "anotherStoreName", 5, 0, 0)
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # product doesn't exist in the store
         res = self.add_products_to_cart("anotherProductName", self._store_name, 5, 0, 0)
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
 
-    # @logger
     def tearDown(self) -> None:
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 5}])

@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import Mock
 from unittest.mock import MagicMock
 
-from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl

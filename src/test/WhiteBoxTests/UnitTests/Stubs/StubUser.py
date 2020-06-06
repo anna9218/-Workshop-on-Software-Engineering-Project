@@ -1,7 +1,6 @@
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
 from src.main.DomainLayer.UserComponent.User import User
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubLogin import StubLogin
 
 
 class StubUser(User):
@@ -27,6 +26,11 @@ class StubUser(User):
         self.__register = True
         self.__nickname = username
         self.__password = password
+
+    def unregistered(self):
+        self.__register = False
+        self.__nickname = None
+        self.__password = None
 
     def is_registered(self):
         return self.__register

@@ -9,26 +9,30 @@ class ShoppingCart:
     def __init__(self):
         self.__shopping_baskets: [{"store_name": str, "basket": ShoppingBasket}] = []
 
-    # @logger
-    def remove_products(self, products_details: [{"product_name": str, "store_name": str}]):
+    @logger
+    def remove_products(self, products_details: [{"product_name": str, "store_name": str}]) -> {'response': bool, 'msg': str}:
         """
         :param products_details: [{"product_name": str,
                                        "store_name": str}, ...]
-        :return: True on success, False when one of the products doesn't exist in the shopping cart
+        :return: dict = {'response': bool, 'msg': str}
+                 True on success, False when one of the products doesn't exist in the shopping cart
         """
         for curr in products_details:
             basket = self.get_store_basket(curr["store_name"])
             if basket:
                 if not basket.remove_product(curr["product_name"]):
-                    return False
+                    return {'response': False, 'msg': "Error! product " + curr["product_name"] +
+                                                      " doesn't exist in the basket of store " + curr["store_name"]}
                 if basket.is_empty():
                     self.remove_store_basket(curr["store_name"])
             else:
-                return False
-        return True
+                return {'response': False, 'msg': "Error! basket of store " + curr["store_name"] +
+                                                  " doesn't exist in your shopping cart"}
+        return {'response': True, 'msg': "Products were removed from your shopping cart successfully"}
 
-    # @logger
-    def update_quantity(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+    @logger
+    def update_quantity(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]) -> \
+            {'response': bool, 'msg': str}:
         """
         The function take a list of {"product_name": str, "store_name": str, "amount": int}.
         The function checks if the basket in the store exist, if the product exist in the basket and the amount isn't
@@ -37,22 +41,28 @@ class ShoppingCart:
         Else, update the amount and return true.
 
         :param products_details: list of {"product_name": str, "store_name": str, "amount": int}
-        :return: If any one of the above is false, the function returns false.
+        :return: dict = {'response': bool, 'msg': str}
+                 If any one of the above is false, the function returns false.
                  else, return true.
         """
         for curr in products_details:
             basket = self.get_store_basket(curr["store_name"])
             if not basket:
-                return False
-            if basket.get_product(curr['product_name']) is None or curr['amount'] < 0:
-                return False
+                return {'response': False, 'msg': "Error! basket of store " + curr["store_name"] +
+                                                  " doesn't exist in your shopping cart"}
+            if basket.get_product(curr['product_name']) is None:
+                return {'response': False, 'msg': "Error! product " + curr["product_name"] +
+                                                  " doesn't exist in the basket of store " + curr["store_name"]}
+            if curr['amount'] < 0:
+                return {'response': False, 'msg': "Error! Amount of product " + curr["product_name"] +
+                                                  " must be greater than 0"}
 
         for curr in products_details:
             basket = self.get_store_basket(curr["store_name"])
             basket.update_amount(curr["product_name"], curr["amount"])
-        return True
+        return {'response': True, 'msg': "Shopping cart was updated successfully."}
 
-    # @logger
+    @logger
     def remove_store_basket(self, store_name: str):
         for s in self.__shopping_baskets:
             if s["store_name"] == store_name:
@@ -60,12 +70,12 @@ class ShoppingCart:
                 return True
         return False
 
-    # @logger
+    @logger
     def add_products(self, products_stores_quantity_ls: [{"store_name": str,
                                                           "product": Product,
                                                           "amount": int,
                                                           "discount_type": DiscountType,
-                                                          "purchase_type": PurchaseType}]) -> bool:
+                                                          "purchase_type": PurchaseType}]) -> {'response': bool, 'msg': str}:
         """
         The function iterate over the list to see if all the arguments are valid.
         If all the arguments are valid, and the basket exist, the function add the products the corresponding basket.
@@ -85,10 +95,13 @@ class ShoppingCart:
         # Check if the arguments are valid.
         for curr in products_stores_quantity_ls:
             if curr is None:
-                return False
+                return {'response': False, 'msg': "Error! invalid input"}
             else:
-                if curr['product'] is None or curr['amount'] <= 0:
-                    return False
+                if curr['product'] is None:
+                    return {'response': False, 'msg': "Error! invalid input"}
+                if curr['amount'] <= 0:
+                    return {'response': False, 'msg': "Error! the amount of product " + curr['product'].get_name() +
+                                                      "is >= 0. A product amount must be bigger than 0"}
 
         # Rest of the function
         for curr in products_stores_quantity_ls:
@@ -99,25 +112,30 @@ class ShoppingCart:
                 basket = ShoppingBasket()
                 basket.add_product(curr["product"], curr["amount"], curr["discount_type"], curr["purchase_type"])
                 self.__shopping_baskets.append({"store_name": curr["store_name"], "basket": basket})
-        return True
 
-    # @logger
+        return {'response': True, 'msg': "Products were added to shopping cart successfully"}
+
+    @logger
     def get_store_basket(self, store_name: str) -> ShoppingBasket:
         for store_basket in self.__shopping_baskets:
             if store_basket["store_name"] == store_name:
                 return store_basket["basket"]
         return None
 
-    # @logger
-    def view_shopping_cart(self):
+    @logger
+    def view_shopping_cart(self) -> {'response': list, 'msg': str}:
         """
-        :return: list: [{"store_name": str,
-                         "basket": [{"product_name": str
-                                     "amount": int}, ...]
-                        }, ...]
+        :return: dict: {'response': [{"store_name": str,
+                                     "basket": [{"product_name": str
+                                                 "amount": int}, ...]
+                                    }, ...],
+                        'msg': str}
         """
-        return list(map(lambda x: {"store_name": x["store_name"],
+        ls = list(map(lambda x: {"store_name": x["store_name"],
                                    "basket": x["basket"].get_basket_info()}, self.__shopping_baskets))
+        if len(ls) == 0:
+            return {'response': [], 'msg': "Shopping cart is empty"}
+        return {'response': ls, 'msg': "Shopping cart was retrieved successfully"}
 
     # def is_product_in_cart(self, product) -> bool:
     #     for store_basket in self.__shopping_baskets:
@@ -125,7 +143,7 @@ class ShoppingCart:
     #             return True
     #     return False
 
-    # @logger
+    @logger
     def get_shopping_baskets(self):
         return self.__shopping_baskets
 

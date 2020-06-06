@@ -13,7 +13,7 @@ from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointManagerTest import Ap
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.RemoveStoreManagerTest import RemoveStoreManagerTest
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.DeliverySystemTest import DeliverySystemTest
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.PaymentSystemTest import PaymentSystemTest
-# from src.test.BlackBoxTests.AcceptanceTests import UcTests
+from src.test.BlackBoxTests.AcceptanceTests import UcTests
 
 
 class BlackBoxTestsRunner:
@@ -22,26 +22,27 @@ class BlackBoxTestsRunner:
     loader = unittest.TestLoader()
 
     # add all tests in package UcTests (all acceptance tests) to test suite
-    # suite.addTests(loader.loadTestsFromModule(UcTests))
+    suite.addTests(loader.loadTestsFromModule(UcTests))
 
     # add individual tests to the test suite
-    suite.addTest(loader.loadTestsFromTestCase(InitSystemTest))
-    suite.addTest(loader.loadTestsFromTestCase(RegisterTest))
-    suite.addTest(loader.loadTestsFromTestCase(LoginTest))
-    suite.addTest(loader.loadTestsFromTestCase(LogoutTest))
-    suite.addTest(loader.loadTestsFromTestCase(OpenStoreTest))
-    suite.addTest(loader.loadTestsFromTestCase(ManageStockTest))
-    suite.addTest(loader.loadTestsFromTestCase(AppointOwnerTest))
-    suite.addTest(loader.loadTestsFromTestCase(AppointManagerTest))
-    suite.addTest(loader.loadTestsFromTestCase(RemoveStoreManagerTest))
-    suite.addTest(loader.loadTestsFromTestCase(DeliverySystemTest))
-    suite.addTest(loader.loadTestsFromTestCase(PaymentSystemTest))
+    # suite.addTest(loader.loadTestsFromTestCase(InitSystemTest))
+    # suite.addTest(loader.loadTestsFromTestCase(RegisterTest))
+    # suite.addTest(loader.loadTestsFromTestCase(LoginTest))
+    # suite.addTest(loader.loadTestsFromTestCase(LogoutTest))
+    # suite.addTest(loader.loadTestsFromTestCase(OpenStoreTest))
+    # suite.addTest(loader.loadTestsFromTestCase(ManageStockTest))
+    # suite.addTest(loader.loadTestsFromTestCase(AppointOwnerTest))
+    # suite.addTest(loader.loadTestsFromTestCase(AppointManagerTest))
+    # suite.addTest(loader.loadTestsFromTestCase(RemoveStoreManagerTest))
+    # suite.addTest(loader.loadTestsFromTestCase(DeliverySystemTest))
+    # suite.addTest(loader.loadTestsFromTestCase(PaymentSystemTest))
 
     # pass runner the suite and run it
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()
 
 

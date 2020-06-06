@@ -2,37 +2,36 @@ from src.Logger import logger
 from src.main.DomainLayer.UserComponent.User import User
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 
-
 class StoreManagerAppointment:
     def __init__(self, appointer: User, appointee: User, permissions: list):
         self.__appointer = appointer
         self.__permissions = permissions
         self.__appointee = appointee
 
-    # @logger
+    @logger
     def set_permissions(self, permissions):
         self.__permissions = permissions
 
-    # @logger
+    @logger
     def get_permissions(self):
         return self.__permissions
 
-    # @logger
+    @logger
     def get_appointer(self):
         return self.__appointer
 
-    # @logger
+    @logger
     def get_appointee(self):
         return self.__appointee
 
-    # @logger
+    @logger
     def has_permission(self, permission: ManagerPermission):
         for perm in self.__permissions:
             if perm.value == permission.value:
                 return True
         return False
 
-    # @logger
+    @logger
     def add_permission(self, permission):
         self.__permissions.append(permission)
         return True

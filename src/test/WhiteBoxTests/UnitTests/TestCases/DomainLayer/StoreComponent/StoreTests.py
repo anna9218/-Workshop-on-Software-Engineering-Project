@@ -1,15 +1,12 @@
 import unittest
 
-from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.UserComponent.User import User
-from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class StoreTests(unittest.TestCase):
-    # @logger
     def setUp(self):
         self.store: Store = Store("myStore")
         self.owner = User()
@@ -19,7 +16,6 @@ class StoreTests(unittest.TestCase):
         self.manager.register("dani", "passwordd45646")
         self.store.get_store_manager_appointments().append(StoreManagerAppointment(self.owner, self.manager, [ManagerPermission.EDIT_INV]))
 
-    # @logger
     def test_get_products_by(self):
         self.assertTrue(
             self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
@@ -36,15 +32,18 @@ class StoreTests(unittest.TestCase):
         ls = self.store.get_products_by(3, "Electric")
         self.assertEqual(len(ls), 1)
 
-    # @logger
     def test_add_products(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
-        self.assertTrue(self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}]))
-        self.assertTrue(self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5}]))
-        self.assertFalse(self.store.add_products("shani", [{"name": "Chair", "price": -99, "category": "Furniture", "amount": 5},
-                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}]))
-    # @logger
+        res = self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
+                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])
+        self.assertTrue(res['response'])
+        res = self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5}])
+        self.assertTrue(res['response'])
+
+        res = self.store.add_products("shani", [{"name": "Chair", "price": -99, "category": "Furniture", "amount": 5},
+                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])
+        self.assertFalse(res['response'])
+
     def test_add_product(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
         self.assertTrue(self.store.add_product("shani", "Chair", 100, "Furniture", 5))
@@ -52,7 +51,6 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.add_product("shani", "Chair", 100, "Furniture", 5))
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 10)
 
-    # @logger
     def test_remove_products(self):
         self.store.add_product("shani", "Chair", 100, "Furniture", 5)
         self.assertFalse(self.store.remove_products("", ["Chair", "Sofa"]))

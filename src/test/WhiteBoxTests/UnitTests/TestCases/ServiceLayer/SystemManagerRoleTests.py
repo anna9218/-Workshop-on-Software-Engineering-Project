@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.Logger import logger
 from src.main.ServiceLayer.GuestRole import TradeControl
 from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 

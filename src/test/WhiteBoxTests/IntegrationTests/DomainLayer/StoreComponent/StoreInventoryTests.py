@@ -1,19 +1,18 @@
 import unittest
 
-from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 
 
 class StoreInventoryTests(unittest.TestCase):
-    @logger
+    # @logger
     def setUp(self):
         self.inv = StoreInventory()
         self.product1 = Product("Chair", 100, "Furniture")
         self.product2 = Product("Sofa", 10, "Furniture")
         self.product3 = Product("Guitar", 1000, "Musical Instruments")
 
-    @logger
+    # @logger
     def test_add_product(self):
         # All valid - None existing product
         self.assertTrue(self.inv.add_product(self.product1, 5))
@@ -26,7 +25,7 @@ class StoreInventoryTests(unittest.TestCase):
         # Invalid - Illegal amount
         self.assertFalse(self.inv.add_product(self.product2, -8))
 
-    @logger
+    # @logger
     def test_get_product(self):
         self.inv.add_product(self.product1, 5)
 
@@ -40,7 +39,7 @@ class StoreInventoryTests(unittest.TestCase):
         # Invalid -> none existing product
         self.assertIsNone(self.inv.get_product("Sofa"))
 
-    @logger
+    # @logger
     def test_get_products_by(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 5)
@@ -81,7 +80,7 @@ class StoreInventoryTests(unittest.TestCase):
         products_list = self.inv.get_products_by(3, "Eytan")
         self.assertEqual(len(products_list), 0)
 
-    @logger
+    # @logger
     def test_remove_product(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 2)
@@ -95,7 +94,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertFalse(self.inv.remove_product("eden"))
         self.assertEqual(len(self.inv.get_products_by(2, "")), 1)
 
-    @logger
+    # @logger
     def test_change_amount(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 2)
@@ -122,7 +121,7 @@ class StoreInventoryTests(unittest.TestCase):
         product_names = [p.get_name() for p in self.inv.get_products_by(2, "")]
         self.assertFalse("Eytan" in product_names)
 
-    @logger
+    # @logger
     def test_len(self):
 
         # All valid -> Empty inventory
@@ -148,7 +147,7 @@ class StoreInventoryTests(unittest.TestCase):
         self.inv.add_product(Product("Eytan", 100, "Different Eytan"), -12)
         self.assertEqual(self.inv.len(), 2)
 
-    @logger
+    # @logger
     def test_get_amount_of_product(self):
         # All valid -> none existing product
         self.assertEqual(self.inv.get_amount("Chair"), 0)
@@ -163,7 +162,7 @@ class StoreInventoryTests(unittest.TestCase):
         # All valid -> amount = 0
         self.assertEqual(self.inv.get_amount("Chair"), 0)
 
-    @logger
+    # @logger
     def test_is_in_stock(self):
         self.inv.add_product(self.product1, 10)
 

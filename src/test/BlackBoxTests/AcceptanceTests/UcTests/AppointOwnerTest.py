@@ -1,13 +1,11 @@
 """
     test class for use case 4.3 - appoint additional store owner
 """
-from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class AppointOwnerTest(ProjectTest):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.__appointee_name = "username2"
@@ -17,33 +15,30 @@ class AppointOwnerTest(ProjectTest):
         self.login(self._username, self._password)
         self.open_store(self._store_name)
 
-    # @logger
     def test_success(self):
         # valid details
         res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.appoint_additional_owner(self.__appointee_name, "someOtherStore")
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # appointee doesn't exist
         res = self.appoint_additional_owner("imaginaryAppointee", self._store_name)
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # appointee is already store owner of the shop
         self.appoint_additional_owner(self.__appointee_name, self._store_name)
         res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # appointee isn't registered
         self.delete_user(self.__appointee_name)
         res = self.appoint_additional_owner(self.__appointee_name, self._store_name)
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
 
-    # @logger
     def tearDown(self) -> None:
-        self.delete_user(self._username)
         self.remove_store(self._store_name)
+        self.delete_user(self._username)
 
     def __repr__(self):
         return repr("AppointOwnerTest")

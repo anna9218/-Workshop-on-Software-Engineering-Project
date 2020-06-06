@@ -3,18 +3,18 @@ from src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubje
 
 
 class RealDelivery(DeliverySubject):
-    # @logger
+    @logger
     def connect(self):
         pass
 
-    # @logger
-    def deliver_products(self, address: str, products_ls: []) -> bool:
+    @logger
+    def deliver_products(self, address: str, products_ls: []) -> {'response': bool, 'msg': str}:
         pass
 
-    # @logger
+    @logger
     def disconnect(self):
         pass
 
-    # @logger
+    @logger
     def is_connected(self) -> bool:
         pass

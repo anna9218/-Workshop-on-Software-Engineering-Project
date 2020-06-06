@@ -1,6 +1,5 @@
 import unittest
 
-from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 

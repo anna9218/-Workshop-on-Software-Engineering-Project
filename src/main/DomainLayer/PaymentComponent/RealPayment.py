@@ -3,18 +3,18 @@ from src.main.DomainLayer.PaymentComponent.PaymentSubject import PaymentSubject
 
 
 class RealPayment(PaymentSubject):
-    # @logger
+    @logger
     def connect(self):
         pass
 
-    # @logger
-    def commit_payment(self, products_ls: {"total_price": float, "products": [dict]}) -> bool:
+    @logger
+    def commit_payment(self, products_ls: {"total_price": float, "purchases": [dict]}) -> {'response': bool, 'msg': str}:
         pass
 
-    # @logger
+    @logger
     def disconnect(self):
         pass
 
-    # @logger
+    @logger
     def is_connected(self) -> bool:
         pass

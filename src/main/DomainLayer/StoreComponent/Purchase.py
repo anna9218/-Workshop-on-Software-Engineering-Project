@@ -17,27 +17,27 @@ class Purchase(object):
     def __repr__(self):
         return repr("Purchase")
 
-    # @logger
+    @logger
     def get_total_price(self):
         return self.__total_price
 
-    # @logger
+    @logger
     def get_store_name(self):
         return self.__store_name
 
-    # @logger
+    @logger
     def get_nickname(self):
         return self.__username
 
-    # @logger
+    @logger
     def get_date(self):
         return self.__curr_date
 
-    # @logger
+    @logger
     def get_products(self):
         return self.__products
 
-    # @logger
+    @logger
     def __eq__(self, other):
         try:
             if (self.get_total_price != other.get_total_price

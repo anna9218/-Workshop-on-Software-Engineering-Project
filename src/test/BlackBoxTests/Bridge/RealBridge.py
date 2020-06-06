@@ -64,12 +64,12 @@ class RealBridge(Bridge):
         return res is not None and len(res) != 0
 
     def display_stores_or_products_info(self, store_name: str, store_info_flag: bool, products_info_flag: bool) -> bool:
-        res = self.__guest_role.display_stores_or_products_info(store_name, store_info_flag, products_info_flag)
+        res = self.__guest_role.display_stores_or_products_info(store_name, store_info_flag, products_info_flag)['response']
         return res is not None and len(res) != 0
 
     # uc 2.5
     def search_product(self, search_option: int, string: str):
-        res = self.__guest_role.search_products_by(search_option, string)
+        res = self.__guest_role.search_products_by(search_option, string)['response']
         return res is not None and len(res) != 0
 
     def filter_products(self, filter_details, products):
@@ -93,8 +93,8 @@ class RealBridge(Bridge):
 
     # uc 2.7
     def view_shopping_cart(self):
-        res = self.__guest_role.view_shopping_cart()
-        return len(self.__guest_role.view_shopping_cart()) != 0
+        res = self.__guest_role.view_shopping_cart()['response']
+        return len(res) != 0
 
     def update_shopping_cart(self, flag: str,
                              products_details: [{"product_name": str, "store_name": str, "amount": int}]):
@@ -122,12 +122,12 @@ class RealBridge(Bridge):
 
     # uc 3.6
     def view_personal_purchase_history(self):
-        purchase_ls = self.__subscriber.view_personal_purchase_history()
+        purchase_ls = self.__subscriber.view_personal_purchase_history()['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 4.1
-    def add_products_to_store(self, store_name: str, products_details:
-    [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+    def add_products_to_store(self, store_name: str,
+                              products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
         return self.__store_owner_or_manager.add_products(store_name, products_details)
 
     def edit_products_in_store(self, store_name: str, product_name: str, op: str, new_value: str):
@@ -136,8 +136,35 @@ class RealBridge(Bridge):
     def remove_products_from_store(self, store_name: str, products_names: list) -> bool:
         return self.__store_owner_or_manager.remove_products(store_name, products_names)
 
+    # 4.2 add and update purchase and discount policies
+    def set_purchase_operator(self, store_name: str, operator: str):
+        self.__store_owner_or_manager.set_purchase_operator(store_name, operator)
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        return self.__store_owner_or_manager.get_policies(type, store_name)
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        res_dict = self.__store_owner_or_manager.update_purchase_policy(store_name, details)
+        return res_dict["response"]
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        res_dict = self.__store_owner_or_manager.define_purchase_policy(store_name, details)
+        return res_dict["response"]
+
+    def update_discount_policy(self):
+        pass
+
+    def define_discount_policy(self):
+        pass
+
     # uc 4.3
-    def appoint_additional_owner(self, nickname: str, store_name: str) -> bool:
+    def appoint_additional_owner(self, nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         return self.__store_owner_or_manager.appoint_additional_owner(nickname, store_name)
 
     # uc 4.5
@@ -160,7 +187,7 @@ class RealBridge(Bridge):
         return self.__store_owner_or_manager.remove_manager(store_name, manager_nickname)
 
     def view_store_purchase_history(self, store_name: str):
-        purchase_ls = self.__store_owner_or_manager.display_store_purchases(store_name)
+        purchase_ls = self.__store_owner_or_manager.display_store_purchases(store_name)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     def subscribe_user(self, nickname: str, password: str):
@@ -189,7 +216,7 @@ class RealBridge(Bridge):
     def connect_delivery_sys(self):
         self.__trade_control_srv.connect_delivery()
 
-    def deliver(self, address: str, products_ls) -> bool:
+    def deliver(self, address: str, products_ls) -> {'response': bool, 'msg': str}:
         return self.__trade_control_srv.deliver(address, products_ls)
 
     def disconnect_delivery_sys(self):

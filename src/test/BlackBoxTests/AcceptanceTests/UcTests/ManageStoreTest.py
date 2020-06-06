@@ -1,13 +1,11 @@
 """
     test class for use case 5.1 - check that manager can activated actions he has permissions to
 """
-from src.Logger import logger
 from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
 
 
 class ManageStoreTest(ProjectTest):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.subscribe_user("newManager", "newPassword")
@@ -21,21 +19,18 @@ class ManageStoreTest(ProjectTest):
         self.set_user("newManager")
         self.login("newManager", "newPassword")
 
-    # @logger
     def test_success(self):
         self.subscribe_user("newUser", "newerPassword")
         # manager with permission to add owner
         res = self.appoint_additional_owner("newUser", self._store_name)
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # manager without permissions
         self.edit_manager_permissions(self._store_name, self._username, [])
         res = self.edit_products_in_store(self._store_name, "product", "price", "100")
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
 
-    # @logger
     def tearDown(self) -> None:
         self.logout()
         self.update_shopping_cart("remove",
