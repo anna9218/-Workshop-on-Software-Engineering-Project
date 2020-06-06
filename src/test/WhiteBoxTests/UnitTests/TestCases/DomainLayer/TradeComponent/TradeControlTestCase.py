@@ -1,9 +1,11 @@
 import unittest
 
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
+from unittest.mock import MagicMock
 
 
 class TradeControlTestCase(unittest.TestCase):
@@ -12,9 +14,11 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl = TradeControl.get_instance()
         self.user = StubUser()
         self.user.set_password_and_nickname("nickname", "password")
-#         self.tradeControl.manager = StubUser(self.tradeControl)
-#         self.tradeControl.delivery_system = StubDelivery()
-#         self.tradeControl.payment_system = StubPayment()
+        self.purchase_policy_mock = PurchasePolicy()
+
+    #         self.tradeControl.manager = StubUser(self.tradeControl)
+    #         self.tradeControl.delivery_system = StubDelivery()
+    #         self.tradeControl.payment_system = StubPayment()
 
     def test_add_sys_manager_success_and_fail(self):
         managers_num = len(self.tradeControl.get_managers())
@@ -58,7 +62,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.open_store("myFirstStore")['response'])
         self.user.login("name", "213456")
         self.assertTrue(self.tradeControl.open_store("myFirstStore")['response'])
-        self.assertEqual(len(self.tradeControl.get_stores()), stores_num+1)
+        self.assertEqual(len(self.tradeControl.get_stores()), stores_num + 1)
         self.assertTrue(self.tradeControl.close_store("myFirstStore"))
         self.assertFalse(self.tradeControl.close_store("myFirstStore"))
         self.assertEqual(len(self.tradeControl.get_stores()), stores_num)
@@ -111,8 +115,9 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.open_store("myStore")
         self.tradeControl.open_store("myStore2")
         store1 = self.tradeControl.get_store("myStore")
-        self.assertFalse(self.tradeControl.add_products("Store", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-                                     {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])['response'])
+        self.assertFalse(self.tradeControl.add_products("Store", [
+            {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
+            {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])['response'])
         self.assertTrue(self.tradeControl.add_products("myStore", [
             {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
             {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])['response'])
@@ -177,11 +182,124 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.set_curr_user(self.user)
         self.tradeControl.open_store("myStore")
         store1 = self.tradeControl.get_store("myStore")
-        self.assertTrue(self.tradeControl.appoint_store_manager("appointee", "myStore", [ManagerPermission.APPOINT_OWNER])['response'])
-        self.assertTrue(self.tradeControl.edit_manager_permissions("myStore", "appointee", [ManagerPermission.EDIT_INV]))
+        self.assertTrue(
+            self.tradeControl.appoint_store_manager("appointee", "myStore", [ManagerPermission.APPOINT_OWNER])[
+                'response'])
+        self.assertTrue(
+            self.tradeControl.edit_manager_permissions("myStore", "appointee", [ManagerPermission.EDIT_INV]))
         self.assertTrue(ManagerPermission.EDIT_INV in store1.get_permissions("appointee"))
         self.assertFalse(ManagerPermission.APPOINT_OWNER in store1.get_permissions("appointee"))
 
+    def setup_for_policies(self):
+        self.tradeControl.set_curr_user(self.user)
+        self.user.register("name", "213456")
+        self.user.login("name", "213456")
+        self.tradeControl.open_store("store1")
+        self.store_mock = Store("store1")
+        self.store_mock.get_name = MagicMock(return_value="store1")
+        self.store_mock.define_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.store_mock.is_owner = MagicMock(return_value=True)
+
+    def test_define_purchase_policy(self):
+        self.setup_for_policies()
+
+        # valid details
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": False, "msg": "no policy exists by the name"})
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
+
+        res = self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+                                                                                    "products": ["product1",
+                                                                                                 "product2"],
+                                                                                    "bundle": True})
+        self.assertTrue(res)
+
+        # invalid details
+        # policy already exist
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": True, "msg": "ok"})
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
+
+        res = self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+                                                                                    "products": ["product1",
+                                                                                                 "product2"],
+                                                                                    "bundle": True})["response"]
+        self.assertFalse(res)
+
+        # invalid policy details
+        self.store_mock.define_purchase_policy = MagicMock(return_value={"response": False, "msg": "invalid details"})
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": False, "msg": "no policy exists by the name"})
+
+        res = self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+                                                                                    "products": ["product1",
+                                                                                                 "product2"]})[
+            "response"]
+        self.assertFalse(res)
+        self.tradeControl.reset_purchase_policies(self.store_mock.get_name())
+
+    def test_update_purchase_policy(self):
+        self.setup_for_policies()
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": False, "msg": "no policy exists by the name"})
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
+
+        self.tradeControl.define_purchase_policy(self.store_mock.get_name(),
+                                                 {"name": "policy1", "products": ["product1", "product2"],
+                                                  "min_amount": 5})
+        # valid update
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": True, "msg": "ok"})
+        self.purchase_policy_mock.update = MagicMock(return_value={"response": True, "msg": "updated"})
+
+        res = self.tradeControl.update_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+                                                                                    "products": ["product1",
+                                                                                                 "product2"],
+                                                                                    "min_amount": 9})["response"]
+        self.assertTrue(res)
+
+        # invalid update
+        # policy doesn't exist
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": False, "msg": "policy doesn't exist"})
+        self.purchase_policy_mock.update = MagicMock(return_value={"response": True, "msg": "updated"})
+
+        res = self.tradeControl.update_purchase_policy(self.store_mock.get_name(), {"name": "policy2",
+                                                                                    "products": ["product1",
+                                                                                                 "product2"],
+                                                                                    "min_amount": 9})["response"]
+        self.assertFalse(res)
+
+        # invalid policy details
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": True, "msg": "ok"})
+        self.purchase_policy_mock.update = MagicMock(return_value={"response": False, "msg": "can't update"})
+
+        res = self.tradeControl.update_purchase_policy(self.store_mock.get_name(),
+                                                       {"name": "policy2", "products": ["product1", "product2"]})[
+            "response"]
+        self.assertFalse(res)
+        self.tradeControl.reset_purchase_policies(self.store_mock.get_name())
+
+    def test_get_policies(self):
+        self.setup_for_policies()
+
+        # no policies exist yet
+        res = self.tradeControl.get_policies("purchase", self.store_mock.get_name())["response"]
+        self.assertTrue(len(res) == 0)
+
+        # policies exist
+        self.store_mock.purchase_policy_exists = MagicMock(
+            return_value={"response": False, "msg": "no policy exists by the name"})
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+                                                                              "products": ["product1",
+                                                                                           "product2"],
+                                                                              "min_amount": 5})
+
+        res = self.tradeControl.get_policies("purchase", self.store_mock.get_name())["response"]
+        self.assertTrue(len(res) > 0)
+        self.tradeControl.reset_purchase_policies(self.store_mock.get_name())
 
     def tearDown(self):
         # pass
@@ -191,7 +309,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.unsubscribe("appointee")
 
     def __repr__(self):
-        return repr ("TradeControlTestCase")
+        return repr("TradeControlTestCase")
 
 
 if __name__ == '__main__':

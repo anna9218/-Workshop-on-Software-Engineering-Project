@@ -1,10 +1,10 @@
 """
     test class for use case 2.3 - login
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class LoginTest(ProjectTest):
+class LoginTest(ProjectAT):
 
     # @logger
     def setUp(self) -> None:

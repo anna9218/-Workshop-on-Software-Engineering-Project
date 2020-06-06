@@ -803,6 +803,10 @@ class TradeControl:
             res = res or details.get("products") is not None
         return res
 
+    # function for ut teardown
+    def reset_purchase_policies(self, store_name: str):
+        store = self.get_store(store_name)
+        store.reset_policies()
     # ------------------- 4.2 --------------------
 
     # ----------- Getters & Setters --------------

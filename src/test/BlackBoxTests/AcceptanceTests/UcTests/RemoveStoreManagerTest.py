@@ -1,10 +1,10 @@
 """
     test class for use case 4.7 - remove store manager
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class RemoveStoreManagerTest(ProjectTest):
+class RemoveStoreManagerTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.__appointee_name = "username2"

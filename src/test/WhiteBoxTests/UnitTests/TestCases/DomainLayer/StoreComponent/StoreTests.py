@@ -1,9 +1,11 @@
 import unittest
 
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.UserComponent.User import User
+from unittest.mock import MagicMock
 
 
 class StoreTests(unittest.TestCase):
@@ -15,6 +17,7 @@ class StoreTests(unittest.TestCase):
         self.manager = User()
         self.manager.register("dani", "passwordd45646")
         self.store.get_store_manager_appointments().append(StoreManagerAppointment(self.owner, self.manager, [ManagerPermission.EDIT_INV]))
+        self.purchase_policy_mock = PurchasePolicy()
 
     def test_get_products_by(self):
         self.assertTrue(
@@ -159,6 +162,60 @@ class StoreTests(unittest.TestCase):
         amount_per_product = [["Eytan's social life", 5], ["Liverpool's primer league title", 1]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
+
+    # 4.2
+    def test_purchase_policy_exists(self):
+        # policy exists
+        self.purchase_policy_mock.equals = MagicMock(return_value=True)
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.purchase_policy_exists({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertTrue(res)
+
+        # policy doesn't exists
+        self.purchase_policy_mock.equals = MagicMock(return_value=False)
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.purchase_policy_exists({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertFalse(res)
+
+    def test_add_purchase_policy(self):
+        # all valid details for new policy
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertTrue(res["response"])
+
+        # invalid details
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": False, "msg": "fail"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"]})
+        self.assertFalse(res["response"])
+
+    def test_update_purchase_policy(self):
+        # valid details
+        self.purchase_policy_mock.update = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertTrue(res["response"])
+
+        # invalid details
+        self.purchase_policy_mock.update = MagicMock(return_value={"response": False, "msg": "fail"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"]})
+        self.assertFalse(res["response"])
+
+    def test_get_purchase_policies(self):
+        # some policy exist
+        self.purchase_policy_mock.get_details = MagicMock(return_value={"name": "policy1"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) > 0)
+
+        # no policies set yet
+        # self.purchase_policy_mock.get_details = MagicMock(return_value={})
+        self.purchase_policy_mock.get_details = MagicMock(return_value={})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) == 0)
 
     # @logger
     def tearDown(self) -> None:
