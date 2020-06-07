@@ -1,11 +1,11 @@
 import datetime
 
 from src.Logger import logger
-from src.main.DomainLayer.StoreComponent.DiscountPolicy import DiscountPolicy
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
-from src.main.DomainLayer.StoreComponent.PurchasePolicy import PurchasePolicy
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
@@ -630,13 +630,15 @@ class Store:
         if policy:
             policy.update(details)
             return {'response': True, 'msg': "Great Success! Policy updated"}
-        return {'response': True, 'msg': "Oops...no policy exist by the given name"}
+        return {'response': False, 'msg': "Oops...no policy exist by the given name"}
 
     @logger
     def get_purchase_policies(self):
         ls = []
         for policy in self.__purchase_policies:
-            ls.append(policy.get_details())
+            details = policy.get_details()
+            if len(details) > 0:
+                ls.append(details)
         return ls
 
     @logger
@@ -645,6 +647,13 @@ class Store:
             if policy.get_name() == policy_name:
                 return policy
         return None
+
+    def set_purchase_policies(self, policy: PurchasePolicy):
+        self.__purchase_policies.append(policy)
+
+    # function for ut teardown
+    def reset_policies(self):
+        self.__purchase_policies = []
     # ------------- purchase policy end --------------
     # ------------- 4.2 --------------
 

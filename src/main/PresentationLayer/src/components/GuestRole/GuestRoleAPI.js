@@ -26,7 +26,7 @@ import * as theService from '../../services/communication';
 //     }
 
 
-function GuestRoleAPI(){
+function GuestRoleAPI(props){
 
     const [searchOption, setSearchOption] = useState(0);
     const [searchInput, setSearchInput] = useState('');
@@ -49,12 +49,12 @@ function GuestRoleAPI(){
     // for the search functionality
     const fetchCategories = async () =>{
         const promise = theService.getCategories(); // goes to register.js and sends to backend
-    promise.then((data) => {setCategories(data["data"])});
+        promise.then((data) => {setCategories(data["data"])});
     };
     
-
     return(
-        <Container>
+
+        <Container style={{width: props["screenWidth"], height: props["screenHeight"]}}>
         <Jumbotron fluid>
             <Row>
                 <Col />
@@ -72,8 +72,25 @@ function GuestRoleAPI(){
             </Row>
         </Jumbotron>
 
+            
+                {/*
+                        // for guest only
+                        1. register - > now button -> redirect to ./register -> ok
+                        2. login - > now button -> redirect to ./login -> ok 
 
+                        // guest and up
+                        3. display stores and products info, display stores ->  redirect to ./stores
+                        4. search products by + filter products by -> in navbar
+                        5. save products to basket -> in shopping cart
+                        6. view and update shopping cart -> in shopping cart
+                    */}
+
+             
         <Row>
+            <Button variant="secondary" size="lg" block as={Link} to="/stores">
+                Display Stores And Products Information
+            </Button>
+
             {/* <Link to='/stores'>
                 <Button variant="dark" id="displaystores">Display Stores</Button>
             </Link> */}

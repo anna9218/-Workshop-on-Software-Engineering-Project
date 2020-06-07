@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Route, Link } from 'react-router-dom'
 // import { browserHistory } from "react-router";
-import {Container, Button} from 'react-bootstrap'
+import {Container, Button, Table} from 'react-bootstrap'
 import * as theService from '../services/communication';
 
 
@@ -27,13 +27,11 @@ function StoreProducts(props) {
   const fetchStoreProducts = async (storeName) => {
     const promise = theService.displayStoresProducts(storeName)
     promise.then((data) => {
-      //TODO make sure this works, maybe bug with response - products are returned as Product objects from the server
-      console.log(data["data"]["response"]);
-      if (data["data"]["response"].length > 0){   // if there are stores to display
-          setStoreProducts(data["data"]["response"]);
+      if (data["data"].length > 0){   // if there are stores to display
+          setStoreProducts(data["data"]);
       }
       else{
-        alert(data["data"]["msg"]);      // no products to display
+        alert(data["msg"]);      // no products to display
       }
   });
 };
@@ -41,19 +39,38 @@ function StoreProducts(props) {
   
 
   return (
+    <div>
       <div>
         <h1>{storeName} - Products</h1>
-        {/* {storeProducts.map(storeProduct => (
-          <h1>
-            <Button variant="dark" onClick={onButtonClickHandler}>{storeProduct}</Button>
-          </h1>
-        ))} */}
-        {/* <Link to={{
-                  pathname:'/stores/'+storeName
-                  }}> */}
-                {/* <Button variant="dark" id="backbtn" onClick={history.goBack}>Back</Button> */}
-            {/* </Link> */}
       </div>
+
+      <div style={{marginTop: "3%", marginLeft: "1%", marginRight: "1%"}}>
+        <Table striped bordered hover >
+          <thead>
+              <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Category</th>
+                  <th>Amount</th>
+              </tr>
+          </thead>
+          <tbody>
+              {
+                  storeProducts.map(storeProduct => {
+                      return(
+                          <tr>
+                              <td>{storeProduct["name"]}</td>
+                              <td>{storeProduct["price"]}</td>
+                              <td>{storeProduct["category"]}</td>
+                              <td>{storeProduct["amount"]}</td>
+                          </tr>
+                      );
+                  })
+              }
+          </tbody>
+        </Table>
+      </div>
+    </div>
   );
 }
 

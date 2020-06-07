@@ -7,7 +7,7 @@ import * as theService from '../../services/communication';
 
 // TODO - call the server, get the purchases, display
 
-function PersonalPurchaseHistory(){
+function PersonalPurchaseHistory(props){
   useEffect(() => {
     fetchPersonalPurchaseHistory();
   }, []);
@@ -29,7 +29,7 @@ function PersonalPurchaseHistory(){
 
 
   return (
-      <div>
+      <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
         <h1>Personal Purchase History</h1>
 
 

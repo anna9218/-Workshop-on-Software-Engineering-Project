@@ -20,61 +20,111 @@ import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
 // Manage store (5.1) (MANAGER)
 
 
-function OwnerAPI(){
+class OwnerAPI extends React.Component {
+    constructor(props) {
+        super(props);
+  
+      this.logoutHandler = this.logoutHandler.bind(this);
+    }
 
+    logoutHandler = async () =>{
+        const promise = theService.logout(); // goes to register.js and sends to backend
+        promise.then((data) => {
+          alert(data["msg"]);
+            this.props.history.push("/");
+        });
+    };
 
-    return(
-        <Container>
-            <div>
-                <h1>Welcome Dear Owner!</h1>
-            </div>
+    render(){
+        return(
+            <Container style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
+                <Jumbotron fluid>
+                    <Row>
+                        <Col />
+                        <Col xs={7}>
+                            <h1 style={{textAlign: "center"}}>Welcome Dear Owner!</h1>
+                        </Col>
+                        <Col>
+                        <Link to='/logout'>
+                            <Button variant="dark" id="logout" onClick={this.logoutHandler}>Logout</Button>
+                        </Link>
+                        </Col>
+                    </Row>
+                </Jumbotron>
+    
+                {/*
+                    need options for:
+                    // for guest only
+                    1. register - > now button -> redirect to ./register -> ok
+                    2. login - > now button -> redirect to ./login -> ok 
 
+                    // guest and up
+                    3. display stores and products info, display stores ->  redirect to ./stores
+                    4. search products by + filter products by -> in navbar
+                    5. save products to basket -> in shopping cart
+                    6. view and update shopping cart -> in shopping cart
 
-            <Link to='/openstore'>
-                <Button variant="dark" id="open_store">Open Store</Button>
-            </Link>
+                    // subscriber and up
+                    7. purchase shopping cart -> in shopping cart
+                    8. open store
+                    9. view personal purchase history
+                    10. logout - > now button -> redirect to ./login -> ok
 
-            <Link to='/history'>
-                <Button variant="dark" id="view_personal_history">View personal purchase history</Button>
-            </Link>
+                    // shop owner and up
+                    11. manage stock
+                    12. appoint owner
+                    13. appoint manager
+                    14. edit permissions
+                    15. remove manager
+                    16. view store history
+                    17. manage store
+                */}
 
-            <Link to='/'>
-                <Button variant="dark" id="logout">Logout</Button>
-            </Link>
+                <Row>
+                    <Button variant="secondary" size="lg" block as={Link} to="/stores">
+                        Display Stores And Products Information
+                    </Button>
+    
+                    <Button variant="secondary" size="lg" block as={Link} to="/openstore">
+                        Open Store
+                    </Button>
+    
+                    <Button variant="secondary" size="lg" block as={Link} to="/history">
+                        View Personal Purchase History
+                    </Button>
 
+                    <Button variant="secondary" size="lg" block as={Link} to="/manageinventory">
+                        Manage Stock
+                    </Button>
 
+                    <Button variant="secondary" size="lg" block as={Link} to="/appointowner">
+                        Appoint Additional Owner
+                    </Button>
 
+                    <Button variant="secondary" size="lg" block as={Link} to="/appointmanager">
+                        Appoint Additional Manager
+                    </Button>
 
-            <Link to='/managestock'>
-                <Button variant="dark" id="manage_stock">Manage Stock</Button>
-            </Link>
+                    <Button variant="secondary" size="lg" block as={Link} to="/editpermissions">
+                        Edit Manager’s Permissions
+                    </Button>
 
-            <Link to='/appointowner'>
-                <Button variant="dark" id="appoint_owner">Appoint additional owner</Button>
-            </Link>
+                    <Button variant="secondary" size="lg" block as={Link} to="/removemanager">
+                        Remove A Store Manager
+                    </Button>
 
-            <Link to='/appointmanager'>
-                <Button variant="dark" id="appoint_manager">Appoint additional manager</Button>
-            </Link>
+                    <Button variant="secondary" size="lg" block as={Link} to="/storehistory">
+                        View Store’s Purchase History
+                    </Button>
 
-            <Link to='/editpermissions'>
-                <Button variant="dark" id="edit_perm">Edit manager’s permissions</Button>
-            </Link>
-
-            <Link to='/removemanager'>
-                <Button variant="dark" id="remove_manager">Remove a store manager</Button>
-            </Link>
-
-            <Link to='/storehistory'>
-                <Button variant="dark" id="store_history">View store’s purchase history</Button>
-            </Link>
-
-            <Link to='/managestore'>
-                <Button variant="dark" id="manage_store">Manage store</Button>
-            </Link>
-
-        </Container>
-    );
+                    <Button variant="secondary" size="lg" block as={Link} to="/managestore">
+                        Manage Store
+                    </Button>
+                </Row>
+            </Container>
+        );
+    }
+    
 
 }
 

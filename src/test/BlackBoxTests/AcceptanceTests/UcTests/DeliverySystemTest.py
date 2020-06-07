@@ -2,10 +2,10 @@
     test class for use case 8 - commit transaction via delivery system
 """
 from src.Logger import errorLogger
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class DeliverySystemTest(ProjectTest):
+class DeliverySystemTest(ProjectAT):
 
     def setUp(self) -> None:
         super().setUp()

@@ -41,3 +41,9 @@ class MaxAmountPolicy(PurchaseComponent):
         if details.get("max_amount"):
             self.__products = details["products"]
             self.__amount = details["max_amount"]
+
+    def get_products(self):
+        return self.__products
+
+    def get_max_amount(self):
+        return self.__amount

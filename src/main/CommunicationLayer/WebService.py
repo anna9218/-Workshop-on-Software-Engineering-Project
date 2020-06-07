@@ -6,6 +6,7 @@ from flask import jsonify
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from src.main.ServiceLayer.TradeControlService import TradeControlService
 
 app = Flask(__name__)
 CORS(app)
@@ -52,7 +53,9 @@ def display_stores_products():
         store_info_flag = request_dict.get('store_info_flag')
         products_info_flag = request_dict.get('products_info_flag')
         response = GuestRole.display_stores_or_products_info(store_name, store_info_flag, products_info_flag)
-        return jsonify(data=response)
+        if response:
+            return jsonify(msg=response["msg"], data=response["response"])
+        return jsonify(msg="get store products failed", data=response["response"], status=400)
 
 
 @app.route('/view_shopping_cart', methods=['GET'])
@@ -170,6 +173,11 @@ def view_personal_purchase_history():
 
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
 
+# @app.route('/system_initialized', methods=['POST'])
+# def system_initialized():
+#     result = TradeControlService.is_sys_initialized()
+#     return jsonify(data=result)
+
 @app.route('/view_user_purchase_history', methods=['POST'])
 def view_user_purchase_history():
     if request.is_json:
@@ -196,3 +204,13 @@ def view_store_purchases_history():
 
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 
+@app.route('/init_system', methods=['GET'])
+def init_system():
+    result = TradeControlService.init_system()
+    return jsonify(data=result['response'], msg=result['msg'])
+
+
+@app.route('/get_user_type', methods=['GET'])
+def get_user_type():
+    result = TradeControlService.get_user_type()
+    return jsonify(data=result)

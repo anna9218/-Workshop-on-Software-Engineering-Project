@@ -3,10 +3,10 @@
 """
 import jsonpickle
 import datetime
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class DefineAndUpdatePolicies(ProjectTest):
+class DefineAndUpdatePoliciesTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.__dates: [dict] = [jsonpickle.encode(datetime.date.today())]

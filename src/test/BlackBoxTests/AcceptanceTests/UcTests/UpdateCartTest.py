@@ -1,10 +1,10 @@
 """
     test class for use case 2.7 - view and update shopping cart
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class UpdateCartTest(ProjectTest):
+class UpdateCartTest(ProjectAT):
 
     def setUp(self) -> None:
         super().setUp()
