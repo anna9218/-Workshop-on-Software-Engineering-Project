@@ -11,7 +11,6 @@ from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 app = Flask(__name__)
 CORS(app)
 
-
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
 @app.route('/register', methods=['POST'])
 def register():

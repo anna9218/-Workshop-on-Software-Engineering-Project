@@ -648,7 +648,8 @@ class GuestRoleTest(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store1)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 1, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
-        product_as_dictionary2 = {"product_name": product2.get_name(), "amount": 10, "store_name": store1.get_name(),
+        product_as_dictionary2 = {"product_name": product2.get_name(), "amount": 10,
+                                  "store_name": store1.get_name(),
                                   "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         (TradeControl.get_instance()).set_curr_user(user)
@@ -664,38 +665,30 @@ class GuestRoleTest(unittest.TestCase):
         result_as_tuple: tuple = (result_as_dictionary['total_price'], result_basket_list)
         self.assertEqual(result_as_tuple[0], 112)
         self.assertListEqual(result_basket_list, expected_list)
-        # check post-condition: after purchase, shopping cart should be empty
-        self.assertEqual(0, len(user.get_shopping_cart().get_shopping_baskets()))
-        # check post-condition: after purchase, amount in store should be decreased
-        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
-                         get_amount(product.get_name()))
-        self.assertEqual(90, (TradeControl.get_instance()).get_store(store1.get_name()).get_inventory().
-                         get_amount(product2.get_name()))
 
         # Init cart again
         product_as_dictionary = {"product_name": product.get_name(), "amount": 1000, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
-        product_as_dictionary2 = {"product_name": product2.get_name(), "amount": 10, "store_name": store1.get_name(),
-                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
-        self.__guest_role.save_products_to_basket([product_as_dictionary, product_as_dictionary2])
-
-        # Invalid - try to purchase more then store have.
-        result_as_dictionary = self.__guest_role.purchase_products()
-        self.assertIsNone(result_as_dictionary)
-        # check post-condition: Nothing change
-        self.assertEqual(2, len(user.get_shopping_cart().get_shopping_baskets()))
-        # check post-condition: Nothing change
-        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
-                         get_amount(product.get_name()))
-        self.assertEqual(90, (TradeControl.get_instance()).get_store(store1.get_name()).get_inventory().
-                         get_amount(product2.get_name()))
-
-        # Init cart again
-        self.__guest_role.update_shopping_cart("remove", [{"product_name": product.get_name(), "amount": 1000,
-                                                           "store_name": store.get_name()}])
-        product_as_dictionary = {"product_name": product.get_name(), "amount": 1, "store_name": store.get_name(),
-                                 "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
         self.__guest_role.save_products_to_basket([product_as_dictionary])
+
+        expected_list = [(store1.get_name(), 100, 1)]
+
+        # Invalid - one basket have more then store have.
+        result_as_dictionary = self.__guest_role.purchase_products()
+        result_basket_list = [(basket['store_name'], basket['basket_price'], len(basket['products'])) for basket in
+                              result_as_dictionary['purchases']]
+
+        result_as_tuple: tuple = (result_as_dictionary['total_price'], result_basket_list)
+        self.assertEqual(result_as_tuple[0], 100)
+        self.assertListEqual(result_basket_list, expected_list)
+
+        product_as_dictionary2 = {"product_name": product2.get_name(), "amount": 1000,
+                                  "store_name": store1.get_name(),
+                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
+        self.__guest_role.save_products_to_basket([product_as_dictionary2])
+
+        # Invalid two baskets have more then store have.
+        self.assertListEqual([], self.__guest_role.purchase_products())
 
         # TODO: Add tests for legal/illegal policies(4.2), a test with discount and a test without discount.
         # More TODO: A test for Public auction, a test for secret sale and for known sale.
@@ -730,13 +723,6 @@ class GuestRoleTest(unittest.TestCase):
         result_as_tuple: tuple = (result_as_dictionary['total_price'], result_basket_list)
         self.assertEqual(result_as_tuple[0], 12)
         self.assertListEqual(result_basket_list, expected_list)
-        # check post-condition: after purchase, shopping basket should be empty
-        self.assertIsNone(user.get_shopping_cart().get_store_basket(store.get_name()))
-        # check post-condition: after purchase, amount in store should be decreased
-        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
-                         get_amount(product.get_name()))
-        # check post-condition: after purchase, the other basket should be fine
-        self.assertIsNotNone(user.get_shopping_cart().get_store_basket(store1.get_name()))
 
         # Init cart again
         product_as_dictionary = {"product_name": product.get_name(), "amount": 1000, "store_name": store.get_name(),
@@ -746,20 +732,10 @@ class GuestRoleTest(unittest.TestCase):
         # Invalid - try to purchase more than store have
         result_as_dictionary = self.__guest_role.purchase_basket(store.get_name())
         self.assertIsNone(result_as_dictionary)
-        # check post-condition: Nothing change
-        self.assertEqual(2, len(user.get_shopping_cart().get_shopping_baskets()))
-        # check post-condition: Nothing change
-        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
-                         get_amount(product.get_name()))
 
         # Invalid - basket doesn't exist
         result_as_dictionary = self.__guest_role.purchase_basket("store.get_name()")
         self.assertIsNone(result_as_dictionary)
-        # check post-condition: Nothing change
-        self.assertEqual(2, len(user.get_shopping_cart().get_shopping_baskets()))
-        # check post-condition: Nothing change
-        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
-                         get_amount(product.get_name()))
 
         # Init cart again
         self.__guest_role.update_shopping_cart("remove", [{"product_name": product.get_name(), "amount": 1000,
@@ -795,21 +771,33 @@ class GuestRoleTest(unittest.TestCase):
         DeliveryProxy.get_instance().deliver_products = MagicMock(return_value={'response': True, 'msg': 'Good'})
         PaymentProxy.get_instance().commit_payment = MagicMock(return_value={'response': True, 'msg': 'Good'})
 
-        # Assuming GuestRole.purchase_basket() is working fine.
-        purchase_result = self.__guest_role.purchase_basket(store.get_name())
+        # Assuming GuestRole.purchase_products() is working fine.
+        purchase_result = self.__guest_role.purchase_products()
 
         # All valid
         self.assertTrue(self.__guest_role.confirm_payment("Eytan's address", purchase_result)['response'])
         # check post condition - purchase in purchase history
-        self.assertEqual(1, len(user.get_purchase_history()))
+        self.assertEqual(2, len(user.get_purchase_history()))
+        # # check post-condition: after purchase, shopping cart should be empty
+        # self.assertEqual(0, len(user.get_shopping_cart().get_shopping_baskets()))
+        # check post-condition: after purchase, amount in store should be decreased
+        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
+                         get_amount(product.get_name()))
+        self.assertEqual(90, (TradeControl.get_instance()).get_store(store1.get_name()).get_inventory().
+                         get_amount(product2.get_name()))
 
         DeliveryProxy.get_instance().deliver_products = MagicMock(return_value={'response': True, 'msg': 'Good'})
         PaymentProxy.get_instance().commit_payment = MagicMock(return_value={'response': False, 'msg': 'Bad'})
 
         # Invalid  - can't make the payment
         self.assertFalse(self.__guest_role.confirm_payment("Eytan's address", purchase_result)['response'])
-        # check post condition - purchase in not in  purchase history
-        self.assertEqual(1, len(user.get_purchase_history()))
+        # check post condition - purchase in not in purchase history
+        self.assertEqual(2, len(user.get_purchase_history()))
+        # check post condition - amount in stores not change
+        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
+                         get_amount(product.get_name()))
+        self.assertEqual(90, (TradeControl.get_instance()).get_store(store1.get_name()).get_inventory().
+                         get_amount(product2.get_name()))
 
         DeliveryProxy.get_instance().deliver_products = MagicMock(return_value={'response': False, 'msg': 'Bad'})
         PaymentProxy.get_instance().commit_payment = MagicMock(return_value={'response': True, 'msg': 'Good'})
@@ -817,10 +805,10 @@ class GuestRoleTest(unittest.TestCase):
         # Invalid  - can't make the Delivery
         self.assertFalse(self.__guest_role.confirm_payment("Eytan's address", purchase_result)['response'])
         # check post condition - inventory amount do not decrease
-        self.assertEqual(5, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
+        self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
                          get_amount(product.get_name()))
         # check post condition - purchase in not in  purchase history
-        self.assertEqual(1, len(user.get_purchase_history()))
+        self.assertEqual(2, len(user.get_purchase_history()))
 
     def tearDown(self):
         (TradeControl.get_instance()).__delete__()
