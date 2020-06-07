@@ -7,8 +7,9 @@ class StoreOwnerOrManagerRole:
     def __init__(self):
         pass
 
-    @logger
+    # @logger
     # use case 4.1.1
+    @staticmethod
     def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
         int}]) -> {'response': bool, 'msg': str}:
         """
@@ -111,29 +112,59 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().close_store(store_name)
 
     # -------- UC 4.2 -------------------
+    @staticmethod
+    def set_purchase_operator(store_name: str, operator: str):
+        TradeControl.define_store_purchase_operator(store_name, operator)
+
     # uc 4.2
     @logger
-    def define_and_update_policies(self, type: str, store_name: str) -> [dict] or None:
+    def get_policies(self, purchase_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
         """
             according to the given type, displays a list of policies for the store
-        :param type: can be "purchase" or "discount"
+        :param purchase_type: can be "purchase" or "discount"
         :param store_name:
-        :return: list of policies or empty list, returns None if user is not owner of the store
+        :return: list of policies or empty list, returns None if user is not owner of the store or store doesn't exist
         """
-        return TradeControl.get_instance().define_and_update_policies(type, store_name)
+        return TradeControl.get_instance().get_policies(purchase_type, store_name)
 
     # uc 4.2.1
     @logger
     def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}):
+                                                                "dates": [dict] or None, "bundle": bool or None})\
+            -> {'response': bool, 'msg': str}:
+        """
+            update must have valid policy name of an existing policy and at least one more detail
+        :param store_name:
+        :param details: {"name": str,                            -> policy name
+                        "products": [str] or None,               -> list of product names
+                        "min_amount": int or None,               -> minimum amount of products required
+                        "max_amount": int or None,               -> maximum amount of products required
+                        "dates": [dict] or None,                 -> list of prohibited dated for the given products
+                        "bundle": bool or None}                  -> true if the products are bundled together
+           i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
+        :return: true if successful, otherwise false with details for failure
+        """
         return TradeControl.get_instance().update_purchase_policy(store_name, details)
 
     # uc 4.2.2
     @logger
     def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}):
+                                                                "dates": [dict] or None, "bundle": bool or None})\
+            -> {'response': bool, 'msg': str}:
+        """
+            define requires valid and unique policy name, none empty list of products and at least one more detail
+        :param store_name:
+        :param details: {"name": str,                             -> policy name
+                        "products": [str],                       -> list of product names
+                        "min_amount": int or None,               -> minimum amount of products required
+                        "max_amount": int or None,               -> maximum amount of products required
+                        "dates": [dict] or None,                 -> list of prohibited dated for the given products
+                        "bundle": bool or None}                  -> true if the products are bundled together
+           i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
+        :return: true if successful, otherwise false with details for failure
+        """
         return TradeControl.get_instance().define_purchase_policy(store_name, details)
 
     # uc 4.2.3
@@ -149,8 +180,6 @@ class StoreOwnerOrManagerRole:
     # ------------------------------------
 
     # -------------------------------------------------------------
-
-
     @staticmethod
     # for managing inventory - uc 4.1
     def get_owned_stores():

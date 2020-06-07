@@ -1431,7 +1431,73 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                          self.__store_owner_or_manager_role.display_store_purchases(self.__store.get_name())['response']]
         self.assertListEqual([{"product_name": "eytan", "product_price": 12, "amount": 1}], purchases_lst[0])
 
+    # TODO: add get tests for discount policies
+    def test_get_policies(self):
+        # ------------- purchase policies -------------
+        # policies exist
+        self.__store_owner_or_manager_role.define_purchase_policy(self.__store.get_name(),
+                                                                  {"name": "policy1", "products": ["product1"],
+                                                                   "min_amount": 8})
+        res = self.__store_owner_or_manager_role.get_policies("purchase", self.__store.get_name())["response"]
+        self.assertTrue(len(res) > 0)
+
+        # no policy exist
+        TradeControl.get_instance().reset_purchase_policies(self.__store.get_name())
+        res = self.__store_owner_or_manager_role.get_policies("purchase", self.__store.get_name())["response"]
+        self.assertTrue(len(res) == 0)
+        # ------------- purchase policies -------------
+
+    def test_update_purchase_policy(self):
+        self.__store_owner_or_manager_role.define_purchase_policy(self.__store.get_name(),
+                                                                  {"name": "policy1", "products": ["product1"],
+                                                                   "min_amount": 8})
+        # valid update
+        self.__store_owner_or_manager_role.update_purchase_policy(self.__store.get_name(),
+                                                                  {"name": "policy1", "products": ["product1"],
+                                                                   "min_amount": 1})
+        res = self.__store_owner_or_manager_role.get_policies("purchase", self.__store.get_name())["response"]
+        self.assertTrue(res[0]["min_amount"] == 1)
+
+        # invalid update
+        self.__store_owner_or_manager_role.update_purchase_policy(self.__store.get_name(),
+                                                                  {"products": ["product1"],
+                                                                   "min_amount": 4})
+        res = self.__store_owner_or_manager_role.get_policies("purchase", self.__store.get_name())["response"]
+        self.assertTrue(res[0]["min_amount"] == 1)
+
+        self.__store_owner_or_manager_role.update_purchase_policy(self.__store.get_name(),
+                                                                  {"name": "policy1",
+                                                                   "products": ["product1"]})
+        res = self.__store_owner_or_manager_role.get_policies("purchase", self.__store.get_name())["response"]
+        self.assertTrue(res[0]["min_amount"] == 1)
+
+    def test_define_purchase_policy(self):
+        # valid define
+        res = self.__store_owner_or_manager_role.define_purchase_policy(self.__store.get_name(),
+                                                                  {"name": "policy1", "products": ["product1"],
+                                                                   "min_amount": 8})["response"]
+        self.assertTrue(res)
+
+        # invalid define
+        res = self.__store_owner_or_manager_role.define_purchase_policy(self.__store.get_name(), {"name": "policy1",
+                                                                        "products": ["product1"]})["response"]
+
+        self.assertFalse(res)
+
+        res = self.__store_owner_or_manager_role.define_purchase_policy(self.__store.get_name(), {"name": "policy1",
+                                                                                                  "min_amount": 8})[
+            "response"]
+
+        self.assertFalse(res)
+
+        res = self.__store_owner_or_manager_role.define_purchase_policy(self.__store.get_name(),
+                                                                        {"products": ["product1"], "min_amount": 8})[
+            "response"]
+
+        self.assertFalse(res)
+
     def tearDown(self):
+        TradeControl.get_instance().reset_purchase_policies(self.__store.get_name())
         (TradeControl.get_instance()).__delete__()
 
     def __repr__(self):

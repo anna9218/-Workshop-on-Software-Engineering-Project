@@ -23,7 +23,7 @@ import * as theService from '../../services/communication';
 
 // TODO - need to check permission and display matching buttons (??)
 
-function ManagerAPI(){
+function ManagerAPI(props){
     useEffect(() => {
     // fetchPermissions();
   }, []);
@@ -45,7 +45,7 @@ function ManagerAPI(){
     return(
 
         // TODO - THINK HOW TO DISPLAY BUTTONS ACCORDING TO THE PERMISSIONS
-        <Container>
+        <Container style={{width: props["screenWidth"], height: props["screenHeight"]}}>
             <div>
                 <h1>Welcome Dear Manager!</h1>
             </div>

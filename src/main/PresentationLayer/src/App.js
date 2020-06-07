@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Navbar, Nav,Form, FormControl, Button,  NavDropdown, Dropdown} from 'react-bootstrap';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
@@ -7,10 +7,10 @@ import * as theService from './services/communication';
 
 
 // import Nav from './components/Nav'
+// guest
 import GuestRoleAPI from './components/GuestRole/GuestRoleAPI'
 import RegisterForm from './components/GuestRole/RegisterForm'
 import Login from './components/GuestRole/Login'
-
 import DisplayStores from './components/Actions/DisplayStores'
 import DisplayProducts from './components/DisplayProducts'
 import Search from './components/Search'
@@ -20,16 +20,20 @@ import StoreDetail from './components/StoreDetail'
 import StoreProducts from './components/StoreProducts'
 import SearchResults from './components/SearchResults'
 
+// subscriber
 import SubscriberAPI from './components/SubscriberRole/SubscriberAPI'
 import OpenStore from './components/SubscriberRole/OpenStore'
 import PersonalPurchaseHistory from './components/SubscriberRole/PersonalPurchaseHistory'
 
+// owner or manager
 import OwnerAPI from './components/OwnerOrManagerRole/OwnerAPI'
 import ManageInventory from './components/OwnerOrManagerRole/ManageInventory'
-
 import ManagerAPI from './components/OwnerOrManagerRole/ManagerAPI'
+import AddProductsForm from './components/OwnerOrManagerRole/AddProductsForm'
 
+// system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
+import SystemManagerAPI from './components/SystemManagerRole/SystemManagerAPI'
 
 
 function App(){
@@ -37,6 +41,7 @@ function App(){
   const [searchOption, setSearchOption] = useState(0);
   const [searchInput, setSearchInput] = useState('');
   const [categories, setCategories] = useState([]);
+
 
   const byNameHandler = () =>{
       setSearchOption(1);
@@ -55,15 +60,13 @@ function App(){
   // for the search functionality
   const fetchCategories = async () =>{
       const promise = theService.getCategories(); // goes to register.js and sends to backend
-  promise.then((data) => {setCategories(data["data"])});
+      promise.then((data) => {setCategories(data["data"])});
   };
 
-
-
-
-
-
-
+  useEffect(async () => {
+    // init system on startup
+    const promise = theService.initSystem();
+  });
 
   return (
     <Router>
@@ -72,93 +75,84 @@ function App(){
         <Navbar id="navbar" bg="dark" variant="dark">
           <Navbar.Brand as={Link} id="navbar-logo" to="/">Trade Control</Navbar.Brand>
           <Nav id="navbar-nav" className="mr-auto">
-            {/* <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#pricing">Pricing</Nav.Link> */}
-             <NavGuestDropDown/>
-             <NavSubscriberDropDown/>
-             <NavStoreOwnerDropDown/>
-             <NavSystemManagerDropDown/>
-                          
-             <Link to='/viewcart'>
-              <Button variant="outline-info" id="navbar-shopping-cart">Shopping Cart</Button>
-             </Link>
-             {/* <Nav.Link as={Link} to="/stores" >Stores</Nav.Link>
-             <Nav.Link as={Link} to="/displayproducts" >Products</Nav.Link>
-             <Nav.Link as={Link} to="/viewcart" >Shoping Cart</Nav.Link> */}
-
+             {/* this space is currently only a filer for navbar decoration */}
           </Nav>
-          {/* <Form inline>
-            <FormControl type="text" placeholder="Search" className="mr-sm-2" />
 
-            <Button variant="outline-info">Search</Button>
-          </Form> */}
-
+          {/* <Nav id="navbar-nav" className="mr-auto" style={{float: "right"}}> */}
+          <div style={{marginRight: "1%"}}>
+            <Link to='/viewcart'>
+              <Button variant="outline-info" id="navbar-shopping-cart">Shopping Cart</Button>
+            </Link>
+          </div>
                 
-                <Form inline id="form">
-                <Form.Control id="form-search-text" type="text" placeholder="Search" className="search" value={searchInput} onChange={searchInputHandler}/>
-                <Dropdown>
-                <Dropdown.Toggle variant="outline-info" id="dropdown-searchby">
-                    By
-                </Dropdown.Toggle>
-                <Dropdown.Menu variant="outline-info" id="form-dropdown-menu">
-                    {/* <Link to='/search'> */}
-                    <Dropdown.Item id="form-dropdown-item1" href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
-                    <Dropdown.Item id="form-dropdown-item2" href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
-                            
+          <Form inline id="form">
+            <Form.Control id="form-search-text" type="text" placeholder="Search" className="search" value={searchInput} onChange={searchInputHandler}/>
+            <Dropdown>
+            <Dropdown.Toggle variant="outline-info" id="dropdown-searchby">
+                By
+            </Dropdown.Toggle>
+            <Dropdown.Menu variant="outline-info" id="form-dropdown-menu">
+              {/* <Link to='/search'> */}
+              <Dropdown.Item id="form-dropdown-item1" href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
+              <Dropdown.Item id="form-dropdown-item2" href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
+                      
+              <Dropdown drop='left' onClick={fetchCategories}>
+              <Dropdown.Toggle variant="outline-info" id="form-dropdown-item3">
+                  By Category
+              </Dropdown.Toggle>
 
-                    <Dropdown drop='left' onClick={fetchCategories}>
-                    <Dropdown.Toggle variant="outline-info" id="form-dropdown-item3">
-                        By Category
-                    </Dropdown.Toggle>
+              <Dropdown.Menu id="form-category-dropdown" variant="dark">
+                  {categories.map(category => (
+                      <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
+                  ))}
+              </Dropdown.Menu>
 
-                    <Dropdown.Menu id="form-category-dropdown" variant="dark">
-                        {categories.map(category => (
-                            <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
-                        ))}
-                    </Dropdown.Menu>
+            </Dropdown>
+          </Dropdown.Menu>
+        </Dropdown>
 
-                    </Dropdown>
-                </Dropdown.Menu>
-                </Dropdown>
+        <Link to={{
+          pathname:'/searchresults', 
+          state: {
+              searchOption: searchOption,
+              input: searchInput,
+              categories: categories
+          }
+          }}>
+            <Button id="form-search-button" variant="outline-info">Search</Button>
+          </Link>
 
-                    <Link to={{
-                        pathname:'/searchresults', 
-                        state: {
-                            searchOption: searchOption,
-                            input: searchInput,
-                            categories: categories
-                        }
-                        }}>
-                        <Button id="form-search-button" variant="outline-info">Search</Button>
-                        </Link>
-
-                </Form>
-        </Navbar>
+        </Form>
+      </Navbar>
 
       <Switch>
-        <Route path="/" exact component={GuestRoleAPI} />
-        <Route path="/register" exact component={RegisterForm} />
-        <Route path="/login" exact component={Login} />
-        <Route path="/displayproducts" exact component={DisplayProducts} />
-        <Route path="/stores" exact component={DisplayStores} />
+        {/* guest */}
+        <Route path="/" exact render={(props) => <GuestRoleAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/register" exact render={(props) => <RegisterForm screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/login" exact render={(props) => <Login screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />        
+        <Route path="/displayproducts" exact render={(props) => <DisplayProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/stores" exact render={(props) => <DisplayStores screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         {/* <Route path="/search" exact component={Search} /> */}
-        <Route path="/purchase" exact component={PurchaseProducts} />
-        <Route path="/viewcart" exact component={ShoppingCart} />
-        <Route path="/stores/:store" exact component={StoreDetail} />
-        <Route path="/stores/:store/products" exact component={StoreProducts} />
-        <Route path="/searchresults" exact component={SearchResults} />
+        <Route path="/purchase" exact render={(props) => <PurchaseProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/viewcart" exact render={(props) => <ShoppingCart screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/stores/:store" exact render={(props) => <StoreDetail screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/stores/:store/products" exact render={(props) => <StoreProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/searchresults" exact render={(props) => <SearchResults screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
-        <Route path="/subscriber" exact component={SubscriberAPI} />
-        <Route path="/openstore" exact component={OpenStore} />
-        <Route path="/history" exact component={PersonalPurchaseHistory} />
+        {/* subscriber */}
+        <Route path="/subscriber" exact render={(props) => <SubscriberAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/openstore" exact render={(props) => <OpenStore screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/history" exact render={(props) => <PersonalPurchaseHistory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/owner" exact render={(props) => <OwnerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/manageinventory" exact render={(props) => <ManageInventory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/manager" exact render={(props) => <ManagerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/addproduct" exact render={(props) => <AddProductsForm screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
-        <Route path="/owner" exact component={OwnerAPI} />
-        <Route path="/manageinventory" exact component={ManageInventory} />
+        {/* owner */}
+        <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
-        <Route path="/manager" exact component={ManagerAPI} />
+        <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
-        <Route path="/allhistory" exact component={PurchaseHistoryUsersStores} />
 
         {/* <Route path="/history" exact component={PersonalPurchaseHistory} />
         <Route path="/history" exact component={PersonalPurchaseHistory} />

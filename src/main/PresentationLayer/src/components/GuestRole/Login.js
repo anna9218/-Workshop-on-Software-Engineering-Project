@@ -6,14 +6,12 @@ import * as theService from '../../services/communication';
 
 
 class Login extends React.Component{
-  // constructor(props) {
-    // super(props);
-    constructor() {
-      super();
+    constructor(props) {
+      super(props);
       this.state = {
         nickname: '',
         password: '',
-    };
+      };
 
     this.handleLogin = this.handleLogin.bind(this);
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -24,14 +22,38 @@ class Login extends React.Component{
     event.preventDefault();
         const promise = theService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend
         promise.then((data) => {
-          alert(data["msg"]);
+          let is_manager = data["msg"] === "SYS_MANAGER";
+          if(!is_manager){
+            alert(data["msg"]);
+          }
           if(data["data"]){ // if logged in
-              return;
-              //TODO - redirect to other page
+              if(is_manager){
+                // if system manager - redirect to system manager home page
+                this.props.history.push({pathname: '/systemmanager', props: this.props});
+              }
+              else{
+                const userType = theService.getUserType();
+                userType.then((data) => {
+                  if(data["data"] === "OWNER"){
+                    // if store owner - redirect to subscriber home page
+                    this.props.history.push({pathname: '/owner', props: this.props});
+                  }
+                  else if(data["data"] === "MANAGER"){
+                    // if store manager - redirect to subscriber home page
+                    this.props.history.push({pathname: '/manager', props: this.props});
+                  }
+                  else{
+                    // if subscriber - redirect to subscriber home page
+                    this.props.history.push({pathname: '/subscriber', props: this.props});
+                  }
+                })
+              }
             }
             else{
+              // user didn't succeed to log in
+              this.state.nickname = ''
+              this.state.password = ''
               return;
-              //TODO - redirect to other page
             }
         });
   }
@@ -46,16 +68,21 @@ class Login extends React.Component{
 
   render(){
     return (
-      <div>
+      <div style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
         <h1>Login</h1>
         <form className='login'>
          <input id="email" type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
              <input id="password" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
              <Link to='/'>
                  {/* <Button variant="dark" id="regbtn" onClick={this.handleLogin}>Login</Button> */}
-             <button type="button" onClick={this.handleLogin}>Login</button>
+             <button type="button" onClick={this.handleLogin}>
+               Login
+               </button>
              </Link>
          </form>
+         <Button variant="secondary" style={{marginTop: "1%"}} as={Link} to="./register">
+                Register
+          </Button>
          </div>);
   }
 }

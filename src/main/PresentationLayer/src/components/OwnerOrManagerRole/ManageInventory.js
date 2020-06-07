@@ -6,7 +6,7 @@ import * as theService from '../../services/communication';
 import AddProductsForm from './AddProductsForm'
 
 
-function ManageInventory(){
+function ManageInventory(props){
     useEffect(() => {
         fetchOwnedStores();
     }, []);
@@ -42,7 +42,7 @@ function ManageInventory(){
             setSelectedStore(stores[0]);
         }
 
-        setShowAddForm(true)
+        setShowAddForm(false)
         //TODO
     };
 
@@ -51,14 +51,14 @@ function ManageInventory(){
             setSelectedStore(stores[0]);
         }
 
-        setShowAddForm(true)
+        setShowAddForm(false)
         //TODO
     };
 
 
 
     return (
-        <div>
+        <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
           <h1>Manage Inventory</h1>
 
             <Form.Group controlId="stores_ControlSelect1" onChange={ event => {setSelectedStore(event.target.value);}}>
@@ -76,8 +76,9 @@ function ManageInventory(){
                 <Button variant="dark" id="open-store-button" onClick={removeProductsHandler}>Remove Products</Button>
                 <Button variant="dark" id="open-store-button" onClick={editProductsHandler}>Edit Products Details</Button>
 
-
-            { showAddForm ? <AddProductsForm storeName={selectedStore} /> : null }
+            <div style={{marginTop: "5%"}}>
+                { showAddForm ? <AddProductsForm storeName={selectedStore} /> : null }
+            </div>
             {/* { showAddForm ? <AddProductsForm storeName={selectedStore} showForm={() => setShowAddForm(false)}/> : null } */}
           
           

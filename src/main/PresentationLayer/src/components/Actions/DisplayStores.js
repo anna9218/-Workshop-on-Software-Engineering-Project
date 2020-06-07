@@ -5,7 +5,7 @@ import {Button, Jumbotron} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 
 
-function DisplayStores(){
+function DisplayStores(props){
   useEffect(() => {
     setCount(count + 1);
     fetchStores();
@@ -28,7 +28,7 @@ function DisplayStores(){
 
   return (
     //SET SOME KIND OF COUNTER ID FOR LINK - SOLVED IT WITH STORE NAME
-      <div>
+      <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
         <h1>All Stores</h1>
         {stores.map(store => (
           <h1>

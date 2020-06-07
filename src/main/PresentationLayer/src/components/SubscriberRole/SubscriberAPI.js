@@ -12,144 +12,106 @@ import * as theService from '../../services/communication';
 // View personal purchase history (3.7)
 
 
-function SubscriberAPI(){
+class SubscriberAPI extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchOption: 0,
+            searchInput: '',
+            categories: [],
 
+        };
 
-    const [searchOption, setSearchOption] = useState(0);
-    const [searchInput, setSearchInput] = useState('');
-    const [categories, setCategories] = useState([])
+      this.byNameHandler = this.byNameHandler.bind(this);
+      this.byKeywordHandler = this.byKeywordHandler.bind(this);
+      this.byCategoryHandler = this.byCategoryHandler.bind(this);
+      this.searchInputHandler = this.searchInputHandler.bind(this);
+      this.fetchCategories = this.fetchCategories.bind(this);
+      this.logoutHandler = this.logoutHandler.bind(this);
+      this.logoutHandler = this.logoutHandler.bind(this);
+    }
 
-    const byNameHandler = () =>{
-        setSearchOption(1);
+    byNameHandler = () =>{
+        this.setState({searchOption: 1})
     };
-    const byKeywordHandler = () =>{
-        setSearchOption(2);
+    byKeywordHandler = () =>{
+        this.setState({searchOption: 2})
     };
-    const byCategoryHandler = (input) =>{
-        setSearchOption(3);
-        setSearchInput(input);
+    byCategoryHandler = (input) =>{
+        this.setState({searchOption: 3, searchInput: input})
     };
-    const searchInputHandler = (event) =>{
-        setSearchInput(event.target.value);
+    searchInputHandler = (event) =>{
+        this.setState({searchInput: event.target.value})
     }
 
     // for the search functionality
-    const fetchCategories = async () =>{
+    fetchCategories = async () =>{
         const promise = theService.getCategories(); // goes to register.js and sends to backend
-    promise.then((data) => {setCategories(data["data"])});
+        promise.then((data) => {this.setState({categories: data["data"]})})
     }
 
-
-
-
-    const logoutHandler = async () =>{
+    logoutHandler = async () =>{
         const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
-
-        //   <Router>
-        //   <Redirect to='/subscriber' />
-        //   </Router>
-              {/* </Redirect> */}
-
-
-
+            this.props.history.push("/");
         });
     };
 
+    render(){
+        return(
+            <Container style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
+                <Jumbotron fluid>
+                    <Row>
+                        <Col />
+                        <Col xs={7}>
+                            <h1 style={{textAlign: "center"}}>Welcome Dear Subscriber!</h1>
+                        </Col>
+                        <Col>
+                        <Link to='/logout'>
+                            <Button variant="dark" id="logout" onClick={this.logoutHandler}>Logout</Button>
+                        </Link>
+                        </Col>
+                    </Row>
+                </Jumbotron>
+                
+                {/*
+                     need options for:
+                        // for guest only
+                        1. register - > now button -> redirect to ./register -> ok
+                        2. login - > now button -> redirect to ./login -> ok 
 
+                        // guest and up
+                        3. display stores and products info, display stores ->  redirect to ./stores
+                        4. search products by + filter products by -> in navbar
+                        5. save products to basket -> in shopping cart
+                        6. view and update shopping cart -> in shopping cart
 
-
-    return(
-        <Container>
-            <div>
-                <h1>Welcome Dear Subscriber!</h1>
-            </div>
-
-            
-
-
-
-            <Row>
-            <Link to='/stores'>
-                <Button variant="dark" id="displaystores">Display Stores</Button>
-            </Link>
+                        // subscriber and up
+                        7. purchase shopping cart -> in shopping cart
+                        8. open store
+                        9. view personal purchase history
+                        10. logout - > now button -> redirect to ./login -> ok
+                        */}
     
-            <Link to='/purchase'>
-                <Button variant="dark" id="purchasesbtn">Purchase Products</Button>
-            </Link>
-                    
-            <Link to='/viewcart'>
-                <Button variant="dark" id="viewcartbtn">View Shopping Cart</Button>
-            </Link>
-
-
-            <Form inline>
-                <Form.Control type="text" placeholder="Search" className="search" onChange={searchInputHandler}/>
-                <Dropdown>
-                <Dropdown.Toggle variant="dark" id="dropdown-searchby">
-                    By
-                </Dropdown.Toggle>
-                <Dropdown.Menu variant="dark">
-                    {/* <Link to='/search'> */}
-                    <Dropdown.Item href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
-                            
-
-                    <Dropdown drop='right' onClick={fetchCategories}>
-                    <Dropdown.Toggle variant="dark" id="dropdown-searchby">
-                        By Category
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu variant="dark">
-                        {categories.map(category => (
-                            <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
-                        ))}
-                    </Dropdown.Menu>
-
-                    </Dropdown>
-                </Dropdown.Menu>
-                </Dropdown>
-
-                    <Link to={{
-                        pathname:'/searchresults', 
-                        state: {
-                            searchOption: searchOption,
-                            input: searchInput,
-                            categories: categories
-                        }
-                        }}>
-                        <Button variant="dark">Search</Button>
-                    </Link>
-
-                </Form>
-            </Row>
- 
-
-
-
-
-
-
-
-
-
-
     
-            <Link to='/openstore'>
-                <Button variant="dark" id="open_store">Open Store</Button>
-            </Link>
-
-            <Link to='/history'>
-                <Button variant="dark" id="view_personal_history">View personal purchase history</Button>
-            </Link>
-
-            {/* <Link to='/'> */}
-                <Button variant="dark" id="logout" onClick={logoutHandler}>Logout</Button>
-            {/* </Link> */}
-
-        </Container>
-    );
+                <Row>
+                    <Button variant="secondary" size="lg" block as={Link} to="/stores">
+                        Display Stores And Products Information
+                    </Button>
+    
+                    <Button variant="secondary" size="lg" block as={Link} to="/openstore">
+                        Open Store
+                    </Button>
+    
+                    <Button variant="secondary" size="lg" block as={Link} to="/history">
+                        View Personal Purchase History
+                    </Button>
+                </Row>
+            </Container>
+        );
+    }
+   
 
 }
 

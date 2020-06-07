@@ -17,6 +17,11 @@ export async function login(nickname, password) {
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function getUserType(){
+    return axios.get('http://localhost:5000/get_user_type')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function displayStores(){
     return axios.get('http://localhost:5000/display_stores')
     .then((response) => (response.data), (error) => {console.log(error)});
@@ -27,6 +32,15 @@ export async function displayStoresProducts(store_name){
         store_name: store_name, 
         store_info_flag: false,
         products_info_flag: true
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function displayStoresStores(store_name){
+    return axios.post('http://localhost:5000/display_stores_products', {
+        store_name: store_name, 
+        store_info_flag: true,
+        products_info_flag: false
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -96,6 +110,13 @@ export async function fetchPersonalPurchaseHistory(){
 }
 
 //--------------------------- END OF SUBSCRIBER ROLE --------------------------------//
+
+//--------------------------- INIT SYSTEM --------------------------------------------//
+export async function initSystem(){
+    return axios.get('http://localhost:5000/init_system')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+//--------------------------- END OF INIT SYSTEM -------------------------------------//
 
 //--------------------------- OWNER ROLE --------------------------------------------//
 

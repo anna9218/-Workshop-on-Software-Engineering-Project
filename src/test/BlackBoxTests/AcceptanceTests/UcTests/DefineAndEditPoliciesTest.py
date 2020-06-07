@@ -3,10 +3,10 @@
 """
 import jsonpickle
 import datetime
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class DefineAndUpdatePolicies(ProjectTest):
+class DefineAndUpdatePoliciesTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.__dates: [dict] = [jsonpickle.encode(datetime.date.today())]
@@ -21,7 +21,7 @@ class DefineAndUpdatePolicies(ProjectTest):
         # ------------ purchase policy options -----------
         # .......... add policy + valid input ..........
         res = self.define_purchase_policy(self._store_name,
-                                          {"name": "policy1", "operator": "or", "products": ["product1"],
+                                          {"name": "policy1", "products": ["product1"],
                                            "dates": self.__dates, "min_amount": 2, "max_amount": 3})
         self.assertTrue(res)
         # .......... update policy + valid input ..........
@@ -41,30 +41,30 @@ class DefineAndUpdatePolicies(ProjectTest):
         # .......... add policy ..........
         # store doesn't exist
         res = self.define_purchase_policy("anotherStoreName",
-                                          {"name": "policy1", "operator": "and", "products": ["product1"],
+                                          {"name": "policy1", "products": ["product1"],
                                            "dates": self.__dates, "min_amount": 2, "max_amount": 3})
 
         self.assertFalse(res)
         # no products defined
         res = self.define_purchase_policy(self._store_name,
-                                          {"name": "policy1", "operator": "and", "dates": self.__dates,
+                                          {"name": "policy1", "dates": self.__dates,
                                            "min_amount": 2, "max_amount": 3})
         self.assertFalse(res)
         # no policy details given
         res = self.define_purchase_policy(self._store_name,
-                                          {"name": "policy1", "operator": "and", "products": ["product1"]})
+                                          {"name": "policy1", "products": ["product1"]})
         self.assertFalse(res)
         # policy name missing
         res = self.define_purchase_policy(self._store_name,
-                                          {"products": ["product1"], "operator": "and", "dates": self.__dates,
+                                          {"products": ["product1"], "dates": self.__dates,
                                            "min_amount": 2, "max_amount": 3})
         self.assertFalse(res)
         # policy already exists with given name
         self.define_purchase_policy(self._store_name,
-                                    {"name": "policy1",  "operator": "and", "products": ["product1"],
+                                    {"name": "policy1", "products": ["product1"],
                                      "dates": self.__dates})
         res = self.define_purchase_policy(self._store_name,
-                                    {"name": "policy1", "operator": "and", "products": ["product1"], "max_amount": 3})
+                                    {"name": "policy1", "products": ["product1"], "max_amount": 3})
         self.assertFalse(res)
 
         # .......... update policy ..........

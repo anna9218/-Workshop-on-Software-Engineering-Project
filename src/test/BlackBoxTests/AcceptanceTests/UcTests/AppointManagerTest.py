@@ -1,10 +1,10 @@
 """
     test class for use case 4.5 - appoint additional store manager
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class AppointManagerTest(ProjectTest):
+class AppointManagerTest(ProjectAT):
 
     # @logger
     def setUp(self) -> None:

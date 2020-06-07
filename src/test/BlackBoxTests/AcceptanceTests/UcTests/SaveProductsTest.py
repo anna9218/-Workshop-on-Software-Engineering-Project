@@ -1,10 +1,10 @@
 """
     test class for use case 2.6 - save products to basket
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class SaveProductsTest(ProjectTest):
+class SaveProductsTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
