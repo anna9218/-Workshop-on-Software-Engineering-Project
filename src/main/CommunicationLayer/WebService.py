@@ -3,14 +3,18 @@ from flask import Flask, request
 from flask_cors import CORS
 from flask import jsonify
 
-from src.main.CommunicationLayer import WebSocketService
+# from src.main.CommunicationLayer import WebSocketService
+from src.main.CommunicationLayer import Websocket
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 from src.main.ServiceLayer.TradeControlService import TradeControlService
+from flask_socketio import SocketIO, join_room, leave_room
 
 app = Flask(__name__)
 CORS(app)
+# socket = SocketIO(app)
+
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
 @app.route('/register', methods=['POST'])
@@ -115,7 +119,7 @@ def update_shopping_cart():
 @app.route('/purchase_products', methods=['POST'])
 def purchase_products():
     # if request.is_json:
-        # TODO
+    # TODO
     return jsonify(msg="Updated successfully!")
 
 
@@ -141,6 +145,7 @@ def add_product():
             return jsonify(msg="Congrats! Product was added!")
     return jsonify(msg="Oops, product wasn't added")
 
+
 # ------------------------------ SUBSCRIBER ROLE SERVICES -------------------------------------------------#
 
 
@@ -158,7 +163,8 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
-        WebSocketService.open_store(store_name, SubscriberRole.username, result)
+        # Websocket.open_store(store_name, SubscriberRole.username, result) TODO
+        # WebSocketService.open_store(store_name, SubscriberRole.username, result)
         # if response:
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened")
@@ -215,3 +221,26 @@ def init_system():
 def get_user_type():
     result = TradeControlService.get_user_type()
     return jsonify(data=result)
+
+
+# ------------------------------ WEBSOCKET ----------------------------------------------------#
+#
+# @socket.on('join')
+# async def join(data):
+#     join_room(room=data['store'], sid=data['username'])
+#
+#
+# @socket.on('leave')
+# async def leave(data):
+#     leave_room(room=data['store'], sid=data['username'])
+#
+#
+# async def send_notification(event, store_name, msg):
+#     # socket.send(msgs, json=True, room=storename)
+#     socket.emit(event, msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
+#
+#
+# def handle_purchase(user_name, store_name, result):
+#     if result:  # should be True or dict - TODO change the call to be inside if (result)
+#         msg = f"{user_name} made a purchase on store {store_name}"
+#         send_notification('purchase', store_name, msg)

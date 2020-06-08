@@ -7,14 +7,14 @@ from typing import Tuple
 import websockets
 from jsonpickle import json
 
-from src.main.CommunicationLayer.Store import Store
+from src.main.CommunicationLayer.StorePublisher import Store
 
 # SHOULD SEND ONLY JSON BETWEEN
 
 _stores = []  # (ConnectionLayerStore, list of (username_websocket) of its online subscribers)
 _connections : Tuple = () # (username, it's websocket)
 
-def open_store(store_name, owner_nickname, result):
+async def open_store(store_name, owner_nickname, result):
     if result and get_store(store_name) is None:  # should be true/false if Eden have'nt changed it to dictionary
         _stores.append (Store(store_name, owner_nickname))  # TODO - add ws? how?
         # maybe replace with registration msg and open new websocket in first store ownership
@@ -28,8 +28,21 @@ def in_connections(username_to_check):
             return True
     return False
 
+async def handle_new_connection(websocket, path):
+    msg = await websocket.recv()
+    if msg.msg != 'openStore':
+        return
+    for store in _stores:
+        # for username, ws in username_ws_tuple:
+        if store.is_subscribed_to_store(msg.username) and not in_connections(msg.username):
+            _connections.append((msg.username, websocket))
+            msgs = store.notify(msg.username)
+newOwner = websockets.serve(  # maybe send instead of serve
+    # handle_login, "localhost", 8765, ssl=ssl_context  # should be sending the unread msgs
+    handle_new_connection, "localhost", 8765  # should be sending the unread msgs
+)
 
-async def handle_new_connection(websocket):
+async def handle_login(websocket, path):
     msg = await websocket.recv()  # {username, (list of) stores, msg, (list of) ids}
     if msg.msg != 'connect':  # new - {username, msg}
         return
@@ -56,7 +69,7 @@ async def handle_new_connection(websocket):
 
 sendUnreadMsgs = websockets.serve(  # maybe send instead of serve
     # handle_login, "localhost", 8765, ssl=ssl_context  # should be sending the unread msgs
-    handle_new_connection, "localhost", 8765  # should be sending the unread msgs
+    handle_login, "localhost", 8765  # should be sending the unread msgs
 )
 
 
@@ -76,12 +89,11 @@ async def handle_purchase(user_name, store_name, result):
             #     json.jsonify()
             #     websocket.send(json.parse(newMsg))
             store.add_msg(user_name + ' made a purchase on store ' + store_name)
-            store.notifyAll()
+            store.notifyAll() # TODO - notifyAll doesnt call send_msg
 
 async def send_msg (send_to_username, msg):
     for username, ws in _connections:
         if send_to_username == username:
-           json.jsonify()
            ws.send(json.parse(msg))
 
 #
@@ -123,7 +135,8 @@ asyncio.get_event_loop().run_until_complete(sendUnreadMsgs)
 
 # asyncio.get_event_loop().run_until_complete(notifyPurchase) # maybe replace it with store.notify
 # asyncio.get_event_loop().run_until_complete(recieveLogoutMsg)
-# asyncio.get_event_loop().run_forever()  # TODO - delete?
+asyncio.get_event_loop().run_until_complete(handle_new_connection)
+asyncio.get_event_loop().run_forever()  # TODO - delete?
 
 def get_store(store_name) -> Store:
     for store in _stores:
