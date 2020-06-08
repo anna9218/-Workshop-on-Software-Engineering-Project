@@ -3,6 +3,7 @@ from datetime import datetime
 from src.Logger import errorLogger, logger
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
@@ -130,7 +131,7 @@ class TradeControl:
                     return {'response': False, 'msg': "Error! Store name " + store_name + " already exist"}
 
             store = Store(store_name)
-            store.get_owners().append(self.__curr_user)
+            store.get_owners_appointments().append(StoreAppointment(None, self.__curr_user, []))
             self.__stores.append(store)
             return {'response': True, 'msg': "Store " + store_name + " opened successfully"}
         return {'response': False, 'msg': "Error! user doesn't have permission to open a store"}
@@ -344,7 +345,7 @@ class TradeControl:
         """
         return self.__curr_user.update_quantity_in_shopping_cart(products_details)
 
-    @logger
+    # @logger
     def get_store(self, store_name) -> Store:
         for s in self.__stores:
             if s.get_name() == store_name:
@@ -580,6 +581,30 @@ class TradeControl:
                 return {'response': True, 'msg': "Product was edited successfully"}
             return {'response': False, 'msg': "Edit product failed."}
         return {'response': False, 'msg': "Edit product failed."}
+
+    @logger
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        """
+        the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
+        and owners appointee_nickname appointed.
+        :param appointee_nickname: nickname of the owner we want to remove as owner
+        :param store_name: store the owner will be removed from as owner
+        :return: dict =  {'response': [], 'msg': str}
+                 response = nicknames list of all the removed appointees -> the appointee_nickname of the owner we want
+                            to remove and all the appointees he appointed, we had to remove as well.
+        """
+        store = self.get_store(store_name)
+        appointee = self.get_subscriber(appointee_nickname)
+        if appointee is not None and \
+                store is not None and \
+                self.__curr_user.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                store.is_owner(self.__curr_user.get_nickname()) and \
+                appointee.is_registered() and \
+                store.is_owner(appointee_nickname):
+            return store.remove_owner(self.__curr_user.get_nickname(), appointee_nickname)
+        return {'response': [], 'msg': "Error! remove store owner failed."}
+
 
     @logger
     def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:

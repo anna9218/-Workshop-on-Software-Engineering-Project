@@ -2,6 +2,7 @@ import unittest
 
 import jsonpickle
 
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Store import Store
@@ -84,7 +85,7 @@ class GuestRoleTest(unittest.TestCase):
         user = User()
         user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.get_owners().append(user)
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
         store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
         store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100)
         (TradeControl.get_instance()).get_stores().append(store)
@@ -99,9 +100,9 @@ class GuestRoleTest(unittest.TestCase):
         # flag store
 
         # All valid
-        self.assertEqual(store, jsonpickle.decode(self.__guest_role.display_stores_or_products_info(store.get_name(),
-                                                                                                    store_info_flag=True
-                                                                                                    )['response']))
+        res = self.__guest_role.display_stores_or_products_info(store.get_name(), store_info_flag=True)
+
+        self.assertEqual({"name": 'myStore', "owners": ['eytan'], "managers": []}, res['response'])
         # Invalid - store doesn't exist
         self.assertIsNone((self.__guest_role.display_stores_or_products_info("store.get_name()",
                                                                              store_info_flag=True
@@ -110,11 +111,12 @@ class GuestRoleTest(unittest.TestCase):
         # flag products
 
         # All valid
-        result_products_in_inventory = [(element['product'], element['amount']) for element in
-                                        jsonpickle.decode(self.__guest_role.display_stores_or_products_info
+        res = (self.__guest_role.display_stores_or_products_info
                                                           (store.get_name(),
-                                                           products_info_flag=True)['response'])]
-        expected_products_in_inventory = [(element['product'], element['amount']) for element in
+                                                           products_info_flag=True)['response'])
+        result_products_in_inventory = [(element['name'], element['amount']) for element in res
+                                        ]
+        expected_products_in_inventory = [(element['product'].get_name(), element['amount']) for element in
                                           store.get_inventory().get_inventory()]
         self.assertEqual(expected_products_in_inventory, result_products_in_inventory)
         # Invalid - store doesn't exist
@@ -408,7 +410,7 @@ class GuestRoleTest(unittest.TestCase):
         user = User()
         user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.get_owners().append(user)
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
         store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 4, "store_name": store.get_name(),
@@ -481,7 +483,7 @@ class GuestRoleTest(unittest.TestCase):
         user = User()
         user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.get_owners().append(user)
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
         store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
         store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100)
         (TradeControl.get_instance()).get_stores().append(store)
@@ -515,7 +517,7 @@ class GuestRoleTest(unittest.TestCase):
         user = User()
         user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.get_owners().append(user)
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
         store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
         store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100)
         (TradeControl.get_instance()).get_stores().append(store)
@@ -627,15 +629,6 @@ class GuestRoleTest(unittest.TestCase):
         self.assertIsNotNone((TradeControl.get_instance()).get_curr_user().get_shopping_cart().
             get_store_basket(store.get_name()).get_product(
             (product_details_as_dictionary2['product_name'])))
-
-    # use case 2.8
-    def test_purchase_products(self):
-        # TODO: this
-        self.assertTrue(False)
-
-    def test_confirm_payment_test(self):
-        # TODO: this
-        self.assertTrue(False)
 
     def tearDown(self):
         (TradeControl.get_instance()).__delete__()

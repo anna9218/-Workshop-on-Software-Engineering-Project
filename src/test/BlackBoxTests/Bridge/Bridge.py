@@ -140,6 +140,13 @@ class Bridge(ABC):
     def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
         pass
 
+    # 4.4
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        pass
+
+    def get_store(self, store_name):
+        pass
+
     def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None,
                                                                 "max_amount": int or None,

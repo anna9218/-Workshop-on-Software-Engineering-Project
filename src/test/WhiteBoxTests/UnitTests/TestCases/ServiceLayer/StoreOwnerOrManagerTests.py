@@ -72,6 +72,14 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         TradeControl.get_instance().remove_manager = MagicMock(return_value=False)
         self.assertFalse(self.__store_owner_or_manager_role.remove_manager("Eytan is", "the best"))
 
+    def test_remove_owner(self):
+        TradeControl.get_instance().remove_owner = MagicMock(return_value={'response': ['owner was removed'], 'msg': "success"})
+
+        res = self.__store_owner_or_manager_role.remove_owner("owner", "myStore")
+        self.assertEqual(res['response'], ['owner was removed'])
+        self.assertEqual(res['msg'], "success")
+
+
     # @logger
     def test_display_store_purchases(self):
         TradeControl.get_instance().display_store_purchases = MagicMock(return_value=True)

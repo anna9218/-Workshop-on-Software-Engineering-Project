@@ -10,7 +10,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -40,9 +40,6 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.add_owner was called
-arguments: ('Store', 'shani', 'User')
-
 The function User.is_registered was called
 arguments: ('User',)
 
@@ -55,13 +52,25 @@ arguments: ('User',)
 The function Registration.get_nickname was called
 arguments: ('Registration',)
 
+The function Store.is_owner was called
+arguments: ('Store', 'eden')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
 The function Registration.get_nickname was called
 arguments: ('Registration',)
 
-The function StoreManagerAppointment.get_appointee was called
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
 arguments: ('StoreManagerAppointment',)
 
 The function Store.has_permission was called
@@ -69,6 +78,36 @@ arguments: ('Store', 'shani', <ManagerPermission.APPOINT_OWNER: 3>)
 
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
 
 The function User.get_nickname was called
 arguments: ('User',)
@@ -91,6 +130,12 @@ arguments: ('Registration',)
 The function Store.get_owners was called
 arguments: ('Store',)
 
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.register was called
 arguments: (string, string, string, )
 
@@ -103,7 +148,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -130,6 +175,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -138,9 +189,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5)
@@ -151,6 +199,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -159,12 +213,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
@@ -175,6 +223,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -184,44 +238,17 @@ arguments: ('Registration',)
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_inventory was called
 arguments: ('Store',)
 
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function User.register was called
 arguments: (string, string, string, )
@@ -235,7 +262,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -262,6 +289,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -277,6 +310,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -285,9 +324,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5)
@@ -298,6 +334,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -307,12 +349,6 @@ arguments: ('Registration',)
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.add_products was called
 arguments: ('Store', 'shani', [{'name': 'Chair', 'price': 100, 'category': 'Furniture', 'amount': 5}])
 
@@ -321,6 +357,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
 arguments: ('User',)
@@ -337,6 +379,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -346,32 +394,11 @@ arguments: ('Registration',)
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_products was called
 arguments: ('Store', 'shani', [{'name': 'Chair', 'price': -99, 'category': 'Furniture', 'amount': 5}, {'name': 'Sofa', 'price': 100, 'category': 'Furniture', 'amount': 5}])
@@ -381,6 +408,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
 arguments: ('User',)
@@ -400,7 +433,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -436,7 +469,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -463,6 +496,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -471,9 +510,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.change_amount was called
 arguments: ('Store', 'Chair', 3)
@@ -484,23 +520,14 @@ arguments: ('Store', 'Chair')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.change_amount was called
 arguments: ('StoreInventory', 'Chair', 3)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_inventory was called
 arguments: ('Store',)
 
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.change_amount was called
 arguments: ('Store', 'Chair', 8)
@@ -511,14 +538,8 @@ arguments: ('Store', 'Chair')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.change_amount was called
 arguments: ('StoreInventory', 'Chair', 8)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.change_amount was called
 arguments: ('Store', 'Chair', -8)
@@ -528,9 +549,6 @@ arguments: ('Store',)
 
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function User.register was called
 arguments: (string, string, string, )
@@ -544,7 +562,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -571,6 +589,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -579,9 +603,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.change_name was called
 arguments: ('Store', 'Chair', 'Chair222')
@@ -592,9 +613,6 @@ arguments: ('Store', 'Chair')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Product.set_name was called
 arguments: ('Product', 'Chair222')
 
@@ -603,9 +621,6 @@ arguments: ('Store', 'Chair222')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair222')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Product.__eq__ was called
 arguments: ('Product', None)
@@ -616,9 +631,6 @@ arguments: ('Store', 'Chair')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.change_name was called
 arguments: ('Store', 'Chair222', 'Blaaaa')
 
@@ -627,9 +639,6 @@ arguments: ('Store', 'Chair222')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair222')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Product.set_name was called
 arguments: ('Product', 'Blaaaa')
@@ -640,9 +649,6 @@ arguments: ('Store', 'Blaaaa')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Blaaaa')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Product.__eq__ was called
 arguments: ('Product', None)
 
@@ -651,9 +657,6 @@ arguments: ('Store', 'Chair222')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair222')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.change_name was called
 arguments: ('Store', 'NNNN', 'blaaa')
@@ -664,26 +667,17 @@ arguments: ('Store', 'NNNN')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'NNNN')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.get_product was called
 arguments: ('Store', 'NNNN')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'NNNN')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.get_product was called
 arguments: ('Store', 'blaaa')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'blaaa')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function User.register was called
 arguments: (string, string, string, )
@@ -697,7 +691,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -724,6 +718,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -732,9 +732,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.change_price was called
 arguments: ('Store', 'Chair', 13)
@@ -745,23 +742,11 @@ arguments: ('Store', 'Chair')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.set_price was called
-arguments: ('Product', 13)
-
 The function Store.get_product was called
 arguments: ('Store', 'Chair')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_price was called
-arguments: ('Product',)
 
 The function Store.change_price was called
 arguments: ('Store', 'Chair', 8)
@@ -772,23 +757,11 @@ arguments: ('Store', 'Chair')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.set_price was called
-arguments: ('Product', 8)
-
 The function Store.get_product was called
 arguments: ('Store', 'Chair')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_price was called
-arguments: ('Product',)
 
 The function Store.change_price was called
 arguments: ('Store', 'NNNN', 8)
@@ -799,9 +772,6 @@ arguments: ('Store', 'NNNN')
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'NNNN')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.change_price was called
 arguments: ('Store', 'Chair', -8)
 
@@ -810,9 +780,6 @@ arguments: ('Store', 'NNNN')
 
 The function StoreInventory.get_product was called
 arguments: ('StoreInventory', 'NNNN')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function User.register was called
 arguments: (string, string, string, )
@@ -826,7 +793,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -853,6 +820,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -868,6 +841,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -876,9 +855,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', 'TV', 100, 'Electric', 5)
@@ -889,6 +865,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -897,12 +879,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5)
@@ -913,6 +889,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -922,29 +904,11 @@ arguments: ('Registration',)
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.get_products_by was called
 arguments: ('Store', 1, 'Chaer')
 
 The function StoreInventory.get_products_by was called
 arguments: ('StoreInventory', 1, 'Chaer')
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_products_by was called
 arguments: ('Store', 1, 'Chair')
@@ -952,29 +916,11 @@ arguments: ('Store', 1, 'Chair')
 The function StoreInventory.get_products_by was called
 arguments: ('StoreInventory', 1, 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.get_products_by was called
 arguments: ('Store', 2, 'a')
 
 The function StoreInventory.get_products_by was called
 arguments: ('StoreInventory', 2, 'a')
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_products_by was called
 arguments: ('Store', 3, 'Furniture')
@@ -982,29 +928,11 @@ arguments: ('Store', 3, 'Furniture')
 The function StoreInventory.get_products_by was called
 arguments: ('StoreInventory', 3, 'Furniture')
 
-The function Product.get_category was called
-arguments: ('Product',)
-
-The function Product.get_category was called
-arguments: ('Product',)
-
-The function Product.get_category was called
-arguments: ('Product',)
-
 The function Store.get_products_by was called
 arguments: ('Store', 3, 'Electric')
 
 The function StoreInventory.get_products_by was called
 arguments: ('StoreInventory', 3, 'Electric')
-
-The function Product.get_category was called
-arguments: ('Product',)
-
-The function Product.get_category was called
-arguments: ('Product',)
-
-The function Product.get_category was called
-arguments: ('Product',)
 
 The function User.register was called
 arguments: (string, string, string, )
@@ -1018,7 +946,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -1054,7 +982,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -1081,6 +1009,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1089,9 +1023,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', "not Eytan's Product", 10, 'Eytan Category', 2)
@@ -1102,6 +1033,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1110,12 +1047,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 2)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.is_in_store_inventory was called
 arguments: ('Store', [["Eytan's Product", 4]])
@@ -1129,9 +1060,6 @@ arguments: ('StoreInventory', "Eytan's Product", 4)
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "Eytan's Product")
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.is_in_store_inventory was called
 arguments: ('Store', [["Eytan's Product", 4], ["not Eytan's Product", 1]])
 
@@ -1144,9 +1072,6 @@ arguments: ('StoreInventory', "Eytan's Product", 4)
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "Eytan's Product")
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.get_inventory was called
 arguments: ('Store',)
 
@@ -1155,12 +1080,6 @@ arguments: ('StoreInventory', "not Eytan's Product", 1)
 
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "not Eytan's Product")
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.is_in_store_inventory was called
 arguments: ('Store', [["Eytan's Product", 5], ["not Eytan's Product", 2]])
@@ -1174,9 +1093,6 @@ arguments: ('StoreInventory', "Eytan's Product", 5)
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "Eytan's Product")
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.get_inventory was called
 arguments: ('Store',)
 
@@ -1185,12 +1101,6 @@ arguments: ('StoreInventory', "not Eytan's Product", 2)
 
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "not Eytan's Product")
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.is_in_store_inventory was called
 arguments: ('Store', [["Eytan's Product", 6], ["not Eytan's Product", 1]])
@@ -1204,9 +1114,6 @@ arguments: ('StoreInventory', "Eytan's Product", 6)
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "Eytan's Product")
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.is_in_store_inventory was called
 arguments: ('Store', [["Eytan's Product", 6], ["not Eytan's Product", 10]])
 
@@ -1218,9 +1125,6 @@ arguments: ('StoreInventory', "Eytan's Product", 6)
 
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "Eytan's Product")
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.is_in_store_inventory was called
 arguments: ('Store', [["Eytan's social life", 5], ["not Eytan's Product", 1]])
@@ -1234,12 +1138,6 @@ arguments: ('StoreInventory', "Eytan's social life", 5)
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "Eytan's social life")
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.is_in_store_inventory was called
 arguments: ('Store', [["Eytan's social life", 5], ["Liverpool's primer league title", 1]])
 
@@ -1252,12 +1150,6 @@ arguments: ('StoreInventory', "Eytan's social life", 5)
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', "Eytan's social life")
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function User.register was called
 arguments: (string, string, string, )
 
@@ -1270,7 +1162,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -1303,14 +1195,17 @@ arguments: (string, string, string, )
 The function Store.is_owner was called
 arguments: ('Store', 'eden')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
 The function Registration.get_nickname was called
 arguments: ('Registration',)
-
-The function Store.add_owner was called
-arguments: ('Store', 'shani', 'User')
 
 The function User.is_registered was called
 arguments: ('User',)
@@ -1324,13 +1219,25 @@ arguments: ('User',)
 The function Registration.get_nickname was called
 arguments: ('Registration',)
 
+The function Store.is_owner was called
+arguments: ('Store', 'eden')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
 The function Registration.get_nickname was called
 arguments: ('Registration',)
 
-The function StoreManagerAppointment.get_appointee was called
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
 arguments: ('StoreManagerAppointment',)
 
 The function Store.has_permission was called
@@ -1339,6 +1246,36 @@ arguments: ('Store', 'shani', <ManagerPermission.APPOINT_OWNER: 3>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1360,6 +1297,15 @@ arguments: ('Registration',)
 The function Store.is_owner was called
 arguments: ('Store', 'eden')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1384,7 +1330,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -1414,7 +1360,1423 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
+The function Store.get_owners_appointments was called
+arguments: ('Store',)
+
+The function User.register was called
+arguments: (string, string, string, )
+
+The function User.is_registered was called
+arguments: ('User',)
+
+The function Registration.is_registered was called
+arguments: ('Registration',)
+
+The function Registration.register was called
+arguments: (string, string, string, )
+
+The function Store.get_store_manager_appointments was called
+arguments: ('Store',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner1')
+
 The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'shani', <ManagerPermission.APPOINT_OWNER: 3>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner2')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner1', <ManagerPermission.APPOINT_OWNER: 3>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner1')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner3')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner2', <ManagerPermission.APPOINT_OWNER: 3>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner2')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.add_manager was called
+arguments: ('Store', 'User', 'User', [])
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner3', <ManagerPermission.APPOINT_MANAGER: 5>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner3')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.add_manager was called
+arguments: ('Store', 'User', 'User', [])
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'shani', <ManagerPermission.APPOINT_MANAGER: 5>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.remove_owner was called
+arguments: ('Store', 'owner2', 'owner1')
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner2', <ManagerPermission.DEL_OWNER: 4>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner2')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.remove_owner was called
+arguments: ('Store', 'owner', 'owner1')
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner', <ManagerPermission.DEL_OWNER: 4>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_manager was called
+arguments: ('Store', 'owner')
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.remove_owner was called
+arguments: ('Store', 'shani', 'owner1')
+
+The function Store.has_permission was called
+arguments: ('Store', 'shani', <ManagerPermission.DEL_OWNER: 4>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.remove_owner_appointees was called
+arguments: ('Store', 'owner1')
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.remove_owner_appointees was called
+arguments: ('Store', 'owner2')
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.remove_owner_appointees was called
+arguments: ('Store', 'owner3')
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner1')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner2')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner3')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_manager was called
+arguments: ('Store', 'manager1')
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_manager was called
+arguments: ('Store', 'manager2')
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.register was called
+arguments: (string, string, string, )
+
+The function User.is_registered was called
+arguments: ('User',)
+
+The function Registration.is_registered was called
+arguments: ('Registration',)
+
+The function Registration.register was called
+arguments: (string, string, string, )
+
+The function Store.get_owners_appointments was called
+arguments: ('Store',)
+
+The function User.register was called
+arguments: (string, string, string, )
+
+The function User.is_registered was called
+arguments: ('User',)
+
+The function Registration.is_registered was called
+arguments: ('Registration',)
+
+The function Registration.register was called
+arguments: (string, string, string, )
+
+The function Store.get_store_manager_appointments was called
+arguments: ('Store',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner1')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'shani', <ManagerPermission.APPOINT_OWNER: 3>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner2')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner1', <ManagerPermission.APPOINT_OWNER: 3>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner1')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner3')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner2', <ManagerPermission.APPOINT_OWNER: 3>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner2')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.add_manager was called
+arguments: ('Store', 'User', 'User', [])
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'owner3', <ManagerPermission.APPOINT_MANAGER: 5>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner3')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.add_manager was called
+arguments: ('Store', 'User', 'User', [])
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.has_permission was called
+arguments: ('Store', 'shani', <ManagerPermission.APPOINT_MANAGER: 5>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.remove_owner_appointees was called
+arguments: ('Store', 'owner1')
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.remove_owner_appointees was called
+arguments: ('Store', 'owner2')
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function Store.remove_owner_appointees was called
+arguments: ('Store', 'owner3')
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreAppointment.get_appointer was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner1')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner2')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_owner was called
+arguments: ('Store', 'owner3')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_manager was called
+arguments: ('Store', 'manager1')
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function Store.is_manager was called
+arguments: ('Store', 'manager2')
+
+The function Store.get_managers was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function User.register was called
+arguments: (string, string, string, )
+
+The function User.is_registered was called
+arguments: ('User',)
+
+The function Registration.is_registered was called
+arguments: ('Registration',)
+
+The function Registration.register was called
+arguments: (string, string, string, )
+
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -1447,6 +2809,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1455,9 +2823,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_inventory was called
 arguments: ('Store',)
@@ -1470,9 +2835,6 @@ arguments: ('Store', 'Chair')
 
 The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_inventory was called
 arguments: ('Store',)
@@ -1492,7 +2854,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called
@@ -1519,6 +2881,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1527,9 +2895,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.remove_products was called
 arguments: ('Store', '', ['Chair', 'Sofa'])
@@ -1539,6 +2904,12 @@ arguments: ('Store', '', <ManagerPermission.EDIT_INV: 1>)
 
 The function Store.is_owner was called
 arguments: ('Store', '')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
 arguments: ('User',)
@@ -1552,7 +2923,7 @@ arguments: ('Store', '')
 The function Store.get_managers was called
 arguments: ('Store',)
 
-The function StoreManagerAppointment.get_appointee was called
+The function StoreAppointment.get_appointee was called
 arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
@@ -1576,6 +2947,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1585,29 +2962,11 @@ arguments: ('Registration',)
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.get_amount was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 3)
@@ -1618,6 +2977,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1626,12 +2991,6 @@ arguments: ('Registration',)
 
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 3)
-
-The function Product.get_name was called
-arguments: ('Product',)
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_inventory was called
 arguments: ('Store',)
@@ -1648,6 +3007,12 @@ arguments: ('Store', '', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', '')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1660,7 +3025,7 @@ arguments: ('Store', '')
 The function Store.get_managers was called
 arguments: ('Store',)
 
-The function StoreManagerAppointment.get_appointee was called
+The function StoreAppointment.get_appointee was called
 arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
@@ -1678,6 +3043,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1690,17 +3061,11 @@ arguments: ('Store', 'Chair')
 The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.remove_product was called
 arguments: ('Store', 'Sofa')
 
 The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Sofa')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.add_product was called
 arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
@@ -1711,6 +3076,12 @@ arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
 The function Store.is_owner was called
 arguments: ('Store', 'shani')
 
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
 The function User.get_nickname was called
 arguments: ('User',)
 
@@ -1720,9 +3091,6 @@ arguments: ('Registration',)
 The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
-The function Product.get_name was called
-arguments: ('Product',)
-
 The function Store.remove_products was called
 arguments: ('Store', 'dani', ['Chair'])
 
@@ -1731,6 +3099,12 @@ arguments: ('Store', 'dani', <ManagerPermission.EDIT_INV: 1>)
 
 The function Store.is_owner was called
 arguments: ('Store', 'dani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
 arguments: ('User',)
@@ -1744,7 +3118,7 @@ arguments: ('Store', 'dani')
 The function Store.get_managers was called
 arguments: ('Store',)
 
-The function StoreManagerAppointment.get_appointee was called
+The function StoreAppointment.get_appointee was called
 arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
@@ -1753,7 +3127,7 @@ arguments: ('User',)
 The function Registration.get_nickname was called
 arguments: ('Registration',)
 
-The function StoreManagerAppointment.get_appointee was called
+The function StoreAppointment.get_appointee was called
 arguments: ('StoreManagerAppointment',)
 
 The function User.get_nickname was called
@@ -1762,7 +3136,7 @@ arguments: ('User',)
 The function Registration.get_nickname was called
 arguments: ('Registration',)
 
-The function StoreManagerAppointment.has_permission was called
+The function StoreAppointment.has_permission was called
 arguments: ('StoreManagerAppointment', <ManagerPermission.EDIT_INV: 1>)
 
 The function Store.remove_product was called
@@ -1770,9 +3144,6 @@ arguments: ('Store', 'Chair')
 
 The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
-
-The function Product.get_name was called
-arguments: ('Product',)
 
 The function Store.get_inventory was called
 arguments: ('Store',)
@@ -1792,7 +3163,7 @@ arguments: ('Registration',)
 The function Registration.register was called
 arguments: (string, string, string, )
 
-The function Store.get_owners was called
+The function Store.get_owners_appointments was called
 arguments: ('Store',)
 
 The function User.register was called

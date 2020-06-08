@@ -2,7 +2,8 @@ from src.Logger import logger
 from src.main.DomainLayer.UserComponent.User import User
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 
-class StoreManagerAppointment:
+
+class StoreAppointment:
     def __init__(self, appointer: User, appointee: User, permissions: list):
         self.__appointer = appointer
         self.__permissions = permissions

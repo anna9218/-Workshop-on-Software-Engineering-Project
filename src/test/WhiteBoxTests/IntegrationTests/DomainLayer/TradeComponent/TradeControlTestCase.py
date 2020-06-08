@@ -3,6 +3,7 @@ import unittest
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
@@ -670,7 +671,7 @@ class TradeControlTestCase(unittest.TestCase):
         store: Store = Store("myStore")
         user: User = User()
         user.register('Eytan', '12')
-        store.get_owners().append(user)
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
         store.add_product("Eytan", "Eytan's product", 12, "Eytan's category", 5)
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 4, "store_name": store.get_name(),
@@ -680,7 +681,9 @@ class TradeControlTestCase(unittest.TestCase):
         product2: Product = Product("maybe Eytan's product", 8, "Eytan's category")
         store.add_product("Eytan", "not Eytan's product", 9, "Eytan's category", 3)
         store1: Store = Store("Not my store")
-        store1.get_owners().append(user)
+        # store1.get_owners().append(user)
+        store1.get_owners_appointments().append(StoreAppointment(None, user, []))
+
         store1.add_product("Eytan", "Eytan's product", 12, "Eytan's category", 5)
         store1.add_product("Eytan", "not Eytan's product", 9, "Eytan's category", 12)
         store1.add_product("Eytan", "maybe Eytan's product", 8, "Eytan's category", 5)
@@ -749,7 +752,7 @@ class TradeControlTestCase(unittest.TestCase):
         # (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
 
@@ -899,7 +902,7 @@ class TradeControlTestCase(unittest.TestCase):
         # (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
 
@@ -974,7 +977,7 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 5}
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store2.get_name()).add_manager(self.__user, manager,
                                                                                [ManagerPermission.EDIT_INV])
         (TradeControl.get_instance()).add_products(store2.get_name(), [product_as_dictionary])
@@ -1007,7 +1010,7 @@ class TradeControlTestCase(unittest.TestCase):
         # (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])
@@ -1084,7 +1087,7 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 5}
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store2.get_name()).add_manager(self.__user, manager,
                                                                                [ManagerPermission.EDIT_INV])
         (TradeControl.get_instance()).add_products(store2.get_name(), [product_as_dictionary])
@@ -1142,7 +1145,7 @@ class TradeControlTestCase(unittest.TestCase):
         # (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
 
@@ -1273,7 +1276,7 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 5}
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store2.get_name()).add_manager(self.__user, manager,
                                                                                [ManagerPermission.EDIT_INV])
         (TradeControl.get_instance()).add_products(store2.get_name(), [product_as_dictionary])
@@ -1309,7 +1312,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
 
@@ -1443,7 +1446,7 @@ class TradeControlTestCase(unittest.TestCase):
                                  "amount": 5}
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store2.get_name()).add_manager(self.__user, manager,
                                                                                [ManagerPermission.EDIT_INV])
         (TradeControl.get_instance()).add_products(store2.get_name(), [product_as_dictionary])
@@ -1495,7 +1498,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
 
@@ -1516,7 +1519,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertNotIn(manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
 
         # Restore
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().remove(manager)
+        (TradeControl.get_instance()).remove_owner(manager.get_nickname(), store.get_name())
 
         # Invalid - new owner already an owner
         self.assertFalse((TradeControl.get_instance()).appoint_additional_owner(new_owner.get_nickname(),
@@ -1524,7 +1527,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertIn(new_owner, (TradeControl.get_instance()).get_store(store.get_name()).get_owners())
 
         # Restore
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().remove(new_owner)
+        (TradeControl.get_instance()).remove_owner(new_owner.get_nickname(), store.get_name())
 
         (TradeControl.get_instance()).set_curr_user(manager)
         (TradeControl.get_instance()).login_subscriber(manager.get_nickname(), "country")
@@ -1555,7 +1558,7 @@ class TradeControlTestCase(unittest.TestCase):
                                                                                 "store.get_name()")['response'])
 
         store2: Store = Store("Not store")
-        store2.get_owners().append(new_owner)
+        store2.get_owners_appointments().append(StoreAppointment(self.__user, new_owner, []))
 
         # Valid - appointee owns another store
         self.assertTrue((TradeControl.get_instance()).appoint_additional_owner(new_owner.get_nickname(),
@@ -1571,7 +1574,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
 
@@ -1610,7 +1613,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertNotIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
 
         # Restore
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().remove(new_manager)
+        (TradeControl.get_instance()).remove_owner(new_manager.get_nickname(), store.get_name())
 
         (TradeControl.get_instance()).set_curr_user(manager)
         (TradeControl.get_instance()).login_subscriber(manager.get_nickname(), "country")
@@ -1655,7 +1658,7 @@ class TradeControlTestCase(unittest.TestCase):
                                                                                  new_manager.get_nickname())
 
         store2: Store = Store("Not store")
-        store2.get_owners().append(self.__user)
+        store2.get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_stores().append(store2)
         (TradeControl.get_instance()).appoint_additional_owner(new_manager.get_nickname(), store2.get_name())
 
@@ -1677,7 +1680,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).set_curr_user(manager)
         (TradeControl.get_instance()).login_subscriber(manager.get_nickname(), "manager")
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.APPOINT_MANAGER])
 
@@ -1720,7 +1723,10 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertNotIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
 
         # Restore
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().remove(new_manager)
+        (TradeControl.get_instance()).set_curr_user(self.__user)
+        (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
+
+        (TradeControl.get_instance()).remove_owner(new_manager.get_nickname(), store.get_name())
 
         (TradeControl.get_instance()).set_curr_user(manager)
         (TradeControl.get_instance()).logout_subscriber()
@@ -1746,7 +1752,7 @@ class TradeControlTestCase(unittest.TestCase):
                                                                              [ManagerPermission.EDIT_INV])['response'])
 
         store2: Store = Store("Not store")
-        store2.get_owners().append(self.__user)
+        store2.get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_stores().append(store2)
         (TradeControl.get_instance()).appoint_additional_owner(new_manager.get_nickname(), store2.get_name())
 
@@ -1765,7 +1771,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_INV])
 
@@ -1773,7 +1779,7 @@ class TradeControlTestCase(unittest.TestCase):
         new_manager.register("I", "manage this tests")
         new_owner = User()
         new_owner.register("Bed", "of roses")
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(new_owner)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(self.__user, new_owner, []))
         (TradeControl.get_instance()).subscribe(new_manager)
         (TradeControl.get_instance()).subscribe(manager)
         (TradeControl.get_instance()).appoint_store_manager(new_manager.get_nickname(),
@@ -1816,7 +1822,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_MANAGER_PER,
                                                                                ManagerPermission.APPOINT_MANAGER])
@@ -1828,7 +1834,7 @@ class TradeControlTestCase(unittest.TestCase):
         new_manager.register("I", "manage this tests")
         new_owner = User()
         new_owner.register("Bed", "of roses")
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(new_owner)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, new_owner, []))
         (TradeControl.get_instance()).subscribe(new_manager)
         (TradeControl.get_instance()).subscribe(manager)
         (TradeControl.get_instance()).appoint_store_manager(new_manager.get_nickname(),
@@ -1924,7 +1930,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_MANAGER_PER,
                                                                                ManagerPermission.APPOINT_MANAGER])
@@ -1933,7 +1939,7 @@ class TradeControlTestCase(unittest.TestCase):
         new_manager.register("I", "manage this tests")
         new_owner = User()
         new_owner.register("Bed", "of roses")
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(new_owner)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(self.__user, new_owner, []))
         (TradeControl.get_instance()).subscribe(new_manager)
         (TradeControl.get_instance()).subscribe(manager)
         (TradeControl.get_instance()).appoint_store_manager(new_manager.get_nickname(),
@@ -1980,7 +1986,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(self.__user)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
         (TradeControl.get_instance()).get_store(store.get_name()).add_manager(self.__user, manager,
                                                                               [ManagerPermission.EDIT_MANAGER_PER,
                                                                                ManagerPermission.APPOINT_MANAGER,
@@ -1995,8 +2001,8 @@ class TradeControlTestCase(unittest.TestCase):
         new_owner.register("Bed", "of roses")
         second_owner = User()
         second_owner.register("Bed2", "of roses")
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(new_owner)
-        (TradeControl.get_instance()).get_store(store.get_name()).get_owners().append(second_owner)
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(manager, new_owner, []))
+        (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(StoreAppointment(manager, second_owner, []))
         (TradeControl.get_instance()).register_guest("I", "manage this tests")
         (TradeControl.get_instance()).register_guest("Bed", "of roses")
         (TradeControl.get_instance()).register_guest("Bed2", "of roses")
@@ -2058,6 +2064,54 @@ class TradeControlTestCase(unittest.TestCase):
         # Invalid manager doesn't have permissions
         self.assertFalse((TradeControl.get_instance()).remove_manager(store.get_name(), new_manager.get_nickname()))
         self.assertIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
+
+    def test_remove_owner(self):
+        trade = (TradeControl.get_instance())
+        owner1 = User()
+        owner1.register("owner1", "password")
+        owner1.login("owner1", "password")
+        trade.set_curr_user(owner1)
+        trade.open_store("myStore")
+        trade.register_guest("manager1", "213456")
+        trade.appoint_store_manager("manager1", "myStore", [])
+
+        # failed - owner2 is not store owner
+        trade.register_guest("owner2", "213456")
+        res = trade.remove_owner("owner2", "myStore")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # success
+        trade.appoint_additional_owner("owner2", "myStore")
+        owner2 = User()
+        owner2.register("owner2", "password")
+        owner2.login("owner2", "password")
+        trade.set_curr_user(owner2)
+        trade.register_guest("owner3", "213456")
+        trade.appoint_additional_owner("owner3", "myStore")
+
+        trade.register_guest("manager2", "213456")
+        trade.appoint_store_manager("manager2", "myStore", [])
+
+        owner3 = User()
+        owner3.register("owner3", "password")
+        owner3.login("owner3", "password")
+        trade.set_curr_user(owner3)
+        trade.register_guest("manager3", "213456")
+        trade.appoint_store_manager("manager3", "myStore", [])
+
+        trade.set_curr_user(owner1)
+        res = trade.remove_owner("owner2", "myStore")
+        self.assertEqual(res['response'], ['owner2 removed as owner', 'owner3 removed as owner',
+                                           'manager3 removed as manager', 'manager2 removed as manager'])
+        self.assertEqual(res['msg'], "Store owner owner2 and his appointees were removed successfully.")
+        store = trade.get_store("myStore")
+        self.assertTrue(store.is_manager("manager1"))
+        self.assertFalse(store.is_manager("manager2"))
+        self.assertFalse(store.is_manager("manager3"))
+        self.assertTrue(store.is_owner("owner1"))
+        self.assertFalse(store.is_owner("owner2"))
+        self.assertFalse(store.is_owner("owner3"))
 
     def tearDown(self):
         TradeControl.get_instance().__delete__()

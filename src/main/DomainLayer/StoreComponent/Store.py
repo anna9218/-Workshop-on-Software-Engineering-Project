@@ -7,7 +7,7 @@ from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
-from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.main.DomainLayer.UserComponent.User import User
@@ -17,7 +17,7 @@ class Store:
     def __init__(self, store_name):
         # self.__id = id
         self.__name = store_name
-        self.__owners = []
+        self.__StoreOwnerAppointments = []
         # list of StoreManagerAppointment (manager: User, permissions: ManagerPermissions[], appointer:User)
         self.__StoreManagerAppointments = []
         self.__inventory = StoreInventory()
@@ -175,14 +175,14 @@ class Store:
     def product_in_inventory(self, product_name: str):
         return self.__inventory.get_product(product_name) is not None
 
-    @logger
-    def add_owner(self, appointer: str, appointee: User) -> bool:
+    # @logger
+    def add_owner(self, appointer_nickname: str, appointee: User) -> bool:
         """
         appointee has to be registered.
         appointee can't be owner already.
         if appointee is already manager, we will remove him from being manager.
 
-        :param appointer: owner's/manager's nickname.
+        :param appointer_nickname: owner's/manager's nickname.
         :param appointee: new manager from type User.
         :return: True if owner has been added
                  False else.
@@ -191,16 +191,17 @@ class Store:
         if not appointee.is_registered():
             return False
 
-        if appointee in self.__owners:
+        if self.is_owner(appointee.get_nickname()):
             return False
+        # if self.is_owner(appointer_nickname):
+        #     return False
 
-        managers = [manager_appointment.get_appointee() for manager_appointment in self.__StoreManagerAppointments]
-        # if self.is_owner(appointer):
-        # if (self.is_owner(appointer) or
-        #         ((self.is_manager(appointer)) and
-        #          self.has_permission(appointer, ManagerPermission.APPOINT_OWNER))):
-        if self.has_permission(appointer, ManagerPermission.APPOINT_OWNER):
-            self.__owners.append(appointee)
+        managers = self.get_managers()
+
+        if self.has_permission(appointer_nickname, ManagerPermission.APPOINT_OWNER):
+            owners_and_managers = self.get_owners() + self.get_managers()
+            appointer = list(filter(lambda user: user.get_nickname() == appointer_nickname, owners_and_managers))[0]
+            self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
             if appointee in managers:
                 appointment = [manager_appointment for manager_appointment in self.__StoreManagerAppointments
                                if manager_appointment.get_appointee() == appointee]
@@ -210,7 +211,7 @@ class Store:
 
     @logger
     def is_owner(self, user_nickname: str):
-        return user_nickname in [owner.get_nickname() for owner in self.__owners]
+        return user_nickname in [owner.get_nickname() for owner in self.get_owners()]
 
     @logger
     def is_manager(self, user_nickname: str):
@@ -260,7 +261,7 @@ class Store:
         if not appointee.is_registered():
             return False
 
-        if appointee in self.__owners or appointee in self.get_managers():
+        if appointee in self.get_owners() or appointee in self.get_managers():
             return False
 
         # if (self.is_owner(appointer.get_nickname()) or
@@ -268,7 +269,7 @@ class Store:
         #          self.has_permission(appointer.get_nickname(), ManagerPermission.APPOINT_MANAGER))):
         if self.has_permission(appointer.get_nickname(), ManagerPermission.APPOINT_MANAGER):
 
-            self.__StoreManagerAppointments.append(StoreManagerAppointment(appointer, appointee, permissions))
+            self.__StoreManagerAppointments.append(StoreAppointment(appointer, appointee, permissions))
             return True
         return False
 
@@ -282,11 +283,11 @@ class Store:
     @logger
     def get_info(self):
         if not self.__StoreManagerAppointments:  # empty list
-            return "Store owners: %s" % (str(self.__owners.strip('[]')))
+            return "Store owners: %s" % (str(self.__StoreOwnerAppointments.strip('[]')))
         else:
             if len(self.__StoreManagerAppointments) > 0:  # one manager exists
                 return "Store owners: %s \n managers: $s" % (
-                    str(self.__owners.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
+                    str(self.__StoreOwnerAppointments.strip('[]')), self.__StoreManagerAppointments.strip('[]'))
 
     @logger
     def is_in_store_inventory(self, amount_per_product):
@@ -315,9 +316,13 @@ class Store:
         return self.__name
 
     @logger
-    def get_owners(self):
-        return self.__owners
+    def get_owners_appointments(self):
+        return self.__StoreOwnerAppointments
 
+    @logger
+    def get_owners(self):
+        x= [owner_appointment.get_appointee() for owner_appointment in self.__StoreOwnerAppointments]
+        return x
     @logger
     def get_managers(self):
         return [manager_appointment.get_appointee() for manager_appointment in self.__StoreManagerAppointments]
@@ -343,6 +348,69 @@ class Store:
         return False
 
     @logger
+    def remove_owner(self, appointer_nickname: str, appointee_nickname: str) -> {'response': [], 'msg': str}:
+        """
+        the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
+        and owners appointee_nickname appointed.
+        :param appointer_nickname: store's owner/manager
+        :param appointee_nickname: owner to remove
+        :return: dict =  {'response': [], 'msg': str}
+                 response = nicknames list of all the removed appointees -> the appointee_nickname of the owner we want
+                            to remove and all the appointees he appointed, we had to remove as well.
+        """
+        if self.has_permission(appointer_nickname, ManagerPermission.DEL_OWNER):
+            for appointment in self.__StoreOwnerAppointments:
+                if appointment.get_appointee().get_nickname() == appointee_nickname and \
+                        appointment.get_appointer().get_nickname() == appointer_nickname:
+                    # TODO: Yarin, send message for appointee_nickname that he was removed from the store as manager
+                    self.__StoreOwnerAppointments.remove(appointment)
+                    removed_appointees = self.remove_owner_appointees(appointee_nickname)
+                    return {'response': [appointee_nickname + " removed as owner"] + removed_appointees,
+                            'msg': "Store owner " + appointee_nickname + " and his appointees were removed successfully."}
+        return {'response': [], 'msg': "Error! remove store owner failed."}
+
+    @logger
+    def remove_owner_appointees(self, appointer_nickname: str) -> list:
+        """
+        remove all the appointees of the store owner
+        :param appointer_nickname: nickname of the store owner
+        :return: list of nickname of the owner's appointees that were removed
+        """
+
+
+        result = []
+
+        ls_to_remove = []
+        for appointment in self.__StoreOwnerAppointments:
+            if appointment.get_appointer() and appointment.get_appointer().get_nickname() == appointer_nickname:
+                appointee = appointment.get_appointee()
+                # TODO: Yarin, send message for appointee.get_nickname() that he was removed from the store as manager
+                res = self.remove_owner_appointees(appointment.get_appointee().get_nickname())
+                result.append(appointee.get_nickname() + " removed as owner")
+                result += res
+                ls_to_remove.append(appointment)
+
+                # self.__StoreOwnerAppointments.remove(appointment)
+
+        self.__StoreOwnerAppointments = [i for i in self.__StoreOwnerAppointments if i not in ls_to_remove]
+
+        ls_to_remove = []
+        for appointment in self.__StoreManagerAppointments:
+            a = appointment
+            if appointment.get_appointer().get_nickname() == appointer_nickname:
+                appointee = appointment.get_appointee()
+                # TODO: Yarin, send message for appointee.get_nickname() that he was removed from the store as manager
+                result.append(appointee.get_nickname() + " removed as manager")
+                # self.__StoreManagerAppointments.remove(appointment)
+                ls_to_remove.append(appointment)
+
+        self.__StoreManagerAppointments = [i for i in self.__StoreManagerAppointments if i not in ls_to_remove]
+
+        return result
+
+
+
+    @logger
     def remove_manager(self, appointer_nickname: str, appointee_nickname: str) -> bool:
         """
         :param appointer_nickname: store's owner/manager
@@ -354,7 +422,6 @@ class Store:
         #                                          self.has_permission(appointer_nickname,
         #                                                              ManagerPermission.DEL_MANAGER)):
         if self.has_permission(appointer_nickname, ManagerPermission.DEL_MANAGER):
-
             for appointment in self.__StoreManagerAppointments:
                 if appointment.get_appointee().get_nickname() == appointee_nickname and \
                         appointment.get_appointer().get_nickname() == appointer_nickname:

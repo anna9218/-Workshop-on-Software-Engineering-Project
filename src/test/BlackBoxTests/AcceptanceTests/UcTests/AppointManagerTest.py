@@ -39,6 +39,7 @@ class AppointManagerTest(ProjectAT):
     def tearDown(self) -> None:
         self.remove_store(self._store_name)
         self.delete_user(self._username)
+        self.delete_user(self.__appointee_name)
 
     def __repr__(self):
         return repr("AppointManagerTest")
