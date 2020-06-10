@@ -5,7 +5,7 @@ import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-boot
 import * as theService from '../../services/communication';
 
 
-function PurchaseHistoryUsersStores(){
+function PurchaseHistoryUsersStores(props){
 
 //   const [userPurchaseHistory, setUserPurchaseHistory] = useState([]);
 //   const [storePurchaseHistory, setStorerPurchaseHistory] = useState([]); 
@@ -53,7 +53,7 @@ function PurchaseHistoryUsersStores(){
 
 
   return (
-      <div>
+      <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
         <h1>Purchase History</h1>
 
         {purchaseHistory.map(record => (

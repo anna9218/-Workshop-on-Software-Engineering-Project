@@ -1,10 +1,10 @@
 """
     test class for use case 4.5 - appoint additional store manager
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class AppointManagerTest(ProjectTest):
+class AppointManagerTest(ProjectAT):
 
     # @logger
     def setUp(self) -> None:
@@ -39,6 +39,7 @@ class AppointManagerTest(ProjectTest):
     def tearDown(self) -> None:
         self.remove_store(self._store_name)
         self.delete_user(self._username)
+        self.delete_user(self.__appointee_name)
 
     def __repr__(self):
         return repr("AppointManagerTest")

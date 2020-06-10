@@ -1,9 +1,13 @@
 import unittest
 
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.Store import Store
-from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.UserComponent.User import User
+from unittest.mock import MagicMock
+
+from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class StoreTests(unittest.TestCase):
@@ -11,10 +15,11 @@ class StoreTests(unittest.TestCase):
         self.store: Store = Store("myStore")
         self.owner = User()
         self.owner.register("shani", "passwordd45646")
-        self.store.get_owners().append(self.owner)
+        self.store.get_owners_appointments().append(StoreAppointment(None, self.owner, []))
         self.manager = User()
         self.manager.register("dani", "passwordd45646")
-        self.store.get_store_manager_appointments().append(StoreManagerAppointment(self.owner, self.manager, [ManagerPermission.EDIT_INV]))
+        self.store.get_store_manager_appointments().append(StoreAppointment(self.owner, self.manager, [ManagerPermission.EDIT_INV]))
+        self.purchase_policy_mock = PurchasePolicy()
 
     def test_get_products_by(self):
         self.assertTrue(
@@ -160,7 +165,132 @@ class StoreTests(unittest.TestCase):
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
-    # @logger
+    # 4.2
+    def test_purchase_policy_exists(self):
+        # policy exists
+        self.purchase_policy_mock.equals = MagicMock(return_value=True)
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.purchase_policy_exists({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertTrue(res)
+
+        # policy doesn't exists
+        self.purchase_policy_mock.equals = MagicMock(return_value=False)
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.purchase_policy_exists({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertFalse(res)
+
+    def test_add_purchase_policy(self):
+        # all valid details for new policy
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertTrue(res["response"])
+
+        # invalid details
+        self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": False, "msg": "fail"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"]})
+        self.assertFalse(res["response"])
+
+    def test_update_purchase_policy(self):
+        # valid details
+        self.purchase_policy_mock.update = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"], "min_amount": 3})
+        self.assertTrue(res["response"])
+
+        # invalid details
+        self.purchase_policy_mock.update = MagicMock(return_value={"response": False, "msg": "fail"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.define_purchase_policy({"name": "policy1", "products": ["product1"]})
+        self.assertFalse(res["response"])
+
+    def test_get_purchase_policies(self):
+        # some policy exist
+        self.purchase_policy_mock.get_details = MagicMock(return_value={"name": "policy1"})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) > 0)
+
+        # no policies set yet
+        # self.purchase_policy_mock.get_details = MagicMock(return_value={})
+        self.purchase_policy_mock.get_details = MagicMock(return_value={})
+        self.store.set_purchase_policies(self.purchase_policy_mock)
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) == 0)
+
+    def test_remove_owner(self):
+        owner1 = StubUser()
+        owner1.register("owner1", "password")
+        self.store.add_owner("shani", owner1)
+
+        owner2 = StubUser()
+        owner2.register("owner2", "password")
+        self.store.add_owner("owner1", owner2)
+
+        owner3 = StubUser()
+        owner3.register("owner3", "password")
+        self.store.add_owner("owner2", owner3)
+
+        manager1 = StubUser()
+        manager1.register("manager1", "password")
+        self.store.add_manager(owner3, manager1, [])
+
+        manager2 = StubUser()
+        manager2.register("manager2", "password")
+        self.store.add_manager(self.owner, manager2, [])
+
+        # failed owner2 didn't appoint owner 2 as owner
+        res = self.store.remove_owner("owner2", "owner1")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # failed
+        res = self.store.remove_owner("owner", "owner1")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # success
+        res = self.store.remove_owner("shani", "owner1")
+
+        self.assertEqual(res['response'], ['owner1 removed as owner', 'owner2 removed as owner', 'owner3 removed as owner', 'manager1 removed as manager'])
+        self.assertEqual(res['msg'], "Store owner owner1 and his appointees were removed successfully.")
+        self.assertFalse(self.store.is_owner('owner1'))
+        self.assertFalse(self.store.is_owner('owner2'))
+        self.assertFalse(self.store.is_owner('owner3'))
+        self.assertFalse(self.store.is_manager('manager1'))
+        self.assertTrue(self.store.is_manager('manager2'))
+
+    def test_remove_owner_appointees(self):
+        owner1 = StubUser()
+        owner1.register("owner1", "password")
+        self.store.add_owner("shani", owner1)
+
+        owner2 = StubUser()
+        owner2.register("owner2", "password")
+        self.store.add_owner("owner1", owner2)
+
+        owner3 = StubUser()
+        owner3.register("owner3", "password")
+        self.store.add_owner("owner2", owner3)
+
+        manager1 = StubUser()
+        manager1.register("manager1", "password")
+        self.store.add_manager(owner3, manager1, [])
+
+        manager2 = StubUser()
+        manager2.register("manager2", "password")
+        self.store.add_manager(self.owner, manager2, [])
+
+        res = self.store.remove_owner_appointees("owner1")
+
+        self.assertEqual(res, ['owner2 removed as owner', 'owner3 removed as owner', 'manager1 removed as manager'])
+        self.assertTrue(self.store.is_owner('owner1'))
+        self.assertFalse(self.store.is_owner('owner2'))
+        self.assertFalse(self.store.is_owner('owner3'))
+        self.assertFalse(self.store.is_manager('manager1'))
+        self.assertTrue(self.store.is_manager('manager2'))
+
     def tearDown(self) -> None:
         self.store = None
 

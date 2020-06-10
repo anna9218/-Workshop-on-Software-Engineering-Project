@@ -1,10 +1,10 @@
 """
     test class for use case 5.1 - check that manager can activated actions he has permissions to
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class ManageStoreTest(ProjectTest):
+class ManageStoreTest(ProjectAT):
 
     def setUp(self) -> None:
         super().setUp()
@@ -38,9 +38,10 @@ class ManageStoreTest(ProjectTest):
         self.remove_products_from_store(self._store_name, ["product"])
         self.remove_store("store")
         self.delete_user(self._username)
+        self.delete_user(self._username)
         self.delete_manager("newManager", self._store_name)
-        # self.delete_user("newManager")
-        # self.delete_user("newUser")
+        self.delete_user("newManager")
+        self.delete_user("newUser")
 
     def __repr__(self):
         return repr("ManageStoreTest")

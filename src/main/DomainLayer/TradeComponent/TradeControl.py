@@ -3,6 +3,7 @@ from datetime import datetime
 from src.Logger import errorLogger, logger
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
@@ -130,7 +131,7 @@ class TradeControl:
                     return {'response': False, 'msg': "Error! Store name " + store_name + " already exist"}
 
             store = Store(store_name)
-            store.get_owners().append(self.__curr_user)
+            store.get_owners_appointments().append(StoreAppointment(None, self.__curr_user, []))
             self.__stores.append(store)
             return {'response': True, 'msg': "Store " + store_name + " opened successfully"}
         return {'response': False, 'msg': "Error! user doesn't have permission to open a store"}
@@ -244,15 +245,32 @@ class TradeControl:
             except Exception:
                 return {'response': [], 'msg': "Error in filter action"}
 
-    @logger
+            # 'response':
+            # '{"py/object": "src.main.DomainLayer.StoreComponent.Store.Store",
+            # "_Store__name": "s",
+            # "_Store__owners":
+            #   [{"_User__registrationState": {
+            #       "_Registration__username": "s",
+            #    "_Store__StoreManagerAppointments": [],
+            # 'msg': 'Store info was retrieved successfully'}
+    # @logger
     def get_store_info(self, store_name) -> dict:
         """
         :param store_name:
         :return: dict = {'response': store json object, 'msg': str}
         """
-        if self.get_store(store_name) is None:
+        store = self.get_store(store_name)
+        if store is None:
             return {'response': None, 'msg': "Store" + store_name + " doesn't exist"}
-        return {'response': jsonpickle.encode(self.get_store(store_name)),
+        t = store.get_owners()
+        s = store.get_managers()
+
+        owners = []
+        list(map(lambda curr: owners.append(curr.get_nickname()), store.get_owners()))
+        managers = []
+        list(map(lambda curr: managers.append(curr.get_nickname()), store.get_managers()))
+
+        return {'response': {"name": store_name, "owners": owners, "managers": managers},
                 'msg': "Store info was retrieved successfully"}
 
     @logger
@@ -262,8 +280,14 @@ class TradeControl:
 
         if self.get_store(store_name).get_inventory().is_empty():
             return {'response': None, 'msg': "Store inventory is empty"}
-        return {'response': jsonpickle.encode(self.get_store(store_name).get_inventory()),
-                'msg': "Store inventory was retrieved successfully"}
+
+        inventory = self.get_store(store_name).get_inventory().get_inventory()
+
+        res = []
+        list(map(lambda curr: res.append({"name": curr["product"].get_name(), "price": curr["product"].get_price(),
+               "category": curr["product"].get_category(), "amount": curr["amount"]}), inventory))
+
+        return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
     @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
@@ -321,7 +345,7 @@ class TradeControl:
         """
         return self.__curr_user.update_quantity_in_shopping_cart(products_details)
 
-    @logger
+    # @logger
     def get_store(self, store_name) -> Store:
         for s in self.__stores:
             if s.get_name() == store_name:
@@ -491,7 +515,7 @@ class TradeControl:
     # ----------------------------------
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-    @logger
+    # @logger
     def add_products(self, store_name: str,
                      products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> {
         'response': bool, 'msg': str}:
@@ -557,6 +581,30 @@ class TradeControl:
                 return {'response': True, 'msg': "Product was edited successfully"}
             return {'response': False, 'msg': "Edit product failed."}
         return {'response': False, 'msg': "Edit product failed."}
+
+    @logger
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        """
+        the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
+        and owners appointee_nickname appointed.
+        :param appointee_nickname: nickname of the owner we want to remove as owner
+        :param store_name: store the owner will be removed from as owner
+        :return: dict =  {'response': [], 'msg': str}
+                 response = nicknames list of all the removed appointees -> the appointee_nickname of the owner we want
+                            to remove and all the appointees he appointed, we had to remove as well.
+        """
+        store = self.get_store(store_name)
+        appointee = self.get_subscriber(appointee_nickname)
+        if appointee is not None and \
+                store is not None and \
+                self.__curr_user.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                store.is_owner(self.__curr_user.get_nickname()) and \
+                appointee.is_registered() and \
+                store.is_owner(appointee_nickname):
+            return store.remove_owner(self.__curr_user.get_nickname(), appointee_nickname)
+        return {'response': [], 'msg': "Error! remove store owner failed."}
+
 
     @logger
     def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
@@ -803,6 +851,10 @@ class TradeControl:
             res = res or details.get("products") is not None
         return res
 
+    # function for ut teardown
+    def reset_purchase_policies(self, store_name: str):
+        store = self.get_store(store_name)
+        store.reset_policies()
     # ------------------- 4.2 --------------------
 
     # ----------- Getters & Setters --------------
@@ -845,6 +897,16 @@ class TradeControl:
         if len(stores) == 0:
             return {'response': [], 'msg': "There are no stores"}
         return {'response': stores, 'msg': "Stores were retrieved successfully"}
+
+    def get_user_type(self):
+        if self.__curr_user in self.__managers:
+            return "MANAGER"
+        for store in self.__stores:
+            if store.is_owner(self.__curr_user):
+                return "OWNER"
+            elif store.is_manager(self.__curr_user):
+                return "MANAGER"
+        return "SUBSCRIBER"
 
     def __repr__(self):
         return repr("TradeControl")

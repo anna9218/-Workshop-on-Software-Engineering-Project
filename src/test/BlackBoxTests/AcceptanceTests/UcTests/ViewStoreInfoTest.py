@@ -1,10 +1,10 @@
 """
     test class for use case 2.4 - view stores' info and products
 """
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class ViewStoreInfoTest(ProjectTest):
+class ViewStoreInfoTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)

@@ -3,10 +3,10 @@
 """
 from datetime import datetime
 
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class ViewStoresAndUsersPurchaseHistoryTest(ProjectTest):
+class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.__manager = "TradeManager"

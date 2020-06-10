@@ -155,6 +155,13 @@ class ProxyBridge(Bridge):
     def appoint_additional_owner(self, nickname, store_name):
         return self._realbridge.appoint_additional_owner(nickname, store_name)
 
+    # 4.4 remove store owner functions
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        return self._realbridge.remove_owner(appointee_nickname, store_name)
+
+    def get_store(self, store_name):
+        return self._realbridge.get_store(store_name)
+
     # 4.5
     # @logger
     def appoint_additional_manager(self, nickname, store_name, permissions: [int]):

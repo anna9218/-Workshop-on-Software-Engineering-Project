@@ -27,6 +27,10 @@ class TradeControlService:
                 return {'response': False, 'msg': "Init system failed! " + res['msg']}
         return {'response': False, 'msg': "Init system failed!"}
 
+    @staticmethod
+    def get_user_type():
+        return TradeControl.get_instance().get_user_type()
+
     # functions for tests???
     @staticmethod
     def remove_user(nickname: str):
@@ -83,6 +87,10 @@ class TradeControlService:
     @staticmethod
     def set_user(nickname: str):
         TradeControl.get_instance().set_curr_user_by_name(nickname)
+
+    @staticmethod
+    def get_store(store_name):
+        return TradeControl.get_instance().get_store(store_name)
 
     def __repr__(self):
         return repr("TradeFacadeService")
