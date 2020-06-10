@@ -23,8 +23,6 @@ class ShoppingCartTests(unittest.TestCase):
         basket = basket_pair["basket"].get_products()[0]
         self.assertEqual(basket["product"].get_name(), "Alcogel")
         self.assertEqual(basket["amount"], 4)
-        self.assertEqual(basket["discountType"], DiscountType.DEFAULT)
-        self.assertEqual(basket["purchaseType"], PurchaseType.DEFAULT)
 
     def test_remove_product(self):
         self.__shopping_cart.add_products([{"product": self.__product, "amount": 4, "store_name": self.__store.get_name(),

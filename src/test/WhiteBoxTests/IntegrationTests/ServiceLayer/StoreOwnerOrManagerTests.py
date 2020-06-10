@@ -1504,7 +1504,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
     def test_display_store_purchases(self):
         # Empty purchases
         lst = self.__store_owner_or_manager_role.display_store_purchases(self.__store.get_name())['response']
-        # print(type(lst))
         self.assertListEqual([], lst)
 
         (TradeControl.get_instance()).get_store(self.__store.get_name()).add_purchase \
@@ -1654,7 +1653,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         self.__product_as_dictionary = {"name": "eytan2",
                                         "price": 12,
                                         "category": "eytan as category",
-                                        "amount": 21}
+                                        "amount": 21,
+                                        "purchase_type": 0}
         self.__store_owner_or_manager_role.add_products(self.__store.get_name(),
                                                         [self.__product_as_dictionary])
 
@@ -1675,7 +1675,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                                                                   pre_con__details)
 
         result = self.__store_owner_or_manager_role.update_discount_policy(self.__store.get_name(), "p1", 13)
-        print(result['msg'])
         self.assertTrue(result['response'])
         self.assertEqual(13, jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy
                                                (self.__store.get_name(), "p1")['response']).get_percentage())

@@ -467,7 +467,7 @@ class Store:
             if policy.get_product_name() == product_name:
                 if policy.is_worthy(amount, basket_price, prod_lst):
                     price = min(price, policy.get_price_after_discount(product_price))
-        return {"product_name": product_name, "product_price": price, "amount": amount}
+        return {"product_name": product_name, "product_price": price*amount, "amount": amount}
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger
