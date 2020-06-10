@@ -128,11 +128,29 @@ def purchase_products():
 
 # ------------------------------ STORE OWNER AND MANAGER ROLE SERVICES ------------------------------------#
 
+@app.route('/get_managed_stores', methods=['GET'])
+def get_managed_stores():
+    response = StoreOwnerOrManagerRole.get_managed_stores()
+    return jsonify(data=response)
+
 
 @app.route('/get_owned_stores', methods=['GET'])
 def get_owned_stores():
     response = StoreOwnerOrManagerRole.get_owned_stores()
     return jsonify(data=response)
+
+
+@app.route('/appoint_store_manager', methods=['POST'])
+def appoint_store_manager():
+    if request.is_json:
+        request_dict = request.get_json()
+        appointee_nickname = request_dict.get('appointee_nickname')  # str
+        store_name = request_dict.get('store_name')  # str
+        permissions = request_dict.get('permissions')  # list of tuples
+        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, permissions)
+        if response:
+            return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error")
 
 
 @app.route('/add_product', methods=['POST'])

@@ -864,20 +864,32 @@ class TradeControl:
     def get_owned_stores(self):
         stores = []
         for store in self.__stores:
-            owners = store.get_owners()
-            if self.__curr_user.get_nickname() in owners:
+            # owners = store.get_owners()
+            # if self.__curr_user.get_nickname() in owners:
+            if store.is_owner(self.__curr_user.get_nickname()):
                 stores.append(store.get_name())
-        if len(stores) == 0:
-            return {'response': [], 'msg': "There are no stores"}
-        return {'response': stores, 'msg': "Stores were retrieved successfully"}
+        return stores
+        # if len(stores) == 0:
+        #     return {'response': [], 'msg': "There are no stores"}
+        # return {'response': stores, 'msg': "Stores were retrieved successfully"}
+
+    def get_managed_stores(self):
+        stores = []
+        for store in self.__stores:
+            if store.is_manager(self.__curr_user.get_nickname()):
+                stores.append(store.get_name())
+        return stores
+        # if len(stores) == 0:
+        #     return {'response': [], 'msg': "There are no stores"}
+        # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
     def get_user_type(self):
         if self.__curr_user in self.__managers:
             return "MANAGER"
         for store in self.__stores:
-            if store.is_owner(self.__curr_user):
+            if store.is_owner(self.__curr_user.get_nickname()):
                 return "OWNER"
-            elif store.is_manager(self.__curr_user):
+            elif store.is_manager(self.__curr_user.get_nickname()):
                 return "MANAGER"
         return "SUBSCRIBER"
 

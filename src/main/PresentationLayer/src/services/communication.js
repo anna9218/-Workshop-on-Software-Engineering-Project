@@ -123,10 +123,27 @@ export async function initSystem(){
 }
 //--------------------------- END OF INIT SYSTEM -------------------------------------//
 
-//--------------------------- OWNER ROLE --------------------------------------------//
+//--------------------------- MANAGRT ROLE --------------------------------------------//
+
+export async function fetchManagedStores(){
+    return axios.get('http://localhost:5000/get_managed_stores')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+//--------------------------- END OF MANAGRT ROLE -------------------------------------//
+
+//--------------------------- OWNER & MANAGER ROLE --------------------------------------------//
 
 export async function fetchOwnedStores(){
     return axios.get('http://localhost:5000/get_owned_stores')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function appointStoreManager(appointee_nickname, store_name, permissions){
+    return axios.post('http://localhost:5000/appoint_store_manager', {
+        appointee_nickname: appointee_nickname,
+        store_name: store_name,
+        permissions: permissions
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 

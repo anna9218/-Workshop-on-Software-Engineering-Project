@@ -30,6 +30,7 @@ import OwnerAPI from './components/OwnerOrManagerRole/OwnerAPI'
 import ManageInventory from './components/OwnerOrManagerRole/ManageInventory'
 import ManagerAPI from './components/OwnerOrManagerRole/ManagerAPI'
 import AddProductsForm from './components/OwnerOrManagerRole/AddProductsForm'
+import AppointStoreManager from './components/OwnerOrManagerRole/AppointStoreManager'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
@@ -149,8 +150,10 @@ function App(){
         <Route path="/addproduct" exact render={(props) => <AddProductsForm screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
         {/* owner */}
+        <Route path="/appointmanager" exact render={(props) => <AppointStoreManager screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        
+        {/* owner */}
         <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-
         <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
 
