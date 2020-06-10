@@ -147,6 +147,16 @@ def get_managed_stores():
     return jsonify(data=response)
 
 
+@app.route('/get_manager_permissions', methods=['POST'])
+def get_manager_permissions():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        response = TradeControlService.get_manager_permissions(store_name)
+        return jsonify(data=response)
+    return jsonify(data=[])
+
+
 @app.route('/get_owned_stores', methods=['GET'])
 def get_owned_stores():
     response = StoreOwnerOrManagerRole.get_owned_stores()
