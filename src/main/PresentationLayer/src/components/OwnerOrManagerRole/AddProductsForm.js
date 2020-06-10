@@ -64,7 +64,7 @@ function AddProductsForm(props){
           })}/>
 
           <Form.Label>Set the price:</Form.Label>
-          <Form.Control id="product-price" value={productPrice} required type="text" required placeholder="Product price" 
+          <Form.Control id="product-price" value={productPrice} required type="text"  placeholder="Product price"
           onChange={(event => {
             setProductPrice(event.target.value)
           })}/>

@@ -13,7 +13,7 @@ from flask_socketio import SocketIO, join_room, leave_room
 
 app = Flask(__name__)
 CORS(app)
-# socket = SocketIO(app)
+socket = SocketIO(app)
 
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
@@ -163,7 +163,8 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
-        # Websocket.open_store(store_name, SubscriberRole.username, result) TODO
+     #   Websocket.open_store(store_name, SubscriberRole.username, result)
+        # TODO - add some func at websocket that registers the owner
         # WebSocketService.open_store(store_name, SubscriberRole.username, result)
         # if response:
         return jsonify(data=result['response'], msg=result['msg'])
@@ -224,23 +225,37 @@ def get_user_type():
 
 
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
-#
-# @socket.on('join')
-# async def join(data):
-#     join_room(room=data['store'], sid=data['username'])
-#
-#
-# @socket.on('leave')
-# async def leave(data):
-#     leave_room(room=data['store'], sid=data['username'])
-#
-#
-# async def send_notification(event, store_name, msg):
-#     # socket.send(msgs, json=True, room=storename)
-#     socket.emit(event, msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
-#
-#
-# def handle_purchase(user_name, store_name, result):
-#     if result:  # should be True or dict - TODO change the call to be inside if (result)
-#         msg = f"{user_name} made a purchase on store {store_name}"
-#         send_notification('purchase', store_name, msg)
+
+_users = {} # dict of <username>: <its session ID>
+
+@socket.on('subscribe')
+async def join(data):
+    print ("recieved join request")
+    _users[data['username']] = request.sid
+    join_room(room=data['store'], sid=_users[data['username']])
+    print (f"{data['username']} has been subscribed to store {data['storename']}")
+
+
+@socket.on('unsbscribe')
+async def leave(data):
+    # TODO - add check that exists
+    leave_room(room=data['store'], sid=_users[data['username']])
+    print (f"{data['username']} has been removed as subscriber of store {data['storename']}")
+
+async def send_notification(store_name, msg):
+    # socket.send(msgs, json=True, room=storename)
+    # TODO - does it sends even if not logged in? maybe use the written store-funcs
+    socket.emit('message', msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
+
+
+def handle_purchase_msg(user_name, store_name, result):
+    if result:  # should be True or dict - TODO change the call to be inside if (result)
+        msg = f"{user_name} made a purchase on store {store_name}"
+        send_notification(store_name, jsonify(username= user_name, message= msg, store=store_name))
+        print(f"send msg: {msg}")
+
+def handle_remove_owner_msg(user_name, store_name, result):
+    if result:  # should be True or dict - TODO change the call to be inside if (result)
+        msg = f"{user_name} was removed as owner from store {store_name}"
+        send_notification(store_name,  jsonify(username= user_name, message= msg, store=store_name))
+        print(f"send msg: {msg}")
