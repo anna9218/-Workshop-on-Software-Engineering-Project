@@ -4,11 +4,13 @@ import {BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-rout
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 // import {connect} from '../../services/Notifications';
-import Notifications from '../../services/Notifications';
+// import theNotifications from '../../services/Notifications';
 // import {register_new_store, connect} from '../../services/Notifications';
 import {useEffect} from '../../services/Notifications';
 // import setStorename from '../../services/Notifications';;
 // import setUsername from '../../services/Notifications';
+
+import * as theNotifications from '../../services/Notifications';
 
 
 // TODO - display a form to enter new store details. send the entered data to server.
@@ -35,14 +37,17 @@ class OpenStore extends React.Component {
     const something = theService.getUserType()
     something.then((data) => {
       if(data["data"] == "OWNER"){
-        Notifications.register_new_store('s2');
+        // Notifications.register_new_store('s2');
+        theNotifications.register_new_store('s2');
       }
       else {        // FIRST TIME OWNER
         // <Notifications props={'y', 's'}/>
         // <Notifications setState(state => ({ storename: 's', username: 'y' }));/>
 
         // Notifications.useState(Username='y');
-        Notifications({Username:'y', Storename: 's'});
+
+        // Notifications({Username:'y', Storename: 's'});
+        theNotifications.init('y', 's');
 
         // Notifications.username = 'y';
         // Notifications.storename = 's';
