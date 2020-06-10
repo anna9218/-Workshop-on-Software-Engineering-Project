@@ -95,10 +95,12 @@ class PurchasePolicy(PurchaseComponent):
     def equals(self, details: {"name": str, "products": [str], "min_amount": int or None, "max_amount": int or None,
                                "dates": [dict] or None, "bundle": bool or None}) -> bool:
         if details.get("name") and self._name == details["name"]:
-            for rule in self.__children:
-                if not rule.equals(details):
-                    return False
             return True
+
+        # for rule in self.__children:
+        #     if not rule.equals(details):
+        #         return False
+        #     return True
         return False
 
     @logger

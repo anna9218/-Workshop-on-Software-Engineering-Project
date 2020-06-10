@@ -1,4 +1,6 @@
 from src.Logger import logger
+from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
+from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 
 
 class Product:
@@ -10,6 +12,9 @@ class Product:
         self.__name = name
         self.__price = price
         self.__category = category
+        self.__purchase_type = PurchaseType.DEFAULT
+        self.__discount_type = DiscountType.DEFAULT
+
         # self.__rate = 0 TODO - for search 2.5
 
     def __repr__(self):
@@ -44,3 +49,19 @@ class Product:
             return False
         except Exception:
             return False
+
+    def set_purchase_type(self, purchase_type: int):
+        for type in PurchaseType:
+            if type.value == purchase_type:
+                self.__purchase_type = type
+
+    def set_discount_type(self, discount_type: int):
+        for type in DiscountType:
+            if type.value == discount_type:
+                self.__discount_type = type
+
+    def get_discount_type(self):
+        return self.__discount_type
+
+    def get_purchase_type(self):
+        return self.__purchase_type

@@ -73,9 +73,11 @@ export async function filterProductsBy(products, filter_option, input){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function addToProductsCart(products){
+export async function addToProductsCart(store_name, product_name, product_amount){
     return axios.post('http://localhost:5000/add_products_to_cart', {
-        products: products
+        products: [{"store_name": store_name,
+                    "product_name": product_name, 
+                    "amount": product_amount}]
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -88,7 +90,18 @@ export async function updateShoppingCart(option_flag, product){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function purchaseCart(){
+    return axios.get('http://localhost:5000/purchase_products')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 
+export async function confirmPurchase(address, purchase_details){
+    return axios.post('http://localhost:5000/confirm_purchase', {
+        address: address,
+        purchases: purchase_details
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 
 //--------------------------- SUBSCRIBER ROLE ---------------------------------------//
 
@@ -118,14 +131,39 @@ export async function initSystem(){
 }
 //--------------------------- END OF INIT SYSTEM -------------------------------------//
 
-//--------------------------- OWNER ROLE --------------------------------------------//
+//--------------------------- MANAGRT ROLE --------------------------------------------//
+
+export async function fetchManagedStores(){
+    return axios.get('http://localhost:5000/get_managed_stores')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function fetchManagerPermissions(store_name){
+    return axios.post('http://localhost:5000/get_manager_permissions', {
+        store_name: store_name,
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+//--------------------------- END OF MANAGRT ROLE -------------------------------------//
+
+//--------------------------- OWNER & MANAGER ROLE --------------------------------------------//
 
 export async function fetchOwnedStores(){
     return axios.get('http://localhost:5000/get_owned_stores')
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function addProduct(store_name, product_name, product_price, product_category, product_amount){
+export async function appointStoreManager(appointee_nickname, store_name, permissions){
+    return axios.post('http://localhost:5000/appoint_store_manager', {
+        appointee_nickname: appointee_nickname,
+        store_name: store_name,
+        permissions: permissions
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function addProduct(store_name, product_name, product_price, product_category, product_amount, purchase_type){
     return axios.post('http://localhost:5000/add_product', {
         store_name: store_name,
         products_details:
@@ -133,7 +171,8 @@ export async function addProduct(store_name, product_name, product_price, produc
             name: product_name,
             price: parseInt(product_price),
             category: product_category,
-            amount: parseInt(product_amount)
+            amount: parseInt(product_amount),
+            purchase_type: purchase_type
         }]
         
     })

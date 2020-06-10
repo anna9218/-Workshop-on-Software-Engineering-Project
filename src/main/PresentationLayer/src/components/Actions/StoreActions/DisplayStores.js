@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import {Button, Jumbotron} from 'react-bootstrap'
-import * as theService from '../../services/communication';
+import * as theService from '../../../services/communication';
 
 
 function DisplayStores(props){

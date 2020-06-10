@@ -114,7 +114,8 @@ class ProxyBridge(Bridge):
     # 4.1
     # @logger
     def add_products_to_store(self, store_name: str, products_details:
-                                            [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+                                            [{"name": str, "price": int, "category": str, "amount": int,
+                                              "purchase_type": int, "discount_type": int}]) -> bool:
         return self._realbridge.add_products_to_store(store_name, products_details)
 
     # @logger

@@ -11,7 +11,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.1.1
     @staticmethod
     def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
-        int}]) -> {'response': bool, 'msg': str}:
+        int, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
@@ -56,10 +56,11 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
 
-    @logger
     # use case 4.5
-    def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool,
-                                                                                                     'msg': str}:
+    @staticmethod
+    @logger
+    def appoint_store_manager(appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
+
         """
         :param appointee_nickname: new manager's nickname
         :param store_name: store's name
@@ -217,6 +218,9 @@ class StoreOwnerOrManagerRole:
     def get_owned_stores():
         return TradeControl.get_instance().get_stores_names()
 
+    @staticmethod
+    def get_managed_stores():
+        return TradeControl.get_instance().get_managed_stores()
     # -------------------------------------------------------------
 
     def __repr__(self):

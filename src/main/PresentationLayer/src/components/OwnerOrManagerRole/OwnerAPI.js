@@ -23,7 +23,12 @@ import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
 class OwnerAPI extends React.Component {
     constructor(props) {
         super(props);
-  
+
+        this.state = {
+            ownedStores: [],
+            selectedStore: ""
+        }
+        
       this.logoutHandler = this.logoutHandler.bind(this);
     }
 
@@ -34,6 +39,20 @@ class OwnerAPI extends React.Component {
             this.props.history.push("/");
         });
     };
+
+    componentDidMount = () => {
+        const promise = theService.fetchOwnedStores();  // goes to communication.js and sends to server
+        promise.then((data) => {
+            if(data != null){
+                if (data["data"].length > 0){   // if there are owned stores
+                    this.setState({ownedStores: data["data"], selectedStore: data["data"][0]})
+                }
+                else{
+                    alert([data["msg"]]);       // no owned stores, array is empty
+                }
+            }
+        });
+    }
 
     render(){
         return(
@@ -51,6 +70,16 @@ class OwnerAPI extends React.Component {
                         </Col>
                     </Row>
                 </Jumbotron>
+                
+                <Form.Group controlId="stores_ControlSelect2" onChange={ event => {this.setState({selectedStore: event.target.value})}}>
+                <Form.Label>Please choose a store:</Form.Label>
+                <Form.Control as="select">
+                    {this.state.ownedStores.map(store => (
+                        
+                        <option value={store}>{store}</option>
+                    ))}
+                </Form.Control>
+                </Form.Group>
     
                 {/*
                     need options for:
@@ -93,7 +122,8 @@ class OwnerAPI extends React.Component {
                         View Personal Purchase History
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/manageinventory">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/manageinventory/" + this.state.selectedStore, 
+                                                                               store: this.state.selectedStore}} >
                         Manage Stock
                     </Button>
 
@@ -101,7 +131,8 @@ class OwnerAPI extends React.Component {
                         Appoint Additional Owner
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/appointmanager">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
+                                                                               store: this.state.selectedStore}}>
                         Appoint Additional Manager
                     </Button>
 

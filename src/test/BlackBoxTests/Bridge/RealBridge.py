@@ -127,7 +127,8 @@ class RealBridge(Bridge):
 
     # uc 4.1
     def add_products_to_store(self, store_name: str,
-                              products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+                              products_details: [{"name": str, "price": int, "category": str, "amount": int,
+                                                  "purchase_type": int, "discount_type": int}]) -> bool:
         return self.__store_owner_or_manager.add_products(store_name, products_details)
 
     def edit_products_in_store(self, store_name: str, product_name: str, op: str, new_value: str):
