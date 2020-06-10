@@ -7,13 +7,15 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 class ConditionalDiscountPolicy(DiscountComponent):
 
     def get_price_after_discount(self, price: float):
-        return price*(100-self.__percentage)
+        return price*((100-self.__percentage)/100)
 
     def is_worthy(self, amount: int, basket_price: float, prod_lst: [str]):
         if self.__precondition['product'].lower().strip() == "all":
             if basket_price >= self.__precondition['min_basket_price']:
                 return True
         else:
+            if self.__precondition['product'] not in prod_lst:
+                return False
             if amount >= self.__precondition['min_amount']:
                 if self.__precondition['min_basket_price'] is not None:
                     if basket_price >= self.__precondition['min_basket_price']:

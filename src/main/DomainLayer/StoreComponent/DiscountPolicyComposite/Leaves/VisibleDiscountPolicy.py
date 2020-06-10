@@ -8,7 +8,7 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 class VisibleDiscountPolicy(DiscountComponent):
 
     def get_price_after_discount(self, price: float):
-        return price*(100 - self.__percentage)
+        return price*((100-self.__percentage)/100)
 
     def is_worthy(self, amount: int, basket_price: float, prod_lst: [str]):
         return True
