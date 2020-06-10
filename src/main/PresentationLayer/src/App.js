@@ -145,7 +145,7 @@ function App(){
         <Route path="/openstore" exact render={(props) => <OpenStore screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/history" exact render={(props) => <PersonalPurchaseHistory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/owner" exact render={(props) => <OwnerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-        <Route path="/manageinventory" exact render={(props) => <ManageInventory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/manageinventory/:store" exact render={(props) => <ManageInventory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/manager" exact render={(props) => <ManagerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/addproduct" exact render={(props) => <AddProductsForm screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 

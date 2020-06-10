@@ -122,7 +122,8 @@ class OwnerAPI extends React.Component {
                         View Personal Purchase History
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/manageinventory", props: this.state.selectedStore}} >
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/manageinventory/" + this.state.selectedStore, 
+                                                                               store: this.state.selectedStore}} >
                         Manage Stock
                     </Button>
 

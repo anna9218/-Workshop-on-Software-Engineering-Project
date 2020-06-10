@@ -8,7 +8,7 @@ import AddProductsForm from './AddProductsForm'
 
 function ManageInventory(props){
     useEffect(() => {
-        setSelectedStore(props)
+        setSelectedStore(props.location.store)
     }, []);
 
     const [stores, setStores] = useState(["No owned stores"]);
