@@ -8,7 +8,7 @@ import AddProductsForm from './AddProductsForm'
 
 function ManageInventory(props){
     useEffect(() => {
-        fetchOwnedStores();
+        setSelectedStore(props)
     }, []);
 
     const [stores, setStores] = useState(["No owned stores"]);
@@ -17,17 +17,17 @@ function ManageInventory(props){
     const [showOptionsForm, setShowOptionsForm] = useState(false);
 
 
-    const fetchOwnedStores = async () => {
-        const promise = theService.fetchOwnedStores();  // goes to communication.js and sends to server
-        promise.then((data) => {
-            if (data["data"]["response"].length > 0){   // if there are owned stores
-                setStores(data["data"]["response"]);
-            }
-            else{
-                setStores([data["data"]["msg"]]);       // no owned stores, array if empty
-            }
-        });
-    };
+    // const fetchOwnedStores = async () => {
+    //     const promise = theService.fetchOwnedStores();  // goes to communication.js and sends to server
+    //     promise.then((data) => {
+    //         if (data["data"]["response"].length > 0){   // if there are owned stores
+    //             setStores(data["data"]["response"]);
+    //         }
+    //         else{
+    //             setStores([data["data"]["msg"]]);       // no owned stores, array if empty
+    //         }
+    //     });
+    // };
 
     const addProductsHandler = (event) =>{
         if(selectedStore == ""){
@@ -61,17 +61,18 @@ function ManageInventory(props){
         <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
           <h1>Manage Inventory</h1>
 
-            <Form.Group controlId="stores_ControlSelect1" onChange={ event => {setSelectedStore(event.target.value);}}>
+            {/* <Form.Group controlId="stores_ControlSelect1" onChange={ event => {setSelectedStore(event.target.value);}}>
             <Form.Label>Please choose a store:</Form.Label>
             <Form.Control as="select">
                 {stores.map(store => (
                     <option value={store}>{store}</option>
                 ))}
             </Form.Control>
-            </Form.Group>
+            </Form.Group> */}
 
 
             <Container> 
+                <h1>Store: {selectedStore}</h1>
                 <Button variant="dark" id="open-store-button" onClick={addProductsHandler}>Add Products</Button>
                 <Button variant="dark" id="open-store-button" onClick={removeProductsHandler}>Remove Products</Button>
                 <Button variant="dark" id="open-store-button" onClick={editProductsHandler}>Edit Products Details</Button>

@@ -134,7 +134,7 @@ function App(){
         <Route path="/displayproducts" exact render={(props) => <DisplayProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores" exact render={(props) => <DisplayStores screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         {/* <Route path="/search" exact component={Search} /> */}
-        <Route path="/purchase" exact render={(props) => <PurchaseProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/confirm_purchase" exact render={(props) => <PurchaseProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/viewcart" exact render={(props) => <ShoppingCart screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores/:store" exact render={(props) => <StoreDetail screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores/:store/products" exact render={(props) => <StoreProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />

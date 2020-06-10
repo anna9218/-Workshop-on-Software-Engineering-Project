@@ -121,12 +121,13 @@ def update_shopping_cart():
 def purchase_products():
     response = GuestRole.purchase_products()
     if response:
-        return jsonify(msg=response["msg"], data=response["response"])
-    return jsonify(msg="get store products failed", data=response["response"], status=400)
+        return jsonify(data=response)
+    return jsonify(msg="purchase products failed", data=response["response"], status=400)
 
 # AND MANY MORE OTHER FUNCTIONS ..... TODO
 
 # ------------------------------ STORE OWNER AND MANAGER ROLE SERVICES ------------------------------------#
+
 
 @app.route('/get_managed_stores', methods=['GET'])
 def get_managed_stores():
@@ -137,7 +138,7 @@ def get_managed_stores():
 @app.route('/get_owned_stores', methods=['GET'])
 def get_owned_stores():
     response = StoreOwnerOrManagerRole.get_owned_stores()
-    return jsonify(data=response)
+    return jsonify(data=response["response"], msg=response["msg"])
 
 
 @app.route('/appoint_store_manager', methods=['POST'])

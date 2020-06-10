@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import * as theService from '../../../services/communication';
 import {Button, Jumbotron, Form, Row, Table, Container} from 'react-bootstrap'
 
 
-function ShoppingCart(){
+function ShoppingCart(props){
   useEffect(() => {
     fetchShoppingCart();
   }, []);
@@ -48,15 +48,16 @@ function ShoppingCart(){
     //TODO
   }
 
-  const purchaseProductsHandler = (event) => {
-    const promise = theService.purchaseCart();
-    promise.then((data) => {
-      if(data != null){
-        alert(data["msg"])
-        // data["data"] ={ total_price, purchases=[{store_name, basket_price, products=[{product_name, product_price, amount}]}] }
-      }
-    })
-  }
+  // const purchaseProductsHandler = (event) => {
+  //   const promise = theService.purchaseCart();
+  //   promise.then((data) => {
+  //     if(data != null){
+  //       alert(data["msg"])
+  //       // data["data"] ={ total_price, purchases=[{store_name, basket_price, products=[{product_name, product_price, amount}]}] }
+        
+  //     }
+  //   })
+  // }
 
   const selectedProductsHandler = (event) => {
         if(selectedProducts.includes(event.target.value)){
@@ -74,7 +75,7 @@ function ShoppingCart(){
     }
 
   return (
-      <div>
+      <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
         <h1>Shopping Cart</h1>
         <Container>
         {
@@ -92,15 +93,13 @@ function ShoppingCart(){
           </thead>
           <tbody>
               {
-                  basket["basket"].map(storeProduct => {
-                      return(
-                          <tr>
-                              <td>{storeProduct["product_name"]}</td>
-                              <td>{storeProduct["price"]}</td>
-                              <td>{storeProduct["amount"]}</td>
-                          </tr>
-                      );
-                  })
+                  basket["basket"].map(storeProduct => (
+                    <tr>
+                        <td>{storeProduct["product_name"]}</td>
+                        <td>{storeProduct["price"]}</td>
+                        <td>{storeProduct["amount"]}</td>
+                    </tr>
+                  ))
               }
           </tbody>
         </Table>
@@ -110,7 +109,7 @@ function ShoppingCart(){
 
         {
           shoppingCart.length > 0 ? 
-            <Button variant="dark" id="purchaseBtn" onClick={purchaseProductsHandler}>
+            <Button variant="dark" id="purchaseBtn" as={Link} to="/confirm_purchase" >
               Purchase Shopping Cart
             </Button>
             : null
