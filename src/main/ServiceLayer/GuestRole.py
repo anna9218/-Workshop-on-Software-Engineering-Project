@@ -187,8 +187,9 @@ class GuestRole:
         """
         return TradeControl.get_instance().purchase_basket(store_name)
 
+    @staticmethod
     @logger
-    def confirm_payment(self, address: str, purchase_ls: dict) -> {'response': bool, 'msg': str}:
+    def confirm_payment(address: str, purchase_ls: dict) -> {'response': bool, 'msg': str}:
         """
             purchase confirmation and addition to user & store purchases
         :param purchase_ls: dict

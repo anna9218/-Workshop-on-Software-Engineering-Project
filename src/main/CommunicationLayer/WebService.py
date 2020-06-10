@@ -124,6 +124,18 @@ def purchase_products():
         return jsonify(data=response)
     return jsonify(msg="purchase products failed", data=response["response"], status=400)
 
+
+@app.route('/confirm_purchase', methods=['POST'])
+def confirm_purchase():
+    if request.is_json:
+        request_dict = request.get_json()
+        address = request_dict.get('address')
+        details = request_dict.get("purchases")
+        response = GuestRole.confirm_payment(address, details)
+        if response:
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="purchase confirmation failed", data=response["response"], status=400)
+
 # AND MANY MORE OTHER FUNCTIONS ..... TODO
 
 # ------------------------------ STORE OWNER AND MANAGER ROLE SERVICES ------------------------------------#

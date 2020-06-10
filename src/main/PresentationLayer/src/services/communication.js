@@ -90,8 +90,16 @@ export async function updateShoppingCart(option_flag, product){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function purchaseCart(shoppingCart){
+export async function purchaseCart(){
     return axios.get('http://localhost:5000/purchase_products')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function confirmPurchase(address, purchase_details){
+    return axios.post('http://localhost:5000/confirm_purchase', {
+        address: address,
+        purchases: purchase_details
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 

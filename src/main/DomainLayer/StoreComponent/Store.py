@@ -542,7 +542,7 @@ class Store:
         for product in details:
             if self.__inventory.get_amount(product["product_name"]) < product["amount"]:
                 return {'response': False, 'msg': "Requested amount for product: "
-                                                  + product.get_name() + ", exceeds amount in inventory"}
+                                                  + product["product_name"] + ", exceeds amount in inventory"}
         return self.check_purchase_policy(details, curr_date)
 
     @logger
