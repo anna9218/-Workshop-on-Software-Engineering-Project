@@ -87,10 +87,10 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.open_store("myStore2")
         store1 = self.tradeControl.get_store("myStore")
         store2: Store = self.tradeControl.get_store("myStore2")
-        store1.add_products("eden", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-                                     {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])
-        store2.add_products("eden", [{"name": "TV", "price": 100, "category": "Electric", "amount": 5},
-                                     {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])
+        store1.add_products("eden", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
+                                     {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])
+        store2.add_products("eden", [{"name": "TV", "price": 100, "category": "Electric", "amount": 5, "purchase_type": 0},
+                                     {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])
         ls = self.tradeControl.get_products_by(1, "Sofa")['response']
         self.assertEqual(len(ls), 2)
         ls = self.tradeControl.get_products_by(2, "o")['response']
@@ -116,11 +116,11 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.open_store("myStore2")
         store1 = self.tradeControl.get_store("myStore")
         self.assertFalse(self.tradeControl.add_products("Store", [
-            {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-            {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])['response'])
+            {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
+            {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])['response'])
         self.assertTrue(self.tradeControl.add_products("myStore", [
-            {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-            {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])['response'])
+            {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
+            {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])['response'])
         self.assertNotEqual(store1.get_product("Chair"), None)
         self.assertNotEqual(store1.get_product("Sofa"), None)
         self.assertTrue(self.tradeControl.remove_products("myStore", ["Sofa"]))
@@ -134,8 +134,8 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.open_store("myStore")
         store1 = self.tradeControl.get_store("myStore")
         self.tradeControl.add_products("myStore", [
-            {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-            {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])
+            {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
+            {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])
 
         self.assertTrue(self.tradeControl.edit_product("myStore", "Chair", "price", 155)['response'])
         self.assertEqual(155, store1.get_product("Chair").get_price())

@@ -73,9 +73,7 @@ class ShoppingCart:
     @logger
     def add_products(self, products_stores_quantity_ls: [{"store_name": str,
                                                           "product": Product,
-                                                          "amount": int,
-                                                          "discount_type": DiscountType,
-                                                          "purchase_type": PurchaseType}]) -> {'response': bool, 'msg': str}:
+                                                          "amount": int}]) -> {'response': bool, 'msg': str}:
         """
         The function iterate over the list to see if all the arguments are valid.
         If all the arguments are valid, and the basket exist, the function add the products the corresponding basket.
@@ -107,10 +105,10 @@ class ShoppingCart:
         for curr in products_stores_quantity_ls:
             basket = self.get_store_basket(curr["store_name"])
             if basket:
-                basket.add_product(curr["product"], curr["amount"], curr["discount_type"], curr["purchase_type"])
+                basket.add_product(curr["product"], curr["amount"])
             else:
                 basket = ShoppingBasket()
-                basket.add_product(curr["product"], curr["amount"], curr["discount_type"], curr["purchase_type"])
+                basket.add_product(curr["product"], curr["amount"])
                 self.__shopping_baskets.append({"store_name": curr["store_name"], "basket": basket})
 
         return {'response': True, 'msg': "Products were added to shopping cart successfully"}

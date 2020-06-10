@@ -10,9 +10,13 @@ from src.main.ServiceLayer.TradeControlService import TradeControlService
 
 app = Flask(__name__)
 CORS(app)
-
+# 1 - purchase
+# 2 - add+remove manager
+# 3 - else
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
+
+
 @app.route('/register', methods=['POST'])
 def register():
     req = request
@@ -60,9 +64,8 @@ def display_stores_products():
 
 @app.route('/view_shopping_cart', methods=['GET'])
 def view_shopping_cart():
-    # response = GuestRole.view_shopping_cart()
-    # return jsonify(data=response)  # list of Products (Object)
-    return jsonify(data=["Product1", "Product2"])
+    response = GuestRole.view_shopping_cart()
+    return jsonify(data=response["response"], msg=response["msg"])
 
 
 @app.route('/search_products_by', methods=['POST'])
@@ -100,11 +103,13 @@ def filter_products_by():
 
 @app.route('/add_products_to_cart', methods=['POST'])
 def add_products_to_cart():
-    # if request.is_json:
-    #     request_dict = request.get_json()
-    #     products = request_dict.get('products')
-    #     response = GuestRole.save_products_to_basket()
-    return jsonify(msg="Added to cart successfully!")
+    if request.is_json:
+        request_dict = request.get_json()
+        products = request_dict.get('products')
+        response = GuestRole.save_products_to_basket(products)
+        # if response:
+        return jsonify(msg=response['msg'], data=response['response'])
+    # return jsonify(msg="Registration failed", data=response['response'], status=400)
 
 
 @app.route('/update_shopping_cart', methods=['POST'])
@@ -112,12 +117,12 @@ def update_shopping_cart():
     return jsonify(msg="Updated successfully!")
 
 
-@app.route('/purchase_products', methods=['POST'])
+@app.route('/purchase_products', methods=['GET'])
 def purchase_products():
-    # if request.is_json:
-        # TODO
-    return jsonify(msg="Updated successfully!")
-
+    response = GuestRole.purchase_products()
+    if response:
+        return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="get store products failed", data=response["response"], status=400)
 
 # AND MANY MORE OTHER FUNCTIONS ..... TODO
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import * as theService from '../services/communication';
-import {Button, Jumbotron, Form, Row, Col, Container} from 'react-bootstrap'
+import * as theService from '../../../services/communication';
+import {Button, Jumbotron, Form, Row, Table, Container} from 'react-bootstrap'
 
 
 function ShoppingCart(){
@@ -18,7 +18,12 @@ function ShoppingCart(){
     const promise = theService.displayShoppingCart()
     // const stores = await promise.json();
     promise.then((data) => {
-      setShoppingCart(data["data"])
+      if(data != null){
+        if(data["data"].length > 0)
+          setShoppingCart(data["data"])
+        else
+          alert(data["msg"]);
+      }
     });
   };
 
@@ -44,7 +49,13 @@ function ShoppingCart(){
   }
 
   const purchaseProductsHandler = (event) => {
-    //TODO
+    const promise = theService.purchaseCart();
+    promise.then((data) => {
+      if(data != null){
+        alert(data["msg"])
+        // data["data"] ={ total_price, purchases=[{store_name, basket_price, products=[{product_name, product_price, amount}]}] }
+      }
+    })
   }
 
   const selectedProductsHandler = (event) => {
@@ -66,30 +77,47 @@ function ShoppingCart(){
       <div>
         <h1>Shopping Cart</h1>
         <Container>
-        {shoppingCart.map(product => (
-          <h1>
-            
-            <Row>
-                    <Col />
-                    <Col xs={14}>
-                        <Row>
-            <Button id="product-button" variant="dark" onClick={onButtonClickHandler}>{product}</Button>
-            <Form.Check label="select" value={product} 
-                            onChange={selectedProductsHandler} type='checkbox' id={`inline-radio-1`} />
-            <Button variant="dark" onClick={removeProductHandler}>Remove</Button>
-            <Button variant="dark" onClick={updateProductAmountHandler}>Update Amount</Button>
-            </Row>
-                    </Col>
-                    <Col />
-                </Row>
-                
-           
-          </h1>
-        ))}
-        <Button id="purchase-button" variant="dark" block onClick={purchaseProductsHandler}>Purchase Products</Button>
+        {
+          // shopping cart = [{store_name, basket = [{product_name, amount}]}]
+          shoppingCart.map(basket => (
+            <div>
+              <h2>Store: {basket["store_name"]}</h2>
+              <Table striped bordered hover >
+          <thead>
+              <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Amount</th>
+              </tr>
+          </thead>
+          <tbody>
+              {
+                  basket["basket"].map(storeProduct => {
+                      return(
+                          <tr>
+                              <td>{storeProduct["product_name"]}</td>
+                              <td>{storeProduct["price"]}</td>
+                              <td>{storeProduct["amount"]}</td>
+                          </tr>
+                      );
+                  })
+              }
+          </tbody>
+        </Table>
+            </div>
+          ))
+        }
 
+        {
+          shoppingCart.length > 0 ? 
+            <Button variant="dark" id="purchaseBtn" onClick={purchaseProductsHandler}>
+              Purchase Shopping Cart
+            </Button>
+            : null
+        }
       </Container>
-      </div>
+    </div>
+         
       
   );
 }

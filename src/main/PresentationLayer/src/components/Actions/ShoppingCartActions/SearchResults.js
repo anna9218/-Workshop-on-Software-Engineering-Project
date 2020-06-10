@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container, Col, Row, Checkbox} from 'react-bootstrap'
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
-import * as theService from '../services/communication';
+import * as theService from '../../../services/communication';
 
 
 function SearchResults(props){

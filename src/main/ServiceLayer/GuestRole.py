@@ -110,20 +110,22 @@ class GuestRole:
                                                               max_price=max_price,
                                                               category=category)
 
+    @staticmethod
     @logger
     # use case 2.6
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
-                                                                     "amount": int, "discount_type": DiscountType,
-                                                                     "purchase_type": PurchaseType}]) -> {'response': bool, 'msg': str}:
+    def save_products_to_basket(products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+                                                                     "amount": int}]) \
+            -> {'response': bool, 'msg': str}:
         """
         :param products_stores_quantity_ls: [ {"product_name": str, "amount": int, "store_name": str}, .... ]
         :return: dict = {'response': bool, 'msg': str}
         """
         return TradeControl.get_instance().save_products_to_basket(products_stores_quantity_ls)
 
+    @staticmethod
     @logger
     # use case 2.7
-    def view_shopping_cart(self) -> {'response': list, 'msg': str}:
+    def view_shopping_cart() -> {'response': list, 'msg': str}:
         """
         :return: dict: {'response': [{"store_name": str,
                                      "basket": [{"product_name": str

@@ -73,9 +73,11 @@ export async function filterProductsBy(products, filter_option, input){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function addToProductsCart(products){
+export async function addToProductsCart(store_name, product_name, product_amount){
     return axios.post('http://localhost:5000/add_products_to_cart', {
-        products: products
+        products: [{"store_name": store_name,
+                    "product_name": product_name, 
+                    "amount": product_amount}]
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -88,7 +90,10 @@ export async function updateShoppingCart(option_flag, product){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-
+export async function purchaseCart(shoppingCart){
+    return axios.get('http://localhost:5000/purchase_products')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 
 //--------------------------- SUBSCRIBER ROLE ---------------------------------------//
 
@@ -125,7 +130,7 @@ export async function fetchOwnedStores(){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function addProduct(store_name, product_name, product_price, product_category, product_amount){
+export async function addProduct(store_name, product_name, product_price, product_category, product_amount, purchase_type){
     return axios.post('http://localhost:5000/add_product', {
         store_name: store_name,
         products_details:
@@ -133,7 +138,8 @@ export async function addProduct(store_name, product_name, product_price, produc
             name: product_name,
             price: parseInt(product_price),
             category: product_category,
-            amount: parseInt(product_amount)
+            amount: parseInt(product_amount),
+            purchase_type: purchase_type
         }]
         
     })

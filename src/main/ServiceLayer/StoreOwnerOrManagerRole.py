@@ -11,7 +11,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.1.1
     @staticmethod
     def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
-        int}]) -> {'response': bool, 'msg': str}:
+        int, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)

@@ -12,7 +12,8 @@ class UpdateCartTest(ProjectAT):
         self.login(self._username, self._password)
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
-                                   [{"name": "product", "price": 10, "category": "general", "amount": 5}])
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 5,
+                                     "purchase_type": 0, "discount_type": 0}])
         self.add_products_to_cart("product", self._store_name, 1, 0, 0)
 
     def test_success(self):

@@ -15,7 +15,8 @@ class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
         self.login("TradeManager", "123456789")
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
-                                       [{"name": "product", "price": 10, "category": "general", "amount": 10}])
+                                       [{"name": "product", "price": 10, "category": "general", "amount": 10,
+                                         "purchase_type": 0, "discount_type": 0}])
         self.add_products_to_cart("product", self._store_name, 5, 0, 0)
         self.__purchase_ls = self.purchase_products()
         self.confirm_purchase("my address 12", self.__purchase_ls)
