@@ -162,7 +162,7 @@ class App extends React.Component{
           <Route path="/viewcart" exact render={(props) => <ShoppingCart screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/stores/:store" exact render={(props) => <StoreDetail screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/stores/:store/products" exact render={(props) => <StoreProducts screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
-          // <Route path="/searchresults" exact render={(props) => <SearchResults screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          {/* // <Route path="/searchresults" exact render={(props) => <SearchResults screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} /> */}
           <Route path="/searchandfilter" exact render={(props) => <SearchAndFilterProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
           {/* subscriber */}
@@ -175,10 +175,10 @@ class App extends React.Component{
           <Route path="/addproduct" exact render={(props) => <AddProductsForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
           {/* owner */}
-          <Route path="/appointowner" exact render={(props) => <AppointOwner screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-        <Route path="/appointmanager" exact render={(props) => <AppointStoreManager screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-        <Route path="/editpermissions" exact render={(props) => <EditPermissions screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-        <Route path="/removemanager" exact render={(props) => <RemoveManager screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+          <Route path="/appointowner" exact render={(props) => <AppointOwner screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/appointmanager" exact render={(props) => <AppointStoreManager screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/editpermissions" exact render={(props) => <EditPermissions screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/removemanager" exact render={(props) => <RemoveManager screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
           {/* owner */}
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />

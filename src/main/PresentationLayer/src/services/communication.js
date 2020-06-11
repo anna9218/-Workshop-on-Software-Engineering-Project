@@ -201,6 +201,14 @@ export async function editProduct(store_name, product_name, new_product_name, am
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function deleteProduct(store_name, product_name){
+    return axios.post('http://localhost:5000/remove_product', {
+        store_name: store_name,
+        product_name: product_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function getProductInfo(store_name, product_name){
     return axios.post('http://localhost:5000/get_product_details', {
         store_name: store_name,

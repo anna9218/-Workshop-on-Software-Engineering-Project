@@ -219,18 +219,6 @@ def appoint_store_owner():
     return jsonify(msg="Oops, communication error")
 
 
-@app.route('/add_product', methods=['POST'])
-def add_product():
-    if request.is_json:
-        request_dict = request.get_json()
-        store_name = request_dict.get('store_name')
-        products_details = request_dict.get('products_details')
-        response = StoreOwnerOrManagerRole.add_products(store_name, products_details)
-        if response["response"]:
-            return jsonify(msg="Congrats! Product was added!")
-    return jsonify(msg="Oops, product wasn't added")
-
-
 @app.route('/get_managers_appointees', methods=['POST'])
 def get_managers_appointees():
     if request.is_json:
@@ -254,6 +242,18 @@ def edit_manager_permissions():
         else:
             return jsonify(msg="Oops, update permissions failed.")
     return jsonify(msg="Oops, communication error.")
+
+
+@app.route('/add_product', methods=['POST'])
+def add_product():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        products_details = request_dict.get('products_details')
+        response = StoreOwnerOrManagerRole.add_products(store_name, products_details)
+        if response["response"]:
+            return jsonify(msg="Congrats! Product was added!")
+    return jsonify(msg="Oops, product wasn't added")
 
 
 @app.route('/edit_product', methods=['POST'])
@@ -292,6 +292,18 @@ def edit_product():
         if len(errors) == 0:
             return jsonify(msg="Congrats! Product was edited successfully!")
         return jsonify(msg="Oops, issue with product edit, couldn't update: " + error_str)
+
+
+@app.route('/remove_product', methods=['POST'])
+def remove_product():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        products_name = request_dict.get('products_name')
+        response = StoreOwnerOrManagerRole.remove_products(store_name, [products_name])
+        if response["response"]:
+            return jsonify(msg="Congrats! Product was removed!")
+    return jsonify(msg="Oops, product wasn't removed")
 
 
 @app.route('/get_product_details', methods=['POST'])

@@ -175,36 +175,4 @@ function EditProductsForm(props){
   );
 }
 
-export default EditProductsForm;
-// const addProductHandler = async () =>{
-//     const promise = theService.addProduct(storeName, productName, productPrice, productCategory, productAmount, purchaseType); // goes to register.js and sends to backend
-//     promise.then((data) => {
-
-//         confirmAlert({
-//           title: data["msg"],
-//           buttons: [
-//             {
-//               label: 'Add another product',
-//               onClick: () => { // reset the form in order to add another product
-//                 setProductName("");
-//                 setProductPrice("");
-//                 setProductCategory("");
-//                 setProductAmount("");
-//                 // setDiscountType(0);
-//                 setPurchaseType(0);
-//                 // setDiscountPercentage(0);
-//               }
-//             },
-//           {
-//             label: 'Done',
-//             onClick: () => alert('Click No')  //TODO - add an option to go back (need to disable addProductForm)
-//           }
-//         ]
-//       });
-
-//     });
-//   };
-
-
-
-//           
+export default EditProductsForm;      

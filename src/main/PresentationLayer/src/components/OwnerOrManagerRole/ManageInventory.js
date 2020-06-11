@@ -6,6 +6,7 @@ import * as theService from '../../services/communication';
 import AddProductsForm from './AddProductsForm'
 import EditProductsForm from './EditProductsForm';
 import * as BackOption from '../Actions/GeneralActions/Back'
+import DeleteProductsForm from './DeleteProductForm';
 
 
 function ManageInventory(props){
@@ -53,10 +54,11 @@ function ManageInventory(props){
             <div style={{marginTop: "5%"}}>
                 { showEditForm ? <EditProductsForm storeName={selectedStore} history={props.location.props} /> : null }
             </div>
-            {/* { showAddForm ? <AddProductsForm storeName={selectedStore} showForm={() => setShowAddForm(false)}/> : null } */}
-          
+            <div style={{marginTop: "5%"}}>
+                { showDeleteForm ? <DeleteProductsForm storeName={selectedStore} history={props.location.props} /> : null }
+            </div>
 
-            <Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props.location.props)}>Back</Button>
+            <Button style={{marginTop: "1%"}}  variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props.location.props)}>Back</Button>
           
             </Container>
   
