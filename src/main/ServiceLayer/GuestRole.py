@@ -58,12 +58,13 @@ class GuestRole:
     @staticmethod
     def search_products_by(search_option: int, string: str) -> {'response': list, 'msg': str}:
         """
-        :param search_option: = 1-byName/2-byKeyword/3-byCategoru
+        :param search_option: = 1-byName/2-byKeyword/3-byCategory
         :param string: for opt: 0 -> productName, 1 -> string, 2 -> category
         :return: dict = {'response': [{"store_name": str,
                                       "product_name": str,
                                       "price": int,
-                                      "category": str}],
+                                      "category": str,
+                                      "amount": int}],
                          'msg': str
         """
         loggerStaticMethod("GuestRole.search_products_by", [search_option, string])
@@ -71,9 +72,10 @@ class GuestRole:
 
     # use case 2.5.2
     @staticmethod
-    def filter_products_by(products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
+    def filter_products_by(products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
-                           max_price: (float or None) = None, category: (str or None) = None) -> {'response': list, 'msg': str}:
+                           max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
+                                                                                                  'msg': str}:
         """
         This function have two options:
             Either filter_by_option == 1, and then the function should get min price and max price.
@@ -102,28 +104,29 @@ class GuestRole:
         :return: a list of the filtered product.
                  an empty list if an error occurs.
         """
-        loggerStaticMethod("GuestRole.filter_products_by", [products_ls, filter_by_option, min_price, max_price,
-                                                            category])
+
         return TradeControl.get_instance().filter_products_by(products_ls=products_ls,
                                                               filter_by_option=filter_by_option,
                                                               min_price=min_price,
                                                               max_price=max_price,
                                                               category=category)
 
+    @staticmethod
     @logger
     # use case 2.6
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
-                                                                     "amount": int, "discount_type": DiscountType,
-                                                                     "purchase_type": PurchaseType}]) -> {'response': bool, 'msg': str}:
+    def save_products_to_basket(products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+                                                                     "amount": int}]) \
+            -> {'response': bool, 'msg': str}:
         """
         :param products_stores_quantity_ls: [ {"product_name": str, "amount": int, "store_name": str}, .... ]
         :return: dict = {'response': bool, 'msg': str}
         """
         return TradeControl.get_instance().save_products_to_basket(products_stores_quantity_ls)
 
+    @staticmethod
     @logger
     # use case 2.7
-    def view_shopping_cart(self) -> {'response': list, 'msg': str}:
+    def view_shopping_cart() -> {'response': list, 'msg': str}:
         """
         :return: dict: {'response': [{"store_name": str,
                                      "basket": [{"product_name": str
@@ -185,8 +188,9 @@ class GuestRole:
         """
         return TradeControl.get_instance().purchase_basket(store_name)
 
+    @staticmethod
     @logger
-    def confirm_payment(self, address: str, purchase_ls: dict) -> {'response': bool, 'msg': str}:
+    def confirm_payment(address: str, purchase_ls: dict) -> {'response': bool, 'msg': str}:
         """
             purchase confirmation and addition to user & store purchases
         :param purchase_ls: dict

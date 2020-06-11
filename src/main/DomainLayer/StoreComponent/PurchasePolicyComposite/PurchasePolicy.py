@@ -100,6 +100,11 @@ class PurchasePolicy(PurchaseComponent):
             if not rule.equals(details):
                 return False
             return True
+
+        # for rule in self.__children:
+        #     if not rule.equals(details):
+        #         return False
+        #     return True
         return False
 
     @logger

@@ -24,7 +24,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                                                         [{"name": "eytan",
                                                           "price": 12,
                                                           "category": "eytan as category",
-                                                          "amount": 21}])
+                                                          "amount": 21,
+                                                          "purchase_type": 0}])
 
     def test_close_store(self):
         user = User()
@@ -79,7 +80,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": product.get_name(),
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0}
 
         manager = User()
         manager.register("manager", "manager")
@@ -105,7 +106,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for name",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": 0}
+                                 "amount": 0, "purchase_type": 0}
 
         # All valid - owner -edge case -> amount = 0
         self.assertTrue(self.__store_owner_or_manager_role.add_products(store.get_name(), [product_as_dictionary])['response'])
@@ -117,7 +118,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for No-way-in-hell-we-get-less-then-100",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": -99}
+                                 "amount": -99, "purchase_type": 0}
 
         # Invalid - negative amount
         self.assertFalse(self.__store_owner_or_manager_role.add_products(store.get_name(), [product_as_dictionary])['response'])
@@ -127,7 +128,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for No-way-in-hell-we-get-less-then-100",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": 99}
+                                 "amount": 99, "purchase_type": 0}
 
         # Invalid - store doesn't exist
         self.assertFalse(self.__store_owner_or_manager_role.add_products("store.get_name()", [product_as_dictionary])['response'])
@@ -136,7 +137,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for Never said goodbye",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": 15}
+                                 "amount": 15, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # Invalid - curr_user is logged out
         self.assertFalse(self.__store_owner_or_manager_role.add_products(store.get_name(), [product_as_dictionary])['response'])
@@ -146,7 +148,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": product.get_name(),
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # All valid - Manager
 
@@ -162,7 +165,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for name",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": 0}
+                                 "amount": 0, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # All valid - owner -edge case -> amount = 0
         self.assertTrue(self.__store_owner_or_manager_role.add_products(store.get_name(), [product_as_dictionary])['response'])
@@ -174,7 +178,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for No-way-in-hell-we-get-less-then-100",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": -99}
+                                 "amount": -99, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # Invalid - negative amount
         self.assertFalse(self.__store_owner_or_manager_role.add_products(store.get_name(), [product_as_dictionary])['response'])
@@ -184,7 +189,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for No-way-in-hell-we-get-less-then-100",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": 99}
+                                 "amount": 99, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # Invalid - store doesn't exist
         self.assertFalse(self.__store_owner_or_manager_role.add_products("store.get_name()", [product_as_dictionary])['response'])
@@ -192,7 +198,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "Name a better striker then RvP. I dare you.",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": 99}
+                                 "amount": 99, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).get_store(store.get_name()). \
             edit_manager_permissions(self.__user, manager.get_nickname(), [ManagerPermission.USERS_QUESTIONS])
 
@@ -206,7 +213,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "N is for Never said goodbye",
                                  "price": 3,
                                  "category": "C is for category",
-                                 "amount": 15}
+                                 "amount": 15, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # Invalid - curr_user is logged out
         self.assertFalse(self.__store_owner_or_manager_role.add_products(store.get_name(), [product_as_dictionary])['response'])
@@ -233,7 +241,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": product.get_name(),
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
 
         manager = User()
         manager.register("manager", "manager")
@@ -258,7 +267,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary2 = {"name": "I'll be there for you",
                                   "price": product.get_price(),
                                   "category": product.get_category(),
-                                  "amount": 5}
+                                  "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary2])
 
         # All valid - owner - two products
@@ -277,7 +287,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary2 = {"name": "I'll be there for you",
                                   "price": product.get_price(),
                                   "category": product.get_category(),
-                                  "amount": 5}
+                                  "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary2])
 
         # All valid - owner - two products
@@ -294,7 +305,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "It's my life",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])
 
         # Invalid - store doesn't exist
@@ -318,7 +330,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "Born to be my baby",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(user_nickname, user_password)
         (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
@@ -345,7 +358,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": product.get_name(),
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
 
         manager = User()
         manager.register("manager", "manager")
@@ -372,7 +386,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary2 = {"name": "I'll be there for you",
                                   "price": product.get_price(),
                                   "category": product.get_category(),
-                                  "amount": 5}
+                                  "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary2])
 
         # All valid - manager - two products
@@ -391,7 +406,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary2 = {"name": "I'll be there for you",
                                   "price": product.get_price(),
                                   "category": product.get_category(),
-                                  "amount": 5}
+                                  "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary2])
 
         # All valid - manager - two products
@@ -408,7 +424,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "It's my life",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])
 
         # Invalid - store doesn't exist
@@ -431,7 +448,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "Born to be my baby",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(user_nickname, user_password)
         (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
@@ -487,7 +505,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": product.get_name(),
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
 
         manager = User()
         manager.register("manager", "manager")
@@ -521,7 +540,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         exist_product_as_dictionary = {"name": "Eagle's statue",
                                        "price": product.get_price(),
                                        "category": product.get_category(),
-                                       "amount": 5}
+                                       "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [exist_product_as_dictionary])
 
         # Invalid - owner - another product with the same name as the new name already exist
@@ -536,7 +556,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "new_name",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # All valid - owner - price
         self.assertTrue(self.__store_owner_or_manager_role.edit_product(store.get_name(), product_as_dictionary['name'],
@@ -597,7 +618,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "It's my life",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])
 
         # Invalid - store doesn't exist
@@ -623,7 +645,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "Born to be my baby",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(user_nickname, user_password)
         (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
@@ -654,7 +677,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": product.get_name(),
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
 
         manager = User()
         manager.register("manager", "manager")
@@ -691,7 +715,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         exist_product_as_dictionary = {"name": "Eagle's statue",
                                        "price": product.get_price(),
                                        "category": product.get_category(),
-                                       "amount": 5}
+                                       "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [exist_product_as_dictionary])
 
         # Invalid - manager - another product with the same name as the new name already exist
@@ -706,7 +731,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "new_name",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
 
         # All valid - manager - price
         self.assertTrue(self.__store_owner_or_manager_role.edit_product(store.get_name(), product_as_dictionary['name'],
@@ -767,7 +793,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "It's my life",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).add_products(store.get_name(), [product_as_dictionary])
 
         # Invalid - store doesn't exist
@@ -793,7 +820,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         product_as_dictionary = {"name": "Born to be my baby",
                                  "price": product.get_price(),
                                  "category": product.get_category(),
-                                 "amount": 5}
+                                 "amount": 5, "purchase_type": 0,
+                                  "discount_type": 0}
         (TradeControl.get_instance()).set_curr_user(self.__user)
         (TradeControl.get_instance()).login_subscriber(user_nickname, user_password)
         (TradeControl.get_instance()).get_store(store2.get_name()).get_owners_appointments().append(StoreAppointment(None, self.__user, []))
@@ -1423,7 +1451,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
     def test_display_store_purchases(self):
         # Empty purchases
         lst = self.__store_owner_or_manager_role.display_store_purchases(self.__store.get_name())['response']
-        # print(type(lst))
         self.assertListEqual([], lst)
 
         (TradeControl.get_instance()).get_store(self.__store.get_name()).add_purchase \
@@ -1476,6 +1503,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                                                                    "products": ["product1"]})
         res = self.__store_owner_or_manager_role.get_policies("purchase", self.__store.get_name())["response"]
         self.assertTrue(res[0]["min_amount"] == 1)
+        TradeControl.get_instance().reset_purchase_policies(self.__store.get_name())
 
     def test_define_purchase_policy(self):
         # valid define
@@ -1501,6 +1529,132 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
             "response"]
 
         self.assertFalse(res)
+        TradeControl.get_instance().reset_purchase_policies(self.__store.get_name())
+
+        
+    def test_define_discount_policy(self):
+
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+
+        # All valid - no precondition
+        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(), "p1")
+                              ['response']))
+
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+
+        # All valid - with precondition
+        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                           pre_con__details)
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(), "p2")
+                              ['response']))
+
+    def test_define_composite_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "p1", "p2", "and",
+                                                                            8.5, "p1_or_p2")
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                                     "p1_or_p2")
+                              ['response']))
+        self.assertIsNone(
+            self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                   "p1")['response'])
+
+        self.assertIsNone(
+            (self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                    "p2")['response']))
+
+        dis_details = {'name': "p3", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+
+        result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "p1_or_p2", "p3",
+                                                                            "xor", 8.5, "(p1_or_p2)_xor_p3")
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                                     "(p1_or_p2)_xor_p3")
+                              ['response']))
+        self.assertIsNone(
+            self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                   "p2")['response'])
+
+        self.assertIsNone(
+            (self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                    "p1_or_p2")['response']))
+
+        self.__product_as_dictionary = {"name": "eytan2",
+                                        "price": 12,
+                                        "category": "eytan as category",
+                                        "amount": 21,
+                                        "purchase_type": 0}
+        self.__store_owner_or_manager_role.add_products(self.__store.get_name(),
+                                                        [self.__product_as_dictionary])
+
+        dis_details = {'name': "p4", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+
+        result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "(p1_or_p2)_xor_p3"
+                                                                            , "p4", "xor", 8.5,
+                                                                            "((p1_or_p2)_xor_p3)_xor_p4")
+        self.assertFalse(result['response'])
+
+    def test_update_discount_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        result = self.__store_owner_or_manager_role.update_discount_policy(self.__store.get_name(), "p1", 13)
+        self.assertTrue(result['response'])
+        self.assertEqual(13, jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy
+                                               (self.__store.get_name(), "p1")['response']).get_percentage())
+
+    def test_get_discount_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        self.assertEqual("Successful.", self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                                               "p1")['msg'])
+
+        self.assertEqual("Policy doesn't exist.", self.__store_owner_or_manager_role.get_discount_policy
+        (self.__store.get_name(), "p3")['msg'])
+
+    def test_delete_discount_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        result = self.__store_owner_or_manager_role.delete_policy(self.__store.get_name(), "p1")
+        self.assertTrue(result['response'])
+        self.assertEqual("Policy doesn't exist.", self.__store_owner_or_manager_role.get_discount_policy
+        (self.__store.get_name(), "p1")['msg'])
+
+        result = self.__store_owner_or_manager_role.delete_policy(self.__store.get_name(), "p1")
+        self.assertFalse(result['response'])
+        self.assertEqual("Policy doesn't exist.", self.__store_owner_or_manager_role.get_discount_policy
+        (self.__store.get_name(), "p1")['msg'])
 
     def tearDown(self):
         # TradeControl.get_instance().reset_purchase_policies(self.__store.get_name())

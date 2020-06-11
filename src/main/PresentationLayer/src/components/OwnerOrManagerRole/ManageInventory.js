@@ -4,83 +4,61 @@ import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import AddProductsForm from './AddProductsForm'
+import EditProductsForm from './EditProductsForm';
+import * as BackOption from '../Actions/GeneralActions/Back'
+import DeleteProductsForm from './DeleteProductForm';
 
 
 function ManageInventory(props){
     useEffect(() => {
-        fetchOwnedStores();
+        // alert(props.location.props)
+        setSelectedStore(props.location.store)
     }, []);
 
-    const [stores, setStores] = useState(["No owned stores"]);
     const [selectedStore, setSelectedStore] = useState("");
     const [showAddForm, setShowAddForm] = useState(false);
-    const [showOptionsForm, setShowOptionsForm] = useState(false);
-
-
-    const fetchOwnedStores = async () => {
-        const promise = theService.fetchOwnedStores();  // goes to communication.js and sends to server
-        promise.then((data) => {
-            if (data["data"]["response"].length > 0){   // if there are owned stores
-                setStores(data["data"]["response"]);
-            }
-            else{
-                setStores([data["data"]["msg"]]);       // no owned stores, array if empty
-            }
-        });
-    };
+    const [showEditForm, setShowEditForm] = useState(false);
+    const [showDeleteForm, setShowDeleteForm] = useState(false);
 
     const addProductsHandler = (event) =>{
-        if(selectedStore == ""){
-            setSelectedStore(stores[0]);
-        }
-
         setShowAddForm(true);
+        setShowDeleteForm(false);
+        setShowEditForm(false);
     };
 
     const removeProductsHandler = (event) =>{
-        if(selectedStore == ""){
-            setSelectedStore(stores[0]);
-        }
-
         setShowAddForm(false)
-        //TODO
+        setShowDeleteForm(true);
+        setShowEditForm(false);
     };
 
     const editProductsHandler = (event) =>{
-        if(selectedStore == ""){
-            setSelectedStore(stores[0]);
-        }
-
         setShowAddForm(false)
-        //TODO
+        setShowDeleteForm(false);
+        setShowEditForm(true);
     };
-
-
 
     return (
         <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
           <h1>Manage Inventory</h1>
 
-            <Form.Group controlId="stores_ControlSelect1" onChange={ event => {setSelectedStore(event.target.value);}}>
-            <Form.Label>Please choose a store:</Form.Label>
-            <Form.Control as="select">
-                {stores.map(store => (
-                    <option value={store}>{store}</option>
-                ))}
-            </Form.Control>
-            </Form.Group>
-
-
             <Container> 
-                <Button variant="dark" id="open-store-button" onClick={addProductsHandler}>Add Products</Button>
-                <Button variant="dark" id="open-store-button" onClick={removeProductsHandler}>Remove Products</Button>
-                <Button variant="dark" id="open-store-button" onClick={editProductsHandler}>Edit Products Details</Button>
+                <h1>Store: {selectedStore}</h1>
+                <Button variant="dark" id="add_product-button" onClick={addProductsHandler}>Add Products</Button>
+                <Button variant="dark" id="delete-product-button" onClick={removeProductsHandler}>Remove Products</Button>
+                <Button variant="dark" id="edit-product-button" onClick={editProductsHandler}>Edit Products Details</Button>
 
             <div style={{marginTop: "5%"}}>
-                { showAddForm ? <AddProductsForm storeName={selectedStore} /> : null }
+                { showAddForm ? <AddProductsForm storeName={selectedStore} history={props.location.props} /> : null }
             </div>
-            {/* { showAddForm ? <AddProductsForm storeName={selectedStore} showForm={() => setShowAddForm(false)}/> : null } */}
-          
+            <div style={{marginTop: "5%"}}>
+                { showEditForm ? <EditProductsForm storeName={selectedStore} history={props.location.props} /> : null }
+            </div>
+            <div style={{marginTop: "5%"}}>
+                { showDeleteForm ? <DeleteProductsForm storeName={selectedStore} history={props.location.props} /> : null }
+            </div>
+
+            <Button style={{marginTop: "1%"}}  variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props.location.props)}>Back</Button>
           
             </Container>
   
@@ -88,7 +66,5 @@ function ManageInventory(props){
     );
 
 }
-
-
 
 export default ManageInventory;

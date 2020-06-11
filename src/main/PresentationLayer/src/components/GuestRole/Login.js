@@ -18,6 +18,10 @@ class Login extends React.Component{
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
+  // componentWillUnmount = () =>{
+
+  // }
+
   handleLogin = event =>{
     event.preventDefault();
         const promise = theService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend
@@ -41,6 +45,9 @@ class Login extends React.Component{
                   else if(data["data"] === "MANAGER"){
                     // if store manager - redirect to subscriber home page
                     this.props.history.push({pathname: '/manager', props: this.props});
+                  }
+                  else if(data["data"] === "SYS-MANAGER"){
+                    this.props.history.push({pathname: '/systemmanager', props: this.props});
                   }
                   else{
                     // if subscriber - redirect to subscriber home page

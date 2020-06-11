@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import {Button, Jumbotron} from 'react-bootstrap'
-import * as theService from '../../services/communication';
+import * as theService from '../../../services/communication';
+import * as BackOption from '../GeneralActions/Back'
 
 
 function DisplayStores(props){
@@ -17,12 +18,14 @@ function DisplayStores(props){
   const fetchStores = async () => {
     const promise = theService.displayStores(); // goes to register.js and sends to backend
     promise.then((data) => {
+      if(data !== null){
         if (data["data"]["response"].length > 0){   // if there are stores to display
             setStores(data["data"]["response"]);
         }
         else{
           alert(data["data"]["msg"]);      // no stores to display
         }
+      }
     });
   };
 
@@ -35,17 +38,15 @@ function DisplayStores(props){
           <Link to={{
             pathname:'/stores/'+store, 
             state:{
-              storeName: store}
+              storeName: store
+            }
             }}>
             <Button variant="dark">{store}</Button>
           </Link>
           </h1>
         ))}
-        <Link to={{
-            pathname:'/'
-            }}>
-            <Button variant="dark" id="backbtn">Back</Button>
-          </Link>
+       
+        <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
       </div>
   );
 }

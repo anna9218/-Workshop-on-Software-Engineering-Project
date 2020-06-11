@@ -5,25 +5,15 @@ import * as theService from '../../services/communication';
 import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
 
 
-
-//---------- WHAT AN OWNER CAN DO? ----------//
-// Guest actions 
-// Subscriber actions - Logout, Open store, View personal purchase history
-// Manage stock (4.1) 
-// (4.2)
-// Appoint additional owner (4.3)
-// Appoint additional manager (4.5)
-// Edit manager’s permissions (4.6)
-// Remove a store manager (4.7)
-// View store’s purchase history (4.10)
-
-// Manage store (5.1) (MANAGER)
-
-
 class OwnerAPI extends React.Component {
     constructor(props) {
         super(props);
-  
+
+        this.state = {
+            ownedStores: [],
+            selectedStore: ""
+        }
+        
       this.logoutHandler = this.logoutHandler.bind(this);
     }
 
@@ -34,6 +24,20 @@ class OwnerAPI extends React.Component {
             this.props.history.push("/");
         });
     };
+
+    componentDidMount = () => {
+        const promise = theService.fetchOwnedStores();  // goes to communication.js and sends to server
+        promise.then((data) => {
+            if(data != null){
+                if (data["data"].length > 0){   // if there are owned stores
+                    this.setState({ownedStores: data["data"], selectedStore: data["data"][0]})
+                }
+                else{
+                    alert([data["msg"]]);       // no owned stores, array is empty
+                }
+            }
+        });
+    }
 
     render(){
         return(
@@ -51,6 +55,16 @@ class OwnerAPI extends React.Component {
                         </Col>
                     </Row>
                 </Jumbotron>
+                
+                <Form.Group controlId="stores_ControlSelect2" onChange={ event => {this.setState({selectedStore: event.target.value})}}>
+                <Form.Label>Please choose a store:</Form.Label>
+                <Form.Control as="select">
+                    <option value={""} >Select Store</option>
+                    {this.state.ownedStores.map(store => (
+                        <option value={store}>{store}</option>
+                    ))}
+                </Form.Control>
+                </Form.Group>
     
                 {/*
                     need options for:
@@ -93,35 +107,48 @@ class OwnerAPI extends React.Component {
                         View Personal Purchase History
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/manageinventory">
-                        Manage Stock
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/manageinventory/" + this.state.selectedStore, 
+                                                                               store: this.state.selectedStore, props: this.props}} >
+                        Manage Inventory
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/appointowner">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointowner", 
+                                                                               store: this.state.selectedStore}}>
                         Appoint Additional Owner
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/appointmanager">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
+                                                                               store: this.state.selectedStore}}>
                         Appoint Additional Manager
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/editpermissions">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/editpermissions", 
+                                                                               store: this.state.selectedStore}}>
                         Edit Manager’s Permissions
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/removemanager">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removemanager", 
+                                                                               store: this.state.selectedStore}}>
                         Remove A Store Manager
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/storehistory">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/storehistory", 
+                                                                             store: this.state.selectedStore}}>
                         View Store’s Purchase History
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/managestore">
-                        Manage Store
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/managestorepolicies", 
+                                                                               store: this.state.selectedStore}}>
+                        Manage Store Policies
                     </Button>
+
+                    <Button variant="secondary" size="lg" block as={Link} to="/notifications">
+                        Notifications
+                    </Button>
+
                 </Row>
             </Container>
+            
         );
     }
     

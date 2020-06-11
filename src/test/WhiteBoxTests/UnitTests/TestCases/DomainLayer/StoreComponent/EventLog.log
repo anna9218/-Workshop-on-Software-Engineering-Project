@@ -167,7 +167,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -191,7 +191,7 @@ The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -215,7 +215,7 @@ The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -281,7 +281,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_products was called
-arguments: ('Store', 'shani', [{'name': 'Chair', 'price': 100, 'category': 'Furniture', 'amount': 5}, {'name': 'Sofa', 'price': 100, 'category': 'Furniture', 'amount': 5}])
+arguments: ('Store', 'shani', [{'name': 'Chair', 'price': 100, 'category': 'Furniture', 'amount': 5, 'purchase_type': 0}, {'name': 'Sofa', 'price': 100, 'category': 'Furniture', 'amount': 5, 'purchase_type': 0}])
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -302,7 +302,7 @@ The function Registration.get_nickname was called
 arguments: ('Registration',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -326,7 +326,7 @@ The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -350,7 +350,7 @@ The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
 The function Store.add_products was called
-arguments: ('Store', 'shani', [{'name': 'Chair', 'price': 100, 'category': 'Furniture', 'amount': 5}])
+arguments: ('Store', 'shani', [{'name': 'Chair', 'price': 100, 'category': 'Furniture', 'amount': 5, 'purchase_type': 0}])
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -371,7 +371,7 @@ The function Registration.get_nickname was called
 arguments: ('Registration',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -401,7 +401,7 @@ The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
 
 The function Store.add_products was called
-arguments: ('Store', 'shani', [{'name': 'Chair', 'price': -99, 'category': 'Furniture', 'amount': 5}, {'name': 'Sofa', 'price': 100, 'category': 'Furniture', 'amount': 5}])
+arguments: ('Store', 'shani', [{'name': 'Chair', 'price': -99, 'category': 'Furniture', 'amount': 5, 'purchase_type': 0}, {'name': 'Sofa', 'price': 100, 'category': 'Furniture', 'amount': 5, 'purchase_type': 0}])
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -488,7 +488,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -581,7 +581,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -710,7 +710,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -812,7 +812,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_products was called
-arguments: ('Store', 'shani', [{'name': 'Chair', 'price': 100, 'category': 'Furniture', 'amount': 5}, {'name': 'TV', 'price': 100, 'category': 'Electric', 'amount': 5}, {'name': 'Sofa', 'price': 100, 'category': 'Furniture', 'amount': 5}])
+arguments: ('Store', 'shani', [{'name': 'Chair', 'price': 100, 'category': 'Furniture', 'amount': 5, 'purchase_type': 0}, {'name': 'TV', 'price': 100, 'category': 'Electric', 'amount': 5, 'purchase_type': 0}, {'name': 'Sofa', 'price': 100, 'category': 'Furniture', 'amount': 5, 'purchase_type': 0}])
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -833,31 +833,7 @@ The function Registration.get_nickname was called
 arguments: ('Registration',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
-
-The function Store.has_permission was called
-arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
-
-The function Store.is_owner was called
-arguments: ('Store', 'shani')
-
-The function Store.get_owners was called
-arguments: ('Store',)
-
-The function StoreAppointment.get_appointee was called
-arguments: ('StoreManagerAppointment',)
-
-The function User.get_nickname was called
-arguments: ('User',)
-
-The function Registration.get_nickname was called
-arguments: ('Registration',)
-
-The function StoreInventory.add_product was called
-arguments: ('StoreInventory', 'Product', 5)
-
-The function Store.add_product was called
-arguments: ('Store', 'shani', 'TV', 100, 'Electric', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -881,7 +857,31 @@ The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'TV', 100, 'Electric', 5, 0)
+
+The function Store.has_permission was called
+arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
+
+The function Store.is_owner was called
+arguments: ('Store', 'shani')
+
+The function Store.get_owners was called
+arguments: ('Store',)
+
+The function StoreAppointment.get_appointee was called
+arguments: ('StoreManagerAppointment',)
+
+The function User.get_nickname was called
+arguments: ('User',)
+
+The function Registration.get_nickname was called
+arguments: ('Registration',)
+
+The function StoreInventory.add_product was called
+arguments: ('StoreInventory', 'Product', 5)
+
+The function Store.add_product was called
+arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -1001,7 +1001,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', "Eytan's Product", 100, 'Eytan Category', 5)
+arguments: ('Store', 'shani', "Eytan's Product", 100, 'Eytan Category', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -1025,7 +1025,7 @@ The function StoreInventory.add_product was called
 arguments: ('StoreInventory', 'Product', 5)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', "not Eytan's Product", 10, 'Eytan Category', 2)
+arguments: ('Store', 'shani', "not Eytan's Product", 10, 'Eytan Category', 2, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -2801,7 +2801,7 @@ The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -2873,7 +2873,7 @@ The function Store.get_store_manager_appointments was called
 arguments: ('Store',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -2939,7 +2939,7 @@ The function StoreInventory.len was called
 arguments: ('StoreInventory',)
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -2969,7 +2969,7 @@ The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Chair')
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 3)
+arguments: ('Store', 'shani', 'Sofa', 100, 'Furniture', 3, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)
@@ -3068,7 +3068,7 @@ The function StoreInventory.remove_product was called
 arguments: ('StoreInventory', 'Sofa')
 
 The function Store.add_product was called
-arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5)
+arguments: ('Store', 'shani', 'Chair', 100, 'Furniture', 5, 0)
 
 The function Store.has_permission was called
 arguments: ('Store', 'shani', <ManagerPermission.EDIT_INV: 1>)

@@ -13,7 +13,8 @@ class ManageStoreTest(ProjectAT):
         self.login(self._username, self._password)
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
-                                   [{"name": "product", "price": 10, "category": "general", "amount": 10}])
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 10,
+                                     "purchase_type": 0, "discount_type": 0}])
         self.appoint_additional_manager("newManager", self._store_name, [3])
         self.logout()
         self.set_user("newManager")

@@ -23,9 +23,9 @@ class StoreTests(unittest.TestCase):
 
     def test_get_products_by(self):
         self.assertTrue(
-            self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-                                              {"name": "TV", "price": 100, "category": "Electric", "amount": 5},
-                                              {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}]))
+            self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
+                                              {"name": "TV", "price": 100, "category": "Electric", "amount": 5, "purchase_type": 0},
+                                              {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}]))
         ls = self.store.get_products_by(1, "Chaer")
         self.assertEqual(ls, [])
         ls = self.store.get_products_by(1, "Chair")
@@ -39,47 +39,47 @@ class StoreTests(unittest.TestCase):
 
     def test_add_products(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
-        res = self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])
+        res = self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
+                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])
         self.assertTrue(res['response'])
-        res = self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5}])
+        res = self.store.add_products("shani", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])
         self.assertTrue(res['response'])
 
-        res = self.store.add_products("shani", [{"name": "Chair", "price": -99, "category": "Furniture", "amount": 5},
-                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5}])
+        res = self.store.add_products("shani", [{"name": "Chair", "price": -99, "category": "Furniture", "amount": 5, "purchase_type": 0},
+                                                          {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])
         self.assertFalse(res['response'])
 
     def test_add_product(self):
         # self.product3 = Product("Guitar", 100, "Musical Instruments")
-        self.assertTrue(self.store.add_product("shani", "Chair", 100, "Furniture", 5))
-        self.assertTrue(self.store.add_product("shani", "Sofa", 100, "Furniture", 5))
-        self.assertTrue(self.store.add_product("shani", "Chair", 100, "Furniture", 5))
+        self.assertTrue(self.store.add_product("shani", "Chair", 100, "Furniture", 5, 0))
+        self.assertTrue(self.store.add_product("shani", "Sofa", 100, "Furniture", 5,0))
+        self.assertTrue(self.store.add_product("shani", "Chair", 100, "Furniture", 5,0))
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 10)
 
     def test_remove_products(self):
-        self.store.add_product("shani", "Chair", 100, "Furniture", 5)
+        self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
         self.assertFalse(self.store.remove_products("", ["Chair", "Sofa"]))
         self.assertEqual(self.store.get_inventory().len(), 1)
-        self.store.add_product("shani", "Chair", 100, "Furniture", 5)
-        self.store.add_product("shani", "Sofa", 100, "Furniture", 3)
+        self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
+        self.store.add_product("shani", "Sofa", 100, "Furniture", 3,0)
         self.assertEqual(self.store.get_inventory().len(), 2)
         self.assertFalse(self.store.remove_products("", ["Chair", "Sofa"]))
         self.assertTrue(self.store.remove_products("shani", ["Chair", "Sofa"]))
-        self.store.add_product("shani", "Chair", 100, "Furniture", 5)
+        self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
         self.assertTrue(self.store.remove_products("dani", ["Chair"]))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
     # @logger
     def test_remove_product(self):
         self.assertFalse(self.store.remove_product("Chair"))
-        self.store.add_product("shani", "Chair", 100, "Furniture", 5)
+        self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
         self.assertEqual(self.store.get_inventory().len(), 1)
         self.assertTrue(self.store.remove_product("Chair"))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
     # @logger
     def test_change_price(self):
-        self.store.add_product("shani", "Chair", 100, "Furniture", 5)
+        self.store.add_product("shani", "Chair", 100, "Furniture", 5, 0)
         self.assertTrue(self.store.change_price("Chair", 13))
         self.assertEqual(self.store.get_product("Chair").get_price(), 13)
         self.assertTrue(self.store.change_price("Chair", 8))
@@ -90,7 +90,7 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_change_name(self):
-        self.store.add_product("shani", "Chair", 100, "Furniture", 5)
+        self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
         self.assertTrue(self.store.change_name("Chair", "Chair222"))
         self.assertNotEqual(self.store.get_product("Chair222"), None)
         self.assertEqual(self.store.get_product("Chair"), None)
@@ -103,7 +103,7 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_change_amount(self):
-        self.store.add_product("shani", "Chair", 100, "Furniture", 5)
+        self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
         self.assertTrue(self.store.change_amount("Chair", 3))
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 3)
         self.assertTrue(self.store.change_amount("Chair", 8))
@@ -127,8 +127,8 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_is_in_store_inventory(self):
-        self.store.add_product("shani", "Eytan's Product", 100, "Eytan Category", 5)
-        self.store.add_product("shani", "not Eytan's Product", 10, "Eytan Category", 2)
+        self.store.add_product("shani", "Eytan's Product", 100, "Eytan Category", 5,0)
+        self.store.add_product("shani", "not Eytan's Product", 10, "Eytan Category", 2,0)
 
         # All valid one product
         amount_per_product = [["Eytan's Product", 4]]

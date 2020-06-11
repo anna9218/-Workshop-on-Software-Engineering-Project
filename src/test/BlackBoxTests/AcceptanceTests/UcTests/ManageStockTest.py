@@ -13,7 +13,8 @@ class ManageStockTest(ProjectAT):
 
     def test_success(self):
         # add product to store, valid details
-        res = self.add_products_to_store(self._store_name, [{"name": "product", "price": 10, "category": "general", "amount": 5}])
+        res = self.add_products_to_store(self._store_name, [{"name": "product", "price": 10, "category": "general", "amount": 5,
+                                                             "purchase_type": 0, "discount_type": 0}])
         self.assertTrue(res)
         # edit products in store, valid details
         res = self.edit_products_in_store(self._store_name, "product", "price", 12)
@@ -25,7 +26,8 @@ class ManageStockTest(ProjectAT):
     def test_fail(self):
         # store doesn't exist
         res = self.add_products_to_store("anotherStoreName",
-                                         [{"name": "product", "price": 10, "category": "general", "amount": 5}])
+                                         [{"name": "product", "price": 10, "category": "general", "amount": 5,
+                                           "purchase_type": 0, "discount_type": 0}])
         self.assertFalse(res['response'])
         # store doesn't exist or product doesn't exist in store
         res = self.edit_products_in_store("anotherStoreName", "product", "price", 12)

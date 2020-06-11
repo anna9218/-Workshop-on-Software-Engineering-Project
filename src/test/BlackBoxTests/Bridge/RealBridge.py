@@ -127,7 +127,8 @@ class RealBridge(Bridge):
 
     # uc 4.1
     def add_products_to_store(self, store_name: str,
-                              products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+                              products_details: [{"name": str, "price": int, "category": str, "amount": int,
+                                                  "purchase_type": int, "discount_type": int}]) -> bool:
         return self.__store_owner_or_manager.add_products(store_name, products_details)
 
     def edit_products_in_store(self, store_name: str, product_name: str, op: str, new_value: str):
@@ -157,11 +158,31 @@ class RealBridge(Bridge):
         res_dict = self.__store_owner_or_manager.define_purchase_policy(store_name, details)
         return res_dict["response"]
 
-    def update_discount_policy(self):
-        pass
+    def update_discount_policy(self, store_name: str, policy_name: str,
+                               percentage: float = -999,
+                               discount_details: {'name': str,
+                                                  'product': str} = None,
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None):
+        return self.__store_owner_or_manager.update_discount_policy(store_name, policy_name, percentage, discount_details,
+                                                                    discount_precondition)['response']
 
-    def define_discount_policy(self):
-        pass
+    def define_discount_policy(self, store_name: str,
+                               percentage: float,
+                               discount_details: {'name': str,
+                                                  'product': str},
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None
+                               ):
+        return self.__store_owner_or_manager.define_discount_policy(store_name, percentage, discount_details,
+                                                                    discount_precondition)['response']
+
+    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float, name: str) -> {}:
+        return self.__store_owner_or_manager.define_composite_policy(store_name, policy1_name, policy2_name, flag,
+                                                                     percentage, name)
 
     # uc 4.3
     def appoint_additional_owner(self, nickname: str, store_name: str) -> {'response': bool, 'msg': str}:

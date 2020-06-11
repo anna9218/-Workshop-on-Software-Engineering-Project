@@ -169,19 +169,21 @@ class TradeControl:
     @logger
     def get_products_by(self, search_opt: int, string: str) -> {'response': list, 'msg': str}:
         list_of_products = []
+        s: Store
         for s in self.__stores:
             products = s.get_products_by(search_opt, string)
             list(map(lambda product: list_of_products.append({"store_name": s.get_name(),
                                                               "product_name": product.get_name(),
                                                               "price": product.get_price(),
-                                                              "category": product.get_category()}), products))
+                                                              "category": product.get_category(),
+                                                              "amount": s.get_inventory().get_amount(product.get_name())}), products))
         if len(list_of_products) == 0:
             return {'response': list_of_products, 'msg': "Error! There are no results"}
         return {'response': list_of_products, 'msg': "Products was retrieved successfully"}
 
     @logger
     def filter_products_by(self,
-                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
+                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
                            max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
                                                                                                   'msg': str}:
@@ -230,8 +232,12 @@ class TradeControl:
         # filter by Price Range
         if filter_by_option == 1:
             try:
-                ls = list(filter(lambda product_dictionary: min_price <= product_dictionary['price'] <= max_price,
-                                 products_ls))
+                ls = []
+                for p in products_ls:
+                    if p['price'] >= min_price and p['price'] <= max_price:
+                        ls.append(p)
+                # ls = list(filter(lambda product_dictionary: min_price <= product_dictionary['price'] and product_dictionary['price'] <= max_price,
+                #                  products_ls))
                 return {'response': ls, 'msg': "Action Filter by price range was successful"}
             except Exception:
                 return {'response': [], 'msg': "Error in filter action"}
@@ -262,8 +268,6 @@ class TradeControl:
         store = self.get_store(store_name)
         if store is None:
             return {'response': None, 'msg': "Store" + store_name + " doesn't exist"}
-        t = store.get_owners()
-        s = store.get_managers()
 
         owners = []
         list(map(lambda curr: owners.append(curr.get_nickname()), store.get_owners()))
@@ -275,24 +279,26 @@ class TradeControl:
 
     @logger
     def get_store_inventory(self, store_name):
-        if self.get_store(store_name) is None:
+        store = self.get_store(store_name)
+        if store is None:
             return {'response': None, 'msg': "Store" + store_name + " doesn't exist"}
 
-        if self.get_store(store_name).get_inventory().is_empty():
+        if store.get_inventory().is_empty():
             return {'response': None, 'msg': "Store inventory is empty"}
 
-        inventory = self.get_store(store_name).get_inventory().get_inventory()
+        inventory = store.get_inventory().get_inventory()
 
         res = []
         list(map(lambda curr: res.append({"name": curr["product"].get_name(), "price": curr["product"].get_price(),
-               "category": curr["product"].get_category(), "amount": curr["amount"]}), inventory))
+               "category": curr["product"].get_category(), "amount": curr["amount"],
+               "discount_type": curr["product"].get_discount_type().name,
+               "purchase_type": curr["product"].get_purchase_type().name}), inventory))
 
         return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
     @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
-                                                                     "amount": int, "discount_type": DiscountType,
-                                                                     "purchase_type": PurchaseType}]) -> {
+                                                                     "amount": int}]) -> {
         'response': bool, 'msg': str}:
         for element in products_stores_quantity_ls:
             if element is None:
@@ -304,9 +310,7 @@ class TradeControl:
 
         ls = list(map(lambda x: {"store_name": x["store_name"],
                                  "product": self.get_store(x["store_name"]).get_product(x["product_name"]),
-                                 "amount": x["amount"],
-                                 "discount_type": x["discount_type"],
-                                 "purchase_type": x["purchase_type"]},
+                                 "amount": x["amount"]},
                       products_stores_quantity_ls))
         return self.__curr_user.save_products_to_basket(ls)
 
@@ -467,7 +471,11 @@ class TradeControl:
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             purchases = self.__curr_user.get_purchase_history()
             ls = []
-            list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), purchases))
+            list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                 "nickname": purchase.get_nickname(),
+                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                 "total_price": purchase.get_total_price(),
+                                                 "products": purchase.get_products()}), purchases))
             if len(ls) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': ls, 'msg': "Purchase history was retrieved successfully"}
@@ -517,8 +525,8 @@ class TradeControl:
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     # @logger
     def add_products(self, store_name: str,
-                     products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> {
-        'response': bool, 'msg': str}:
+                     products_details: [{"name": str, "price": int, "category": str, "amount": int,
+                                         "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of JSONs, each JSON is one details record, for one product
@@ -581,6 +589,13 @@ class TradeControl:
                 return {'response': True, 'msg': "Product was edited successfully"}
             return {'response': False, 'msg': "Edit product failed."}
         return {'response': False, 'msg': "Edit product failed."}
+
+    def get_product_details(self, store_name, product_name):
+        store = self.get_store(store_name)
+        product = store.get_product(product_name)
+        return {"name": product.get_name(), "price": product.get_price(), "category": product.get_category(),
+                "amount": store.get_inventory().get_amount(product_name),
+                "purchase_type": product.get_purchase_type().name}
 
     @logger
     def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
@@ -665,6 +680,20 @@ class TradeControl:
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
 
+
+    def get_manager_permissions(self, store_name) -> list:
+        """
+        :param store_name:
+        :return: returns the permissions of the current user
+        """
+        store: Store = self.get_store(store_name)
+        if store is not None and \
+                self.__curr_user.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                store.is_manager(self.__curr_user.get_nickname()):
+            return store.get_permissions(self.__curr_user.get_nickname())
+        return False
+
     @logger
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
@@ -686,6 +715,22 @@ class TradeControl:
                 store.is_manager(appointee_nickname):
             return store.edit_manager_permissions(self.__curr_user, appointee_nickname, permissions)
         return False
+
+    @logger
+    def get_managers_appointees(self, store_name: str) -> list:
+        """
+        returns for the current manager/owner all the managers he appointed
+        :param store_name: name of the store
+        :return: list of the managers nicknames
+        """
+        store: Store = self.get_store(store_name)
+        if store is not None and \
+            self.__curr_user.is_registered() and \
+            self.__curr_user.is_logged_in() and \
+            (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
+                self.__curr_user.get_nickname())):
+            return store.get_managers_appointees(self.__curr_user.get_nickname())
+        return []
 
     @logger
     def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
@@ -888,25 +933,44 @@ class TradeControl:
     def get_curr_user(self):
         return self.__curr_user
 
+    @logger
+    def get_curr_username(self):
+        return self.__curr_user.get_nickname()
+
+    @logger
     def get_owned_stores(self):
         stores = []
         for store in self.__stores:
-            owners = store.get_owners()
-            if self.__curr_user.get_nickname() in owners:
+            # owners = store.get_owners()
+            # if self.__curr_user.get_nickname() in owners:
+            if store.is_owner(self.__curr_user.get_nickname()):
                 stores.append(store.get_name())
-        if len(stores) == 0:
-            return {'response': [], 'msg': "There are no stores"}
-        return {'response': stores, 'msg': "Stores were retrieved successfully"}
+        return stores
+        # if len(stores) == 0:
+        #     return {'response': [], 'msg': "There are no stores"}
+        # return {'response': stores, 'msg': "Stores were retrieved successfully"}
+
+    def get_managed_stores(self):
+        stores = []
+        for store in self.__stores:
+            if store.is_manager(self.__curr_user.get_nickname()):
+                stores.append(store.get_name())
+        return stores
+        # if len(stores) == 0:
+        #     return {'response': [], 'msg': "There are no stores"}
+        # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
     def get_user_type(self):
-        if self.__curr_user in self.__managers:
-            return "MANAGER"
+        if self.__curr_user.get_nickname() is "TradeManager":
+            return "SYS-MANAGER"
         for store in self.__stores:
-            if store.is_owner(self.__curr_user):
+            if store.is_owner(self.__curr_user.get_nickname()):
                 return "OWNER"
-            elif store.is_manager(self.__curr_user):
+            elif store.is_manager(self.__curr_user.get_nickname()):
                 return "MANAGER"
-        return "SUBSCRIBER"
+            elif self.__curr_user.is_registered():
+                return "SUBSCRIBER"
+        return "GUEST"
 
     def __repr__(self):
         return repr("TradeControl")

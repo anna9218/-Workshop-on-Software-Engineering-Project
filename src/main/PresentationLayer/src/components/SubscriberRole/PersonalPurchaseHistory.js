@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 import * as theService from '../../services/communication';
+import * as BackOption from '../Actions/GeneralActions/Back'
 
-
-// TODO - call the server, get the purchases, display
 
 function PersonalPurchaseHistory(props){
   useEffect(() => {
@@ -22,31 +20,51 @@ function PersonalPurchaseHistory(props){
     });
   };
 
-  const recordOnClickHandler = () => {
-    alert('purchase info purchase info')
-  };
-
-
-
   return (
-      <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-        <h1>Personal Purchase History</h1>
+    <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
+      <h1>Personal Purchase History</h1>
 
+      {/* purchaseHistory = [{store_name, nickname, date, total_price, products=[{amount, product_name, products_price}]}] */}
+      {/* purchase =  {store_name, nickname, date, total_price, products=[{amount, product_name, products_price}]}*/}
+      {
+        purchaseHistory.map(purchase => (
+          <div style={{marginRight: "5%", marginLeft: "5%", border: "1px solid", borderColor: "#CCCCCC"}}>
+            <h2>Store: {purchase["store_name"]}</h2>
 
-        {purchaseHistory.map(record => (
-          <h1>
-            <Button variant="dark" onClick={recordOnClickHandler}>{record}</Button>
-          </h1>
-        ))}
-
-        <Link to={{
-            pathname:'/subscriber'
-            }}>
-            <Button variant="dark" id="backbtn">Back</Button>
-          </Link>
-
-
-      </div>
+            {
+              // purchaseProduct = [{amount, product_name, products_price}]
+              purchase["products"].map(purchaseProduct => (
+                <Table striped bordered hover >
+                  <thead>
+                      <tr>
+                          <th>Product Name</th>
+                          <th>Price</th>
+                          <th>Amount</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      // product = {product_name, product_price, amount}
+                      purchase["products"].map(product => (
+                        <tr>
+                            <td>{product["product_name"]}</td>
+                            <td>{product["product_price"]}</td>
+                            <td>{product["amount"]}</td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </Table>
+              ))
+            }
+            <p>Date: {purchase["date"]}</p>
+            <p>Total Price: {purchase["total_price"]}</p>
+          </div>
+        ))
+      }
+      <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
+      
+  </div>
   );
 }
 
