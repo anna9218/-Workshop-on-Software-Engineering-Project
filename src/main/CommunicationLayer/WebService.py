@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask import jsonify
 
 # from src.main.CommunicationLayer import WebSocketService
-from src.main.CommunicationLayer import Websocket
+from src.main.CommunicationLayer.StorePublisher import StorePublisher
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
@@ -131,7 +131,10 @@ def purchase_products():
         # print(response)
         purchases = response["purchases"]
         # print(purchases)
-        handle_purchase_msg(purchases[0]["store_name"])
+        # print(purchases[0])
+        # print(purchases[0]["store_name"])
+        # handle_purchase_msg(purchases[0]["store_name"]) TODO
+        # print("after handle")
         return jsonify(data=response)
     return jsonify(msg="purchase products failed", data=response["response"], status=400)
 
@@ -221,6 +224,7 @@ def open_store():
         # TODO - add some func at websocket that registers the owner
         # WebSocketService.open_store(store_name, SubscriberRole.username, result)
         # if response:
+        open_store(TradeControlService.get_curr_username(), store_name)
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened")
 
@@ -281,16 +285,25 @@ def get_user_type():
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
 
 _users = {}  # dict of <username>: <its session ID>
-
+_stores : [StorePublisher] = [] # list of StorePublisher
 
 @socket.on('connect')
 def connect():
     print(f"connect event. sid --> {request.sid}")
-    if (TradeControlService.get_curr_username() is not None):
-        _users[TradeControlService.get_curr_username()] = request.sid
+    owner_username= TradeControlService.get_curr_username()
+    print (f"curr_nickname = {owner_username}")
+    if (owner_username is not None):
+        _users[owner_username] = request.sid
+        # print ("in if")
+        for store in _stores:
+            # print ("in for")
+            if store.is_subscribed_to_store(owner_username):
+                # print("before join")
+                join_room(room=store.store_name(), sid=_users[owner_username])
+                print (f"username {owner_username} is added as a subscriber to store {store.store_name()} publisher")
+
     print (f"users list: {_users}")
 
-# TODO- replace it with call from open store. assume _users already includes the username and its websocket
 @socket.on('join')
 def join(data):
     print("recieved join request")
@@ -298,12 +311,18 @@ def join(data):
     join_room(room=data['store'], sid=_users[data['username']])
     print(f"{data['username']} has been subscribed to store {data['storename']}")
 
-@socket.on('message')
-def join1(data):
-    print("recieved join1 msg request")
-    _users[data['username']] = request.sid
-    join_room(room=data['store'], sid=_users[data['username']])
-    print(f"{data['username']} has been subscribed to store {data['storename']}")
+# TODO- replace it with call from open store. assume _users already includes the username and its websocket
+def open_store(username, storename):
+    print(f"open store (name = {storename}) msg from {username} ")
+    if _users:
+        _users[username] = request.sid
+        print (f"users = {_users}")
+        join_room(room=storename, sid=_users[username])
+        print(f"{username} has been subscribed to store {storename}")
+    store = StorePublisher(storename, username)
+    # print(f"store = {store}")
+    _stores.append(store)
+    store.subscribe_owner(username)
 
 @socket.on('unsbscribe')
 def leave(data):
@@ -315,15 +334,17 @@ def leave(data):
 def send_notification(store_name, msg):
     # socket.send(msgs, json=True, room=storename)
     # TODO - does it sends even if not logged in? maybe use the written store-funcs
-    print(f"room = {store_name}")
+    print(f"room = {store_name}, msg = {msg}")
     socket.emit('message', msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
-
+    # socket.send({
+    #         'messages': [msg]
+    #     }, room=store_name)
 
 def handle_purchase_msg(store_name):
     # if result:  # should be True or dict - TODO change the call to be inside if (result)
     msg = f"a purchase has been done at store {store_name}"
-    send_notification(store_name, jsonify(messages=msg, store=store_name))
     print(f"send msg: {msg}")
+    send_notification(store_name, jsonify(messages=msg, store=store_name))
 
 
 def handle_remove_owner_msg(user_name, store_name):
@@ -331,3 +352,9 @@ def handle_remove_owner_msg(user_name, store_name):
     msg = f"{user_name} was removed as owner from store {store_name}"
     send_notification(store_name, jsonify(username=user_name, messages=msg, store=store_name))
     print(f"send msg: {msg}")
+
+def get_store(store_name) -> StorePublisher:
+    for store in _stores:
+        if store.store_name() == store_name:
+            return store
+    return None

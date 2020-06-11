@@ -7,7 +7,7 @@ from flask_socketio import join_room, leave_room
 from jsonpickle import json
 
 from src.main.CommunicationLayer import WebService
-from src.main.CommunicationLayer.StorePublisher import Store
+from src.main.CommunicationLayer.StorePublisher import StorePublisher
 
 from flask import Flask, render_template, jsonify
 # class Websocket:

@@ -5,15 +5,17 @@ from jsonpickle import json
 # from src.main.CommunicationLayer.WebSocketService import send_msg
 
 
-class Store:
+class StorePublisher:
 
     def __init__(self, store_name, owner_nickname):
+        # print ("in constructor")
         self.__name = store_name
         # list of all owners ( lastReadMsg: int, nickname: string, ws:websocket)
         # lastReadMsg = last msg id (from msgs) the owner have read
-        self.__subscribers = [(0, owner_nickname)]
+        self.__subscribers = [(owner_nickname, 0)]
         # list of all notifications (id: int, msg: string)
         self.__msgs = []
+        # print(f"store name- {self.__name}, it's subscriber - {self.__subscribers}")
 
     def add_msg(self, msg):  # the setStatus function
         """
