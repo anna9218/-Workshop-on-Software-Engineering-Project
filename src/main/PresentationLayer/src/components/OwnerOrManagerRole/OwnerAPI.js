@@ -5,21 +5,6 @@ import * as theService from '../../services/communication';
 import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
 
 
-
-//---------- WHAT AN OWNER CAN DO? ----------//
-// Guest actions 
-// Subscriber actions - Logout, Open store, View personal purchase history
-// Manage stock (4.1) 
-// (4.2)
-// Appoint additional owner (4.3)
-// Appoint additional manager (4.5)
-// Edit manager’s permissions (4.6)
-// Remove a store manager (4.7)
-// View store’s purchase history (4.10)
-
-// Manage store (5.1) (MANAGER)
-
-
 class OwnerAPI extends React.Component {
     constructor(props) {
         super(props);
@@ -156,6 +141,11 @@ class OwnerAPI extends React.Component {
                                                                                store: this.state.selectedStore}}>
                         Manage Store Policies
                     </Button>
+
+                    <Button variant="secondary" size="lg" block as={Link} to="/notifications">
+                        Notifications
+                    </Button>
+
                 </Row>
             </Container>
         );

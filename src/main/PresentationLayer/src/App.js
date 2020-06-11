@@ -36,6 +36,7 @@ import AppointOwner from './components/OwnerOrManagerRole/AppointOwner'
 import RemoveManager from './components/OwnerOrManagerRole/RemoveManager'
 import EditPermissions from './components/OwnerOrManagerRole/EditPermissions'
 import ManageStorePolicies from './components/OwnerOrManagerRole/ManageStorePolicies'
+import DisplayNotifications from './components/OwnerOrManagerRole/Notifications'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
@@ -185,6 +186,7 @@ class App extends React.Component{
           {/* owner */}
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/notifications" exact render={(props) => <DisplayNotifications screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
 
           <Route path="/back" exact render={(props) => <BackToHome screenWidth= {this.state.width} screenHeight= {this.state.height-100} history={this.props} {...props} />} />
