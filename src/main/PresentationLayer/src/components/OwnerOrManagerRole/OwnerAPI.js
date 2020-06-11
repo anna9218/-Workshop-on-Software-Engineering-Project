@@ -127,19 +127,23 @@ class OwnerAPI extends React.Component {
                         Manage Inventory
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/appointowner">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointowner", 
+                                                                               store: this.state.selectedStore}}>
                         Appoint Additional Owner
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/appointmanager">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
+                                                                               store: this.state.selectedStore}}>
                         Appoint Additional Manager
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/editpermissions">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/editpermissions", 
+                                                                               store: this.state.selectedStore}}>
                         Edit Manager’s Permissions
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/removemanager">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removemanager", 
+                                                                               store: this.state.selectedStore}}>
                         Remove A Store Manager
                     </Button>
 
