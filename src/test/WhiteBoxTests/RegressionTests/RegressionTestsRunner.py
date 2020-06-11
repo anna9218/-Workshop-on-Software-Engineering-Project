@@ -1,5 +1,5 @@
 """
-    test suite class - used to test V1 Features.
+    test suite class - used to test Version1 Features.
 """
 import unittest
 from src.test.WhiteBoxTests.RegressionTests.Version1.SystemManagerRoleTests import SystemManagerRoleTests as \
@@ -18,10 +18,10 @@ class RegressionTestsRunner:
     loader = unittest.TestLoader()
 
     # add individual tests to the test suite for version 1
-    suite.addTest(loader.loadTestsFromTestCase(SystemManagerRoleTests_V1))
-    suite.addTest(loader.loadTestsFromTestCase(SubscriberRoleTests_V1))
-    suite.addTest(loader.loadTestsFromTestCase(StoreOwnerOrManagerTests_V1))
-    suite.addTest(loader.loadTestsFromTestCase(GuestRoleTests_V1))
+    # suite.addTest(loader.loadTestsFromTestCase(SystemManagerRoleTests_V1))
+    # suite.addTest(loader.loadTestsFromTestCase(SubscriberRoleTests_V1))
+    # suite.addTest(loader.loadTestsFromTestCase(StoreOwnerOrManagerTests_V1))
+    # suite.addTest(loader.loadTestsFromTestCase(GuestRoleTests_V1))
 
     # pass runner the suite and run it
     runner = unittest.TextTestRunner(verbosity=2)

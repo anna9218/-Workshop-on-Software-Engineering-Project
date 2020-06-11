@@ -182,7 +182,7 @@ class RealBridge(Bridge):
     def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str) -> {}:
         return self.__store_owner_or_manager.define_composite_policy(store_name, policy1_name, policy2_name, flag,
-                                                                     percentage, name)
+                                                                     percentage, name)['response']
 
     # uc 4.3
     def appoint_additional_owner(self, nickname: str, store_name: str) -> {'response': bool, 'msg': str}:

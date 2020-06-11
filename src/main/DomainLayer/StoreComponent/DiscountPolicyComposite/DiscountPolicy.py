@@ -26,6 +26,12 @@ class DiscountPolicy(DiscountComponent):
 
         if discount_precondition is not None:
             return {'response': False, 'msg': "Composite discount can't have not-policy precondition."}
+
+        if percentage != -999:
+            if 0 <= percentage <= 100:
+                self.__percentage = percentage
+            else:
+                return {'response': False, 'msg': "Composite discount can't have not-policy precondition."}
         if discount_details is not None:
             self.__name = discount_details['name']
             self.__product = discount_details['product']
