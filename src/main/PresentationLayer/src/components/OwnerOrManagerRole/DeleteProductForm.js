@@ -16,6 +16,10 @@ function DeleteProductsForm(props){
   
     useEffect(() => {
         // alert(props.history)
+        getProductList();
+    }, []);
+
+    const getProductList = () => {
         const promise = theService.displayStoresProducts(props.storeName)
         promise.then((data) => {
             if(data !== undefined){
@@ -27,7 +31,7 @@ function DeleteProductsForm(props){
                 }
             }
         })
-    }, []);
+    }
 
     const removeProductHandler = async () => {
         const promise = theService.deleteProduct(props.storeName, productName)
@@ -41,6 +45,7 @@ function DeleteProductsForm(props){
                         onClick: () => { // reset the form in order to add another product
                             // reset form
                             setProductName(null);
+                            getProductList();
                         }
                       },
                       {

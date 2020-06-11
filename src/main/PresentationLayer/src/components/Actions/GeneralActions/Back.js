@@ -23,6 +23,9 @@ export function BackToHome(props){
                 // return to subscriber home page
                 props.history.push({pathname: '/subscriber', props: this.props});
               }
+              else if(data["data"] == "SYS-MANAGER"){
+                props.history.push({pathname: '/systemmanager', props: this.props});
+              }
               else{
                   // return to guest home screen
                   props.history.push({pathname: '/', props: this.props});

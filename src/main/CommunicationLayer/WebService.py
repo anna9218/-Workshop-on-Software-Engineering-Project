@@ -253,7 +253,7 @@ def add_product():
         response = StoreOwnerOrManagerRole.add_products(store_name, products_details)
         if response["response"]:
             return jsonify(msg="Congrats! Product was added!")
-    return jsonify(msg="Oops, product wasn't added")
+        return jsonify(msg="Oops, product wasn't added")
 
 
 @app.route('/edit_product', methods=['POST'])
@@ -299,9 +299,9 @@ def remove_product():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
-        products_name = request_dict.get('products_name')
+        products_name = request_dict.get('product_name')
         response = StoreOwnerOrManagerRole.remove_products(store_name, [products_name])
-        if response["response"]:
+        if response:
             return jsonify(msg="Congrats! Product was removed!")
     return jsonify(msg="Oops, product wasn't removed")
 
@@ -339,10 +339,8 @@ def open_store():
 
 @app.route('/view_personal_purchase_history', methods=['GET'])
 def view_personal_purchase_history():
-    # response = SubscriberRole.view_personal_purchase_history()
-    # return jsonify(msg="Logged out successfully", data=response) # NEED TO BE CHEKED, STAM ASITI
-
-    return jsonify(data=["purchase1", "purchase2"])
+    response = SubscriberRole.view_personal_purchase_history()
+    return jsonify(msg=response["msg"], data=response["response"]) # NEED TO BE CHEKED, STAM ASITI
 
 
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#

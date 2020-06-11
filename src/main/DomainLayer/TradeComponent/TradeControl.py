@@ -466,7 +466,11 @@ class TradeControl:
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             purchases = self.__curr_user.get_purchase_history()
             ls = []
-            list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), purchases))
+            list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                 "nickname": purchase.get_nickname(),
+                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                 "total_price": purchase.get_total_price(),
+                                                 "products": purchase.get_products()}), purchases))
             if len(ls) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': ls, 'msg': "Purchase history was retrieved successfully"}
@@ -923,14 +927,16 @@ class TradeControl:
         # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
     def get_user_type(self):
-        if self.__curr_user in self.__managers:
-            return "MANAGER"
+        if self.__curr_user.get_nickname() is "TradeManager":
+            return "SYS-MANAGER"
         for store in self.__stores:
             if store.is_owner(self.__curr_user.get_nickname()):
                 return "OWNER"
             elif store.is_manager(self.__curr_user.get_nickname()):
                 return "MANAGER"
-        return "SUBSCRIBER"
+            elif self.__curr_user.is_registered():
+                return "SUBSCRIBER"
+        return "GUEST"
 
     def __repr__(self):
         return repr("TradeControl")

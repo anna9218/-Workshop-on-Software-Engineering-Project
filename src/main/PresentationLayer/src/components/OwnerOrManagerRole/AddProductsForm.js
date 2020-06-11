@@ -87,7 +87,7 @@ function AddProductsForm(props){
             <Form.Label>Enter the purchase type:</Form.Label>
 
             <div key={`inline-checkbox`} className="mb-3" style={{border: "1px solid", borderColor: "#CCCCCC"}}>
-              <Form.Check inline label="Immidiate Purcahse" type="checkbox" id={`immidiate-purchase`} onChange={(event => {setPurchaseType(0)})} />
+              <Form.Check inline label="Immidiate Purcahse" checked={purchaseType !== null} type="checkbox" id={`immidiate-purchase`} onChange={(event => {setPurchaseType(0)})} />
               <Form.Check inline label="Auction Purchase" type="checkbox" id={`auction-purchase`} onChange={(event => {setPurchaseType(1)})} />
               <Form.Check inline label="Lottery Purchase" type="checkbox" id={`lottery-purchase`} onChange={(event => {setPurchaseType(2)})}/>
             </div>

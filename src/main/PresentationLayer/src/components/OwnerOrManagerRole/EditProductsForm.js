@@ -29,6 +29,10 @@ function EditProductsForm(props){
   
     useEffect(() => {
         // alert(props.history)
+        getProductList();
+    }, []);
+
+    const getProductList = () => {
         const promise = theService.displayStoresProducts(props.storeName)
         promise.then((data) => {
             if(data !== undefined){
@@ -40,7 +44,7 @@ function EditProductsForm(props){
                 }
             }
         })
-    }, []);
+    }
 
     const setSelectedProduct = (product_name) => {
         allStoreProducts.map(product => {
@@ -94,6 +98,7 @@ function EditProductsForm(props){
                             setNewProductName(null);
                             setNewProductPrice(null);
                             setNewPurchaseType(null);
+                            getProductList();
                         }
                       },
                       {
