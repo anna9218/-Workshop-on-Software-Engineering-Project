@@ -17,12 +17,13 @@ class Store:
     def __init__(self, store_name):
         # self.__id = id
         self.__name = store_name
-        self.__owners = []
+        self.__owners: [User] = []
         # list of StoreManagerAppointment (manager: User, permissions: ManagerPermissions[], appointer:User)
         self.__StoreManagerAppointments = []
         self.__inventory = StoreInventory()
         self.__discount_policies: [DiscountPolicy] = []
         self.__purchase_policies: [PurchasePolicy] = []
+        self.__purchases: [Purchase] = []
         self.__purchases = []
         # default operator is 'and'
         self.__operator = "and"

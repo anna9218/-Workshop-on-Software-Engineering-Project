@@ -6,7 +6,6 @@ from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.Registration import Registration
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
-from src.main.DomainLayer.UserComponent.UserType import UserType
 # from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
 
 
@@ -128,16 +127,6 @@ class User:
                  True on success, False when one of the products doesn't exist in the shopping cart
         """
         return self.__shoppingCart.update_quantity(products_details)
-
-    # def get_appointment (self):
-    #     return self.__appointment
-
-    @logger
-    def get_user_type(self):
-        if self.is_logged_in():
-            return UserType.Subscriber
-        else:
-            return UserType.Guest
 
     @logger
     def set_registration_state(self, registration):

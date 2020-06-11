@@ -908,6 +908,11 @@ class TradeControl:
     def get_curr_user(self):
         return self.__curr_user
 
+    @logger
+    def get_curr_username(self):
+        return self.__curr_user.get_nickname()
+
+    @logger
     def get_owned_stores(self):
         stores = []
         for store in self.__stores:

@@ -35,6 +35,10 @@ class TradeControlService:
     def get_product_details(store_name, product_name):
         return TradeControl.get_product_details(store_name, product_name)
 
+    @staticmethod
+    def get_curr_username():
+        return TradeControl.get_instance().get_curr_username()
+
     # functions for tests???
     @staticmethod
     def remove_user(nickname: str):

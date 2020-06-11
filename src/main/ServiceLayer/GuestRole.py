@@ -58,7 +58,7 @@ class GuestRole:
     @staticmethod
     def search_products_by(search_option: int, string: str) -> {'response': list, 'msg': str}:
         """
-        :param search_option: = 1-byName/2-byKeyword/3-byCategoru
+        :param search_option: = 1-byName/2-byKeyword/3-byCategory
         :param string: for opt: 0 -> productName, 1 -> string, 2 -> category
         :return: dict = {'response': [{"store_name": str,
                                       "product_name": str,
@@ -74,7 +74,8 @@ class GuestRole:
     @staticmethod
     def filter_products_by(products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
-                           max_price: (float or None) = None, category: (str or None) = None) -> {'response': list, 'msg': str}:
+                           max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
+                                                                                                  'msg': str}:
         """
         This function have two options:
             Either filter_by_option == 1, and then the function should get min price and max price.
