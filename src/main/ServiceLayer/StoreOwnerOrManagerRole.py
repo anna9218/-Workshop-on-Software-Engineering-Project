@@ -33,8 +33,7 @@ class StoreOwnerOrManagerRole:
 
     @logger
     # use 4.1.3
-    def edit_product(self, store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool,
-                                                                                            'msg': str}:
+    def edit_product(self, store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param product_name: product's name to edit
@@ -60,7 +59,6 @@ class StoreOwnerOrManagerRole:
     @staticmethod
     @logger
     def appoint_store_manager(appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
-
         """
         :param appointee_nickname: new manager's nickname
         :param store_name: store's name
@@ -134,7 +132,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}) \
+                                                                "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
             update must have valid policy name of an existing policy and at least one more detail
@@ -154,12 +152,12 @@ class StoreOwnerOrManagerRole:
     @logger
     def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}) \
+                                                                "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
         :param store_name:
-        :param details: {"name": str,                            -> policy name
+        :param details: {"name": str,                             -> policy name
                         "products": [str],                       -> list of product names
                         "min_amount": int or None,               -> minimum amount of products required
                         "max_amount": int or None,               -> maximum amount of products required
@@ -172,43 +170,13 @@ class StoreOwnerOrManagerRole:
 
     # uc 4.2.3
     @logger
-    def update_discount_policy(self, store_name: str, policy_name: str,
-                               percentage: float = -999,
-                               discount_details: {'name': str,
-                                                  'product': str} = None,
-                               discount_precondition: {'product': str,
-                                                       'min_amount': int or None,
-                                                       'min_basket_price': str or None} or None = None) -> {}:
-        return TradeControl.get_instance().update_discount_policy(store_name, policy_name, percentage, discount_details,
-                                                                  discount_precondition)
+    def update_discount_policy(self):
+        return TradeControl.get_instance().update_discount_policy()
 
     # uc 4.2.4
     @logger
-    def define_discount_policy(self, store_name: str,
-                               percentage: float,
-                               discount_details: {'name': str,
-                                                  'product': str},
-                               discount_precondition: {'product': str,
-                                                       'min_amount': int or None,
-                                                       'min_basket_price': str or None} or None = None
-                               ) \
-            -> {'response': bool, 'msg': str}:
-        return TradeControl.get_instance().define_discount_policy(store_name, percentage, discount_details,
-                                                                  discount_precondition)
-
-    @logger
-    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
-                                percentage: float, name: str) -> {}:
-        return (TradeControl.get_instance()).define_composite_policy(store_name, policy1_name, policy2_name, flag,
-                                                                     percentage, name)
-
-    @logger
-    def get_discount_policy(self, store_name: str, policy_name: str) -> {}:
-        return (TradeControl.get_instance()).get_discount_policy(store_name, policy_name)
-
-    @logger
-    def delete_policy(self, store_name: str, policy_name: str):
-        return (TradeControl.get_instance()).delete_policy(store_name, policy_name)
+    def define_discount_policy(self):
+        return TradeControl.get_instance().define_discount_policy()
 
     # ------------------------------------
 

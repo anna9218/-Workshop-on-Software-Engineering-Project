@@ -1,6 +1,5 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import * as theService from '../../../services/communication';
 import {Container, Table, Form, Button} from 'react-bootstrap'
 
@@ -36,8 +35,6 @@ class PurchaseProducts extends React.Component{
     const promise = theService.purchaseCart();
     promise.then((data) => {
       if(data != null){
-        // alert(data["data"]["purchases"][0]["store_name"])
-        // data["data"] ={ total_price, purchases=[{store_name, basket_price, products=[{product_name, product_price, amount}]}] }
         this.setState({total_price: data["data"]["total_price"], purchases: data["data"]["purchases"], purchase_ls: data["data"]})
       }
     })
