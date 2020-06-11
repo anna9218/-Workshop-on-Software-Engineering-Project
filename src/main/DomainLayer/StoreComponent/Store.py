@@ -160,6 +160,17 @@ class Store:
             return True
         return False
 
+    def get_managers_appointees(self, appointer_nickname: str) -> list:
+        """
+        :param appointer_nickname:
+        :return: returns a list of nicknames, of all the managers appointer_nickname appointed
+        """
+        ls = []
+        for appointment in self.__StoreManagerAppointments:
+            if appointment.get_appointer().get_nickname() == appointer_nickname:
+                ls.append(appointment.get_appointee().get_nickname())
+        return ls
+
     @logger
     def change_amount(self, product_name: str, new_amount: int) -> bool:
         """

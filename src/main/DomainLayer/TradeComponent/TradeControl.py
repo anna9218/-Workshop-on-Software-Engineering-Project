@@ -670,6 +670,22 @@ class TradeControl:
         return False
 
     @logger
+    def get_managers_appointees(self, store_name: str) -> list:
+        """
+        returns for the current manager/owner all the managers he appointed
+        :param store_name: name of the store
+        :return: list of the managers nicknames
+        """
+        store: Store = self.get_store(store_name)
+        if store is not None and \
+            self.__curr_user.is_registered() and \
+            self.__curr_user.is_logged_in() and \
+            (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
+                self.__curr_user.get_nickname())):
+            return store.get_managers_appointees(self.__curr_user.get_nickname())
+        return []
+
+    @logger
     def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
         """
         :param store_name: store's name

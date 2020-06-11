@@ -44,9 +44,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().edit_product(store_name, product_name, op, new_value)
 
-    @logger
     # use case 4.3
-    def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+    @staticmethod
+    @logger
+    def appoint_additional_owner( appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -80,8 +81,18 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().edit_manager_permissions(store_name, appointee_nickname, permissions)
 
     # @logger
+    @staticmethod
+    def get_managers_appointees(store_name) -> list:
+        """
+        returns for the current manager/owner all the managers he appointed
+        :param store_name: name of the store
+        :return: list of the managers nicknames
+        """
+        return TradeControl.get_instance().get_managers_appointees(store_name)
+
     # use case 4.7
-    def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
+    @staticmethod
+    def remove_manager(store_name: str, appointee_nickname: str) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's will be removed

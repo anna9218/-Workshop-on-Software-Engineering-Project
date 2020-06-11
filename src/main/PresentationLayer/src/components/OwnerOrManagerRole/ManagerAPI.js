@@ -59,7 +59,6 @@ class ManagerAPI extends React.Component {
                     this.setState({managedStores: data["data"], store: data["data"][0]})
                     const promise2 = theService.fetchManagerPermissions(this.state.store);  // goes to communication.js and sends to server
                     promise2.then((data) => {
-                        // alert(data["data"]);
                         this.setState({permissions: data["data"]});
                     });
                 }

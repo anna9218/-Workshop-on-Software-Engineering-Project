@@ -31,6 +31,9 @@ import ManageInventory from './components/OwnerOrManagerRole/ManageInventory'
 import ManagerAPI from './components/OwnerOrManagerRole/ManagerAPI'
 import AddProductsForm from './components/OwnerOrManagerRole/AddProductsForm'
 import AppointStoreManager from './components/OwnerOrManagerRole/AppointStoreManager'
+import AppointOwner from './components/OwnerOrManagerRole/AppointOwner'
+import RemoveManager from './components/OwnerOrManagerRole/RemoveManager'
+import EditPermissions from './components/OwnerOrManagerRole/EditPermissions'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
@@ -150,7 +153,10 @@ function App(){
         <Route path="/addproduct" exact render={(props) => <AddProductsForm screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
         {/* owner */}
+        <Route path="/appointowner" exact render={(props) => <AppointOwner screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/appointmanager" exact render={(props) => <AppointStoreManager screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/editpermissions" exact render={(props) => <EditPermissions screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/removemanager" exact render={(props) => <RemoveManager screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         
         {/* owner */}
         <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
