@@ -11,14 +11,14 @@ import * as theService from './services/communication';
 import GuestRoleAPI from './components/GuestRole/GuestRoleAPI'
 import RegisterForm from './components/GuestRole/RegisterForm'
 import Login from './components/GuestRole/Login'
-import DisplayStores from './components/Actions/DisplayStores'
-import DisplayProducts from './components/DisplayProducts'
+import DisplayStores from './components/Actions/StoreActions/DisplayStores'
+import DisplayProducts from './components/Actions/ShoppingCartActions/DisplayProducts'
 import Search from './components/Search'
-import ShoppingCart from './components/ShoppingCart'
-import PurchaseProducts from './components/PurchaseProducts'
-import StoreDetail from './components/StoreDetail'
-import StoreProducts from './components/StoreProducts'
-import SearchResults from './components/SearchResults'
+import ShoppingCart from './components/Actions/ShoppingCartActions/ShoppingCart'
+import PurchaseProducts from './components/Actions/ShoppingCartActions/PurchaseProducts'
+import StoreDetail from './components/Actions/StoreActions/StoreDetail'
+import StoreProducts from './components/Actions/StoreActions/StoreProducts'
+import SearchResults from './components/Actions/ShoppingCartActions/SearchResults'
 
 // subscriber
 import SubscriberAPI from './components/SubscriberRole/SubscriberAPI'
@@ -30,6 +30,7 @@ import OwnerAPI from './components/OwnerOrManagerRole/OwnerAPI'
 import ManageInventory from './components/OwnerOrManagerRole/ManageInventory'
 import ManagerAPI from './components/OwnerOrManagerRole/ManagerAPI'
 import AddProductsForm from './components/OwnerOrManagerRole/AddProductsForm'
+import AppointStoreManager from './components/OwnerOrManagerRole/AppointStoreManager'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
@@ -133,7 +134,7 @@ function App(){
         <Route path="/displayproducts" exact render={(props) => <DisplayProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores" exact render={(props) => <DisplayStores screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         {/* <Route path="/search" exact component={Search} /> */}
-        <Route path="/purchase" exact render={(props) => <PurchaseProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/confirm_purchase" exact render={(props) => <PurchaseProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/viewcart" exact render={(props) => <ShoppingCart screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores/:store" exact render={(props) => <StoreDetail screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores/:store/products" exact render={(props) => <StoreProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
@@ -144,13 +145,15 @@ function App(){
         <Route path="/openstore" exact render={(props) => <OpenStore screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/history" exact render={(props) => <PersonalPurchaseHistory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/owner" exact render={(props) => <OwnerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-        <Route path="/manageinventory" exact render={(props) => <ManageInventory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        <Route path="/manageinventory/:store" exact render={(props) => <ManageInventory screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/manager" exact render={(props) => <ManagerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/addproduct" exact render={(props) => <AddProductsForm screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
         {/* owner */}
+        <Route path="/appointmanager" exact render={(props) => <AppointStoreManager screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        
+        {/* owner */}
         <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-
         <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
 

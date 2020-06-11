@@ -14,8 +14,10 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
         self.login(self._username, self._password)
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
-                                   [{"name": "product1", "price": 10, "category": "general", "amount": 10},
-                                    {"name": "product2", "price": 5, "category": "general", "amount": 10}])
+                                   [{"name": "product1", "price": 10, "category": "general", "amount": 10,
+                                     "purchase_type": 0, "discount_type": 0},
+                                    {"name": "product2", "price": 5, "category": "general", "amount": 10,
+                                     "purchase_type": 0, "discount_type": 0}])
 
     def test_success(self):
         # ------------ purchase policy options -----------

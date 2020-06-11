@@ -18,8 +18,9 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
-    "save-dev": "0.0.1-security",
-    "socket.io-client": "^2.3.0"
+    "react-widgets": "^4.5.0",
+    "react-widgets-simple-number": "^4.1.24",
+    "save-dev": "0.0.1-security"
   },
   "scripts": {
     "start": "react-scripts start",

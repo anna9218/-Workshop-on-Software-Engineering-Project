@@ -122,7 +122,8 @@ class Bridge(ABC):
     # manage stock functions
     @abstractmethod
     def add_products_to_store(self, store_name: str, products_details:
-                                            [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+                                            [{"name": str, "price": int, "category": str, "amount": int,
+                                              "purchase_type": int, "discount_type": int}]) -> bool:
         pass
 
     @abstractmethod

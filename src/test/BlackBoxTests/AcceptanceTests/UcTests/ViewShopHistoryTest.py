@@ -13,7 +13,8 @@ class ViewShopHistoryTest(ProjectAT):
         self.login(self._username, self._password)
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
-                                   [{"name": "product", "price": 10, "category": "general", "amount": 10}])
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 10,
+                                     "purchase_type": 0, "discount_type": 0}])
         self.connect_delivery_sys()
         self.connect_payment_sys()
         self.add_products_to_cart("product", self._store_name, 5, 0, 0)

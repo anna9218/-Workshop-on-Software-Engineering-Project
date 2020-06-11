@@ -18,6 +18,10 @@ class Login extends React.Component{
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
+  // componentWillUnmount = () =>{
+
+  // }
+
   handleLogin = event =>{
     event.preventDefault();
         const promise = theService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend

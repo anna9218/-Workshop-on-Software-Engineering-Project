@@ -130,7 +130,8 @@ class ProjectAT(ABC, unittest.TestCase):
     # @logger
     # 4.1 manage stock functions
     def add_products_to_store(self, store_name: str, products_details:
-                                            [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+                                            [{"name": str, "price": int, "category": str, "amount": int,
+                                              "purchase_type": int, "discount_type": int}]) -> bool:
         return self.__bridge.add_products_to_store(store_name, products_details)
 
     # @logger

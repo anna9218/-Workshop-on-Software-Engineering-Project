@@ -92,8 +92,7 @@ class User:
     @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str,
                                                                      "product": Product,
-                                                                     "amount": int, "discount_type": DiscountType,
-                                                                     "purchase_type": PurchaseType}]):
+                                                                     "amount": int}]):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
 
     @logger

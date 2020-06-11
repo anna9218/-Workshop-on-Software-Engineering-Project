@@ -262,8 +262,6 @@ class TradeControl:
         store = self.get_store(store_name)
         if store is None:
             return {'response': None, 'msg': "Store" + store_name + " doesn't exist"}
-        t = store.get_owners()
-        s = store.get_managers()
 
         owners = []
         list(map(lambda curr: owners.append(curr.get_nickname()), store.get_owners()))
@@ -275,24 +273,26 @@ class TradeControl:
 
     @logger
     def get_store_inventory(self, store_name):
-        if self.get_store(store_name) is None:
+        store = self.get_store(store_name)
+        if store is None:
             return {'response': None, 'msg': "Store" + store_name + " doesn't exist"}
 
-        if self.get_store(store_name).get_inventory().is_empty():
+        if store.get_inventory().is_empty():
             return {'response': None, 'msg': "Store inventory is empty"}
 
-        inventory = self.get_store(store_name).get_inventory().get_inventory()
+        inventory = store.get_inventory().get_inventory()
 
         res = []
         list(map(lambda curr: res.append({"name": curr["product"].get_name(), "price": curr["product"].get_price(),
-               "category": curr["product"].get_category(), "amount": curr["amount"]}), inventory))
+               "category": curr["product"].get_category(), "amount": curr["amount"],
+               "discount_type": curr["product"].get_discount_type().name,
+               "purchase_type": curr["product"].get_purchase_type().name}), inventory))
 
         return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
     @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
-                                                                     "amount": int, "discount_type": DiscountType,
-                                                                     "purchase_type": PurchaseType}]) -> {
+                                                                     "amount": int}]) -> {
         'response': bool, 'msg': str}:
         for element in products_stores_quantity_ls:
             if element is None:
@@ -304,9 +304,7 @@ class TradeControl:
 
         ls = list(map(lambda x: {"store_name": x["store_name"],
                                  "product": self.get_store(x["store_name"]).get_product(x["product_name"]),
-                                 "amount": x["amount"],
-                                 "discount_type": x["discount_type"],
-                                 "purchase_type": x["purchase_type"]},
+                                 "amount": x["amount"]},
                       products_stores_quantity_ls))
         return self.__curr_user.save_products_to_basket(ls)
 
@@ -517,8 +515,8 @@ class TradeControl:
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     # @logger
     def add_products(self, store_name: str,
-                     products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> {
-        'response': bool, 'msg': str}:
+                     products_details: [{"name": str, "price": int, "category": str, "amount": int,
+                                         "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of JSONs, each JSON is one details record, for one product
@@ -609,6 +607,7 @@ class TradeControl:
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
 
+
     @logger
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool,
                                                                                                      'msg': str}:
@@ -640,6 +639,14 @@ class TradeControl:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store manager"}
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
+
+    def get_manager_permissions(self, store_name: str) -> list:
+        store: Store = self.get_store(store_name)
+        if store is not None:
+            if store.is_manager(self.__curr_user.get_nickname()):
+                ls = store.get_permissions(self.__curr_user.get_nickname())
+                return ls
+        return []
 
     @logger
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
@@ -931,20 +938,32 @@ class TradeControl:
     def get_owned_stores(self):
         stores = []
         for store in self.__stores:
-            owners = store.get_owners()
-            if self.__curr_user.get_nickname() in owners:
+            # owners = store.get_owners()
+            # if self.__curr_user.get_nickname() in owners:
+            if store.is_owner(self.__curr_user.get_nickname()):
                 stores.append(store.get_name())
-        if len(stores) == 0:
-            return {'response': [], 'msg': "There are no stores"}
-        return {'response': stores, 'msg': "Stores were retrieved successfully"}
+        return stores
+        # if len(stores) == 0:
+        #     return {'response': [], 'msg': "There are no stores"}
+        # return {'response': stores, 'msg': "Stores were retrieved successfully"}
+
+    def get_managed_stores(self):
+        stores = []
+        for store in self.__stores:
+            if store.is_manager(self.__curr_user.get_nickname()):
+                stores.append(store.get_name())
+        return stores
+        # if len(stores) == 0:
+        #     return {'response': [], 'msg': "There are no stores"}
+        # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
     def get_user_type(self):
         if self.__curr_user in self.__managers:
             return "MANAGER"
         for store in self.__stores:
-            if store.is_owner(self.__curr_user):
+            if store.is_owner(self.__curr_user.get_nickname()):
                 return "OWNER"
-            elif store.is_manager(self.__curr_user):
+            elif store.is_manager(self.__curr_user.get_nickname()):
                 return "MANAGER"
         return "SUBSCRIBER"
 

@@ -9,8 +9,11 @@ class StoreInventoryTests(unittest.TestCase):
     def setUp(self):
         self.inv = StoreInventory()
         self.product1 = Product("Chair", 100, "Furniture")
+        self.product1.set_purchase_type(0)
         self.product2 = Product("Sofa", 10, "Furniture")
+        self.product2.set_purchase_type(0)
         self.product3 = Product("Guitar", 1000, "Musical Instruments")
+        self.product3.set_purchase_type(0)
 
     # @logger
     def test_add_product(self):

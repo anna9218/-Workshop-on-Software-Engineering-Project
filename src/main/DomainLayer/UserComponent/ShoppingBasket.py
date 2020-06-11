@@ -6,7 +6,7 @@ from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 
 class ShoppingBasket:
     def __init__(self):
-        self.__products: [{"product": Product, "amount": int, "discountType": DiscountType, "purchaseType": PurchaseType}] = []
+        self.__products: [{"product": Product, "amount": int}] = []
         self.__i = 0
 
     # in order to make the object iterable
@@ -23,7 +23,7 @@ class ShoppingBasket:
             raise StopIteration
 
     @logger
-    def add_product(self, product: Product, amount: int, discount_type: DiscountType, purchase_type: PurchaseType) -> \
+    def add_product(self, product: Product, amount: int) -> \
             bool:
         """
         This function add a product to a basket, if the amount of the product is > 0 and the product not already in the
@@ -45,8 +45,7 @@ class ShoppingBasket:
             if product.get_name() == product_amount["product"].get_name():
                 product_amount["amount"] += amount
                 return True
-        self.__products.append({"product": product, "amount": amount, "discountType": discount_type,
-                                "purchaseType": purchase_type})
+        self.__products.append({"product": product, "amount": amount})
         return True
 
     @logger
@@ -56,7 +55,7 @@ class ShoppingBasket:
                          "amount": int}, ...]
         """
         return list(map(lambda x: {"product_name": x["product"].get_name(),
-                                   "amount": x["amount"]}, self.__products))
+                                   "amount": x["amount"], "price": x["product"].get_price()}, self.__products))
 
     @logger
     def remove_product(self, product_name: str) -> bool:
@@ -139,15 +138,6 @@ class ShoppingBasket:
         """
         for product in product_ls:
             prod_name = product["product_name"]
-
-            # TODO: Fixed this error(?)
-            if self.get_product_amount(prod_name) - product["amount"] < 0:
-                raise ValueError("You tried to buy more then you have in the cart.")
-
-            # TODO: Fixed this error(?)
-            if not self.update_amount(prod_name, self.get_product_amount(prod_name) - product["amount"]):
-                raise ValueError("The product " + prod_name + " isn't in your cart.")
-
             if self.get_product_amount(prod_name) == 0:
                 self.remove_product(prod_name)
 

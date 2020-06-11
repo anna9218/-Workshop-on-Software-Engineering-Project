@@ -11,7 +11,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.1.1
     @staticmethod
     def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
-        int}]) -> {'response': bool, 'msg': str}:
+        int, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
@@ -56,10 +56,11 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
 
-    @logger
     # use case 4.5
-    def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool,
-                                                                                                     'msg': str}:
+    @staticmethod
+    @logger
+    def appoint_store_manager(appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
+
         """
         :param appointee_nickname: new manager's nickname
         :param store_name: store's name
@@ -177,7 +178,22 @@ class StoreOwnerOrManagerRole:
                                                   'product': str} = None,
                                discount_precondition: {'product': str,
                                                        'min_amount': int or None,
-                                                       'min_basket_price': str or None} or None = None) -> {}:
+                                                       'min_basket_price': str or None} or None = None) \
+            -> {'response': bool, 'msg': str}:
+
+        """
+        Updating an existing policy, either visible, conditional or composite.
+        The key word "all" will flag that the policy is on the entire basket.
+
+        :param store_name.
+        :param policy_name: the policy to update.
+        :param percentage: for updating the percentage attribute.
+        :param discount_details: for updating the name or product of the policy.
+        :param discount_precondition: ONLY AVAILABLE FOR CONDITIONAL POLICY.
+                for updating the precondition.
+                DOES NOT AVAILABLE FOR COMPOSITE AND VISIBLE POLICIES.
+        :return: true if successful, else false.
+        """
         return TradeControl.get_instance().update_discount_policy(store_name, policy_name, percentage, discount_details,
                                                                   discount_precondition)
 
@@ -192,21 +208,59 @@ class StoreOwnerOrManagerRole:
                                                        'min_basket_price': str or None} or None = None
                                ) \
             -> {'response': bool, 'msg': str}:
+        """
+        Define SIMPLE discount policy, either visible or conditional.
+        The key word "all" will flag that the policy or constraint are on the entire basket.
+
+        :param store_name.
+        :param percentage: the percentage of the discount.
+        :param discount_details:  the name and the product of the policy.
+        :param discount_precondition: ONLY AVAILABLE FOR CONDITIONAL POLICY.
+                        have a constraint either on the entire basket, or a specific product.
+        :return: True if successful, else false.
+        """
         return TradeControl.get_instance().define_discount_policy(store_name, percentage, discount_details,
                                                                   discount_precondition)
 
     @logger
     def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str) -> {}:
+        """
+        Define a policy that composite from exactly 2 policies.
+        Both policies should have the same product for success.
+        The keyword "all" will flag that the policies are on the entire basket.
+
+        :param store_name.
+        :param policy1_name: the policy uid.
+        :param policy2_name: the policy uid.
+        :param flag: "and ,"or" or "xor"
+        :param percentage.
+        :param name: the policy name.
+        :return: True if successful, else false.
+        """
         return (TradeControl.get_instance()).define_composite_policy(store_name, policy1_name, policy2_name, flag,
                                                                      percentage, name)
 
     @logger
     def get_discount_policy(self, store_name: str, policy_name: str) -> {}:
+        """
+        return the policy.
+
+        :param store_name.
+        :param policy_name.
+        :return: the policy if exist. None else.
+        """
         return (TradeControl.get_instance()).get_discount_policy(store_name, policy_name)
 
     @logger
     def delete_policy(self, store_name: str, policy_name: str):
+        """
+        Delete the policy with the name @policy_name, if exist.
+
+        :param store_name.
+        :param policy_name.
+        :return: True if successful, else false.
+        """
         return (TradeControl.get_instance()).delete_policy(store_name, policy_name)
 
     # ------------------------------------
@@ -217,6 +271,9 @@ class StoreOwnerOrManagerRole:
     def get_owned_stores():
         return TradeControl.get_instance().get_stores_names()
 
+    @staticmethod
+    def get_managed_stores():
+        return TradeControl.get_instance().get_managed_stores()
     # -------------------------------------------------------------
 
     def __repr__(self):

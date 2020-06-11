@@ -36,8 +36,9 @@ class Store:
 
     @logger
     def add_products(self, user_nickname: str,
-                     products_details: [{"name": str, "price": int, "category": str, "amount": int}]) -> \
-            {'response': bool, 'msg': str}:
+                     products_details: [{"name": str, "price": int, "category": str, "amount": int,
+                                         "purchase_type": int}]) -> {'response': bool, 'msg': str}:
+
         """
         :param user_nickname: owner's/manager's nickname
         :param products_details: list of tuples (product_name, product_price, product_category, product_amount) / JSON
@@ -63,14 +64,16 @@ class Store:
             results = list(map(lambda details: self.add_product(user_nickname, details["name"],
                                                                 details["price"],
                                                                 details["category"],
-                                                                details["amount"]),
+                                                                details["amount"],
+                                                                details["purchase_type"]),
                                products_details))
             if False not in results:
                 return {'response': True, 'msg': "Products were added successfully to the store"}
         return {'response': False, 'msg': "User has no permissions"}
 
     @logger
-    def add_product(self, user_nickname: str, name: str, price: float, category: str, amount: int) -> bool:
+    def add_product(self, user_nickname: str, name: str, price: float, category: str, amount: int, purchase_type: int) \
+            -> bool:
         """
         :param name: name of the new product
         :param price: price of the new product
@@ -81,7 +84,9 @@ class Store:
         if name == "".strip() or price < 0.0 or category == "".strip() or amount < 0.0:
             return False
         if self.has_permission(user_nickname, ManagerPermission.EDIT_INV):
-            return self.__inventory.add_product(Product(name, price, category), amount)
+            product = Product(name, price, category)
+            product.set_purchase_type(purchase_type)
+            return self.__inventory.add_product(product, amount)
 
     @logger
     def remove_products(self, user_nickname: str, products_names: list) -> bool:
@@ -422,14 +427,14 @@ class Store:
         products_purchases = []
         basket_price = 0
         for product in basket.get_products():
-            if product["purchaseType"] == PurchaseType.DEFAULT:
+            if product["product"].get_purchase_type() == PurchaseType.DEFAULT:
                 purchase = self.purchase_immediate(product["product"].get_name(),
                                                    product["product"].get_price(),
                                                    product["amount"],
                                                    price_before_discount,
                                                    product_lst)
 
-            elif product["purchaseType"] == PurchaseType.AUCTION:
+            elif product["product"].get_purchase_type() == PurchaseType.AUCTION:
                 purchase = self.purchase_auction(product["product"].get_name(),
                                                  product["product"].get_price(), product["amount"])
             else:
@@ -463,7 +468,7 @@ class Store:
             if policy.get_product_name() == product_name:
                 if policy.is_worthy(amount, basket_price, prod_lst):
                     price = min(price, policy.get_price_after_discount(product_price))
-        return {"product_name": product_name, "product_price": price, "amount": amount}
+        return {"product_name": product_name, "product_price": price*amount, "amount": amount}
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger
@@ -558,7 +563,7 @@ class Store:
         for product in details:
             if self.__inventory.get_amount(product["product_name"]) < product["amount"]:
                 return {'response': False, 'msg': "Requested amount for product: "
-                                                  + product.get_name() + ", exceeds amount in inventory"}
+                                                  + product["product_name"] + ", exceeds amount in inventory"}
         return self.check_purchase_policy(details, curr_date)
 
     @staticmethod
