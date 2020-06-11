@@ -1,20 +1,30 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
+import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import * as BackOption from '../Actions/GeneralActions/Back'
 
 
-function AppointStoreManager(props){
+function EditPermissions(props){
     useEffect(() => {
         setSelectedStore(props.location.store)
-
+        fetchManagersAppointees();
     }, []);
 
     const [selectedStore, setSelectedStore] = useState("");
     const [subscriberNickname, setSubscriberNickname] = useState("");
     const [permissions, setPermissions] = useState([10]);
+    const [managers, setManagers] = useState(["No managers were appointed by you..."]);
 
+    const fetchManagersAppointees = async () => {
+        const promise = theService.fetchManagersAppointees(props.location.store);  // goes to communication.js and sends to server
+        promise.then((data) => {
+            if (data["data"].length > 0){   // if there are owned stores
+                setManagers(data["data"]);
+                setSubscriberNickname(data["data"][0]);
+            }
+        });
+    };
 
     const addPermissions = async (permission) => {
         setPermissions(permissions.concat(permission));
@@ -25,7 +35,7 @@ function AppointStoreManager(props){
             alert("Please enter subscriber's nickname to appoint");
         }
         else{
-            const promise = theService.appointStoreManager(subscriberNickname, selectedStore, permissions);
+            const promise = theService.editManagerPermissions(selectedStore, subscriberNickname, permissions);
             promise.then((data) => {
                 alert(data["msg"]);
             });
@@ -34,13 +44,20 @@ function AppointStoreManager(props){
 
     return (
         <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-          <h1>{selectedStore} - Appoint Store Manager</h1>
+          <h2>{selectedStore} - Update Manager's Permissions</h2>
 
           <div style={{marginLeft: "30%", marginRight: "30%", marginTop: "2%"}}>
-        
-            <Form.Label>Enter subscriber's nickname to appoint as manager:</Form.Label>
-            <Form.Control id="subscriber-nickname" value={subscriberNickname} required type="text" placeholder="Subscriber's nickname" 
-                onChange={(event => {setSubscriberNickname(event.target.value)})}/>
+            <Form.Group controlId="managers_appointees" onChange={ event => {setSubscriberNickname(event.target.value)}}>
+            <Form.Label>Please choose a manager:</Form.Label>
+            <Form.Control as="select">
+                {managers.map(nickname => (
+                    <option value={nickname}>{nickname}</option>
+                ))}
+            </Form.Control>
+            </Form.Group>
+
+            {/* <Form.Control id="subscriber-nickname" value={subscriberNickname} required type="text" placeholder="Subscriber's nickname" 
+                onChange={(event => {setSubscriberNickname(event.target.value)})}/> */}
 
             <Form.Label>Select permissions:</Form.Label>
             
@@ -66,4 +83,4 @@ function AppointStoreManager(props){
 }
 
 
-export default AppointStoreManager;
+export default EditPermissions;

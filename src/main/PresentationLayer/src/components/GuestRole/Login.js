@@ -46,6 +46,9 @@ class Login extends React.Component{
                     // if store manager - redirect to subscriber home page
                     this.props.history.push({pathname: '/manager', props: this.props});
                   }
+                  else if(data["data"] === "SYS-MANAGER"){
+                    this.props.history.push({pathname: '/systemmanager', props: this.props});
+                  }
                   else{
                     // if subscriber - redirect to subscriber home page
                     this.props.history.push({pathname: '/subscriber', props: this.props});

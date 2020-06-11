@@ -10,38 +10,13 @@ class DiscountComponent(ABC):
         self._name = ""
 
     @abstractmethod
-    def get_price_after_discount(self, price: float):
+    def get_discount(self, details):
         pass
 
     @abstractmethod
-    def is_worthy(self, amount: int, basket_price: float, prod_lst: [str]):
+    def equals(self, details):
         pass
 
     @abstractmethod
-    def update(self, percentage: float,
-               discount_details: {'name': str,
-                                  'product': str},
-               discount_precondition: {'product': str,
-                                       'min_amount': int or None,
-                                       'min_basket_price': str or None} or None
-               ):
-        pass
-
-    @abstractmethod
-    def get_name(self):
-        pass
-
-    @abstractmethod
-    def get_product_name(self):
-        pass
-
-    @abstractmethod
-    def get_percentage(self):
-        pass
-
-    @abstractmethod
-    def get_discount_type(self):
-        pass
-
-    def __eq__(self, other):
+    def update(self, details):
         pass

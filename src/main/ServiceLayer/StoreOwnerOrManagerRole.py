@@ -21,9 +21,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().add_products(store_name, products_details)
 
+    @staticmethod
     @logger
     # use 4.1.2
-    def remove_products(self, store_name: str, products_names: list) -> bool:
+    def remove_products(store_name: str, products_names: list) -> bool:
         """
         :param store_name: store's name
         :param products_names: list of products name to remove
@@ -31,10 +32,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().remove_products(store_name, products_names)
 
+    @staticmethod
     @logger
     # use 4.1.3
-    def edit_product(self, store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool,
-                                                                                            'msg': str}:
+    def edit_product(store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param product_name: product's name to edit
@@ -45,9 +46,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().edit_product(store_name, product_name, op, new_value)
 
-    @logger
     # use case 4.3
-    def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+    @staticmethod
+    @logger
+    def appoint_additional_owner( appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -60,7 +62,6 @@ class StoreOwnerOrManagerRole:
     @staticmethod
     @logger
     def appoint_store_manager(appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
-
         """
         :param appointee_nickname: new manager's nickname
         :param store_name: store's name
@@ -70,9 +71,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_store_manager(appointee_nickname, store_name, permissions)
 
-    @logger
     # use case 4.6
-    def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
+    @staticmethod
+    @logger
+    def edit_manager_permissions(store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's permissions will be edited
@@ -81,9 +83,24 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().edit_manager_permissions(store_name, appointee_nickname, permissions)
 
+    @staticmethod
+    @logger
+    def get_manager_permissions(store_name) -> list:
+        return TradeControl.get_instance().get_manager_permissions(store_name)
+
     # @logger
+    @staticmethod
+    def get_managers_appointees(store_name) -> list:
+        """
+        returns for the current manager/owner all the managers he appointed
+        :param store_name: name of the store
+        :return: list of the managers nicknames
+        """
+        return TradeControl.get_instance().get_managers_appointees(store_name)
+
     # use case 4.7
-    def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
+    @staticmethod
+    def remove_manager(store_name: str, appointee_nickname: str) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's will be removed
@@ -91,9 +108,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().remove_manager(store_name, appointee_nickname)
 
-    @logger
     # use case 4.10 - View store’s purchase history
-    def display_store_purchases(self, store_name: str) -> {'response': list, 'msg': str}:
+    @staticmethod
+    @logger
+    def display_store_purchases(store_name: str) -> {'response': list, 'msg': str}:
         """
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
@@ -116,12 +134,14 @@ class StoreOwnerOrManagerRole:
 
     # -------- UC 4.2 -------------------
     @staticmethod
+    @logger
     def set_purchase_operator(store_name: str, operator: str):
         TradeControl.define_store_purchase_operator(store_name, operator)
 
     # uc 4.2
+    @staticmethod
     @logger
-    def get_policies(self, purchase_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
+    def get_policies(purchase_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
         """
             according to the given type, displays a list of policies for the store
         :param purchase_type: can be "purchase" or "discount"
@@ -131,10 +151,11 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().get_policies(purchase_type, store_name)
 
     # uc 4.2.1
+    @staticmethod
     @logger
-    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+    def update_purchase_policy(store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}) \
+                                                                "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
             update must have valid policy name of an existing policy and at least one more detail
@@ -151,15 +172,16 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().update_purchase_policy(store_name, details)
 
     # uc 4.2.2
+    @staticmethod
     @logger
-    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+    def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}) \
+                                                                "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
         :param store_name:
-        :param details: {"name": str,                            -> policy name
+        :param details: {"name": str,                             -> policy name
                         "products": [str],                       -> list of product names
                         "min_amount": int or None,               -> minimum amount of products required
                         "max_amount": int or None,               -> maximum amount of products required
@@ -171,7 +193,10 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().define_purchase_policy(store_name, details)
 
     # uc 4.2.3
+    @staticmethod
     @logger
+  #  def update_discount_policy():
+  #      return TradeControl.get_instance().update_discount_policy()
     def update_discount_policy(self, store_name: str, policy_name: str,
                                percentage: float = -999,
                                discount_details: {'name': str,
@@ -198,7 +223,10 @@ class StoreOwnerOrManagerRole:
                                                                   discount_precondition)
 
     # uc 4.2.4
+    @staticmethod
     @logger
+#    def define_discount_policy():
+ #       return TradeControl.get_instance().define_discount_policy()
     def define_discount_policy(self, store_name: str,
                                percentage: float,
                                discount_details: {'name': str,

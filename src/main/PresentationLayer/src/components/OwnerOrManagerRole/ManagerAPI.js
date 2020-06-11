@@ -59,7 +59,6 @@ class ManagerAPI extends React.Component {
                     this.setState({managedStores: data["data"], store: data["data"][0]})
                     const promise2 = theService.fetchManagerPermissions(this.state.store);  // goes to communication.js and sends to server
                     promise2.then((data) => {
-                        // alert(data["data"]);
                         this.setState({permissions: data["data"]});
                     });
                 }
@@ -160,29 +159,34 @@ class ManagerAPI extends React.Component {
                                                   Appoint Additional Owner
                                               </Button>
                                         : null }  
-                    { this.hasPermission(5) ? <Button variant="secondary" size="lg" block as={Link} to="/appointmanager">
+                    { this.hasPermission(5) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
+                                                                                                        store: this.state.store}}>
                                           Appoint Additional Manager
                                       </Button>
                                       : null }  
 
-                    { this.hasPermission(6) ? <Button variant="secondary" size="lg" block as={Link} to="/editpermissions">
+                    { this.hasPermission(6) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/editpermissions", 
+                                                                                                        store: this.state.store}}>
                                             Edit Manager’s Permissions
                                         </Button>
                                         : null }  
 
-                    { this.hasPermission(7) ? <Button variant="secondary" size="lg" block as={Link} to="/removemanager">
+                    { this.hasPermission(7) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removemanager", 
+                                                                                                        store: this.state.store}}>
                                             Remove A Store Manager
                                         </Button>
                                         : null }  
 
 
-                    { this.hasPermission(10) ? <Button variant="secondary" size="lg" block as={Link} to="/storehistory">
+                    { this.hasPermission(10) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/storehistory", 
+                                                                                                     store: this.state.selectedStore}}>
                                             View Store’s Purchase History
                                         </Button>
                                         : null }  
 
-                    { this.hasPermission(2) ? <Button variant="secondary" size="lg" block as={Link} to="/managestore">
-                                            Manage Store
+                    { this.hasPermission(2) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/managestorepolicies", 
+                                                                                                     store: this.state.selectedStore}}>
+                                            Manage Store Policies
                                         </Button>
                                         : null }  
                 </Row>

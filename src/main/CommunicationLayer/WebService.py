@@ -3,6 +3,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from flask import jsonify
 
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
@@ -74,9 +75,29 @@ def search_products_by():
         request_dict = request.get_json()
         search_option = request_dict.get('search_option')  # by name, keyword or category
         input_str = request_dict.get('input')
-        # response = GuestRole.search_products_by(search_option, input_str)  # list of Products (Object)
-        # return jsonify(data=response)
-        return jsonify(data=["Product1", "Product2"])
+        response = GuestRole.search_products_by(search_option, input_str)  # list of Products (Object)
+        return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error.", data=[])
+
+
+@app.route('/filter_products_by', methods=['POST'])
+def filter_products_by():
+    if request.is_json:
+        request_dict = request.get_json()
+        filter_option = request_dict.get('filter_option')  # by name, keyword or category
+        products_ls = request_dict.get('products_ls')
+
+        if filter_option == 1:
+            min_price = request_dict.get('min_price')
+            max_price = request_dict.get('max_price')
+            response = GuestRole.filter_products_by(products_ls, filter_option, min_price=min_price, max_price=max_price)  # list of Products (Object)
+        else:
+            if filter_option == 2:
+                category = request_dict.get('category')
+                response = GuestRole.filter_products_by(products_ls, filter_option, category=category)  # list of Products (Object)
+
+        return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error.", data=[])
 
 
 @app.route('/get_categories', methods=['GET'])
@@ -85,20 +106,20 @@ def get_categories():
     return jsonify(data=["category1", "category2"])
 
 
-@app.route('/filter_products_by', methods=['POST'])
-def filter_products_by():
-    return jsonify(data=["Product1"])
-    # if request.is_json:
-    #     request_dict = request.get_json()
-    #     products = request_dict.get('products')
-    #     filter_option = request_dict.get('filter_option')  # by name, keyword or category
-    #     input = request_dict.get('input')
-    #     if filter_option == 1:
-    #         min = input.min
-    #         max = input.max
-    #         response = GuestRole.search_products_by(products, filter_option, min, max)  # list of Products (Object)
-    #     else:
-    #         response = GuestRole.search_products_by(products, filter_option, input)  # list of Products (Object)
+# @app.route('/filter_products_by', methods=['POST'])
+# def filter_products_by():
+#     return jsonify(data=["Product1"])
+#     # if request.is_json:
+#     #     request_dict = request.get_json()
+#     #     products = request_dict.get('products')
+#     #     filter_option = request_dict.get('filter_option')  # by name, keyword or category
+#     #     input = request_dict.get('input')
+#     #     if filter_option == 1:
+#     #         min = input.min
+#     #         max = input.max
+#     #         response = GuestRole.search_products_by(products, filter_option, min, max)  # list of Products (Object)
+#     #     else:
+#     #         response = GuestRole.search_products_by(products, filter_option, input)  # list of Products (Object)
 
 
 @app.route('/add_products_to_cart', methods=['POST'])
@@ -152,8 +173,9 @@ def get_manager_permissions():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        response = TradeControlService.get_manager_permissions(store_name)
-        return jsonify(data=response)
+        response = StoreOwnerOrManagerRole.get_manager_permissions(store_name)
+        numlist = [enum.value for enum in response]
+        return jsonify(data=numlist)
     return jsonify(data=[])
 
 
@@ -170,22 +192,169 @@ def appoint_store_manager():
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         store_name = request_dict.get('store_name')  # str
         permissions = request_dict.get('permissions')  # list of tuples
-        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, permissions)
+        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, numbersToEnum(permissions))
         if response:
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
+
+
+@app.route('/remove_manager', methods=['POST'])
+def remove_manager():
+    if request.is_json:
+        request_dict = request.get_json()
+        appointee_nickname = request_dict.get('nickname')  # str
+        store_name = request_dict.get('store_name')  # str
+        response = StoreOwnerOrManagerRole.remove_manager(store_name, appointee_nickname)
+        if response:
+            return jsonify(msg="Removed manager " + appointee_nickname + " successfully!")
+    return jsonify(msg="Oops, communication error")
+
+
+@app.route('/appoint_store_owner', methods=['POST'])
+def appoint_store_owner():
+    if request.is_json:
+        request_dict = request.get_json()
+        appointee_nickname = request_dict.get('appointee_nickname')  # str
+        store_name = request_dict.get('store_name')  # str
+        response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
+        if response:
+            return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error")
+
+
+@app.route('/get_managers_appointees', methods=['POST'])
+def get_managers_appointees():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        response = StoreOwnerOrManagerRole.get_managers_appointees(store_name)
+        return jsonify(data=response)
+    return jsonify(data=[])
+
+
+def numbersToEnum(ls):
+    enumList: ManagerPermission = []
+    for num in ls:
+        if num == 1 and (ManagerPermission.EDIT_INV not in enumList):
+            enumList.append(ManagerPermission.EDIT_INV)
+        if num == 2 and (ManagerPermission.EDIT_POLICIES not in enumList):
+            enumList.append(ManagerPermission.EDIT_POLICIES)
+        if num == 3 and (ManagerPermission.APPOINT_OWNER not in enumList):
+            enumList.append(ManagerPermission.APPOINT_OWNER)
+        if num == 4 and (ManagerPermission.DEL_OWNER not in enumList):
+            enumList.append(ManagerPermission.DEL_OWNER)
+        if num == 5 and (ManagerPermission.APPOINT_MANAGER not in enumList):
+            enumList.append(ManagerPermission.APPOINT_MANAGER)
+        if num == 6 and (ManagerPermission.EDIT_MANAGER_PER not in enumList):
+            enumList.append(ManagerPermission.EDIT_MANAGER_PER)
+        if num == 7 and (ManagerPermission.DEL_MANAGER not in enumList):
+            enumList.append(ManagerPermission.DEL_MANAGER)
+        if num == 8 and (ManagerPermission.CLOSE_STORE not in enumList):
+            enumList.append(ManagerPermission.CLOSE_STORE)
+        if num == 9 and (ManagerPermission.USERS_QUESTIONS not in enumList):
+            enumList.append(ManagerPermission.USERS_QUESTIONS)
+        if num == 10 and (ManagerPermission.WATCH_PURCHASE_HISTORY not in enumList):
+            enumList.append(ManagerPermission.WATCH_PURCHASE_HISTORY)
+    return enumList
+
+
+@app.route('/edit_manager_permissions', methods=['POST'])
+def edit_manager_permissions():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        appointee_nickname = request_dict.get('appointee_nickname')  # str
+        permissions = request_dict.get('permissions')  # str
+        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, numbersToEnum(permissions))
+        if response:
+            return jsonify(msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
+        else:
+            return jsonify(msg="Oops, update permissions failed.")
+    return jsonify(msg="Oops, communication error.")
+
+
+@app.route('/get_policies', methods=['POST'])
+def get_policies():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        policy_name = request_dict.get('policy_name')  # str
+        response = StoreOwnerOrManagerRole.get_policies(policy_name, store_name)
+        return jsonify(msg=response["msg"], data=response["response"])
+
+    return jsonify(msg="Oops, communication error.")
 
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
     if request.is_json:
         request_dict = request.get_json()
-        store_name = request_dict.get('store_name')  # str
-        products_details = request_dict.get('products_details')  # list of tuples
+        store_name = request_dict.get('store_name')
+        products_details = request_dict.get('products_details')
         response = StoreOwnerOrManagerRole.add_products(store_name, products_details)
-        if response:
+        if response["response"]:
             return jsonify(msg="Congrats! Product was added!")
-    return jsonify(msg="Oops, product wasn't added")
+        return jsonify(msg="Oops, product wasn't added")
+
+
+@app.route('/edit_product', methods=['POST'])
+def edit_product():
+    if request.is_json:
+        errors = []
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        product_name = request_dict.get('product_name')
+        new_product_name = request_dict.get('new_product_name')
+        amount = request_dict.get('amount')
+        price = request_dict.get('price')
+        category = request_dict.get('category')
+        purchase_type = request_dict.get('purchase_type')
+
+        if new_product_name is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "name", new_product_name)["response"]:
+                errors.append("Product Name")
+        if amount is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "amount", amount)["response"]:
+                errors.append("Product Amount")
+        if price is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "price", price)["response"]:
+                errors.append("Product Price")
+        if category is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "category", category)["response"]:
+                errors.append("Category")
+        if purchase_type is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "purchase_type", purchase_type)["response"]:
+                errors.append("Purchase Type")
+
+        error_str = ""
+        for error in errors:
+            error_str += ", " + error
+
+        if len(errors) == 0:
+            return jsonify(msg="Congrats! Product was edited successfully!")
+        return jsonify(msg="Oops, issue with product edit, couldn't update: " + error_str)
+
+
+@app.route('/remove_product', methods=['POST'])
+def remove_product():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        products_name = request_dict.get('product_name')
+        response = StoreOwnerOrManagerRole.remove_products(store_name, [products_name])
+        if response:
+            return jsonify(msg="Congrats! Product was removed!")
+    return jsonify(msg="Oops, product wasn't removed")
+
+
+@app.route('/get_product_details', methods=['POST'])
+def get_product_details():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        products_details = request_dict.get('product_name')
+        response = TradeControlService.get_product_details(store_name, products_details)
+    return jsonify(data=response)
 
 # ------------------------------ SUBSCRIBER ROLE SERVICES -------------------------------------------------#
 
@@ -194,7 +363,7 @@ def add_product():
 def logout():
     response = SubscriberRole.logout()
     if response:
-        return jsonify(msg="Logged out successfully")
+        return jsonify(msg="Logged out successfully!")
     return jsonify(msg="Logout failed")
 
 
@@ -206,15 +375,13 @@ def open_store():
         result = SubscriberRole.open_store(store_name)
         # if response:
         return jsonify(data=result['response'], msg=result['msg'])
-    return jsonify(msg="Oops, store wasn't opened")
+    return jsonify(msg="Oops, store wasn't opened.")
 
 
 @app.route('/view_personal_purchase_history', methods=['GET'])
 def view_personal_purchase_history():
-    # response = SubscriberRole.view_personal_purchase_history()
-    # return jsonify(msg="Logged out successfully", data=response) # NEED TO BE CHEKED, STAM ASITI
-
-    return jsonify(data=["purchase1", "purchase2"])
+    response = SubscriberRole.view_personal_purchase_history()
+    return jsonify(msg=response["msg"], data=response["response"]) # NEED TO BE CHEKED, STAM ASITI
 
 
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#

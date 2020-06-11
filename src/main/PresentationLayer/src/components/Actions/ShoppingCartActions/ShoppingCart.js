@@ -3,10 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link} from 'react-router-dom'
 import * as theService from '../../../services/communication';
 import {Button, Jumbotron, Form, Row, Table, Container} from 'react-bootstrap'
+import * as BackOption from '../GeneralActions/Back'
 
 
 function ShoppingCart(props){
   useEffect(() => {
+    // alert(props.history)
     fetchShoppingCart();
   }, []);
 
@@ -114,6 +116,9 @@ function ShoppingCart(props){
             </Button>
             : null
         }
+
+      <Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props)}>Back</Button>
+
       </Container>
     </div>
          
