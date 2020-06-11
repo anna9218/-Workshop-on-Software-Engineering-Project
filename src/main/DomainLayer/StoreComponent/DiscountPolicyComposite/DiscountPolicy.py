@@ -15,8 +15,21 @@ class DiscountPolicy(DiscountComponent):
         self.__children: [DiscountComponent] = []
 
     @logger
-    def get_discount(self, details):
-        pass
+ #   def get_discount(self, details):
+ #       pass
+    def update(self, percentage: float = -999,
+               discount_details: {'name': str,
+                                  'product': str} = None,
+               discount_precondition: {'product': str,
+                                       'min_amount': int or None,
+                                       'min_basket_price': str or None} or None = None):
+
+        if discount_precondition is not None:
+            return {'response': False, 'msg': "Composite discount can't have not-policy precondition."}
+        if discount_details is not None:
+            self.__name = discount_details['name']
+            self.__product = discount_details['product']
+        return {'response': True, 'msg': "Policy updated successfully."}
 
     @logger
     def add_discount_policy(self, details: {"name": str, "operator": str, "products": [{"name": str, "price": float}],

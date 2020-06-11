@@ -1445,7 +1445,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
     def test_display_store_purchases(self):
         # Empty purchases
         lst = self.__store_owner_or_manager_role.display_store_purchases(self.__store.get_name())['response']
-        # print(type(lst))
         self.assertListEqual([], lst)
 
         (TradeControl.get_instance()).get_store(self.__store.get_name()).add_purchase \
@@ -1525,6 +1524,131 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
         self.assertFalse(res)
         TradeControl.get_instance().reset_purchase_policies(self.__store.get_name())
+
+        
+    def test_define_discount_policy(self):
+
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+
+        # All valid - no precondition
+        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(), "p1")
+                              ['response']))
+
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+
+        # All valid - with precondition
+        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                           pre_con__details)
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(), "p2")
+                              ['response']))
+
+    def test_define_composite_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "p1", "p2", "and",
+                                                                            8.5, "p1_or_p2")
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                                     "p1_or_p2")
+                              ['response']))
+        self.assertIsNone(
+            self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                   "p1")['response'])
+
+        self.assertIsNone(
+            (self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                    "p2")['response']))
+
+        dis_details = {'name': "p3", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+
+        result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "p1_or_p2", "p3",
+                                                                            "xor", 8.5, "(p1_or_p2)_xor_p3")
+        self.assertTrue(result['response'])
+        self.assertIsNotNone(
+            jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                                     "(p1_or_p2)_xor_p3")
+                              ['response']))
+        self.assertIsNone(
+            self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                   "p2")['response'])
+
+        self.assertIsNone(
+            (self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                    "p1_or_p2")['response']))
+
+        self.__product_as_dictionary = {"name": "eytan2",
+                                        "price": 12,
+                                        "category": "eytan as category",
+                                        "amount": 21,
+                                        "purchase_type": 0}
+        self.__store_owner_or_manager_role.add_products(self.__store.get_name(),
+                                                        [self.__product_as_dictionary])
+
+        dis_details = {'name': "p4", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+
+        result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "(p1_or_p2)_xor_p3"
+                                                                            , "p4", "xor", 8.5,
+                                                                            "((p1_or_p2)_xor_p3)_xor_p4")
+        self.assertFalse(result['response'])
+
+    def test_update_discount_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        result = self.__store_owner_or_manager_role.update_discount_policy(self.__store.get_name(), "p1", 13)
+        self.assertTrue(result['response'])
+        self.assertEqual(13, jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy
+                                               (self.__store.get_name(), "p1")['response']).get_percentage())
+
+    def test_get_discount_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        self.assertEqual("Successful.", self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
+                                                                                               "p1")['msg'])
+
+        self.assertEqual("Policy doesn't exist.", self.__store_owner_or_manager_role.get_discount_policy
+        (self.__store.get_name(), "p3")['msg'])
+
+    def test_delete_discount_policy(self):
+        dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
+        pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+                                                                  pre_con__details)
+
+        result = self.__store_owner_or_manager_role.delete_policy(self.__store.get_name(), "p1")
+        self.assertTrue(result['response'])
+        self.assertEqual("Policy doesn't exist.", self.__store_owner_or_manager_role.get_discount_policy
+        (self.__store.get_name(), "p1")['msg'])
+
+        result = self.__store_owner_or_manager_role.delete_policy(self.__store.get_name(), "p1")
+        self.assertFalse(result['response'])
+        self.assertEqual("Policy doesn't exist.", self.__store_owner_or_manager_role.get_discount_policy
+        (self.__store.get_name(), "p1")['msg'])
 
     def tearDown(self):
         (TradeControl.get_instance()).__delete__()

@@ -461,10 +461,16 @@ class Store:
         :param amount: product amount
         :return: dictionary {"product_name": str, "product_price": float, "amount": int} or None
         """
-        # if self.check_discount_policy(product_name):
-        price = self.calculate_discount_price(product_name, product_price, amount)
-        return {"product_name": product_name, "product_price": price, "amount": amount}
-        # return None
+   #     # if self.check_discount_policy(product_name):
+   #     price = self.calculate_discount_price(product_name, product_price, amount)
+   #     return {"product_name": product_name, "product_price": price, "amount": amount}
+  #      # return None
+        price = product_price
+        for policy in self.__discount_policies:
+            if policy.get_product_name() == product_name:
+                if policy.is_worthy(amount, basket_price, prod_lst):
+                    price = min(price, policy.get_price_after_discount(product_price))
+        return {"product_name": product_name, "product_price": price*amount, "amount": amount}
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger

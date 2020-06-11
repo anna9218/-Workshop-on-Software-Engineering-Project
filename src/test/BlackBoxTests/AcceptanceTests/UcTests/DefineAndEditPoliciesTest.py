@@ -32,11 +32,30 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
                                            "max_amount": 13})
         self.assertTrue(res)
 
-        # ------------ discount policy ------------
+        # ------------ simple discount policies ------------
         # .......... add policy + valid input ..........
+        result = self.define_discount_policy(self._store_name, 10, {'name': "policy1", 'product': "product1"},
+                                             {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
+        self.assertTrue(result)
+
+        result = self.define_discount_policy(self._store_name, 10, {'name': "policy2", 'product': "product1"},
+                                             None)
+        self.assertTrue(result)
 
         # .......... update policy + valid input ..........
-        pass
+        result = self.update_discount_policy(self._store_name, "policy1", 3)
+        self.assertTrue(result)
+
+        result = self.update_discount_policy(self._store_name, "policy2", 5)
+        self.assertTrue(result)
+
+        # ------------ composite discount policies ------------
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "p1_xor_p2")
+        self.assertTrue(result)
+
+        # .......... add policy + valid input ..........
+        result = self.update_discount_policy(self._store_name, "p1_xor_p2", 7.5)
+        self.assertTrue(result)
 
     def test_fail(self):
         # ------------ purchase policy options ------------
@@ -66,7 +85,7 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
                                     {"name": "policy1", "products": ["product1"],
                                      "dates": self.__dates})
         res = self.define_purchase_policy(self._store_name,
-                                    {"name": "policy1", "products": ["product1"], "max_amount": 3})
+                                          {"name": "policy1", "products": ["product1"], "max_amount": 3})
         self.assertFalse(res)
 
         # .......... update policy ..........
