@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
+import * as BackOption from '../Actions/GeneralActions/Back'
 
 function AppointOwner(props){
     useEffect(() => {
@@ -38,6 +39,7 @@ function AppointOwner(props){
                 <Button  variant="dark" id="appoint-manager-button" onClick={appointOwnerHandler}>Commit</Button>
                 </div>
             </div>
+            <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
         </div>
     );
 }

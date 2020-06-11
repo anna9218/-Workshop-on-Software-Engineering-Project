@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
+import * as BackOption from '../Actions/GeneralActions/Back'
 
 
 function AppointStoreManager(props){
@@ -59,6 +60,7 @@ function AppointStoreManager(props){
 
             </div>
   
+            <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
         </div>
     );
 }

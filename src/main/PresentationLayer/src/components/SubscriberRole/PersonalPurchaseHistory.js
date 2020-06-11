@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import {Table} from 'react-bootstrap'
+import {Table, Button} from 'react-bootstrap'
 import * as theService from '../../services/communication';
+import * as BackOption from '../Actions/GeneralActions/Back'
 
-
-// TODO - call the server, get the purchases, display
 
 function PersonalPurchaseHistory(props){
   useEffect(() => {
@@ -21,12 +19,6 @@ function PersonalPurchaseHistory(props){
       setPurchaseHistory(data["data"])
     });
   };
-
-  const recordOnClickHandler = () => {
-    alert('purchase info purchase info')
-  };
-
-
 
   return (
     <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
@@ -70,6 +62,7 @@ function PersonalPurchaseHistory(props){
           </div>
         ))
       }
+      <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
       
   </div>
   );
