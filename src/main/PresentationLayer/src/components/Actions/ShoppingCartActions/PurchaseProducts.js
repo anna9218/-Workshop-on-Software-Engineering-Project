@@ -2,7 +2,9 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as theService from '../../../services/communication';
 import {Container, Table, Form, Button} from 'react-bootstrap'
-
+import * as BackOption from '../GeneralActions/Back'
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 class PurchaseProducts extends React.Component{
   constructor(props){
@@ -22,11 +24,16 @@ class PurchaseProducts extends React.Component{
   handleConfirm = () => {
     const promise = theService.confirmPurchase(this.state.address, this.state.purchase_ls)
     promise.then((data) => {
-      if(data != null){
-        alert(data["msg"]);
-        if(data["data"]){
-          // return to home screen
-        }
+      if(data !== undefined){
+        confirmAlert({
+          title: data["msg"],
+          buttons: [
+            {
+              label: 'Done',
+              onClick: () => {BackOption.BackToHome(this.props)}  
+            }
+          ]
+      });
       }
     })
   }
@@ -34,7 +41,7 @@ class PurchaseProducts extends React.Component{
   componentWillMount = () =>{
     const promise = theService.purchaseCart();
     promise.then((data) => {
-      if(data != null){
+      if(data !== null){
         this.setState({total_price: data["data"]["total_price"], purchases: data["data"]["purchases"], purchase_ls: data["data"]})
       }
     })
@@ -89,7 +96,7 @@ class PurchaseProducts extends React.Component{
         <Form.Control id="address" value={this.state.address} required type="text" placeholder="Delivery Address" 
             onChange={(event => {
               let value = event.target.value
-              if(value != ""){
+              if(value !== ""){
                 this.setState({address: value})
                 this.setState({details_filled: true}) // this is set once all details are filled only
               }

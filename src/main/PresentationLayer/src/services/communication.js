@@ -171,6 +171,19 @@ export async function addProduct(store_name, product_name, product_price, produc
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function editProduct(store_name, product_name, new_product_name, amount, price, category, purchase_type){
+    return axios.post('http://localhost:5000/edit_product', {
+        store_name: store_name,
+        product_name: product_name,
+        new_product_name: new_product_name,
+        amount: amount,
+        price: price,
+        category: category,
+        purchase_type: purchase_type
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function getProductInfo(store_name, product_name){
     return axios.post('http://localhost:5000/get_product_details', {
         store_name: store_name,

@@ -74,7 +74,7 @@ class OwnerAPI extends React.Component {
                 <Form.Group controlId="stores_ControlSelect2" onChange={ event => {this.setState({selectedStore: event.target.value})}}>
                 <Form.Label>Please choose a store:</Form.Label>
                 <Form.Control as="select">
-                    <option></option>
+                    <option value={""} >Select Store</option>
                     {this.state.ownedStores.map(store => (
                         <option value={store}>{store}</option>
                     ))}
@@ -123,8 +123,8 @@ class OwnerAPI extends React.Component {
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/manageinventory/" + this.state.selectedStore, 
-                                                                               store: this.state.selectedStore}} >
-                        Manage Stock
+                                                                               store: this.state.selectedStore, props: this.props}} >
+                        Manage Inventory
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to="/appointowner">

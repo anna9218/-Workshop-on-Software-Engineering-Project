@@ -178,6 +178,44 @@ def add_product():
     return jsonify(msg="Oops, product wasn't added")
 
 
+@app.route('/edit_product', methods=['POST'])
+def edit_product():
+    if request.is_json:
+        errors = []
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        product_name = request_dict.get('product_name')
+        new_product_name = request_dict.get('new_product_name')
+        amount = request_dict.get('amount')
+        price = request_dict.get('price')
+        category = request_dict.get('category')
+        purchase_type = request_dict.get('purchase_type')
+
+        if new_product_name is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "name", new_product_name)["response"]:
+                errors.append("Product Name")
+        if amount is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "amount", amount)["response"]:
+                errors.append("Product Amount")
+        if price is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "price", price)["response"]:
+                errors.append("Product Price")
+        if category is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "category", category)["response"]:
+                errors.append("Category")
+        if purchase_type is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "purchase_type", purchase_type)["response"]:
+                errors.append("Purchase Type")
+
+        error_str = ""
+        for error in errors:
+            error_str += ", " + error
+
+        if len(errors) == 0:
+            return jsonify(msg="Congrats! Product was edited successfully!")
+        return jsonify(msg="Oops, issue with product edit, couldn't update: " + error_str)
+
+
 @app.route('/get_product_details', methods=['POST'])
 def get_product_details():
     if request.is_json:

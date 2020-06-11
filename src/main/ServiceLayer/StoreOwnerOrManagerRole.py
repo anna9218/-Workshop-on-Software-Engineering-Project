@@ -21,9 +21,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().add_products(store_name, products_details)
 
+    @staticmethod
     @logger
     # use 4.1.2
-    def remove_products(self, store_name: str, products_names: list) -> bool:
+    def remove_products(store_name: str, products_names: list) -> bool:
         """
         :param store_name: store's name
         :param products_names: list of products name to remove
@@ -31,9 +32,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().remove_products(store_name, products_names)
 
+    @staticmethod
     @logger
     # use 4.1.3
-    def edit_product(self, store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool, 'msg': str}:
+    def edit_product(store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param product_name: product's name to edit

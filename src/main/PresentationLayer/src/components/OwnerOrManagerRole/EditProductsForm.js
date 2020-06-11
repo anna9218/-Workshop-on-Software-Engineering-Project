@@ -1,35 +1,37 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
+import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-
+import * as BackOption from '../Actions/GeneralActions/Back'
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 
 
 function EditProductsForm(props){
-    const [storeName, setStoreName]= useState("");
     const [allStoreProducts, setAllStoreProducts] = useState([]);
     // const [selectedProduct, setSelectedProduct] = useState(false);
 
-    const [productName, setProductName] = useState("");
+    const [productName, setProductName] = useState(null);
+    const [newProductName, setNewProductName] = useState(null);
     const [productPrice, setProductPrice] = useState(null);
-    const [productCategory, setProductCategory] = useState("");
+    const [newProductPrice, setNewProductPrice] = useState(null);
+    const [newProductCategory, setNewProductCategory] = useState(null);
+    const [productCategory, setProductCategory] = useState(null);
     const [productAmount, setProductAmount] = useState(null);
+    const [newProductAmount, setNewProductAmount] = useState(null);
     const [purchaseType, setPurchaseType] = useState(null);
+    const [newPurchaseType, setNewPurchaseType] = useState(null);
 
     const [immidiateChecked, setImmidiateChecked] = useState(false);
     const [auctionChecked, setAuctionChecked] = useState(false);
     const [lotteryChecked, setLotteryChecked] = useState(false);
   
     useEffect(() => {
-        setStoreName(props.storeName);
-        // const promise = theService.getProductInfo()
+        // alert(props.history)
         const promise = theService.displayStoresProducts(props.storeName)
         promise.then((data) => {
-            if(data != null){
+            if(data !== undefined){
                 if (data["data"] != null){   // if there are stores to display
                     setAllStoreProducts(data["data"]);
                 }
@@ -45,15 +47,15 @@ function EditProductsForm(props){
             if(product["name"] === product_name){
                 setProductName(product["name"]);
                 setProductAmount(product["amount"]);
-                setProductCategory([product["category"]]);
+                setProductCategory(product["category"]);
                 setProductPrice(product["price"]);
-                if(product["purchase_type"] == "DEFUALT"){
+                if(product["purchase_type"] === "DEFUALT"){
                     setImmidiateChecked(true);
                     setAuctionChecked(false);
                     setLotteryChecked(false);
                     setPurchaseType(0);
                 }
-                else if(product["purchase_type"] == "AUCTION"){
+                else if(product["purchase_type"] === "AUCTION"){
                     setImmidiateChecked(false);
                     setAuctionChecked(true);
                     setLotteryChecked(false);
@@ -70,7 +72,38 @@ function EditProductsForm(props){
     }
 
     const editProductHandler = async () => {
-
+        const promise = theService.editProduct(props.storeName, productName, newProductName, newProductAmount, newProductPrice, newProductCategory, newPurchaseType)
+        promise.then((data) => {
+            if(data !== undefined){
+                confirmAlert({
+                    title: data["msg"],
+                    buttons: [
+                      {
+                        label: 'Add another product',
+                        onClick: () => { // reset the form in order to add another product
+                            // reset form
+                            setProductName(null);
+                            setProductAmount(null);
+                            setProductCategory(null);
+                            setProductPrice(null);
+                            setImmidiateChecked(false);
+                            setAuctionChecked(false);
+                            setLotteryChecked(false);
+                            setNewProductAmount(null);
+                            setNewProductCategory(null);
+                            setNewProductName(null);
+                            setNewProductPrice(null);
+                            setNewPurchaseType(null);
+                        }
+                      },
+                      {
+                        label: 'Done',
+                        onClick: () => {BackOption.BackToHome(props.history)}  
+                      }
+                    ]
+                });
+            }
+        });
     }
 
   return (
@@ -80,53 +113,54 @@ function EditProductsForm(props){
             <h1>Edit Product</h1>
 
             <Form.Group controlId="products_ControlSelect2" onChange={ event => {
-                alert((event.target.value)[0])
-                // console.log(event.target.value)
                 setSelectedProduct(event.target.value)
                 }}>
                 <Form.Label>Please choose a product:</Form.Label>
                 <Form.Control as="select">
-                    <option></option>
-                    {allStoreProducts.map(product => (
+                    <option>Select Product</option>
+                    {allStoreProducts !== null ?
+                        allStoreProducts.map(product => (
                         <option value={product["name"]}>{product["name"]}</option>
-                    ))}
+                        ))
+                        : null
+                    }
                 </Form.Control>
             </Form.Group>
 
             {
-                productName !== "" ? 
+                productName !== null ? 
                 <div>
                     <Form className='edit_product'>
                         <Form.Label>Choose the product name:</Form.Label>
-                        <Form.Control id="product-name" value={productName} required type="text" placeholder={productName}
+                        <Form.Control id="product-name" value={newProductName} required type="text" placeholder={productName}
                         onChange={(event => {
-                        setProductName(event.target.value)
+                        setNewProductName(event.target.value)
                         })}/>
 
                         <Form.Label>Set the price:</Form.Label>
-                        <Form.Control id="product-price" value={productPrice} required type="text" required placeholder={productPrice} 
+                        <Form.Control id="product-price" value={newProductPrice} required type="text" required placeholder={productPrice} 
                         onChange={(event => {
-                        setProductPrice(event.target.value)
+                        setNewProductPrice(event.target.value)
                         })}/>
                     
                         <Form.Label>Enter the category:</Form.Label>
-                        <Form.Control id="product-category" value={productCategory} required type="text" placeholder={productCategory}
+                        <Form.Control id="product-category" value={newProductCategory} required type="text" placeholder={productCategory}
                         onChange={(event => {
-                        setProductCategory(event.target.value)
+                        setNewProductCategory(event.target.value)
                         })}/>
                     
                         <Form.Label>Enter the amount:</Form.Label>
-                        <Form.Control id="product-amount" value={productAmount} required type="text" placeholder={productAmount}
+                        <Form.Control id="product-amount" value={newProductAmount} required type="text" placeholder={productAmount}
                         onChange={(event => {
-                        setProductAmount(event.target.value)
+                        setNewProductAmount(event.target.value)
                         })}/>
 
                         <Form.Label>Enter the purchase type:</Form.Label>
 
                         <div key={`inline-checkbox`} className="mb-3" style={{border: "1px solid", borderColor: "#CCCCCC"}}>
-                            <Form.Check inline label="Immidiate Purcahse" type="checkbox" id={`immidiate-purchase`} defaultChecked={immidiateChecked} onChange={(event => {setPurchaseType(0)})} />
-                            <Form.Check inline label="Auction Purchase" type="checkbox" id={`auction-purchase`} defaultChecked={auctionChecked} onChange={(event => {setPurchaseType(1)})} />
-                            <Form.Check inline label="Lottery Purchase" type="checkbox" id={`lottery-purchase`} defaultChecked={lotteryChecked} onChange={(event => {setPurchaseType(2)})}/>
+                            <Form.Check inline label="Immidiate Purcahse" type="checkbox" id={`immidiate-purchase`} defaultChecked={immidiateChecked} onChange={(event => {setNewPurchaseType(0)})} />
+                            <Form.Check inline label="Auction Purchase" type="checkbox" id={`auction-purchase`} defaultChecked={auctionChecked} onChange={(event => {setNewPurchaseType(1)})} />
+                            <Form.Check inline label="Lottery Purchase" type="checkbox" id={`lottery-purchase`} defaultChecked={lotteryChecked} onChange={(event => {setNewPurchaseType(2)})}/>
                         </div>
 
                     </Form>

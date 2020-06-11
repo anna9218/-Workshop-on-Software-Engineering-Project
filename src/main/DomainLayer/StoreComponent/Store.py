@@ -124,6 +124,11 @@ class Store:
                 return self.change_price(product_name, new_value)
             elif op == "amount":
                 return self.change_amount(product_name, new_value)
+            elif op == "purchase_policy":
+                self.get_product(product_name).set_purchase_type(new_value)
+                return True
+            elif op == "category":
+                self.get_product(product_name).set_category(new_value)
             else:
                 return False
         return False

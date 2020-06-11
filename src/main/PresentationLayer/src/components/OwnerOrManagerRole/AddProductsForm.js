@@ -2,18 +2,13 @@ import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-
+import * as BackOption from '../Actions/GeneralActions/Back'
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 
 
 function AddProductsForm(props){
-  useEffect(() => {
-    setStoreName(props.storeName);
-  }, []);
-
-  const [storeName, setStoreName]= useState("");
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState(null);
   const [productCategory, setProductCategory] = useState("");
@@ -24,7 +19,7 @@ function AddProductsForm(props){
     // alert(storeName)
     const promise = theService.addProduct(props.storeName, productName, productPrice, productCategory, productAmount, purchaseType); // goes to register.js and sends to backend
     promise.then((data) => {
-      // if(data["data"]){
+      if(data !== undefined){
         confirmAlert({
           title: data["msg"],
           buttons: [
@@ -40,11 +35,11 @@ function AddProductsForm(props){
             },
             {
               label: 'Done',
-              onClick: () => alert('Click No')  //TODO - add an option to go back (need to disable addProductForm)
+              onClick: () => {BackOption.BackToHome(props.history)}
             }
           ]
         });
-      // }
+      }
       // else{
       //   alert(data["msg"]);
       // }
