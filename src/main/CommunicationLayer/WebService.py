@@ -74,9 +74,28 @@ def search_products_by():
         request_dict = request.get_json()
         search_option = request_dict.get('search_option')  # by name, keyword or category
         input_str = request_dict.get('input')
-        # response = GuestRole.search_products_by(search_option, input_str)  # list of Products (Object)
-        # return jsonify(data=response)
-        return jsonify(data=["Product1", "Product2"])
+        response = GuestRole.search_products_by(search_option, input_str)  # list of Products (Object)
+        return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error.", data=[])
+
+
+@app.route('/filter_products_by', methods=['POST'])
+def filter_products_by():
+    if request.is_json:
+        request_dict = request.get_json()
+        filter_option = request_dict.get('filter_option')  # by name, keyword or category
+        products_ls = request_dict.get('products_ls')
+
+        if filter_option == 1:
+            min_price = request_dict.get('min_price')
+            max_price = request_dict.get('max_price')
+            response = GuestRole.filter_products_by(products_ls, filter_option, min_price=min_price, max_price=max_price)  # list of Products (Object)
+        if filter_option == 2:
+            category = request_dict.get('category')
+            response = GuestRole.filter_products_by(products_ls, filter_option, category=category)  # list of Products (Object)
+
+        return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error.", data=[])
 
 
 @app.route('/get_categories', methods=['GET'])
@@ -85,20 +104,20 @@ def get_categories():
     return jsonify(data=["category1", "category2"])
 
 
-@app.route('/filter_products_by', methods=['POST'])
-def filter_products_by():
-    return jsonify(data=["Product1"])
-    # if request.is_json:
-    #     request_dict = request.get_json()
-    #     products = request_dict.get('products')
-    #     filter_option = request_dict.get('filter_option')  # by name, keyword or category
-    #     input = request_dict.get('input')
-    #     if filter_option == 1:
-    #         min = input.min
-    #         max = input.max
-    #         response = GuestRole.search_products_by(products, filter_option, min, max)  # list of Products (Object)
-    #     else:
-    #         response = GuestRole.search_products_by(products, filter_option, input)  # list of Products (Object)
+# @app.route('/filter_products_by', methods=['POST'])
+# def filter_products_by():
+#     return jsonify(data=["Product1"])
+#     # if request.is_json:
+#     #     request_dict = request.get_json()
+#     #     products = request_dict.get('products')
+#     #     filter_option = request_dict.get('filter_option')  # by name, keyword or category
+#     #     input = request_dict.get('input')
+#     #     if filter_option == 1:
+#     #         min = input.min
+#     #         max = input.max
+#     #         response = GuestRole.search_products_by(products, filter_option, min, max)  # list of Products (Object)
+#     #     else:
+#     #         response = GuestRole.search_products_by(products, filter_option, input)  # list of Products (Object)
 
 
 @app.route('/add_products_to_cart', methods=['POST'])
@@ -152,7 +171,7 @@ def get_manager_permissions():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        response = TradeControlService.get_manager_permissions(store_name)
+        response = StoreOwnerOrManagerRole.get_manager_permissions(store_name)
         return jsonify(data=response)
     return jsonify(data=[])
 

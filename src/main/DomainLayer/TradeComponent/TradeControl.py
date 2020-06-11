@@ -168,19 +168,21 @@ class TradeControl:
     @logger
     def get_products_by(self, search_opt: int, string: str) -> {'response': list, 'msg': str}:
         list_of_products = []
+        s: Store
         for s in self.__stores:
             products = s.get_products_by(search_opt, string)
             list(map(lambda product: list_of_products.append({"store_name": s.get_name(),
                                                               "product_name": product.get_name(),
                                                               "price": product.get_price(),
-                                                              "category": product.get_category()}), products))
+                                                              "category": product.get_category(),
+                                                              "amount": s.get_inventory().get_amount(product.get_name())}), products))
         if len(list_of_products) == 0:
             return {'response': list_of_products, 'msg': "Error! There are no results"}
         return {'response': list_of_products, 'msg': "Products was retrieved successfully"}
 
     @logger
     def filter_products_by(self,
-                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
+                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
                            max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
                                                                                                   'msg': str}:
@@ -644,6 +646,20 @@ class TradeControl:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store manager"}
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
+
+
+    def get_manager_permissions(self, store_name) -> list:
+        """
+        :param store_name:
+        :return: returns the permissions of the current user
+        """
+        store: Store = self.get_store(store_name)
+        if store is not None and \
+                self.__curr_user.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                store.is_manager(self.__curr_user.get_nickname()):
+            return store.get_permissions(self.__curr_user.get_nickname())
+        return False
 
     @logger
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:

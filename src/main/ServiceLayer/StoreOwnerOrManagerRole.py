@@ -81,6 +81,11 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().edit_manager_permissions(store_name, appointee_nickname, permissions)
 
+    @staticmethod
+    @logger
+    def get_manager_permissions(store_name) -> list:
+        return TradeControl.get_instance().get_manager_permissions(store_name)
+
     # @logger
     @staticmethod
     def get_managers_appointees(store_name) -> list:

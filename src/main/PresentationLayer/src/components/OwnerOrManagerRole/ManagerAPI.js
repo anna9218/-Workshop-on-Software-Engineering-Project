@@ -159,17 +159,20 @@ class ManagerAPI extends React.Component {
                                                   Appoint Additional Owner
                                               </Button>
                                         : null }  
-                    { this.hasPermission(5) ? <Button variant="secondary" size="lg" block as={Link} to="/appointmanager">
+                    { this.hasPermission(5) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
+                                                                                                        store: this.state.store}}>
                                           Appoint Additional Manager
                                       </Button>
                                       : null }  
 
-                    { this.hasPermission(6) ? <Button variant="secondary" size="lg" block as={Link} to="/editpermissions">
+                    { this.hasPermission(6) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/editpermissions", 
+                                                                                                        store: this.state.store}}>
                                             Edit Manager’s Permissions
                                         </Button>
                                         : null }  
 
-                    { this.hasPermission(7) ? <Button variant="secondary" size="lg" block as={Link} to="/removemanager">
+                    { this.hasPermission(7) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removemanager", 
+                                                                                                        store: this.state.store}}>
                                             Remove A Store Manager
                                         </Button>
                                         : null }  

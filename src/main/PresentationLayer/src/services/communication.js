@@ -64,14 +64,26 @@ export async function getCategories(){
 }
 
 //input is ["min": 2, "max": 5] or "category"
-export async function filterProductsBy(products, filter_option, input){
+export async function filterProductsByRange(products_ls, filter_option, min_price, max_price){
     return axios.post('http://localhost:5000/filter_products_by', {
-        products: products,
+        products_ls: products_ls,
         filter_option: filter_option, 
-        input: input
+        min_price: min_price,
+        max_price: max_price
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
+
+export async function filterProductsByCategory(products_ls, filter_option, category){
+    return axios.post('http://localhost:5000/filter_products_by', {
+        products_ls: products_ls,
+        filter_option: filter_option, 
+        category: category
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+
 
 export async function addToProductsCart(store_name, product_name, product_amount){
     return axios.post('http://localhost:5000/add_products_to_cart', {
