@@ -16,7 +16,9 @@ CORS(app)
 # 1 - purchase
 # 2 - add+remove manager
 # 3 - else
-socket = SocketIO(app)
+socket = SocketIO(app, cors_allowed_origins='*')
+# socket = SocketIO(app, logger=True, engineio_logger=True,
+#                   cors_allowed_origins='*', async_mode='eventlet')
 
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
@@ -123,9 +125,13 @@ def update_shopping_cart():
 
 
 @app.route('/purchase_products', methods=['GET'])
-def purchase_products():
+async def purchase_products():
     response = GuestRole.purchase_products()
     if response:
+        print(response)
+        purchases = response["purchases"]
+        print(purchases)
+        await handle_purchase_msg(purchases[0])  # ["store_name"]
         return jsonify(data=response)
     return jsonify(msg="purchase products failed", data=response["response"], status=400)
 
@@ -140,6 +146,7 @@ def confirm_purchase():
         if response:
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="purchase confirmation failed", data=response["response"], status=400)
+
 
 # AND MANY MORE OTHER FUNCTIONS ..... TODO
 
@@ -210,7 +217,7 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
-     #   Websocket.open_store(store_name, SubscriberRole.username, result)
+        #   Websocket.open_store(store_name, SubscriberRole.username, result)
         # TODO - add some func at websocket that registers the owner
         # WebSocketService.open_store(store_name, SubscriberRole.username, result)
         # if response:
@@ -273,36 +280,46 @@ def get_user_type():
 
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
 
-_users = {} # dict of <username>: <its session ID>
+_users = {}  # dict of <username>: <its session ID>
+
+
+@socket.on('connect')
+def connect():
+    print(f"connect event. sid --> {request.sid}")
+    _users[TradeControlService.get_curr_username] = request.sid
+
 
 @socket.on('subscribe')
-async def join(data):
-    print ("recieved join request")
+def join(data):
+    print("recieved join request")
     _users[data['username']] = request.sid
     join_room(room=data['store'], sid=_users[data['username']])
-    print (f"{data['username']} has been subscribed to store {data['storename']}")
+    print(f"{data['username']} has been subscribed to store {data['storename']}")
 
 
 @socket.on('unsbscribe')
-async def leave(data):
+def leave(data):
     # TODO - add check that exists
     leave_room(room=data['store'], sid=_users[data['username']])
-    print (f"{data['username']} has been removed as subscriber of store {data['storename']}")
+    print(f"{data['username']} has been removed as subscriber of store {data['storename']}")
 
-async def send_notification(store_name, msg):
+
+def send_notification(store_name, msg):
     # socket.send(msgs, json=True, room=storename)
     # TODO - does it sends even if not logged in? maybe use the written store-funcs
+    print(f"room = {store_name}")
     socket.emit('message', msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
 
 
-def handle_purchase_msg(user_name, store_name, result):
-    if result:  # should be True or dict - TODO change the call to be inside if (result)
-        msg = f"{user_name} made a purchase on store {store_name}"
-        send_notification(store_name, jsonify(username= user_name, message= msg, store=store_name))
-        print(f"send msg: {msg}")
+def handle_purchase_msg(store_name):
+    # if result:  # should be True or dict - TODO change the call to be inside if (result)
+    msg = f"a purchase have been done at store {store_name}"
+    send_notification(store_name, jsonify(messages=msg, store=store_name))
+    print(f"send msg: {msg}")
 
-def handle_remove_owner_msg(user_name, store_name, result):
-    if result:  # should be True or dict - TODO change the call to be inside if (result)
-        msg = f"{user_name} was removed as owner from store {store_name}"
-        send_notification(store_name,  jsonify(username= user_name, message= msg, store=store_name))
-        print(f"send msg: {msg}")
+
+def handle_remove_owner_msg(user_name, store_name):
+    # if result:  # should be True or dict - TODO change the call to be inside if (result)
+    msg = f"{user_name} was removed as owner from store {store_name}"
+    send_notification(store_name, jsonify(username=user_name, messages=msg, store=store_name))
+    print(f"send msg: {msg}")
