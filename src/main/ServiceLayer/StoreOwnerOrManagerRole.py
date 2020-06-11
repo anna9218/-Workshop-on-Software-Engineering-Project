@@ -69,9 +69,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_store_manager(appointee_nickname, store_name, permissions)
 
-    @logger
     # use case 4.6
-    def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
+    @staticmethod
+    @logger
+    def edit_manager_permissions(store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's permissions will be edited
@@ -100,9 +101,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().remove_manager(store_name, appointee_nickname)
 
-    @logger
     # use case 4.10 - View store’s purchase history
-    def display_store_purchases(self, store_name: str) -> {'response': list, 'msg': str}:
+    @staticmethod
+    @logger
+    def display_store_purchases(store_name: str) -> {'response': list, 'msg': str}:
         """
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
@@ -125,12 +127,14 @@ class StoreOwnerOrManagerRole:
 
     # -------- UC 4.2 -------------------
     @staticmethod
+    @logger
     def set_purchase_operator(store_name: str, operator: str):
         TradeControl.define_store_purchase_operator(store_name, operator)
 
     # uc 4.2
+    @staticmethod
     @logger
-    def get_policies(self, purchase_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
+    def get_policies(purchase_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
         """
             according to the given type, displays a list of policies for the store
         :param purchase_type: can be "purchase" or "discount"
@@ -140,8 +144,9 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().get_policies(purchase_type, store_name)
 
     # uc 4.2.1
+    @staticmethod
     @logger
-    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+    def update_purchase_policy(store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None, "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
@@ -160,8 +165,9 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().update_purchase_policy(store_name, details)
 
     # uc 4.2.2
+    @staticmethod
     @logger
-    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+    def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
@@ -180,13 +186,15 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().define_purchase_policy(store_name, details)
 
     # uc 4.2.3
+    @staticmethod
     @logger
-    def update_discount_policy(self):
+    def update_discount_policy():
         return TradeControl.get_instance().update_discount_policy()
 
     # uc 4.2.4
+    @staticmethod
     @logger
-    def define_discount_policy(self):
+    def define_discount_policy():
         return TradeControl.get_instance().define_discount_policy()
 
     # ------------------------------------

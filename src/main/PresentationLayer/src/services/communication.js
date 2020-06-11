@@ -176,6 +176,14 @@ export async function addProduct(store_name, product_name, product_price, produc
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function getProductInfo(store_name, product_name){
+    return axios.post('http://localhost:5000/get_product_details', {
+        store_name: store_name,
+        product_name: product_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function appointStoreManager(appointee_nickname, store_name, permissions){
     return axios.post('http://localhost:5000/appoint_store_manager', {
         appointee_nickname: appointee_nickname,

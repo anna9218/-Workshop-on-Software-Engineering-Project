@@ -204,10 +204,10 @@ def appoint_store_owner():
 def add_product():
     if request.is_json:
         request_dict = request.get_json()
-        store_name = request_dict.get('store_name')  # str
-        products_details = request_dict.get('products_details')  # list of tuples
+        store_name = request_dict.get('store_name')
+        products_details = request_dict.get('products_details')
         response = StoreOwnerOrManagerRole.add_products(store_name, products_details)
-        if response:
+        if response["response"]:
             return jsonify(msg="Congrats! Product was added!")
     return jsonify(msg="Oops, product wasn't added")
 
@@ -229,12 +229,22 @@ def edit_manager_permissions():
         store_name = request_dict.get('store_name')  # str
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         permissions = request_dict.get('permissions')  # str
-        response = StoreOwnerOrManagerRole.get_managers_appointees(store_name, appointee_nickname, permissions)
+        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, permissions)
         if response:
             return jsonify(msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
         else:
             return jsonify(msg="Oops, update permissions failed.")
     return jsonify(msg="Oops, communication error.")
+
+
+@app.route('/get_product_details', methods=['POST'])
+def get_product_details():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        products_details = request_dict.get('product_name')
+        response = TradeControlService.get_product_details(store_name, products_details)
+    return jsonify(data=response)
 
 # ------------------------------ SUBSCRIBER ROLE SERVICES -------------------------------------------------#
 

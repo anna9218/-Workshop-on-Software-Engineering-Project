@@ -13,12 +13,13 @@ import RegisterForm from './components/GuestRole/RegisterForm'
 import Login from './components/GuestRole/Login'
 import DisplayStores from './components/Actions/StoreActions/DisplayStores'
 import DisplayProducts from './components/Actions/ShoppingCartActions/DisplayProducts'
-import Search from './components/Search'
+// import Search from './components/Search'
 import ShoppingCart from './components/Actions/ShoppingCartActions/ShoppingCart'
 import PurchaseProducts from './components/Actions/ShoppingCartActions/PurchaseProducts'
 import StoreDetail from './components/Actions/StoreActions/StoreDetail'
 import StoreProducts from './components/Actions/StoreActions/StoreProducts'
-import SearchResults from './components/Actions/ShoppingCartActions/SearchResults'
+import SearchAndFilterProducts from './components/GuestRole/SearchAndFilterProducts';
+// import SearchResults from './components/Actions/ShoppingCartActions/SearchResults'
 
 // subscriber
 import SubscriberAPI from './components/SubscriberRole/SubscriberAPI'
@@ -90,33 +91,32 @@ function App(){
           </div>
                 
           <Form inline id="form">
-            <Form.Control id="form-search-text" type="text" placeholder="Search" className="search" value={searchInput} onChange={searchInputHandler}/>
-            <Dropdown>
-            <Dropdown.Toggle variant="outline-info" id="dropdown-searchby">
-                By
-            </Dropdown.Toggle>
-            <Dropdown.Menu variant="outline-info" id="form-dropdown-menu">
-              {/* <Link to='/search'> */}
-              <Dropdown.Item id="form-dropdown-item1" href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
-              <Dropdown.Item id="form-dropdown-item2" href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
-                      
-              <Dropdown drop='left' onClick={fetchCategories}>
-              <Dropdown.Toggle variant="outline-info" id="form-dropdown-item3">
-                  By Category
-              </Dropdown.Toggle>
+            {/* <Form.Control id="form-search-text" type="text" placeholder="Search" className="search" value={searchInput} onChange={searchInputHandler}/> */}
+             {/* <Dropdown>
+                  <Dropdown.Toggle variant="outline-info" id="dropdown-searchby">
+                      By
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu variant="outline-info" id="form-dropdown-menu">
+                        <Dropdown.Item id="form-dropdown-item1" href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
+                        <Dropdown.Item id="form-dropdown-item2" href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
+                                
+                        <Dropdown drop='left' onClick={fetchCategories}>
+                              <Dropdown.Toggle variant="outline-info" id="form-dropdown-item3">
+                                  By Category
+                              </Dropdown.Toggle>
 
-              <Dropdown.Menu id="form-category-dropdown" variant="dark">
-                  {categories.map(category => (
-                      <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
-                  ))}
-              </Dropdown.Menu>
+                              <Dropdown.Menu id="form-category-dropdown" variant="dark">
+                                  {categories.map(category => (
+                                      <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
+                                  ))}
+                              </Dropdown.Menu> 
 
-            </Dropdown>
-          </Dropdown.Menu>
-        </Dropdown>
+                        </Dropdown>
+                  </Dropdown.Menu>
+               </Dropdown> */}
 
         <Link to={{
-          pathname:'/searchresults', 
+          pathname:'/searchandfilter', 
           state: {
               searchOption: searchOption,
               input: searchInput,
@@ -141,7 +141,8 @@ function App(){
         <Route path="/viewcart" exact render={(props) => <ShoppingCart screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores/:store" exact render={(props) => <StoreDetail screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
         <Route path="/stores/:store/products" exact render={(props) => <StoreProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
-        <Route path="/searchresults" exact render={(props) => <SearchResults screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
+        {/* <Route path="/searchresults" exact render={(props) => <SearchResults screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} /> */}
+        <Route path="/searchandfilter" exact render={(props) => <SearchAndFilterProducts screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />
 
         {/* subscriber */}
         <Route path="/subscriber" exact render={(props) => <SubscriberAPI screenWidth= {window.innerWidth} screenHeight= {window.innerHeight} {...props} />} />

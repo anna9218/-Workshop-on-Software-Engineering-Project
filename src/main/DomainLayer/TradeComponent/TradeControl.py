@@ -579,6 +579,13 @@ class TradeControl:
             return {'response': False, 'msg': "Edit product failed."}
         return {'response': False, 'msg': "Edit product failed."}
 
+    def get_product_details(self, store_name, product_name):
+        store = self.get_store(store_name)
+        product = store.get_product(product_name)
+        return {"name": product.get_name(), "price": product.get_price(), "category": product.get_category(),
+                "amount": store.get_inventory().get_amount(product_name),
+                "purchase_type": product.get_purchase_type().name}
+
     @logger
     def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
@@ -605,7 +612,6 @@ class TradeControl:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
-
 
     @logger
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool,
@@ -638,14 +644,6 @@ class TradeControl:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store manager"}
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
-
-    def get_manager_permissions(self, store_name: str) -> list:
-        store: Store = self.get_store(store_name)
-        if store is not None:
-            if store.is_manager(self.__curr_user.get_nickname()):
-                ls = store.get_permissions(self.__curr_user.get_nickname())
-                return ls
-        return []
 
     @logger
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
