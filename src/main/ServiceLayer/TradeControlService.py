@@ -29,7 +29,7 @@ class TradeControlService:
 
     @staticmethod
     def get_user_type():
-        return TradeControl.get_instance().get_user_type()    \
+        return TradeControl.get_instance().get_user_type()
 
     @staticmethod
     def get_curr_username():

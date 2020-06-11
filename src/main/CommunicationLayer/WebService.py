@@ -125,13 +125,13 @@ def update_shopping_cart():
 
 
 @app.route('/purchase_products', methods=['GET'])
-async def purchase_products():
+def purchase_products():
     response = GuestRole.purchase_products()
     if response:
-        print(response)
+        # print(response)
         purchases = response["purchases"]
-        print(purchases)
-        await handle_purchase_msg(purchases[0])  # ["store_name"]
+        # print(purchases)
+        handle_purchase_msg(purchases[0]["store_name"])
         return jsonify(data=response)
     return jsonify(msg="purchase products failed", data=response["response"], status=400)
 
@@ -286,16 +286,24 @@ _users = {}  # dict of <username>: <its session ID>
 @socket.on('connect')
 def connect():
     print(f"connect event. sid --> {request.sid}")
-    _users[TradeControlService.get_curr_username] = request.sid
+    if (TradeControlService.get_curr_username() is not None):
+        _users[TradeControlService.get_curr_username()] = request.sid
+    print (f"users list: {_users}")
 
-
-@socket.on('subscribe')
+# TODO- replace it with call from open store. assume _users already includes the username and its websocket
+@socket.on('join')
 def join(data):
     print("recieved join request")
     _users[data['username']] = request.sid
     join_room(room=data['store'], sid=_users[data['username']])
     print(f"{data['username']} has been subscribed to store {data['storename']}")
 
+@socket.on('message')
+def join1(data):
+    print("recieved join1 msg request")
+    _users[data['username']] = request.sid
+    join_room(room=data['store'], sid=_users[data['username']])
+    print(f"{data['username']} has been subscribed to store {data['storename']}")
 
 @socket.on('unsbscribe')
 def leave(data):
@@ -313,7 +321,7 @@ def send_notification(store_name, msg):
 
 def handle_purchase_msg(store_name):
     # if result:  # should be True or dict - TODO change the call to be inside if (result)
-    msg = f"a purchase have been done at store {store_name}"
+    msg = f"a purchase has been done at store {store_name}"
     send_notification(store_name, jsonify(messages=msg, store=store_name))
     print(f"send msg: {msg}")
 
