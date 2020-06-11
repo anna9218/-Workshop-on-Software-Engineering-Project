@@ -231,8 +231,12 @@ class TradeControl:
         # filter by Price Range
         if filter_by_option == 1:
             try:
-                ls = list(filter(lambda product_dictionary: min_price <= product_dictionary['price'] <= max_price,
-                                 products_ls))
+                ls = []
+                for p in products_ls:
+                    if p['price'] >= min_price and p['price'] <= max_price:
+                        ls.append(p)
+                # ls = list(filter(lambda product_dictionary: min_price <= product_dictionary['price'] and product_dictionary['price'] <= max_price,
+                #                  products_ls))
                 return {'response': ls, 'msg': "Action Filter by price range was successful"}
             except Exception:
                 return {'response': [], 'msg': "Error in filter action"}

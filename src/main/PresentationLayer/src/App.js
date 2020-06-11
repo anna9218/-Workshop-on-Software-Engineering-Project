@@ -35,6 +35,7 @@ import AppointStoreManager from './components/OwnerOrManagerRole/AppointStoreMan
 import AppointOwner from './components/OwnerOrManagerRole/AppointOwner'
 import RemoveManager from './components/OwnerOrManagerRole/RemoveManager'
 import EditPermissions from './components/OwnerOrManagerRole/EditPermissions'
+import ManageStorePolicies from './components/OwnerOrManagerRole/ManageStorePolicies'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
@@ -179,6 +180,7 @@ class App extends React.Component{
           <Route path="/appointmanager" exact render={(props) => <AppointStoreManager screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/editpermissions" exact render={(props) => <EditPermissions screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/removemanager" exact render={(props) => <RemoveManager screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/managestorepolicies" exact render={(props) => <ManageStorePolicies screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
           {/* owner */}
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />

@@ -147,12 +147,14 @@ class OwnerAPI extends React.Component {
                         Remove A Store Manager
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/storehistory">
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/storehistory", 
+                                                                             store: this.state.selectedStore}}>
                         View Store’s Purchase History
                     </Button>
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/managestore">
-                        Manage Store
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/managestorepolicies", 
+                                                                               store: this.state.selectedStore}}>
+                        Manage Store Policies
                     </Button>
                 </Row>
             </Container>

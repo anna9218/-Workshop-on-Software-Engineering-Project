@@ -17,7 +17,7 @@ export function BackToHome(props){
               }
               else if(data["data"] === "MANAGER"){
                 // return to subscriber home page
-                props.history.push({pathname: '/manager', props: this.props});
+                    props.history.push({pathname: '/manager', props: this.props});
               }
               else if(data["data"] === "SUBSCRIBER"){
                 // return to subscriber home page

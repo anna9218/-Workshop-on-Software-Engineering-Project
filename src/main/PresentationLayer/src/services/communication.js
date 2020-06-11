@@ -251,6 +251,14 @@ export async function editManagerPermissions(store_name, appointee_nickname, per
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function getPolicies(policy_name, store_name){
+    return axios.post('http://localhost:5000/get_policies', {
+        store_name: store_name,
+        policy_name: policy_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 
 //--------------------------- END OF OWNER ROLE -------------------------------------//
 

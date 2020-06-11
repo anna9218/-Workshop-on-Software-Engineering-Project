@@ -3,6 +3,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from flask import jsonify
 
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
@@ -90,9 +91,10 @@ def filter_products_by():
             min_price = request_dict.get('min_price')
             max_price = request_dict.get('max_price')
             response = GuestRole.filter_products_by(products_ls, filter_option, min_price=min_price, max_price=max_price)  # list of Products (Object)
-        if filter_option == 2:
-            category = request_dict.get('category')
-            response = GuestRole.filter_products_by(products_ls, filter_option, category=category)  # list of Products (Object)
+        else:
+            if filter_option == 2:
+                category = request_dict.get('category')
+                response = GuestRole.filter_products_by(products_ls, filter_option, category=category)  # list of Products (Object)
 
         return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error.", data=[])
@@ -172,7 +174,8 @@ def get_manager_permissions():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.get_manager_permissions(store_name)
-        return jsonify(data=response)
+        numlist = [enum.value for enum in response]
+        return jsonify(data=numlist)
     return jsonify(data=[])
 
 
@@ -189,7 +192,7 @@ def appoint_store_manager():
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         store_name = request_dict.get('store_name')  # str
         permissions = request_dict.get('permissions')  # list of tuples
-        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, permissions)
+        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, numbersToEnum(permissions))
         if response:
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
@@ -229,6 +232,32 @@ def get_managers_appointees():
     return jsonify(data=[])
 
 
+def numbersToEnum(ls):
+    enumList: ManagerPermission = []
+    for num in ls:
+        if num == 1 and (ManagerPermission.EDIT_INV not in enumList):
+            enumList.append(ManagerPermission.EDIT_INV)
+        if num == 2 and (ManagerPermission.EDIT_POLICIES not in enumList):
+            enumList.append(ManagerPermission.EDIT_POLICIES)
+        if num == 3 and (ManagerPermission.APPOINT_OWNER not in enumList):
+            enumList.append(ManagerPermission.APPOINT_OWNER)
+        if num == 4 and (ManagerPermission.DEL_OWNER not in enumList):
+            enumList.append(ManagerPermission.DEL_OWNER)
+        if num == 5 and (ManagerPermission.APPOINT_MANAGER not in enumList):
+            enumList.append(ManagerPermission.APPOINT_MANAGER)
+        if num == 6 and (ManagerPermission.EDIT_MANAGER_PER not in enumList):
+            enumList.append(ManagerPermission.EDIT_MANAGER_PER)
+        if num == 7 and (ManagerPermission.DEL_MANAGER not in enumList):
+            enumList.append(ManagerPermission.DEL_MANAGER)
+        if num == 8 and (ManagerPermission.CLOSE_STORE not in enumList):
+            enumList.append(ManagerPermission.CLOSE_STORE)
+        if num == 9 and (ManagerPermission.USERS_QUESTIONS not in enumList):
+            enumList.append(ManagerPermission.USERS_QUESTIONS)
+        if num == 10 and (ManagerPermission.WATCH_PURCHASE_HISTORY not in enumList):
+            enumList.append(ManagerPermission.WATCH_PURCHASE_HISTORY)
+    return enumList
+
+
 @app.route('/edit_manager_permissions', methods=['POST'])
 def edit_manager_permissions():
     if request.is_json:
@@ -236,11 +265,23 @@ def edit_manager_permissions():
         store_name = request_dict.get('store_name')  # str
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         permissions = request_dict.get('permissions')  # str
-        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, permissions)
+        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, numbersToEnum(permissions))
         if response:
             return jsonify(msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
         else:
             return jsonify(msg="Oops, update permissions failed.")
+    return jsonify(msg="Oops, communication error.")
+
+
+@app.route('/get_policies', methods=['POST'])
+def get_policies():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        policy_name = request_dict.get('policy_name')  # str
+        response = StoreOwnerOrManagerRole.get_policies(policy_name, store_name)
+        return jsonify(msg=response["msg"], data=response["response"])
+
     return jsonify(msg="Oops, communication error.")
 
 

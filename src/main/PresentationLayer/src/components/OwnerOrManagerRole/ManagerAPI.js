@@ -178,13 +178,15 @@ class ManagerAPI extends React.Component {
                                         : null }  
 
 
-                    { this.hasPermission(10) ? <Button variant="secondary" size="lg" block as={Link} to="/storehistory">
+                    { this.hasPermission(10) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/storehistory", 
+                                                                                                     store: this.state.selectedStore}}>
                                             View Store’s Purchase History
                                         </Button>
                                         : null }  
 
-                    { this.hasPermission(2) ? <Button variant="secondary" size="lg" block as={Link} to="/managestore">
-                                            Manage Store
+                    { this.hasPermission(2) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/managestorepolicies", 
+                                                                                                     store: this.state.selectedStore}}>
+                                            Manage Store Policies
                                         </Button>
                                         : null }  
                 </Row>
