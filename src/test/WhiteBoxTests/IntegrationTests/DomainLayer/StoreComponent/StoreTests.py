@@ -4,7 +4,7 @@ from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermiss
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
-from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.UserComponent.User import User
 
 
@@ -14,11 +14,11 @@ class StoreTests(unittest.TestCase):
         self.store: Store = Store("myStore")
         self.owner = User()
         self.owner.register("Eytan", "password")
-        self.store.get_owners().append(self.owner)
+        self.store.get_owners_appointments().append(StoreAppointment(None, self.owner, []))
         self.manager = User()
         self.manager.register("Not Eytan", "Yes Password")
-        self.store.get_store_manager_appointments().append(StoreManagerAppointment(self.owner, self.manager,
-                                                                                   [ManagerPermission.EDIT_INV]))
+        self.store.get_store_manager_appointments().append(StoreAppointment(self.owner, self.manager,
+                                                                            [ManagerPermission.EDIT_INV]))
 
         # self.__product1 = {"name": "Chair", "price": 100, "category": "Furniture", "amount": 10}
         # self.__product2 = {"name": "TV", "price": 10, "category": "Electric", "amount": 1}
@@ -236,7 +236,7 @@ class StoreTests(unittest.TestCase):
         bad_manager = User()
         bad_manager.register("Half Eytan, half not Eytan", "Definitely Password")
         self.store.get_store_manager_appointments().append(
-            StoreManagerAppointment(self.owner, bad_manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
+            StoreAppointment(self.owner, bad_manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
 
         # Invalid - Manager permissions
         self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
@@ -379,7 +379,7 @@ class StoreTests(unittest.TestCase):
         manager = User()
         manager.register("Half Eytan, half not Eytan", "Definitely Password")
         self.store.get_store_manager_appointments().append(
-            StoreManagerAppointment(self.owner, manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
+            StoreAppointment(self.owner, manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
         self.assertTrue(manager in self.store.get_managers())
 
         # All valid - appoint manager as owner
@@ -891,6 +891,82 @@ class StoreTests(unittest.TestCase):
                                            "products": ["product1"], "min_amount": 8})
         res = self.store.get_purchase_policies()
         self.assertTrue(len(res) > 0)
+
+    def test_remove_owner(self):
+        store: Store = Store("store1")
+        store.get_owners_appointments().append(StoreAppointment(None, self.owner, []))
+        owner1 = User()
+        owner1.register("owner1", "password")
+        store.add_owner(self.owner.get_nickname(), owner1)
+
+        owner2 = User()
+        owner2.register("owner2", "password")
+        store.add_owner("owner1", owner2)
+
+        owner3 = User()
+        owner3.register("owner3", "password")
+        store.add_owner("owner2", owner3)
+
+        manager1 = User()
+        manager1.register("manager1", "password")
+        store.add_manager(owner3, manager1, [])
+
+        manager2 = User()
+        manager2.register("manager2", "password")
+        store.add_manager(self.owner, manager2, [])
+
+        # failed owner2 didn't appoint owner 2 as owner
+        res = store.remove_owner("owner2", "owner1")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # failed
+        res = store.remove_owner("owner", "owner1")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # success
+        res = store.remove_owner(self.owner.get_nickname(), "owner1")
+
+        self.assertEqual(res['response'], ['owner1 removed as owner', 'owner2 removed as owner', 'owner3 removed as owner', 'manager1 removed as manager'])
+        self.assertEqual(res['msg'], "Store owner owner1 and his appointees were removed successfully.")
+        self.assertFalse(store.is_owner('owner1'))
+        self.assertFalse(store.is_owner('owner2'))
+        self.assertFalse(store.is_owner('owner3'))
+        self.assertFalse(store.is_manager('manager1'))
+        self.assertTrue(store.is_manager('manager2'))
+
+    def test_remove_owner_appointees(self):
+        store: Store = Store("store")
+        store.get_owners_appointments().append(StoreAppointment(None, self.owner, []))
+        owner1 = User()
+        owner1.register("owner1", "password")
+        store.add_owner(self.owner.get_nickname(), owner1)
+
+        owner2 = User()
+        owner2.register("owner2", "password")
+        store.add_owner("owner1", owner2)
+
+        owner3 = User()
+        owner3.register("owner3", "password")
+        store.add_owner("owner2", owner3)
+
+        manager1 = User()
+        manager1.register("manager1", "password")
+        store.add_manager(owner3, manager1, [])
+
+        manager2 = User()
+        manager2.register("manager2", "password")
+        store.add_manager(self.owner, manager2, [])
+
+        res = store.remove_owner_appointees("owner1")
+
+        self.assertEqual(res, ['owner2 removed as owner', 'owner3 removed as owner', 'manager1 removed as manager'])
+        self.assertTrue(store.is_owner('owner1'))
+        self.assertFalse(store.is_owner('owner2'))
+        self.assertFalse(store.is_owner('owner3'))
+        self.assertFalse(store.is_manager('manager1'))
+        self.assertTrue(store.is_manager('manager2'))
 
     # # @logger
     def tearDown(self) -> None:

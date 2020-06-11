@@ -3,16 +3,16 @@
 """
 import unittest
 from src.test.BlackBoxTests.AcceptanceTests import UcTests
-from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointManagerTest import AppointManagerTest as Test1
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointManagerTest import AppointManagerTest as Test6
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointOwnerTest import AppointOwnerTest as Test2
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.DefineAndEditPoliciesTest import DefineAndUpdatePoliciesTest as Test3
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.DeliverySystemTest import DeliverySystemTest as Test4
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.EditManagerPermissionsTest import EditManagerPermissionsTest as Test5
-from src.test.BlackBoxTests.AcceptanceTests.UcTests.InitSystemTest import InitSystemTest as Test6
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.InitSystemTest import InitSystemTest as Test1
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.LoginTest import LoginTest as Test7
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.LogoutTest import LogoutTest as Test8
-from src.test.BlackBoxTests.AcceptanceTests.UcTests.ManageStockTest import ManageStockTest as Test9
-from src.test.BlackBoxTests.AcceptanceTests.UcTests.ManageStoreTest import ManageStoreTest as Test10
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.ManageStockTest import ManageStockTest as Test10
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.ManageStoreTest import ManageStoreTest as Test9
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.OpenStoreTest import OpenStoreTest as Test11
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.PaymentSystemTest import PaymentSystemTest as Test12
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.PurchaseProductsTest import PurchaseProductsTest as Test13

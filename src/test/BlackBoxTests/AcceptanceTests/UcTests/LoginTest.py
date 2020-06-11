@@ -22,6 +22,10 @@ class LoginTest(ProjectAT):
         # registered user + valid username + invalid password
         res = self.login(self._username, "")
         self.assertFalse(res['response'])
+        # user is already logged in
+        res = self.login(self._username, self._password)
+        res = self.login(self._username, self._password)
+        self.assertFalse(res['response'])
         # registered user + invalid username + valid password
         res = self.login("", self._password)
         self.assertFalse(res['response'])

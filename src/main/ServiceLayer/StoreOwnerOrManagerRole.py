@@ -58,6 +58,21 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
 
+
+    @logger
+    # use case 4.4
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        """
+        the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
+        and owners appointee_nickname appointed.
+        :param appointee_nickname: nickname of the owner we want to remove as owner
+        :param store_name: store the owner will be removed from as owner
+        :return: dict =  {'response': [], 'msg': str}
+                 response = nicknames list of all the removed appointees -> the appointee_nickname of the owner we want
+                            to remove and all the appointees he appointed, we had to remove as well.
+        """
+        return TradeControl.get_instance().remove_owner(appointee_nickname, store_name)
+
     # use case 4.5
     @staticmethod
     @logger

@@ -190,6 +190,13 @@ class ProjectAT(ABC, unittest.TestCase):
     def appoint_additional_owner(self, nickname: str, store_name: str) -> bool:
         return self.__bridge.appoint_additional_owner(nickname, store_name)
 
+    # 4.4 remove store owner
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        return self.__bridge.remove_owner(appointee_nickname, store_name)
+
+    def get_store(self, store_name):
+        return self.__bridge.get_store(store_name)
+
     # @logger
     # 4.5 appoint store manager functions
     def appoint_additional_manager(self, nickname: str, store_name: str, permissions: [int]) -> bool:

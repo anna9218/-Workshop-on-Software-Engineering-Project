@@ -3,8 +3,12 @@ from unittest.mock import MagicMock
 
 import jsonpickle
 
+
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
+
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
+
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Store import Store
@@ -87,9 +91,11 @@ class GuestRoleTest(unittest.TestCase):
         user = User()
         user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.get_owners().append(user)
-        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5, 0)
-        store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100, 0)
+
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
+        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5,0)
+        store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100,0)
+
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 100, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
@@ -102,11 +108,18 @@ class GuestRoleTest(unittest.TestCase):
         # flag store
 
         # All valid
-        result = self.__guest_role.display_stores_or_products_info(store.get_name(), store_info_flag=True)['response']
-        owner_names = [user_v.get_nickname() for user_v in store.get_owners()]
-        result_as_tuple = (result['managers'], result['name'], result['owners'])
-        expected = (store.get_managers(), store.get_name(), owner_names)
-        self.assertEqual(expected, result_as_tuple)
+        
+#        Refactoring_v2
+#         result = self.__guest_role.display_stores_or_products_info(store.get_name(), store_info_flag=True)['response']
+#         owner_names = [user_v.get_nickname() for user_v in store.get_owners()]
+#         result_as_tuple = (result['managers'], result['name'], result['owners'])
+#         expected = (store.get_managers(), store.get_name(), owner_names)
+#         self.assertEqual(expected, result_as_tuple)
+
+        res = self.__guest_role.display_stores_or_products_info(store.get_name(), store_info_flag=True)
+
+        self.assertEqual({"name": 'myStore', "owners": ['eytan'], "managers": []}, res['response'])
+
         # Invalid - store doesn't exist
         self.assertIsNone((self.__guest_role.display_stores_or_products_info("store.get_name()",
                                                                              store_info_flag=True
@@ -115,10 +128,16 @@ class GuestRoleTest(unittest.TestCase):
         # flag products
 
         # All valid
-        result_products_in_inventory = [(element['name'], element['amount']) for element in
-                                        self.__guest_role.display_stores_or_products_info
-                                        (store.get_name(),
-                                         products_info_flag=True)['response']]
+#        Refactoring_v2
+#         result_products_in_inventory = [(element['name'], element['amount']) for element in
+#                                         self.__guest_role.display_stores_or_products_info
+#                                         (store.get_name(),
+#                                          products_info_flag=True)['response']]
+        res = (self.__guest_role.display_stores_or_products_info
+                                                          (store.get_name(),
+                                                           products_info_flag=True)['response'])
+        result_products_in_inventory = [(element['name'], element['amount']) for element in res
+                                        ]
         expected_products_in_inventory = [(element['product'].get_name(), element['amount']) for element in
                                           store.get_inventory().get_inventory()]
         self.assertEqual(expected_products_in_inventory, result_products_in_inventory)
@@ -408,6 +427,7 @@ class GuestRoleTest(unittest.TestCase):
 
     # use case 2.6
     def test_save_products_to_basket(self):
+
         # # TODO: Maybe add a test to check if try to purchase more amount then the store have.
         # product = Product("Eytan's product", 12, "Eytan's category")
         # user = User()
@@ -473,7 +493,74 @@ class GuestRoleTest(unittest.TestCase):
         # self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
         # self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
         #                          shopping_cart.get_shopping_baskets()])
-        self.assertTrue(False)
+       
+        # TODO: Maybe add a test to check if try to purchase more amount then the store have.
+        product = Product("Eytan's product", 12, "Eytan's category")
+        user = User()
+        user.register("eytan", "eytan's password")
+        store: Store = Store("myStore")
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
+        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5)
+        (TradeControl.get_instance()).get_stores().append(store)
+        product_as_dictionary = {"product_name": product.get_name(), "amount": 4, "store_name": store.get_name(),
+                                 "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
+        product_to_add = (product,
+                          product_as_dictionary['amount'],
+                          product_as_dictionary['discount_type'],
+                          product_as_dictionary['purchase_type'])
+
+        basket = ShoppingBasket()
+        basket.add_product(*product_to_add)
+        expected = (store.get_name(), basket)
+
+        shopping_cart = (TradeControl.get_instance()).get_curr_user().get_shopping_cart()
+
+        # All valid
+        self.assertTrue(self.__guest_role.save_products_to_basket([product_as_dictionary])['response'])
+        self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
+        self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
+                                 shopping_cart.get_shopping_baskets()])
+
+        # Valid - empty basket
+        self.assertTrue(self.__guest_role.save_products_to_basket([])['response'])
+        self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
+        self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
+                                 shopping_cart.get_shopping_baskets()])
+
+        # invalid - basket = None
+        self.assertFalse(self.__guest_role.save_products_to_basket([product_as_dictionary, None])['response'])
+        self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
+        self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
+                                 shopping_cart.get_shopping_baskets()])
+
+        bad_basket = {"product_name": "", "amount": 4, "store_name": store.get_name(),
+                      "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
+
+        # invalid - product = None
+        self.assertFalse(self.__guest_role.save_products_to_basket([bad_basket])['response'])
+        self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
+        self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
+                                 shopping_cart.get_shopping_baskets()])
+
+        bad_basket = {"product_name": product.get_name(), "amount": -4, "store_name": store.get_name(),
+                      "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
+
+        # invalid - negative amount
+        self.assertFalse(self.__guest_role.save_products_to_basket([bad_basket])['response'])
+        self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
+        self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
+                                 shopping_cart.get_shopping_baskets()])
+        bad_basket = {"product_name": product.get_name(), "amount": -4, "store_name": store.get_name(),
+                      "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
+
+        bad_basket = {"product_name": product, "amount": 0, "store_name": store.get_name(),
+                      "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
+
+        # invalid - Edge case - amount = 0
+        self.assertFalse(self.__guest_role.save_products_to_basket([bad_basket])['response'])
+        self.assertEqual(len(shopping_cart.get_shopping_baskets()), 1)
+        self.assertIn(expected, [(basket['store_name'], basket['basket']) for basket in
+                                 shopping_cart.get_shopping_baskets()])
 
     # use case 2.7
     def test_view_shopping_cart(self):
@@ -485,9 +572,11 @@ class GuestRoleTest(unittest.TestCase):
         user = User()
         user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.get_owners().append(user)
-        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5, 0)
-        store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100, 0)
+
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
+        store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5,0)
+        store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100,0)
+
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 100, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
@@ -517,9 +606,11 @@ class GuestRoleTest(unittest.TestCase):
         user = User()
         user.register("eytan", "eytan's password")
         store: Store = Store("myStore")
-        store.get_owners().append(user)
+
+        store.get_owners_appointments().append(StoreAppointment(None, user, []))
         store.add_product(user.get_nickname(), "Eytan's product", 12, "Eytan's category", 5, 0)
         store.add_product(user.get_nickname(), "eytan as product", 10, "Eytan's category", 100, 0)
+
         (TradeControl.get_instance()).get_stores().append(store)
         product_as_dictionary = {"product_name": product.get_name(), "amount": 100, "store_name": store.get_name(),
                                  "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
@@ -808,6 +899,7 @@ class GuestRoleTest(unittest.TestCase):
                          get_amount(product.get_name()))
         # check post condition - purchase in not in  purchase history
         self.assertEqual(2, len(user.get_purchase_history()))
+
 
     def tearDown(self):
         (TradeControl.get_instance()).__delete__()

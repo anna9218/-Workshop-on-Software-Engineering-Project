@@ -96,5 +96,9 @@ class TradeControlService:
     def set_user(nickname: str):
         TradeControl.get_instance().set_curr_user_by_name(nickname)
 
+    @staticmethod
+    def get_store(store_name):
+        return TradeControl.get_instance().get_store(store_name)
+
     def __repr__(self):
         return repr("TradeFacadeService")

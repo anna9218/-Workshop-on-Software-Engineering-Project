@@ -39,9 +39,10 @@ class ManageStoreTest(ProjectAT):
         self.remove_products_from_store(self._store_name, ["product"])
         self.remove_store("store")
         self.delete_user(self._username)
+        self.delete_user(self._username)
         self.delete_manager("newManager", self._store_name)
-        # self.delete_user("newManager")
-        # self.delete_user("newUser")
+        self.delete_user("newManager")
+        self.delete_user("newUser")
 
     def __repr__(self):
         return repr("ManageStoreTest")

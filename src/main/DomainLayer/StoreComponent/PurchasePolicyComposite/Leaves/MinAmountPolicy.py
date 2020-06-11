@@ -20,6 +20,7 @@ class MinAmountPolicy(PurchaseComponent):
 
     def equals(self, details: {"products": [str], "min_amount": int or None, "max_amount": int or None,
                                "dates": [dict] or None, "bundle": bool or None}) -> bool:
+
         if details.get("min_amount") \
                 and details.get("min_amount") == self.__amount \
                 and set(self.__products) == set(details["products"]):

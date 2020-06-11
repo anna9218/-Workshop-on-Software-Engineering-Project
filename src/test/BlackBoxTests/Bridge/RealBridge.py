@@ -188,6 +188,13 @@ class RealBridge(Bridge):
     def appoint_additional_owner(self, nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         return self.__store_owner_or_manager.appoint_additional_owner(nickname, store_name)
 
+    # 4.4 remove store owner functions
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        return self.__store_owner_or_manager.remove_owner(appointee_nickname, store_name)
+
+    def get_store(self, store_name):
+        return self.__trade_control_srv.get_store(store_name)
+
     # uc 4.5
     def appoint_additional_manager(self, nickname: str, store_name: str, permissions: [int]) -> bool:
         manager_permissions = []

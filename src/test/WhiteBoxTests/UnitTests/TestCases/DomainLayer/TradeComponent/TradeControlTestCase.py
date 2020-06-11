@@ -148,7 +148,6 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.edit_product("myStore", "blaa", "name", "ch")['response'])
         self.tradeControl.close_store("myStore")
 
-    # @logger
     def test_appoint_additional_owner(self):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
@@ -161,7 +160,53 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertTrue(store1.is_owner("appointee"))
         self.assertFalse(store1.is_owner("a"))
 
-    # @logger
+    def test_remove_owner(self):
+        owner1 = StubUser()
+        owner1.register("owner1", "password")
+        owner1.login("owner1", "password")
+        self.tradeControl.set_curr_user(owner1)
+        self.tradeControl.open_store("myStore")
+        self.tradeControl.register_guest("manager1", "213456")
+        self.tradeControl.appoint_store_manager("manager1", "myStore", [])
+
+        # failed - owner2 is not store owner
+        self.tradeControl.register_guest("owner2", "213456")
+        res = self.tradeControl.remove_owner("owner2", "myStore")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # success
+        self.tradeControl.appoint_additional_owner("owner2", "myStore")
+        owner2 = StubUser()
+        owner2.register("owner2", "password")
+        owner2.login("owner2", "password")
+        self.tradeControl.set_curr_user(owner2)
+        self.tradeControl.register_guest("owner3", "213456")
+        self.tradeControl.appoint_additional_owner("owner3", "myStore")
+
+        self.tradeControl.register_guest("manager2", "213456")
+        self.tradeControl.appoint_store_manager("manager2", "myStore", [])
+
+        owner3 = StubUser()
+        owner3.register("owner3", "password")
+        owner3.login("owner3", "password")
+        self.tradeControl.set_curr_user(owner3)
+        self.tradeControl.register_guest("manager3", "213456")
+        self.tradeControl.appoint_store_manager("manager3", "myStore", [])
+
+        self.tradeControl.set_curr_user(owner1)
+        res = self.tradeControl.remove_owner("owner2", "myStore")
+        self.assertEqual(res['response'], ['owner2 removed as owner', 'owner3 removed as owner',
+                                           'manager3 removed as manager', 'manager2 removed as manager'])
+        self.assertEqual(res['msg'], "Store owner owner2 and his appointees were removed successfully.")
+        store = self.tradeControl.get_store("myStore")
+        self.assertTrue(store.is_manager("manager1"))
+        self.assertFalse(store.is_manager("manager2"))
+        self.assertFalse(store.is_manager("manager3"))
+        self.assertTrue(store.is_owner("owner1"))
+        self.assertFalse(store.is_owner("owner2"))
+        self.assertFalse(store.is_owner("owner3"))
+
     def test_appoint_store_manager(self):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
@@ -307,6 +352,12 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.unsubscribe("nickname")
         self.tradeControl.unsubscribe("eden")
         self.tradeControl.unsubscribe("appointee")
+        self.tradeControl.unsubscribe("owner1")
+        self.tradeControl.unsubscribe("owner2")
+        self.tradeControl.unsubscribe("owner3")
+        self.tradeControl.unsubscribe("manager1")
+        self.tradeControl.unsubscribe("manager2")
+        self.tradeControl.unsubscribe("manager3")
 
     def __repr__(self):
         return repr("TradeControlTestCase")
