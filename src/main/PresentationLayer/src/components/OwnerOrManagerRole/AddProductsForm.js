@@ -1,49 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
-import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
+import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-
+import * as BackOption from '../Actions/GeneralActions/Back'
 import { confirmAlert } from 'react-confirm-alert'; 
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 
 
 function AddProductsForm(props){
-  useEffect(() => {
-    console.log(props);
-    setStoreName(props.storeName);
-    // setShowAddFormFunction(props.showForm);
-  }, []);
-
-  const [storeName, setStoreName]= useState("");
-  // const [showAddFormFunction, setShowAddFormFunction]= useState();
-
   const [productName, setProductName] = useState("");
-  const [productPrice, setProductPrice] = useState();
+  const [productPrice, setProductPrice] = useState(null);
   const [productCategory, setProductCategory] = useState("");
-  const [productAmount, setProductAmount] = useState();
-  const [purchaseType, setPurchaseType] = useState(0);
-  // const [discountType, setDiscountType] = useState(0);
-  // const [discountPercentage, setDiscountPercentage] = useState(0);
-  // const [showDiscount, setShowDiscount] = useState(false)
-
-  // const handleShowDiscount = async () => {
-  //   if(showDiscount){
-  //     setShowDiscount(false);
-  //     setDiscountType(0);
-  //     setPurchaseType(0);
-  //     setDiscountPercentage(0);
-  //   }
-  //   else{
-  //     setShowDiscount(true);
-  //   }
-  // }
+  const [productAmount, setProductAmount] = useState(null);
+  const [purchaseType, setPurchaseType] = useState(null);
 
   const addProductHandler = async () =>{
-    const promise = theService.addProduct(storeName, productName, productPrice, productCategory, productAmount, purchaseType); // goes to register.js and sends to backend
+    // alert(storeName)
+    const promise = theService.addProduct(props.storeName, productName, productPrice, productCategory, productAmount, purchaseType); // goes to register.js and sends to backend
     promise.then((data) => {
-
+      if(data !== undefined){
         confirmAlert({
           title: data["msg"],
           buttons: [
@@ -54,21 +30,29 @@ function AddProductsForm(props){
                 setProductPrice("");
                 setProductCategory("");
                 setProductAmount("");
-                // setDiscountType(0);
-                setPurchaseType(0);
-                // setDiscountPercentage(0);
+                setPurchaseType(null);
               }
             },
-          {
-            label: 'Done',
-            onClick: () => alert('Click No')  //TODO - add an option to go back (need to disable addProductForm)
-          }
-        ]
-      });
+            {
+              label: 'Done',
+              onClick: () => {BackOption.BackToHome(props.history)}
+            }
+          ]
+        });
+      }
+      // else{
+      //   alert(data["msg"]);
+      // }
+        
 
     });
   };
 
+  const detailsFilled = () => {
+    if(props.storeName !== "" && productName !== "" && productPrice !== null && productCategory !== "" && productAmount !== null && purchaseType !== null){
+      return true;
+    }
+  }
 
   return (
       <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
@@ -103,7 +87,7 @@ function AddProductsForm(props){
             <Form.Label>Enter the purchase type:</Form.Label>
 
             <div key={`inline-checkbox`} className="mb-3" style={{border: "1px solid", borderColor: "#CCCCCC"}}>
-              <Form.Check inline label="Immidiate Purcahse" type="checkbox" id={`immidiate-purchase`} onChange={(event => {setPurchaseType(0)})} />
+              <Form.Check inline label="Immidiate Purcahse" checked={purchaseType !== null} type="checkbox" id={`immidiate-purchase`} onChange={(event => {setPurchaseType(0)})} />
               <Form.Check inline label="Auction Purchase" type="checkbox" id={`auction-purchase`} onChange={(event => {setPurchaseType(1)})} />
               <Form.Check inline label="Lottery Purchase" type="checkbox" id={`lottery-purchase`} onChange={(event => {setPurchaseType(2)})}/>
             </div>
@@ -113,8 +97,7 @@ function AddProductsForm(props){
             {/* <ShowDiscount showDiscount={showDiscount} setDiscountType={setDiscountType} discountType={discountType} setDiscountPercentage={setDiscountPercentage} /> */}
             
           </Form>
-
-          <Button variant="dark" id="open-store-button" onClick={addProductHandler}>Add Product!</Button>
+          <Button variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={addProductHandler}>Add Product!</Button>
         </Container>
 
       </div>

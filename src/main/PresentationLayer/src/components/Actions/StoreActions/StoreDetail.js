@@ -6,6 +6,7 @@ import * as theService from '../../../services/communication';
 import {Accordion, Card, Table} from 'react-bootstrap'
 
 
+
 function StoreDetail(props) {
   useEffect(() => {
     console.log(props)
@@ -99,6 +100,8 @@ function ShowStoreInfo(props){
           </Card>
         </Accordion>
       </div>
+      <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" as={Link} to="/stores" >Back</Button>
+
     </div>
   )
 }

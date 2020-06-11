@@ -1,12 +1,7 @@
 import datetime
-import jsonpickle
+
 from src.Logger import logger
-from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.CompositeFlag import CompositeFlag
-from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy, DiscountComponent
-from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.Leaves.ConditionalDiscountPolicy import \
-    ConditionalDiscountPolicy
-from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.Leaves.VisibleDiscountPolicy import \
-    VisibleDiscountPolicy
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
@@ -16,7 +11,6 @@ from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreMan
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.main.DomainLayer.UserComponent.User import User
-import src.main.ResponseFormat as Response
 
 
 class Store:
@@ -38,7 +32,6 @@ class Store:
     def add_products(self, user_nickname: str,
                      products_details: [{"name": str, "price": int, "category": str, "amount": int,
                                          "purchase_type": int}]) -> {'response': bool, 'msg': str}:
-
         """
         :param user_nickname: owner's/manager's nickname
         :param products_details: list of tuples (product_name, product_price, product_category, product_amount) / JSON
@@ -132,6 +125,11 @@ class Store:
                 return self.change_price(product_name, new_value)
             elif op == "amount":
                 return self.change_amount(product_name, new_value)
+            elif op == "purchase_policy":
+                self.get_product(product_name).set_purchase_type(new_value)
+                return True
+            elif op == "category":
+                self.get_product(product_name).set_category(new_value)
             else:
                 return False
         return False
@@ -167,6 +165,17 @@ class Store:
             product.set_name(new_name)
             return True
         return False
+
+    def get_managers_appointees(self, appointer_nickname: str) -> list:
+        """
+        :param appointer_nickname:
+        :return: returns a list of nicknames, of all the managers appointer_nickname appointed
+        """
+        ls = []
+        for appointment in self.__StoreManagerAppointments:
+            if appointment.get_appointer().get_nickname() == appointer_nickname:
+                ls.append(appointment.get_appointee().get_nickname())
+        return ls
 
     @logger
     def change_amount(self, product_name: str, new_amount: int) -> bool:
@@ -235,8 +244,7 @@ class Store:
             return True
         if self.is_manager(user_nickname):
             my_appointment = list(
-                filter(lambda app: app.get_appointee().get_nickname() == user_nickname,
-                       self.__StoreManagerAppointments))
+                filter(lambda app: app.get_appointee().get_nickname() == user_nickname, self.__StoreManagerAppointments))
             if my_appointment:
                 return my_appointment[0].has_permission(permission)
             return False
@@ -280,6 +288,7 @@ class Store:
         #         ((self.is_manager(appointer.get_nickname())) and
         #          self.has_permission(appointer.get_nickname(), ManagerPermission.APPOINT_MANAGER))):
         if self.has_permission(appointer.get_nickname(), ManagerPermission.APPOINT_MANAGER):
+
             self.__StoreManagerAppointments.append(StoreManagerAppointment(appointer, appointee, permissions))
             return True
         return False
@@ -385,8 +394,10 @@ class Store:
         #                                          self.has_permission(appointer_nickname,
         #                                                              ManagerPermission.WATCH_PURCHASE_HISTORY)):
         if self.has_permission(appointer_nickname, ManagerPermission.WATCH_PURCHASE_HISTORY):
+
             return self.__purchases
         return []
+
 
     # def print_inventory(self):
     #     f"The products of store {self.__name}:"
@@ -409,8 +420,7 @@ class Store:
         """
         products = []
         list(map(lambda curr_product:
-                 products.append(
-                     {"product_name": curr_product["product"].get_name(), "amount": curr_product["amount"]}),
+                 products.append({"product_name": curr_product["product"].get_name(), "amount": curr_product["amount"]}),
                  basket.get_products()))
 
         if len(products) == 0:
@@ -419,27 +429,19 @@ class Store:
         if not can_purchase["response"]:
             return {'response': None, 'msg': "Purchase failed: " + can_purchase["msg"]}
 
-        price_before_discount = 0
-        product_lst = [product['product'].get_name() for product in basket]
-        for product in basket:
-            price_before_discount = price_before_discount + (product['product'].get_price() * product['amount'])
-
         products_purchases = []
         basket_price = 0
         for product in basket.get_products():
             if product["product"].get_purchase_type() == PurchaseType.DEFAULT:
                 purchase = self.purchase_immediate(product["product"].get_name(),
-                                                   product["product"].get_price(),
-                                                   product["amount"],
-                                                   price_before_discount,
-                                                   product_lst)
+                                               product["product"].get_price(), product["amount"])
 
             elif product["product"].get_purchase_type() == PurchaseType.AUCTION:
                 purchase = self.purchase_auction(product["product"].get_name(),
-                                                 product["product"].get_price(), product["amount"])
+                                             product["product"].get_price(), product["amount"])
             else:
                 purchase = self.purchase_lottery(product["product"].get_name(),
-                                                 product["product"].get_price(), product["amount"])
+                                             product["product"].get_price(), product["amount"])
 
             if purchase is not None:
                 products_purchases.append(purchase)
@@ -448,21 +450,22 @@ class Store:
         if len(products_purchases) == 0:
             return {'response': None, 'msg': " No purchases can be made"}
         else:
-            return {
-                'response': {"store_name": self.__name, "basket_price": basket_price, "products": products_purchases},
-                'msg': "Success"}
+            return {'response': {"store_name": self.__name, "basket_price": basket_price, "products": products_purchases},
+                    'msg': "Success"}
 
     # u.c 2.8.1
     @logger
-    def purchase_immediate(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
+    def purchase_immediate(self, product_name: str, product_price: int, amount: int):
         """
         :param product_name: product name
         :param product_price: product price
         :param amount: product amount
-        :param basket_price: for checking discount policy.
-        :param prod_lst:  for checking discount policy.
         :return: dictionary {"product_name": str, "product_price": float, "amount": int} or None
         """
+   #     # if self.check_discount_policy(product_name):
+   #     price = self.calculate_discount_price(product_name, product_price, amount)
+   #     return {"product_name": product_name, "product_price": price, "amount": amount}
+  #      # return None
         price = product_price
         for policy in self.__discount_policies:
             if policy.get_product_name() == product_name:
@@ -538,8 +541,7 @@ class Store:
         if self.__operator == "and":
             for policy in self.__purchase_policies:
                 if not policy.can_purchase(details, curr_date):
-                    return {'response': False,
-                            'msg': "Policy: " + policy.get_name() + ", rule not met - for type 'all'"}
+                    return {'response': False, 'msg': "Policy: " + policy.get_name() + ", rule not met - for type 'all'"}
             return {'response': True, 'msg': "Great Success! Good Job!"}
 
         elif self.__operator == "or":
@@ -565,6 +567,23 @@ class Store:
                 return {'response': False, 'msg': "Requested amount for product: "
                                                   + product["product_name"] + ", exceeds amount in inventory"}
         return self.check_purchase_policy(details, curr_date)
+
+    @logger
+    def check_discount_policy(self, product_name: str) -> bool:
+        """
+        :param product_name: product name
+        :return: true if the user can purchase the product, otherwise false
+        """
+        for d in self.__discount_policies:
+            if not d.check_discount(self.__name, product_name):
+                return False
+        return True
+
+    @staticmethod
+    @logger
+    def calculate_discount_price(product_name: str, price: int, amount: int):
+        # once we have functionality for discounts, here we will calculate the discounted price according to the policy
+        return price * amount
 
     @staticmethod
     @logger
@@ -611,7 +630,7 @@ class Store:
     @logger
     def define_purchase_policy(self, details: {"name": str, "products": [str],
                                                "min_amount": int or None, "max_amount": int or None,
-                                               "dates": [dict] or None, "bundle": bool or None}) \
+                                               "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
         :param details: {"name": str,                            -> policy name
@@ -632,7 +651,7 @@ class Store:
     @logger
     def update_purchase_policy(self, details: {"name": str, "products": [str],
                                                "min_amount": int or None, "max_amount": int or None,
-                                               "dates": [dict] or None, "bundle": bool or None}) \
+                                               "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         policy = self.get_policy(details["name"])
         if policy:
@@ -662,187 +681,8 @@ class Store:
     # function for ut teardown
     def reset_policies(self):
         self.__purchase_policies = []
-
     # ------------- purchase policy end --------------
-
-    # ------------- discount policy start --------------
-    def define_discount_policy(self,
-                               percentage: float,
-                               discount_details: {'name': str,
-                                                  'product': str},
-                               discount_precondition: {'product': str,
-                                                       'min_amount': int or None,
-                                                       'min_basket_price': str or None} or None = None
-                               ) \
-            -> {'response': bool, 'msg': str}:
-
-        # Check input validity
-        if not 0 <= percentage <= 100:
-            return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
-
-        discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
-        if discount_details['name'] in discount_policies_names:
-            return {'response': False, 'msg': "Policy already exist."}
-
-        if discount_details['name'].strip() == "":
-            return {'response': False, 'msg': "Illegal policy name."}
-
-        if discount_precondition is None:
-            if self.__inventory.get_product(discount_details['product']) is None:
-                return {'response': False, 'msg': "Product doesn't exist."}
-        else:
-            if (self.__inventory.get_product(discount_details['product']) is None and
-                    discount_details['product'].lower().strip() != "all"):
-                return {'response': False, 'msg': "Product doesn't exist, And the discount isn't on the cart."}
-
-        if discount_precondition is not None:
-            if (self.__inventory.get_product(discount_precondition['product']) is None and
-                    discount_precondition['product'].lower().strip() != "all"):
-                return {'response': False, 'msg': "Precondition product doesn't exist"}
-
-            if (discount_precondition['product'].lower().strip() == "all" and
-                    discount_precondition['min_amount'] is not None):
-                return Response.ret(False, "Can't put min amount condition while the condition is on the entire basket."
-                                    )
-
-            if discount_precondition['min_amount'] is not None:
-                if discount_precondition['min_amount'] < 0:
-                    return {'response': False, 'msg': "Precondition minimum amount should be >= 0"}
-            else:
-                if self.__inventory.get_product(discount_precondition['product']) is not None:
-                    discount_precondition['min_amount'] = 0
-
-            if discount_precondition['min_basket_price'] is not None:
-                if discount_precondition['min_basket_price'] < 0:
-                    return {'response': False, 'msg': "Precondition minimum basket price should be >= 0"}
-            else:
-                if discount_precondition['product'].lower().strip() == "all":
-                    discount_precondition['min_basket_price'] = 0
-
-        if discount_precondition is None:
-            new_policy: DiscountComponent = VisibleDiscountPolicy(percentage, discount_details)
-        else:
-            new_policy: DiscountComponent = ConditionalDiscountPolicy(percentage, discount_details,
-                                                                      discount_precondition)
-        self.__discount_policies.insert(0, new_policy)
-        return {'response': True, 'msg': "Policy added successfully."}
-
-    def update_discount_policy(self, policy_name: str,
-                               percentage: float = -999,
-                               discount_details: {'name': str,
-                                                  'product': str} = None,
-                               discount_precondition: {'product': str,
-                                                       'min_amount': int or None,
-                                                       'min_basket_price': str or None} or None = None
-                               ) \
-            -> {'response': bool, 'msg': str}:
-
-        # Check input validity
-        if not 0 <= percentage <= 100:
-            return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
-
-        discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
-        if policy_name not in discount_policies_names:
-            return {'response': False, 'msg': "Policy doesn't exist."}
-
-        if discount_details is not None:
-            if discount_details['product'] is not None:
-                if self.__inventory.get_product(discount_details['product']) is not None:
-                    return {'response': False, 'msg': "Product doesn't exist"}
-
-            if discount_details['name'] is not None:
-                if discount_details['name'] in discount_policies_names:
-                    return {'response': False, 'msg': "Policy already exist."}
-
-        if discount_precondition is not None:
-            if discount_precondition['product'] is not None:
-                if self.__inventory.get_product(discount_precondition['product']) is not None:
-                    return {'response': False, 'msg': "Precondition product doesn't exist"}
-
-            if discount_precondition['min_amount'] is not None:
-                if discount_precondition['min_amount'] < 0:
-                    return {'response': False, 'msg': "Precondition minimum amount should be >= 0"}
-
-            if discount_precondition['min_basket_price'] is not None:
-                if discount_precondition['min_basket_price'] < 0:
-                    return {'response': False, 'msg': "Precondition minimum basket price should be >= 0"}
-
-        # Update the policy
-        policy: DiscountComponent = None
-        for pol in self.__discount_policies:
-            if pol.get_name() == policy_name:
-                policy = pol
-                break
-        return policy.update(percentage, discount_details, discount_precondition)
-
-    def define_composite_policy(self, policy1_name: str, policy2_name: str, flag: str, percentage: float,
-                                name: str):
-
-        policy1: DiscountComponent = None
-        policy2: DiscountComponent = None
-
-        # Check input validity
-        for policy in self.__discount_policies:
-            if policy.get_name() == policy1_name:
-                policy1 = policy
-            if policy.get_name() == policy2_name:
-                policy2 = policy
-
-        if policy1 is None or policy2 is None:
-            return {'response': False, 'msg': "Policy doesn't exist."}
-
-        if policy1.get_product_name() != policy2.get_product_name():
-            return Response.ret(False, "policy1 product should be the same as policy2 product.")
-
-        flag_as_enum = None
-        if flag.lower().strip() == "and":
-            flag_as_enum = CompositeFlag.AND
-        if flag.lower().strip() == "or":
-            flag_as_enum = CompositeFlag.OR
-        if flag.lower().strip() == "xor":
-            flag_as_enum = CompositeFlag.XOR
-
-        if flag_as_enum is None:
-            return {'response': False, 'msg': "Illegal action between the policies."}
-
-        if not 0 <= percentage <= 100:
-            return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
-
-        discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
-        if name in discount_policies_names:
-            return {'response': False, 'msg': "Policy already exist."}
-
-        # Add the new policy
-        new_policy = DiscountPolicy(jsonpickle.encode(policy1), jsonpickle.encode(policy2),
-                                    flag_as_enum, percentage, name)
-        self.__discount_policies.insert(0, new_policy)
-        self.delete_policy(policy1.get_name())
-        self.delete_policy(policy2.get_name())
-        return {'response': True, 'msg': "Policy added successfully."}
-
-    def get_discount_policy(self, policy_name: str):
-        for pol in self.__discount_policies:
-            if pol.get_name() == policy_name:
-                return Response.ret(jsonpickle.encode(pol), "Successful.")
-
-        return Response.ret(None, "Policy doesn't exist.")
-
-    def delete_policy(self, policy_name: str):
-        policy = None
-        for pol in self.__discount_policies:
-            if pol.get_name() == policy_name:
-                policy = pol
-
-        if policy is None:
-            return Response.ret(False, "Policy doesn't exist.")
-
-        self.__discount_policies.remove(policy)
-        return Response.ret(True, "Policy deleted successfully.")
-
     # ------------- 4.2 --------------
-
-    def get_discount_policies(self):
-        return self.__discount_policies
 
     def __repr__(self):
         return repr("Store")
@@ -856,3 +696,4 @@ class Store:
             return False
 
         return True
+

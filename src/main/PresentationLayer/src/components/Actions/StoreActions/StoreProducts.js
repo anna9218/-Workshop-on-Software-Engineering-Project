@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Link } from 'react-router-dom'
 // import { browserHistory } from "react-router";
 import {Container, Button, Table, Form, InputGroup, FormControl} from 'react-bootstrap'
 import * as theService from '../../../services/communication';
+// import * as BackOption from '../GeneralActions/Back'
 
 
 function StoreProducts(props) {
@@ -130,6 +131,7 @@ function StoreProducts(props) {
           </tbody>
         </Table>
       </div>
+      <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" as={Link} to="/stores" >Back</Button>
     </div>
   );
 }

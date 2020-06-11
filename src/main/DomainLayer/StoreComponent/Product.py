@@ -55,6 +55,9 @@ class Product:
             if type.value == purchase_type:
                 self.__purchase_type = type
 
+    def set_category(self, category):
+        self.__category = category
+
     def set_discount_type(self, discount_type: int):
         for type in DiscountType:
             if type.value == discount_type:

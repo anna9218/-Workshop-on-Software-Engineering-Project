@@ -63,7 +63,8 @@ class GuestRole:
         :return: dict = {'response': [{"store_name": str,
                                       "product_name": str,
                                       "price": int,
-                                      "category": str}],
+                                      "category": str,
+                                      "amount": int}],
                          'msg': str
         """
         loggerStaticMethod("GuestRole.search_products_by", [search_option, string])
@@ -71,7 +72,7 @@ class GuestRole:
 
     # use case 2.5.2
     @staticmethod
-    def filter_products_by(products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
+    def filter_products_by(products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
                            max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
                                                                                                   'msg': str}:
@@ -103,8 +104,7 @@ class GuestRole:
         :return: a list of the filtered product.
                  an empty list if an error occurs.
         """
-        loggerStaticMethod("GuestRole.filter_products_by", [products_ls, filter_by_option, min_price, max_price,
-                                                            category])
+
         return TradeControl.get_instance().filter_products_by(products_ls=products_ls,
                                                               filter_by_option=filter_by_option,
                                                               min_price=min_price,

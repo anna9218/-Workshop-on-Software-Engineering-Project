@@ -7,7 +7,6 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
 import jsonpickle
-import src.main.ResponseFormat as Response
 
 
 class TradeControl:
@@ -169,19 +168,21 @@ class TradeControl:
     @logger
     def get_products_by(self, search_opt: int, string: str) -> {'response': list, 'msg': str}:
         list_of_products = []
+        s: Store
         for s in self.__stores:
             products = s.get_products_by(search_opt, string)
             list(map(lambda product: list_of_products.append({"store_name": s.get_name(),
                                                               "product_name": product.get_name(),
                                                               "price": product.get_price(),
-                                                              "category": product.get_category()}), products))
+                                                              "category": product.get_category(),
+                                                              "amount": s.get_inventory().get_amount(product.get_name())}), products))
         if len(list_of_products) == 0:
             return {'response': list_of_products, 'msg': "Error! There are no results"}
         return {'response': list_of_products, 'msg': "Products was retrieved successfully"}
 
     @logger
     def filter_products_by(self,
-                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str}],
+                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
                            max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
                                                                                                   'msg': str}:
@@ -230,8 +231,12 @@ class TradeControl:
         # filter by Price Range
         if filter_by_option == 1:
             try:
-                ls = list(filter(lambda product_dictionary: min_price <= product_dictionary['price'] <= max_price,
-                                 products_ls))
+                ls = []
+                for p in products_ls:
+                    if p['price'] >= min_price and p['price'] <= max_price:
+                        ls.append(p)
+                # ls = list(filter(lambda product_dictionary: min_price <= product_dictionary['price'] and product_dictionary['price'] <= max_price,
+                #                  products_ls))
                 return {'response': ls, 'msg': "Action Filter by price range was successful"}
             except Exception:
                 return {'response': [], 'msg': "Error in filter action"}
@@ -465,7 +470,11 @@ class TradeControl:
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             purchases = self.__curr_user.get_purchase_history()
             ls = []
-            list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), purchases))
+            list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                 "nickname": purchase.get_nickname(),
+                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                 "total_price": purchase.get_total_price(),
+                                                 "products": purchase.get_products()}), purchases))
             if len(ls) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': ls, 'msg': "Purchase history was retrieved successfully"}
@@ -580,6 +589,13 @@ class TradeControl:
             return {'response': False, 'msg': "Edit product failed."}
         return {'response': False, 'msg': "Edit product failed."}
 
+    def get_product_details(self, store_name, product_name):
+        store = self.get_store(store_name)
+        product = store.get_product(product_name)
+        return {"name": product.get_name(), "price": product.get_price(), "category": product.get_category(),
+                "amount": store.get_inventory().get_amount(product_name),
+                "purchase_type": product.get_purchase_type().name}
+
     @logger
     def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
@@ -606,7 +622,6 @@ class TradeControl:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
-
 
     @logger
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool,
@@ -640,13 +655,19 @@ class TradeControl:
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
 
-    def get_manager_permissions(self, store_name: str) -> list:
+
+    def get_manager_permissions(self, store_name) -> list:
+        """
+        :param store_name:
+        :return: returns the permissions of the current user
+        """
         store: Store = self.get_store(store_name)
-        if store is not None:
-            if store.is_manager(self.__curr_user.get_nickname()):
-                ls = store.get_permissions(self.__curr_user.get_nickname())
-                return ls
-        return []
+        if store is not None and \
+                self.__curr_user.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                store.is_manager(self.__curr_user.get_nickname()):
+            return store.get_permissions(self.__curr_user.get_nickname())
+        return False
 
     @logger
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
@@ -669,6 +690,22 @@ class TradeControl:
                 store.is_manager(appointee_nickname):
             return store.edit_manager_permissions(self.__curr_user, appointee_nickname, permissions)
         return False
+
+    @logger
+    def get_managers_appointees(self, store_name: str) -> list:
+        """
+        returns for the current manager/owner all the managers he appointed
+        :param store_name: name of the store
+        :return: list of the managers nicknames
+        """
+        store: Store = self.get_store(store_name)
+        if store is not None and \
+            self.__curr_user.is_registered() and \
+            self.__curr_user.is_logged_in() and \
+            (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
+                self.__curr_user.get_nickname())):
+            return store.get_managers_appointees(self.__curr_user.get_nickname())
+        return []
 
     @logger
     def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
@@ -808,71 +845,12 @@ class TradeControl:
         return store.update_purchase_policy(details)
 
     @logger
-    def define_discount_policy(self, store_name: str,
-                               percentage: float,
-                               discount_details: {'name': str,
-                                                  'product': str},
-                               discount_precondition: {'product': str,
-                                                       'min_amount': int or None,
-                                                       'min_basket_price': str or None} or None
-                               )\
-            -> {'response': bool, 'msg': str}:
-        store: Store = self.get_store(store_name)
-        if store is None:
-            return {'response': False, 'msg': "Store doesn't exist"}
-        try:
-            return store.define_discount_policy(percentage, discount_details, discount_precondition)
-        except Exception:
-            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+    def define_discount_policy(self, store_name: str, details):
+        pass
 
     @logger
-    def update_discount_policy(self, store_name: str, policy_name: str,
-                               percentage: float = -999,
-                               discount_details: {'name': str,
-                                                  'product': str} = None,
-                               discount_precondition: {'product': str,
-                                                       'min_amount': int or None,
-                                                       'min_basket_price': str or None} or None = None
-                               ) \
-            -> {'response': bool, 'msg': str}:
-        store: Store = self.get_store(store_name)
-        if store is None:
-            return {'response': False, 'msg': "Store doesn't exist"}
-        try:
-            return store.update_discount_policy(policy_name, percentage, discount_details, discount_precondition)
-        except Exception:
-            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
-
-    @logger
-    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str, percentage: float,
-                                name: str):
-        store: Store = self.get_store(store_name)
-        if store is None:
-            return {'response': False, 'msg': "Store doesn't exist"}
-        try:
-            return store.define_composite_policy(policy1_name, policy2_name, flag, percentage, name)
-        except Exception:
-            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
-
-    @logger
-    def get_discount_policy(self, store_name: str, policy_name: str):
-        store: Store = self.get_store(store_name)
-        if store is None:
-            return {'response': False, 'msg': "Store doesn't exist"}
-        try:
-            return store.get_discount_policy(policy_name)
-        except Exception:
-            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
-
-    @logger
-    def delete_policy(self, store_name: str, policy_name: str):
-        store: Store = self.get_store(store_name)
-        if store is None:
-            return {'response': False, 'msg': "Store doesn't exist"}
-        try:
-            return store.delete_policy(policy_name)
-        except Exception:
-            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+    def update_discount_policy(self, store_name: str, details):
+        pass
 
     @staticmethod
     @logger
@@ -958,14 +936,16 @@ class TradeControl:
         # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
     def get_user_type(self):
-        if self.__curr_user in self.__managers:
-            return "MANAGER"
+        if self.__curr_user.get_nickname() is "TradeManager":
+            return "SYS-MANAGER"
         for store in self.__stores:
             if store.is_owner(self.__curr_user.get_nickname()):
                 return "OWNER"
             elif store.is_manager(self.__curr_user.get_nickname()):
                 return "MANAGER"
-        return "SUBSCRIBER"
+            elif self.__curr_user.is_registered():
+                return "SUBSCRIBER"
+        return "GUEST"
 
     def __repr__(self):
         return repr("TradeControl")

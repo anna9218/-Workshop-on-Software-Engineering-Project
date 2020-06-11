@@ -32,6 +32,10 @@ class TradeControlService:
         return TradeControl.get_instance().get_user_type()
 
     @staticmethod
+    def get_product_details(store_name, product_name):
+        return TradeControl.get_product_details(store_name, product_name)
+
+    @staticmethod
     def get_curr_username():
         return TradeControl.get_instance().get_curr_username()
 
@@ -91,10 +95,6 @@ class TradeControlService:
     @staticmethod
     def set_user(nickname: str):
         TradeControl.get_instance().set_curr_user_by_name(nickname)
-
-    @staticmethod
-    def get_manager_permissions(store_name: str):
-        return TradeControl.get_instance().get_manager_permissions(store_name)
 
     def __repr__(self):
         return repr("TradeFacadeService")

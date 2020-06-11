@@ -13,6 +13,7 @@ import {useEffect} from '../../services/Notifications';
 import * as theNotifications from '../../services/Notifications';
 
 
+import * as BackOption from '../Actions/GeneralActions/Back'
 // TODO - display a form to enter new store details. send the entered data to server.
 
 class OpenStore extends React.Component {
@@ -51,7 +52,7 @@ class OpenStore extends React.Component {
 
         // Notifications.username = 'y';
         // Notifications.storename = 's';
-        // <clientWebsocket my_prop={prop} /> - call to useEffect on class clientWebsocket 
+        // <clientWebsocket my_prop={prop} /> - call to useEffect on class clientWebsocket
         // <clientWebsocket />;
       }
     })
@@ -79,7 +80,8 @@ class OpenStore extends React.Component {
           <Form.Control id="open-store-text" value={this.state.storeNameInput} type="text" placeholder="Store name" className="search" onChange={this.storeNameInputHandler}/>
         </Form>
 
-        <Button variant="dark" id="open-store-button" onClick={this.openStoreHandler} style={{marginTop: "1%"}}>Open!</Button>
+        <Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(this.props)} style={{marginTop: "1%"}}>Back</Button>
+        <Button variant="dark" id="open-store-button" onClick={this.openStoreHandler} style={{marginTop: "1%", marginLeft: "1%"}}>Open!</Button>
 
         </Container>
         
