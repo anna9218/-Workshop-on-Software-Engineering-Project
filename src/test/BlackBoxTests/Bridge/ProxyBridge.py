@@ -145,11 +145,29 @@ class ProxyBridge(Bridge):
                                                                 "dates": [dict] or None, "bundle": bool or None}):
         return self._realbridge.define_purchase_policy(store_name, details)
 
-    def update_discount_policy(self):
-        return self._realbridge.update_discount_policy()
+    def update_discount_policy(self, store_name: str, policy_name: str,
+                               percentage: float = -999,
+                               discount_details: {'name': str,
+                                                  'product': str} = None,
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None):
+        return self._realbridge.update_discount_policy(store_name, policy_name, percentage, discount_details,
+                                                       discount_precondition)
 
-    def define_discount_policy(self):
-        return self._realbridge.define_discount_policy()
+    def define_discount_policy(self, store_name: str,
+                               percentage: float,
+                               discount_details: {'name': str,
+                                                  'product': str},
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None
+                               ):
+        return self._realbridge.define_discount_policy(store_name, percentage, discount_details, discount_precondition)
+
+    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float, name: str) -> {}:
+        return self._realbridge.define_composite_policy(store_name, policy1_name, policy2_name, flag, percentage, name)
 
     # 4.3
     # @logger

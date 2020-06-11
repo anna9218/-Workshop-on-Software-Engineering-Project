@@ -54,7 +54,7 @@ class DiscountPolicy(DiscountComponent):
         if discount_details is not None:
             self.__name = discount_details['name']
             self.__product = discount_details['product']
-        return {'response': False, 'msg': "Policy updated successfully."}
+        return {'response': True, 'msg': "Policy updated successfully."}
 
     @logger
     def get_name(self):

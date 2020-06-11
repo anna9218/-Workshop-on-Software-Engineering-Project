@@ -153,10 +153,30 @@ class Bridge(ABC):
                                                                 "dates": [dict] or None, "bundle": bool or None}):
         pass
 
-    def update_discount_policy(self):
+    @abstractmethod
+    def update_discount_policy(self, store_name: str, policy_name: str,
+                               percentage: float = -999,
+                               discount_details: {'name': str,
+                                                  'product': str} = None,
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None):
         pass
 
-    def define_discount_policy(self):
+    @abstractmethod
+    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float, name: str) -> {}:
+        pass
+
+    @abstractmethod
+    def define_discount_policy(self, store_name: str,
+                               percentage: float,
+                               discount_details: {'name': str,
+                                                  'product': str},
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None
+                               ):
         pass
 
     # add store owner functions
