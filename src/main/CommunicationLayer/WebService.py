@@ -1,7 +1,10 @@
+import jsonpickle
 from flask import Flask, request
 # import os
 from flask_cors import CORS
 from flask import jsonify
+from dateutil.parser import *
+# from dateutil import parser
 
 # from src.main.CommunicationLayer import WebSocketService
 from src.main.CommunicationLayer.StorePublisher import StorePublisher
@@ -197,7 +200,7 @@ def get_manager_permissions():
 @app.route('/get_owned_stores', methods=['GET'])
 def get_owned_stores():
     response = StoreOwnerOrManagerRole.get_owned_stores()
-    return jsonify(data=response["response"], msg=response["msg"])
+    return jsonify(data=response)
 
 
 @app.route('/appoint_store_manager', methods=['POST'])
@@ -225,6 +228,19 @@ def remove_manager():
     return jsonify(msg="Oops, communication error")
 
 
+@app.route('/remove_owner', methods=['POST'])
+def remove_owner():
+    if request.is_json:
+        request_dict = request.get_json()
+        appointee_nickname = request_dict.get('nickname')  # str
+        store_name = request_dict.get('store_name')  # str
+        response = StoreOwnerOrManagerRole.remove_owner(appointee_nickname, store_name)
+        if response:
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="Oops, communication error--")
+# remove_owner(self, appointee_nickname: str, store_name: str)
+
+
 @app.route('/appoint_store_owner', methods=['POST'])
 def appoint_store_owner():
     if request.is_json:
@@ -242,7 +258,17 @@ def get_managers_appointees():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        response = StoreOwnerOrManagerRole.get_managers_appointees(store_name)
+        response = StoreOwnerOrManagerRole.get_appointees(store_name, "MANAGERS")
+        return jsonify(data=response)
+    return jsonify(data=[])
+
+
+@app.route('/get_owners_appointees', methods=['POST'])
+def get_owners_appointees():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        response = StoreOwnerOrManagerRole.get_appointees(store_name, "OWNERS")
         return jsonify(data=response)
     return jsonify(data=[])
 
@@ -288,6 +314,16 @@ def edit_manager_permissions():
     return jsonify(msg="Oops, communication error.")
 
 
+@app.route('/view_store_purchases_history', methods=['POST'])
+def view_store_purchases_history():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        response = StoreOwnerOrManagerRole.display_store_purchases(store_name)
+        return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error.", data=[])
+
+
 @app.route('/get_policies', methods=['POST'])
 def get_policies():
     if request.is_json:
@@ -299,6 +335,65 @@ def get_policies():
 
     return jsonify(msg="Oops, communication error.")
 
+
+@app.route('/get_purchase_operator', methods=['POST'])
+def get_purchase_operator():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        response = StoreOwnerOrManagerRole.get_purchase_operator(store_name)
+        if response == "xor" or response == "and" or response == "or":
+            return jsonify(msg="Retrieved purchases policies operator successfully!", data=response)
+
+    return jsonify(msg="Oops, communication error.")
+
+
+@app.route('/set_purchase_operator', methods=['POST'])
+def set_purchase_operator():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')  # str
+        operator = request_dict.get('operator')  # str
+        response = StoreOwnerOrManagerRole.set_purchase_operator(store_name, operator)
+        return jsonify(msg="Retrieved purchases policies operator successfully!", data=response)
+
+    return jsonify(msg="Oops, communication error.")
+
+
+from datetime import datetime
+
+
+@app.route('/add_purchase_policy', methods=['POST'])
+def add_purchase_policy():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        policy_name = request_dict.get('policy_name')
+        products = request_dict.get('products')
+        min_amount = request_dict.get('min_amount')
+        max_amount = request_dict.get('max_amount')
+        bundle = request_dict.get('bundle')
+        string_dates = request_dict.get('dates')
+        dates = []
+        # convert string to dates
+        if string_dates is None:
+            dates = None
+        else:
+            for date in string_dates:
+                dates += [parse(date)]
+
+        details = {"name": policy_name, "products": products,
+                    "min_amount": min_amount, "max_amount": max_amount,
+                    "dates": dates, "bundle": bundle}
+        response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
+        return jsonify(msg=response['msg'], data=response['response'])
+
+    return jsonify(msg="Oops, communication error.")
+
+    # def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
+    #                                                             "min_amount": int or None, "max_amount": int or None,
+    #                                                             "dates": [dict] or None, "bundle": bool or None})\
+    #         -> {'response': bool, 'msg': str}:
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -325,9 +420,13 @@ def edit_product():
         category = request_dict.get('category')
         purchase_type = request_dict.get('purchase_type')
 
-        if new_product_name is not None:
-            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "name", new_product_name)["response"]:
-                errors.append("Product Name")
+        # if new_product_name is not None and new_product_name == "":
+        #     return jsonify(msg="Oops, product's name can't be an emtpy string.")
+        # if amount is not None p amount < 0:
+        #     return jsonify(msg="Oops, product's amount can't be smaller than 0.")
+        # if price < 0:
+        #     return jsonify(msg="Oops, product's amount can't be smaller than 0.")
+
         if amount is not None:
             if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "amount", amount)["response"]:
                 errors.append("Product Amount")
@@ -340,6 +439,9 @@ def edit_product():
         if purchase_type is not None:
             if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "purchase_type", purchase_type)["response"]:
                 errors.append("Purchase Type")
+        if new_product_name is not None:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "name", new_product_name)["response"]:
+                errors.append("Product Name")
 
         error_str = ""
         for error in errors:
@@ -393,7 +495,8 @@ def open_store():
         # TODO - add some func at websocket that registers the owner
         # WebSocketService.open_store(store_name, SubscriberRole.username, result)
         # if response:
-        open_store(TradeControlService.get_curr_username(), store_name)
+        # TODO: ask yarin about that
+        # open_store(TradeControlService.get_curr_username(), store_name)
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened.")
 
@@ -421,18 +524,6 @@ def view_user_purchase_history():
     #         return jsonify(msg="success", data=response)
     # return jsonify(msg="fail", data=response)
     return jsonify(data=["user_purchase1", "user_purchase2"])
-
-
-@app.route('/view_store_purchases_history', methods=['POST'])
-def view_store_purchases_history():
-    if request.is_json:
-        request_dict = request.get_json()
-        store_name = request_dict.get('store_name')
-    #     response = SystemManagerRole.view_store_purchases_history(store_name)
-    #     if response:  # if not None
-    #         return jsonify(msg="success", data=response)
-    # return jsonify(msg="fail", data=response)
-    return jsonify(data=["store_purchase1", "store_purchase2"])
 
 
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#

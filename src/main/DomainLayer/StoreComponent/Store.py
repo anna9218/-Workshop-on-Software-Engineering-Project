@@ -122,14 +122,15 @@ class Store:
             if op == "name":
                 return self.change_name(product_name, new_value)
             elif op == "price":
-                return self.change_price(product_name, new_value)
+                return self.change_price(product_name, float(new_value))
             elif op == "amount":
-                return self.change_amount(product_name, new_value)
-            elif op == "purchase_policy":
+                return self.change_amount(product_name, int(new_value))
+            elif op == "purchase_type":
                 self.get_product(product_name).set_purchase_type(new_value)
                 return True
             elif op == "category":
                 self.get_product(product_name).set_category(new_value)
+                return True
             else:
                 return False
         return False
@@ -166,16 +167,23 @@ class Store:
             return True
         return False
 
-    def get_managers_appointees(self, appointer_nickname: str) -> list:
+    def get_appointees(self, appointer_nickname: str, managers_or_owners: str) -> list:
         """
         :param appointer_nickname:
+        :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
         :return: returns a list of nicknames, of all the managers appointer_nickname appointed
         """
-        ls = []
-        for appointment in self.__StoreManagerAppointments:
-            if appointment.get_appointer().get_nickname() == appointer_nickname:
-                ls.append(appointment.get_appointee().get_nickname())
-        return ls
+        appointees_ls = []
+        if managers_or_owners == "OWNERS":
+            appointees_ls = self.__StoreOwnerAppointments
+        if managers_or_owners == "MANAGERS":
+            appointees_ls = self.__StoreManagerAppointments
+        my_appointees = []
+        for appointment in appointees_ls:
+            if appointment.get_appointer() is not None and \
+                    appointment.get_appointer().get_nickname() == appointer_nickname:
+                my_appointees.append(appointment.get_appointee().get_nickname())
+        return my_appointees
 
     @logger
     def change_amount(self, product_name: str, new_amount: int) -> bool:
@@ -675,6 +683,9 @@ class Store:
     def set_purchase_operator(self, operator: str):
         self.__operator = operator
 
+    def get_purchase_operator(self):
+        return self.__operator
+
     def purchase_policy_exists(self, details: {"name": str, "products": [str],
                                                "min_amount": int or None, "max_amount": int or None,
                                                "dates": [dict] or None, "bundle": bool or None}):
@@ -697,7 +708,7 @@ class Store:
     @logger
     def define_purchase_policy(self, details: {"name": str, "products": [str],
                                                "min_amount": int or None, "max_amount": int or None,
-                                               "dates": [dict] or None, "bundle": bool or None})\
+                                               "dates": [datetime] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
         :param details: {"name": str,                            -> policy name

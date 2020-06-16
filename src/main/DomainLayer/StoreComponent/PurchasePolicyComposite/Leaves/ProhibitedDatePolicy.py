@@ -6,12 +6,12 @@ from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchaseCompone
 
 class ProhibitedDatePolicy(PurchaseComponent):
 
-    def __init__(self, dates: [dict], products: [str]):
+    def __init__(self, dates: [datetime], products: [str]):
         super().__init__()
         self._name = "dates"
-        self.__bad_dates: [datetime] = []
-        for d in dates:
-            self.__bad_dates.append(jsonpickle.decode(d))
+        self.__bad_dates: [datetime] = dates
+        # for d in dates:
+            # self.__bad_dates.append(jsonpickle.decode(d))
         self.__products = products
 
     def can_purchase(self, details: [{"product_name": str, "amount": int}], curr_date: datetime) -> bool:

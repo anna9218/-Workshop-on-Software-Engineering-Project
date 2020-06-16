@@ -15,7 +15,7 @@ def run_client():
     command_prefix = "cmd /c"
 
     # Run server command
-    command_suffix = '\"set HTTPS=' + is_https + '&&npm start\"' # notice the \" inside the string
+    command_suffix = '\"set HTTPS=' + is_https + '&&npm start\"'    # notice the \" inside the string
 
     # Execute command
     os.system(command_prefix + " " + command_suffix)
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     # Init & Execute threads
     try:
-        thread.start_new_thread(run_server, ()) # (<func pointer>, (<params as tuple>))
+        thread.start_new_thread(run_server, ())   # (<func pointer>, (<params as tuple>))
         thread.start_new_thread(run_client, ())
     except Exception:
         print("Error: unable to start thread")

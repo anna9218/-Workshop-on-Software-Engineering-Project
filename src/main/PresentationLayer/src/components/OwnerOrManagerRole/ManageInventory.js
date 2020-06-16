@@ -40,14 +40,21 @@ function ManageInventory(props){
 
     return (
         <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-          <h1>Manage Inventory</h1>
+          <h2>Manage Inventory</h2>
 
             <Container> 
-                <h1>Store: {selectedStore}</h1>
-                <Button variant="dark" id="add_product-button" onClick={addProductsHandler}>Add Products</Button>
-                <Button variant="dark" id="delete-product-button" onClick={removeProductsHandler}>Remove Products</Button>
-                <Button variant="dark" id="edit-product-button" onClick={editProductsHandler}>Edit Products Details</Button>
+            <div style={{marginTop:"3%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
 
+                <h3 style={{marginTop:"2%"}}>Store: {selectedStore}</h3>
+                <Form style={{marginRight:"5%" , marginLeft: "5%", marginBottom:"2%"}}>
+                    <Row><Form.Check onClick={addProductsHandler} type="radio" label="Add Products" name="formHorizontalRadios" id="Radios1"/>
+                    </Row>
+                    <Row><Form.Check inline onClick={removeProductsHandler} type="radio" label="Remove Products" name="formHorizontalRadios"id="Radios2"/>
+                    </Row>
+                    <Row><Form.Check inline onClick={editProductsHandler} type="radio" label="Edit Products Details" name="formHorizontalRadios"id="Radios3"/>
+                    </Row>
+                </Form>
+            </div>
             <div style={{marginTop: "5%"}}>
                 { showAddForm ? <AddProductsForm storeName={selectedStore} history={props.location.props} /> : null }
             </div>

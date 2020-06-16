@@ -1,9 +1,9 @@
 import React from 'react';
-import {Container, Button, Jumbotron, Form} from 'react-bootstrap'
+import {Container, Button, Row, Form} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import * as theService from '../../services/communication';
-
+import * as BackOption from '../Actions/GeneralActions/Back';
 
 class Login extends React.Component{
     constructor(props) {
@@ -75,43 +75,43 @@ class Login extends React.Component{
 
   render(){
     return (
-      <div style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
-        <h1>Login</h1>
-        <form className='login'>
-         <input id="email" type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
-             <input id="password" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
-             <Link to='/'>
-                 {/* <Button variant="dark" id="regbtn" onClick={this.handleLogin}>Login</Button> */}
-             <button type="button" onClick={this.handleLogin}>
-               Login
-               </button>
-             </Link>
-         </form>
-         <Button variant="secondary" style={{marginTop: "1%"}} as={Link} to="./register">
-                Register
-          </Button>
-         </div>);
+
+         <div style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
+         <div style={{marginTop:"1%"}}>
+             <h2>Login </h2>
+         </div>
+         <div style={{marginTop:"0.5%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
+             <Form >
+                 <fieldset>
+                     <Form.Group as={Row} >
+                         <Form.Label as="legend" column sm={6}>
+                             Please enter a unique nickname and password:
+                         </Form.Label>
+                        <Form.Control style={{marginRight:"3%" , marginLeft: "3%"}} type="text" id="email" name="email" placeholder="Nickname" value={this.state.email} onChange={this.handleEmailChange} />
+                         <Form.Control style={{marginTop:"1%", marginRight:"3%" , marginLeft: "3%"}} type="password" id="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
+                     </Form.Group>
+                 </fieldset>
+                 <Form.Group as={Row} style={{marginRight:"1%" , marginLeft: "1%"}}>
+                     <Button type="reset" variant="dark" disabled={this.state.email === "" | this.state.password === ""} onClick={this.handleLogin} to='/'>Login</Button>
+
+                 </Form.Group>
+             </Form>
+         </div>
+         <div style={{marginTop:"1%" , marginLeft: "25%", marginRight: "25%"}}>
+             <Form >
+                 <Form.Group as={Row} style={{marginRight:"1%" , marginLeft: "1%"}}>
+                 <div><Button variant="dark" as={Link} to="./register">Register</Button></div>
+                 <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div>
+                 </Form.Group>
+             </Form>
+         </div>
+
+     </div>
+         
+    );
+   
   }
 }
-
-
-
-        {/* <Container>
-            <Form onSubmit={this.handleLogin}>
-            <Form.Group controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control inputRef={nickname => this.state.nickname = nickname} type="email" placeholder="Enter email" />
-            </Form.Group>
-
-            <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control inputRef={password => this.state.password = password} type="password" placeholder="Password" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-                Login
-            </Button>
-            </Form>
-          </Container> */}
 
 
 export default Login;

@@ -28,30 +28,6 @@ import * as theService from '../../services/communication';
 
 function GuestRoleAPI(props){
 
-    const [searchOption, setSearchOption] = useState(0);
-    const [searchInput, setSearchInput] = useState('');
-    const [categories, setCategories] = useState([]);
-
-    const byNameHandler = () =>{
-        setSearchOption(1);
-    };
-    const byKeywordHandler = () =>{
-        setSearchOption(2);
-    };
-    const byCategoryHandler = (input) =>{
-        setSearchOption(3);
-        setSearchInput(input);
-    };
-    const searchInputHandler = (event) =>{
-        setSearchInput(event.target.value);
-    };
-
-    // for the search functionality
-    const fetchCategories = async () =>{
-        const promise = theService.getCategories(); // goes to register.js and sends to backend
-        promise.then((data) => {setCategories(data["data"])});
-    };
-    
     return(
 
         <Container style={{width: props["screenWidth"], height: props["screenHeight"]}}>
@@ -62,16 +38,9 @@ function GuestRoleAPI(props){
                     <h1 style={{textAlign: "center"}}>Welcome to the Trade Contol Where dreams come true!</h1>
                 </Col>
                 <Col>
-                <Link to='/register'>
-                    <Button variant="dark" id="regbtn">Register</Button>
-                </Link>
-                <Link to='/login'>
-                    <Button variant="dark" id="loginbtn">Login</Button>
-                </Link>
                 </Col>
             </Row>
         </Jumbotron>
-
             
                 {/*
                         // for guest only
@@ -84,29 +53,14 @@ function GuestRoleAPI(props){
                         5. save products to basket -> in shopping cart
                         6. view and update shopping cart -> in shopping cart
                     */}
-
              
         <Row>
-            <Button variant="secondary" size="lg" block as={Link} to="/stores">
-                Display Stores And Products Information
-            </Button>
+            <Button variant="secondary" size="lg" block as={Link} to="/register"> Register </Button>
+            <Button variant="secondary" size="lg" block as={Link} to="/login"> Login </Button>
+            <Button variant="secondary" size="lg" block as={Link} to="/stores"> Display Stores And Products Information </Button>
 
-            {/* <Link to='/stores'>
-                <Button variant="dark" id="displaystores">Display Stores</Button>
-            </Link> */}
-                    
-            {/* <Link to='/purchase'>
-                <Button variant="dark" id="purchasesbtn">Purchase Products</Button>
-            </Link> */}
-                    
-            {/* <Link to='/viewcart'>
-                <Button variant="dark" id="viewcartbtn">View Shopping Cart</Button>
-            </Link> */}
-
-
-
-            </Row>
-            </Container>
+        </Row>
+        </Container>
     );
 }
 

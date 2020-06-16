@@ -29,7 +29,7 @@ class PurchasePolicy(PurchaseComponent):
         return True
 
     def add_purchase_policy(self, details: {"name": str, "products": [str], "min_amount": int or None,
-                                            "max_amount": int or None, "dates": [dict] or None,
+                                            "max_amount": int or None, "dates": [datetime] or None,
                                             "bundle": bool or None}) -> {'response': bool, 'msg': str}:
         """
             add new purchase policy. current policies available are: grouped products, prohibited dates,
@@ -61,7 +61,7 @@ class PurchasePolicy(PurchaseComponent):
     @staticmethod
     def __get_policy_type(
             details: {"name": str, "products": [str], "min_amount": int or None, "max_amount": int or None,
-                      "dates": [dict] or None, "bundle": bool or None}) \
+                      "dates": [datetime] or None, "bundle": bool or None}) \
             -> {'response': [PurchaseComponent] or [], 'msg': str}:
         """
         :param details:{"name": str,                             -> policy name

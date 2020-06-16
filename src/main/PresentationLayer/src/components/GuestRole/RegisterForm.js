@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import {browserHistory} from 'react-router';
-import {Container, Button, Form} from 'react-bootstrap'
+import {Container, Button, Form, Row, Col} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-import {Link, useHistory, Redirect} from 'react-router-dom'
+import {Link, useHistory, Redirect} from 'react-router-dom';
+import * as BackOption from '../Actions/GeneralActions/Back';
 
 // function RegisterForm(){
 //     useEffect(() => {
@@ -65,49 +66,38 @@ class RegisterForm extends React.Component{
     render(){
         return (
             <div style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
-            <h1>Registration</h1>
-            <form className='register'>
-              <input type="text" id="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleEmailChange} />
-              <input type="password" id="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
-              <Link to='/'>
-                 {/* <Button variant="dark" id="regbtn">Register</Button> */}
-              <button type="button" onClick={this.handleRegister}>Register</button>
-              </Link>
-            </form>
-
-            <Button variant="secondary" style={{marginTop: "1%"}} as={Link} to="./login">
-                Login
-            </Button>
-
-
-
-
-            {/* <Container>
-            <Form onSubmit={this.handleRegister}>
-            <Form.Group controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control inputRef={nickname => this.state.nickname = nickname} type="email" placeholder="Enter email" />
-                <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-                </Form.Text>
-            </Form.Group>
-
-            <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control inputRef={password => this.state.password = password} type="password" placeholder="Password" />
-                <Form.Text className="text-muted">
-                Password must contain at least 6 characters.
-                </Form.Text>
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="I accept the terms and conditions" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-                Register
-            </Button>
-            </Form>
-            </Container> */}
+            <div style={{marginTop:"1%"}}>
+                <h2>Registration </h2>
             </div>
+            <div style={{marginTop:"0.5%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
+                <Form >
+                    <fieldset>
+                        <Form.Group as={Row} >
+                            <Form.Label as="legend" column sm={6}>
+                                Please enter a unique nickname and password:
+                            </Form.Label>
+                           <Form.Control style={{marginRight:"3%" , marginLeft: "3%"}} type="text" id="email" name="email" placeholder="Nickname" value={this.state.email} onChange={this.handleEmailChange} />
+                            <Form.Control style={{marginTop:"1%", marginRight:"3%" , marginLeft: "3%"}} type="password" id="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
+                        </Form.Group>
+                    </fieldset>
+                    <Form.Group as={Row} style={{marginRight:"1%" , marginLeft: "1%"}}>
+                        <Button type="reset" variant="dark" disabled={this.state.email === "" | this.state.password === ""} onClick={this.handleRegister} to='/'>Register</Button>
+
+                    </Form.Group>
+                </Form>
+            </div>
+            <div style={{marginTop:"1%" , marginLeft: "25%", marginRight: "25%"}}>
+                <Form >
+                    <Form.Group as={Row} style={{marginRight:"1%" , marginLeft: "1%"}}>
+                    <div><Button variant="dark" as={Link} to="./login">Login</Button></div>
+                    <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div>
+                    </Form.Group>
+                </Form>
+            </div>
+
+        </div>
+
+            
         );
     }
 }

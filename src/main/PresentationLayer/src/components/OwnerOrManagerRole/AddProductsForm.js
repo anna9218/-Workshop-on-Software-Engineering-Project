@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Container, Button, Form} from 'react-bootstrap'
+import {Container, Button, Form, Row} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import * as BackOption from '../Actions/GeneralActions/Back'
 import { confirmAlert } from 'react-confirm-alert'; 
@@ -16,7 +16,6 @@ function AddProductsForm(props){
   const [purchaseType, setPurchaseType] = useState(null);
 
   const addProductHandler = async () =>{
-    // alert(storeName)
     const promise = theService.addProduct(props.storeName, productName, productPrice, productCategory, productAmount, purchaseType); // goes to register.js and sends to backend
     promise.then((data) => {
       if(data !== undefined){
@@ -85,13 +84,13 @@ function AddProductsForm(props){
             })}/>
 
             <Form.Label>Enter the purchase type:</Form.Label>
-
-            <div key={`inline-checkbox`} className="mb-3" style={{border: "1px solid", borderColor: "#CCCCCC"}}>
-              <Form.Check inline label="Immidiate Purcahse" checked={purchaseType !== null} type="checkbox" id={`immidiate-purchase`} onChange={(event => {setPurchaseType(0)})} />
-              <Form.Check inline label="Auction Purchase" type="checkbox" id={`auction-purchase`} onChange={(event => {setPurchaseType(1)})} />
-              <Form.Check inline label="Lottery Purchase" type="checkbox" id={`lottery-purchase`} onChange={(event => {setPurchaseType(2)})}/>
+            <div key={`inline-checkbox`} className="mb-3" style={{ border: "1px solid", borderColor: "#CCCCCC"}}>
+              <div style={{marginLeft:"2%"}}>
+                <Row><Form.Check inline label="Immidiate Purcahse" type="radio" id={`immidiate-purchase`} name="formHorizontalRadios" onChange={(event => {setPurchaseType(0)})} /></Row>
+                <Row><Form.Check inline label="Auction Purchase" type="radio" id={`auction-purchase`} name="formHorizontalRadios" onChange={(event => {setPurchaseType(1)})} /></Row>
+                <Row><Form.Check inline label="Lottery Purchase" type="radio" id={`lottery-purchase`} name="formHorizontalRadios" onChange={(event => {setPurchaseType(2)})}/></Row>
+              </div>
             </div>
-
             {/* <Form.Check type="checkbox" label="Add Discount Type" onChange={handleShowDiscount} style={{position: "relative", right: "43%"}}/> */}
 
             {/* <ShowDiscount showDiscount={showDiscount} setDiscountType={setDiscountType} discountType={discountType} setDiscountPercentage={setDiscountPercentage} /> */}

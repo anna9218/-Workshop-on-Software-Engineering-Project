@@ -525,7 +525,7 @@ class TradeControl:
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     # @logger
     def add_products(self, store_name: str,
-                     products_details: [{"name": str, "price": int, "category": str, "amount": int,
+                     products_details: [{"name": str, "price": float, "category": str, "amount": int,
                                          "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
@@ -717,10 +717,11 @@ class TradeControl:
         return False
 
     @logger
-    def get_managers_appointees(self, store_name: str) -> list:
+    def get_appointees(self, store_name: str, managers_or_owners: str) -> list:
         """
         returns for the current manager/owner all the managers he appointed
         :param store_name: name of the store
+        :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
         :return: list of the managers nicknames
         """
         store: Store = self.get_store(store_name)
@@ -729,7 +730,7 @@ class TradeControl:
             self.__curr_user.is_logged_in() and \
             (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
                 self.__curr_user.get_nickname())):
-            return store.get_managers_appointees(self.__curr_user.get_nickname())
+            return store.get_appointees(self.__curr_user.get_nickname(), managers_or_owners)
         return []
 
     @logger
@@ -766,9 +767,15 @@ class TradeControl:
                 (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
             # if not store.get_purchases(self.__curr_user.get_nickname()):
             #     return {'response': [], 'msg': "There are no previous purchases"}
+            purchases = store.get_purchases(self.__curr_user.get_nickname())
             lst = []
-            list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
-                     store.get_purchases(self.__curr_user.get_nickname())))
+            list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
+                                                 "nickname": purchase.get_nickname(),
+                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                 "total_price": purchase.get_total_price(),
+                                                 "products": purchase.get_products()}), purchases))
+            # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
+            #          store.get_purchases(self.__curr_user.get_nickname())))
             if len(lst) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': lst, 'msg': "Purchase history was retrieved successfully"}
@@ -805,9 +812,19 @@ class TradeControl:
         store.set_purchase_operator(operator)
 
     @logger
+    def get_store_purchase_operator(self, store_name: str):
+        """
+            returns purchase policies operator of the store
+        :param store_name:
+        :return: and/or/xor
+        """
+        store: Store = self.get_store(store_name)
+        return store.get_purchase_operator()
+
+    @logger
     def define_purchase_policy(self, store_name: str,
                                details: {"name": str, "products": [str], "min_amount": int or None,
-                                         "max_amount": int or None, "dates": [dict] or None, "bundle": bool or None}) \
+                                         "max_amount": int or None, "dates": [datetime] or None, "bundle": bool or None}) \
             -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
@@ -828,10 +845,10 @@ class TradeControl:
         if details.get("products") is None \
                 or details.get("name") is None \
                 or not self.at_least_one(details, False):
-            return {'response': False, 'msg': "Policy name, product(s) and at least one rule must be added"}
+            return {'response': False, 'msg': "Error! Policy name, product(s) and at least one rule must be added"}
 
         if store.purchase_policy_exists(details):
-            return {'response': False, 'msg': "A policy by the given name already exist"}
+            return {'response': False, 'msg': "Error! A policy by the given name already exist, or a policy with the same details exists."}
 
         if not store.is_owner(self.__curr_user.get_nickname()):
             return {'response': False, 'msg': "Oopsie poopsie...User un-authorized for this action"}
@@ -961,15 +978,24 @@ class TradeControl:
         # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
     def get_user_type(self):
+        roles = []
         if self.__curr_user.get_nickname() is "TradeManager":
             return "SYS-MANAGER"
+        if self.__curr_user.is_registered():
+            roles.append("SUBSCRIBER")
         for store in self.__stores:
             if store.is_owner(self.__curr_user.get_nickname()):
-                return "OWNER"
+                roles.append("OWNER")
             elif store.is_manager(self.__curr_user.get_nickname()):
-                return "MANAGER"
-            elif self.__curr_user.is_registered():
-                return "SUBSCRIBER"
+                roles.append("MANAGER")
+
+
+        if "OWNER" in roles:
+            return "OWNER"
+        if "MANAGER" in roles:
+            return "MANAGER"
+        if "SUBSCRIBER" in roles:
+            return "SUBSCRIBER"
         return "GUEST"
 
     def __repr__(self):

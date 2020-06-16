@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Navbar, Nav,Form, FormControl, Button,  NavDropdown, Dropdown} from 'react-bootstrap';
+import {Navbar, Nav,Form, FormControl, Button, Col,  NavDropdown, Dropdown} from 'react-bootstrap';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import './App.css';
 import * as theService from './services/communication';
 import BackToHome from './components/Actions/GeneralActions/Back'
+import { IoMdCart, IoMdSearch, IoMdHome} from "react-icons/io";
+import { FaSistrix, FaCartArrowDown, Fahome, FaCartPlus, FaShareSquare } from "react-icons/fa";
 
 // import Nav from './components/Nav'
 // guest
@@ -19,7 +21,7 @@ import PurchaseProducts from './components/Actions/ShoppingCartActions/PurchaseP
 import StoreDetail from './components/Actions/StoreActions/StoreDetail'
 import StoreProducts from './components/Actions/StoreActions/StoreProducts'
 import SearchAndFilterProducts from './components/GuestRole/SearchAndFilterProducts';
-// import SearchResults from './components/Actions/ShoppingCartActions/SearchResults'
+import RemoveOwner from './components/OwnerOrManagerRole/RemoveOwner'
 
 // subscriber
 import SubscriberAPI from './components/SubscriberRole/SubscriberAPI'
@@ -37,6 +39,8 @@ import RemoveManager from './components/OwnerOrManagerRole/RemoveManager'
 import EditPermissions from './components/OwnerOrManagerRole/EditPermissions'
 import ManageStorePolicies from './components/OwnerOrManagerRole/ManageStorePolicies'
 import DisplayNotifications from './components/OwnerOrManagerRole/Notifications'
+import StorePurchaseHistory from './components/OwnerOrManagerRole/StorePurchaseHistory'
+import AddPurchaseForm from './components/OwnerOrManagerRole/AddPurchaseForm'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
@@ -106,52 +110,43 @@ class App extends React.Component{
                {/* this space is currently only a filer for navbar decoration */}
             </Nav>
 
-            {/* <Nav id="navbar-nav" className="mr-auto" style={{float: "right"}}> */}
             <div style={{marginRight: "1%"}}>
               <Link to={{pathname:'/viewcart', history: this.props}}>
-                <Button variant="outline-info" id="navbar-shopping-cart">Shopping Cart</Button>
+                <IoMdHome class='fa-icon-effect' color='white'/>
+               {/* <Button class='fa-icon-effect' style={{marginTop: "1%"}} variant="outline-info" id="back-btn" onClick={event => BackToHome(this.props)}>Back</Button> */}
+
               </Link>
             </div>
 
+           
+            {/* <Nav id="navbar-nav" className="mr-auto" style={{float: "right"}}> */}
+           
             <Form inline id="form">
-              {/* <Form.Control id="form-search-text" type="text" placeholder="Search" className="search" value={searchInput} onChange={searchInputHandler}/> */}
-             {/* <Dropdown>
-                  <Dropdown.Toggle variant="outline-info" id="dropdown-searchby">
-                      By
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu variant="outline-info" id="form-dropdown-menu">
-                        <Dropdown.Item id="form-dropdown-item1" href="#/action-1" onClick={byNameHandler} variant="dark">By Name</Dropdown.Item>
-                        <Dropdown.Item id="form-dropdown-item2" href="#/action-2" onClick={byKeywordHandler} variant="dark">By Keyword</Dropdown.Item>
 
-                        <Dropdown drop='left' onClick={fetchCategories}>
-                              <Dropdown.Toggle variant="outline-info" id="form-dropdown-item3">
-                                  By Category
-                              </Dropdown.Toggle>
+              <Col style={{marginLeft:"82%"}}>
+                  <Link to={{pathname:'/viewcart', history: this.props}} >
+                       <IoMdCart class="fa-icon-effect" data-toggle="tooltip" data-placement="bottom" title="Shopping cart" size="90%" variant="outline-info" color='white'/>
+                  </Link>
+              </Col>
+              <Col>
+                <Link to={{
+                  pathname:'/searchandfilter',
+                  state: {
+                      searchOption: this.state.searchOption,
+                      input: this.state.searchInput,
+                      categories: this.state.categories
+                  }}} > <IoMdSearch  class="fa-icon-effect" data-toggle="tooltip" data-placement="bottom" title="Search" size="90%" color='white'/>
+                </Link>
+              </Col>
+            </Form>
 
-                              <Dropdown.Menu id="form-category-dropdown" variant="dark">
-                                  {categories.map(category => (
-                                      <Dropdown.Item variant="dark" onClick={e => byCategoryHandler(category)}>{category}</Dropdown.Item>
-                                  ))}
-                              </Dropdown.Menu>
+           
+            
 
-                        </Dropdown>
-                  </Dropdown.Menu>
-               </Dropdown> */}
+           {/* </div> */}
 
-          <Link to={{
-            pathname:'/searchandfilter',
-            state: {
-                searchOption: this.state.searchOption,
-                input: this.state.searchInput,
-                categories: this.state.categories
-            }
-            }}>
-              <Button id="form-search-button" variant="outline-info">Search</Button>
-            </Link>
-
-          </Form>
         </Navbar>
-
+        
         <Switch>
           {/* guest */}
           <Route path="/" exact render={(props) => <GuestRoleAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
@@ -182,6 +177,9 @@ class App extends React.Component{
           <Route path="/editpermissions" exact render={(props) => <EditPermissions screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/removemanager" exact render={(props) => <RemoveManager screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/managestorepolicies" exact render={(props) => <ManageStorePolicies screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/removeowner" exact render={(props) => <RemoveOwner screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/storehistory" exact render={(props) => <StorePurchaseHistory screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/addpurchase" exact render={(props) => <AddPurchaseForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
           {/* owner */}
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />

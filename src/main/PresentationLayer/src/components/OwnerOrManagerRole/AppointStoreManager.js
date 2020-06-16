@@ -45,22 +45,26 @@ function AppointStoreManager(props){
             <Form.Label>Select permissions:</Form.Label>
             
             <div>
-            <div key={`inline-checkbox`} className="mb-3" style={{border: "1px solid", borderColor: "#CCCCCC"}}>
-              <Form.Check style = {{position: "sticky"}} label="Manage Stock" type="checkbox" id={`auction-purchase`} onChange={(event => {addPermissions(1)})} />
-              <Form.Check style = {{position: "sticky"}}  label="Manage Store policies" type="checkbox" id={`auction-purchase`} onChange={(event => {addPermissions(2)})} />
-              <Form.Check style = {{position: "sticky"}}  label="Appoint Additional Owner" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(3)})}/>
-              <Form.Check style = {{position: "sticky"}}  label="Appoint Additional Manager" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(5)})}/>
-              <Form.Check style = {{position: "sticky"}}  label="Edit Manager's Permissions" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(6)})}/>
-              <Form.Check style = {{position: "sticky"}}  label="Remove Store Manager" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(7)})}/>
-             </div>
-             </div>
-             <Container> 
-                <Button variant="dark" id="appoint-manager-button" onClick={appointManagerHandler}>Commit</Button>
-             </Container>
-
+            <div key={`inline-checkbox`} className="mb-3" style={{ border: "1px solid", borderColor: "#CCCCCC"}}>
+                <div style={{ marginLeft:"4%"}}>
+                <Row><Form.Check style = {{position: "sticky"}} label="Manage Stock" type="checkbox" id={`auction-purchase`} onChange={(event => {addPermissions(1)})} />
+                </Row><Row><Form.Check style = {{position: "sticky"}}  label="Manage Store policies" type="checkbox" id={`auction-purchase`} onChange={(event => {addPermissions(2)})} />
+                </Row><Row><Form.Check style = {{position: "sticky"}}  label="Appoint Additional Owner" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(3)})}/>
+                </Row><Row><Form.Check style = {{position: "sticky"}}  label="Appoint Additional Manager" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(5)})}/>
+                </Row><Row><Form.Check style = {{position: "sticky"}}  label="Edit Manager's Permissions" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(6)})}/>
+                </Row><Row><Form.Check style = {{position: "sticky"}}  label="Remove Store Manager" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(7)})}/>
+                </Row>
+                </div>
             </div>
-  
-            <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
+             </div>
+
+             <Form >
+                 <Form.Group as={Row} style={{marginRight:"0%" , marginLeft: "0%"}}>
+                 <div><Button type='reset' variant="dark" id="appoint-manager-button" disabled={subscriberNickname === ""} onClick={appointManagerHandler}>Commit</Button></div>
+                 <div style={{marginLeft:"1%"}}> <Button  variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button></div>
+                 </Form.Group>
+             </Form>
+            </div>
         </div>
     );
 }

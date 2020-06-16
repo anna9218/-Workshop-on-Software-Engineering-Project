@@ -3,6 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import {Container, Button} from 'react-bootstrap'
 import * as theService from '../../../services/communication';
+import StoreProducts from '../../Actions/StoreActions/StoreProducts';
+
 import {Accordion, Card, Table} from 'react-bootstrap'
 
 
@@ -10,35 +12,37 @@ import {Accordion, Card, Table} from 'react-bootstrap'
 function StoreDetail(props) {
   useEffect(() => {
     console.log(props)
-    setStoreName(props.location.state.storeName)
+    onStoreInfoClickHandler(props.location.state.storeName);
+    // setDisplayOption(props.location.state.displayOption)
+    // onStoreInfoClickHandler();
   }, []);
   //TODO - need to send a REQUEST to display store's info
 
-  const [storeName, setStoreName]= useState('');
-  const [owners, setOwners]= useState(null);
-  const [managers, setManagers]= useState(null);
-  const [viewStore, setViewStore]= useState(false);
+  // const [displayOption, setDisplayOption]= useState("");
+  const [owners, setOwners]= useState(["empty"]);
+  const [managers, setManagers]= useState(["empty"]);
   
 
-  const onStoreInfoClickHandler = () => {
-    const promise = theService.displayStoresStores(storeName)
+  const onStoreInfoClickHandler = (store) => {
+    const promise = theService.displayStoresStores(store)
     promise.then((data) => {
       if(data){
-        if(data["data"]["name"] !== storeName){
+        if(data["data"]["name"] !== store){
           alert("different name recieved");
-          setStoreName(data["data"]["name"]);
         }
-        setManagers(data["data"]["managers"]);
-        setOwners(data["data"]["owners"]);
-        setViewStore(true);
+        if(props.location.state.displayOption === "storeInfo"){
+
+          setManagers(data["data"]["managers"]);
+          setOwners(data["data"]["owners"]);
+        }
       }
     });
   };
 
   return (
     <div>
-      {viewStore && <ShowStoreInfo storeName={storeName} managers={managers} owners={owners} />}
-      {!viewStore && <ShowStore viewStore={viewStore} storeName={storeName} onStoreInfoClickHandler={onStoreInfoClickHandler} />}
+      {props.location.state.displayOption === "storeInfo" && <ShowStoreInfo storeName={props.location.state.storeName} managers={managers} owners={owners} />}
+      {props.location.state.displayOption === "productsInfo" && <StoreProducts storeName={props.location.state.storeName} onStoreInfoClickHandler={onStoreInfoClickHandler} />}
     </div>
   );
 }
@@ -106,27 +110,5 @@ function ShowStoreInfo(props){
   )
 }
 
-function ShowStore(props){
-  return(
-    <div>
-      <h1>{props.storeName}</h1>
-      <Container>
-              <Button variant="dark" id="storeinfobtn" block onClick={props.onStoreInfoClickHandler}>Store Info</Button>
-          <Link to={{
-                pathname:'/stores/'+props.storeName+'/products', 
-                state: {
-                    storeName: props.storeName               
-                  }}}>
-              <Button variant="dark" id="productsbtn" block>Products Info</Button>
-          </Link>
-          <Link to={{
-                pathname:'/stores'
-                }}>
-              <Button variant="dark" id="backbtn" block>Back</Button>
-          </Link>
-      </Container>
-    </div>
-  )
-}
 
 export default StoreDetail;

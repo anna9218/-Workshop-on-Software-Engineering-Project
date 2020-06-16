@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.Logger import logger
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
@@ -11,7 +13,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.1.1
     @staticmethod
     def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
-        int, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
+        float, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
@@ -49,7 +51,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.3
     @staticmethod
     @logger
-    def appoint_additional_owner( appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+    def appoint_additional_owner(appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -58,10 +60,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
 
-
-    @logger
     # use case 4.4
-    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+    @staticmethod
+    @logger
+    def remove_owner(appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
         """
         the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
         and owners appointee_nickname appointed.
@@ -105,13 +107,14 @@ class StoreOwnerOrManagerRole:
 
     # @logger
     @staticmethod
-    def get_managers_appointees(store_name) -> list:
+    def get_appointees(store_name, managers_or_owners: str) -> list:
         """
         returns for the current manager/owner all the managers he appointed
         :param store_name: name of the store
+        :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
         :return: list of the managers nicknames
         """
-        return TradeControl.get_instance().get_managers_appointees(store_name)
+        return TradeControl.get_instance().get_appointees(store_name, managers_or_owners)
 
     # use case 4.7
     @staticmethod
@@ -150,8 +153,13 @@ class StoreOwnerOrManagerRole:
     # -------- UC 4.2 -------------------
     @staticmethod
     @logger
+    def get_purchase_operator(store_name: str):
+        return TradeControl.get_instance().get_store_purchase_operator(store_name)
+
+    @staticmethod
+    @logger
     def set_purchase_operator(store_name: str, operator: str):
-        TradeControl.define_store_purchase_operator(store_name, operator)
+        TradeControl.get_instance().define_store_purchase_operator(store_name, operator)
 
     # uc 4.2
     @staticmethod
@@ -191,7 +199,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None})\
+                                                                "dates": [datetime] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
@@ -312,7 +320,7 @@ class StoreOwnerOrManagerRole:
     @staticmethod
     # for managing inventory - uc 4.1
     def get_owned_stores():
-        return TradeControl.get_instance().get_stores_names()
+        return TradeControl.get_instance().get_owned_stores()
 
     @staticmethod
     def get_managed_stores():
