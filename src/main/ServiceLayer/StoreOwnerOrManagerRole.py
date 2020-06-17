@@ -220,7 +220,7 @@ class StoreOwnerOrManagerRole:
     @logger
   #  def update_discount_policy():
   #      return TradeControl.get_instance().update_discount_policy()
-    def update_discount_policy(self, store_name: str, policy_name: str,
+    def update_discount_policy(store_name: str, policy_name: str,
                                percentage: float = -999,
                                discount_details: {'name': str,
                                                   'product': str} = None,
@@ -248,9 +248,7 @@ class StoreOwnerOrManagerRole:
     # uc 4.2.4
     @staticmethod
     @logger
-#    def define_discount_policy():
- #       return TradeControl.get_instance().define_discount_policy()
-    def define_discount_policy(self, store_name: str,
+    def define_discount_policy(store_name: str,
                                percentage: float,
                                discount_details: {'name': str,
                                                   'product': str},

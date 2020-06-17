@@ -887,12 +887,73 @@ class TradeControl:
         return store.update_purchase_policy(details)
 
     @logger
-    def define_discount_policy(self, store_name: str, details):
-        pass
+    def define_discount_policy(self, store_name: str,
+                               percentage: float,
+                               discount_details: {'name': str,
+                                                  'product': str},
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None
+                               ) \
+            -> {'response': bool, 'msg': str}:
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            return store.define_discount_policy(percentage, discount_details, discount_precondition)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
     @logger
-    def update_discount_policy(self, store_name: str, details):
-        pass
+    def update_discount_policy(self, store_name: str, policy_name: str,
+                               percentage: float = -999,
+                               discount_details: {'name': str,
+                                                  'product': str} = None,
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None
+                               ) \
+            -> {'response': bool, 'msg': str}:
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            return store.update_discount_policy(policy_name, percentage, discount_details, discount_precondition)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
+    @logger
+    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float,
+                                name: str):
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            return store.define_composite_policy(policy1_name, policy2_name, flag, percentage, name)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
+    @logger
+    def get_discount_policy(self, store_name: str, policy_name: str):
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            return store.get_discount_policy(policy_name)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
+    @logger
+    def delete_policy(self, store_name: str, policy_name: str):
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            return store.delete_policy(policy_name)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
 
     @staticmethod
     @logger

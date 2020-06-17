@@ -12,7 +12,7 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
         self.__dates: [dict] = [jsonpickle.encode(datetime.date.today())]
         self.register_user(self._username, self._password)
         self.login(self._username, self._password)
-        self.open_store(self._store_name)
+        print(self.open_store(self._store_name))
         self.add_products_to_store(self._store_name,
                                    [{"name": "product1", "price": 10, "category": "general", "amount": 10,
                                      "purchase_type": 0, "discount_type": 0},
@@ -105,10 +105,153 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
         self.assertFalse(res)
 
         # ------------ discount policy ------------
+        # add two good simple policies.
+        self.define_discount_policy(self._store_name, 10, {'name': "policy1", 'product': "product1"},
+                                    {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
+        self.define_discount_policy(self._store_name, 10, {'name': "policy2", 'product': "product1"},
+                                    None)
         # .......... add policy ..........
+        # already existing policy
+        result = self.define_discount_policy(self._store_name, 10, {'name': "policy1", 'product': "product1"},
+                                             {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
+        self.assertFalse(result)
+
+        result = self.define_discount_policy(self._store_name, 10, {'name': "policy2", 'product': "product1"},
+                                             None)
+        self.assertFalse(result)
+
+        # Illegal product
+        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product11"},
+                                             {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
+        self.assertFalse(result)
+
+        result = self.define_discount_policy(self._store_name, 10, {'name': "pol2", 'product': "product11"},
+                                             None)
+        self.assertFalse(result)
+
+        # Illegal percentage
+        result = self.define_discount_policy(self._store_name, -10, {'name': "pol1", 'product': "product1"},
+                                             {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
+        self.assertFalse(result)
+
+        result = self.define_discount_policy(self._store_name, 1090, {'name': "pol2", 'product': "product1"},
+                                             None)
+        self.assertFalse(result)
+
+        # Illegal pre condition
+        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product1"},
+                                             {'product': 'product11', 'min_amount': 3, 'min_basket_price': None})
+        self.assertFalse(result)
+
+        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product1"},
+                                             {'product': 'product1', 'min_amount': -9, 'min_basket_price': None})
+        self.assertFalse(result)
+
+        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product1"},
+                                             {'product': 'product1', 'min_amount': 3, 'min_basket_price': -10.7})
+        self.assertFalse(result)
 
         # .......... update policy ..........
-        pass
+        # illegal percentage
+        result = self.update_discount_policy(self._store_name, "policy1", -3.3)
+        self.assertFalse(result)
+
+        result = self.update_discount_policy(self._store_name, "policy2", -5.7)
+        self.assertFalse(result)
+
+        # illegal policy name
+        result = self.update_discount_policy(self._store_name, "policy11", 3.3)
+        self.assertFalse(result)
+
+        result = self.update_discount_policy(self._store_name, "", 5.7)
+        self.assertFalse(result)
+
+        # illegal percentage
+        result = self.update_discount_policy("self._store_name", "policy1", 3.3)
+        self.assertFalse(result)
+
+        result = self.update_discount_policy("self._store_name", "policy2", 5.7)
+        self.assertFalse(result)
+
+        # illegal new_name
+        result = self.update_discount_policy(self._store_name, "policy1", discount_details={'name': "policy2",
+                                                                                            'product': None})
+        self.assertFalse(result)
+
+        result = self.update_discount_policy(self._store_name, "policy2", discount_details={'name': "",
+                                                                                            'product': None})
+        self.assertFalse(result)
+
+        # illegal new product
+        result = self.update_discount_policy(self._store_name, "policy1", discount_details={'name': None,
+                                                                                            'product': "all2"})
+        self.assertFalse(result)
+
+        result = self.update_discount_policy(self._store_name, "policy2", discount_details={'name': None,
+                                                                                            'product': "None"})
+        self.assertFalse(result)
+
+        # illegal precondition
+        result = self.update_discount_policy(self._store_name, "policy1", discount_precondition={'product': "",
+                                                                                                 'min_amount': None,
+                                                                                                 'min_basket_price':
+                                                                                                     None})
+        self.assertFalse(result)
+
+        result = self.update_discount_policy(self._store_name, "policy1", discount_precondition={'product': "product1",
+                                                                                                 'min_amount': -1,
+                                                                                                 'min_basket_price':
+                                                                                                     None})
+        self.assertFalse(result)
+
+        result = self.update_discount_policy(self._store_name, "policy1", discount_precondition={'product': "product1",
+                                                                                                 'min_amount': None,
+                                                                                                 'min_basket_price':
+                                                                                                     -1})
+        self.assertFalse(result)
+
+        # Composite policy
+
+        # add policies
+        # illegal sub-policies.
+        result = self.define_composite_policy(self._store_name, "policy11", "policy2", "xor", 2.5, "p1_xor_p2")
+        self.assertFalse(result)
+
+        # illegal flag.
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xand", 2.5, "p1_xor_p2")
+        self.assertFalse(result)
+
+        # illegal percentage.
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", -2.5, "p1_xor_p2")
+        self.assertFalse(result)
+
+        # illegal flag.
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "policy1")
+        self.assertFalse(result)
+
+        # creating good composite policy
+        self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "p1_xor_p2")
+
+        # update policy
+        # illegal percentage
+        result = self.update_discount_policy(self._store_name, "p1_xor_p2", -4)
+        self.assertFalse(result)
+
+        # illegal store
+        result = self.update_discount_policy("self._store_name", "p1_xor_p2", 4)
+        self.assertFalse(result)
+
+        # illegal policy
+        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4)
+        self.assertFalse(result)
+
+        # illegal new name
+        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4, {'name': "", 'product': 'all'})
+        self.assertFalse(result)
+
+        # illegal new product
+        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4, {'name': "new_policy", 'product': 'all2'})
+        self.assertFalse(result)
 
     def tearDown(self) -> None:
         self.remove_products_from_store(self._store_name, ["product1", "product2"])
