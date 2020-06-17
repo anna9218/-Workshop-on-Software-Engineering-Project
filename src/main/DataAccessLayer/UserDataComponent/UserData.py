@@ -1,5 +1,5 @@
 from peewee import Expression, OP
-from src.Logger import errorLogger
+from src.Logger import errorLogger, logger
 from src.main.DataAccessLayer.ConnectionProxy.RealDb import RealDb
 from src.main.DataAccessLayer.ConnectionProxy.DbProxy import DbProxy, and_exprs
 
@@ -34,6 +34,7 @@ class UserData:
                                                self.__attr_is_system_manager: self.__tbl.is_system_manager}
             UserData.__instance = self
 
+    @logger
     def read(self, attributes_to_read: [str], username: str = "", password: str = "", is_system_manager: bool = None):
         """
         Read users from db.
@@ -79,6 +80,7 @@ class UserData:
 
         return output_lst
 
+    @logger
     def write(self, username: str, password: str, is_system_manager: bool = False):
         """
         Write a user to db.
@@ -94,6 +96,7 @@ class UserData:
 
         return (DbProxy.get_instance()).write(self.__tbl, attributes_as_dictionary)
 
+    @logger
     def update(self, old_username: str = "", old_password: str = "", old_is_system_manager: bool = None,
                new_username: str = "", new_password: str = "", new_is_system_manager: bool = None):
         """
@@ -137,6 +140,7 @@ class UserData:
 
         return DbProxy.get_instance().update(self.__tbl, attributes_as_dictionary, where_expr)
 
+    @logger
     def delete(self, username: str = "", password: str = "", is_system_manager: bool = None):
         """
         Delete users from the DB.
@@ -159,3 +163,6 @@ class UserData:
         where_expr = and_exprs(const_lst)
 
         return (DbProxy.get_instance()).delete(self.__tbl, where_expr=where_expr)
+
+    def __repr__(self):
+        return repr ("UserData")

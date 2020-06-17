@@ -21,10 +21,11 @@ export async function init (nickname, store_name){
     // this.socket = {};
     // io.handshake.query.token;
     // socket.socket.io.emit("join", {username: nickname, store: store_name});
-    // this.counter = {counter: 1};
+    this.counter = {counter: 1};
     console.log("counter = " + this.counter)
 
-    await setHandlers(); // maybe while loop?
+    await connect();
+    // await setHandlers(); // maybe while loop?
     console.log(this.nickname.nickname + " is connected to server by websocket");
   }
   return;
@@ -58,7 +59,7 @@ export const setHandlers = async () => {
 export const disconnect = () => {
 // disconnect (username, storename){
   // this.socket.emit("unsbscribe", { username: username, room: storename });
-  socket.socket.io.emit("unsbscribe", JSON.parse({ username: nickname, store: storeName }));
+  socket.socket.io.emit("unsubscribe", JSON.parse({ username: nickname, store: storeName }));
 }
 
 export const register_new_store = (storename) => {

@@ -28,6 +28,7 @@ def logger(f, name=None):
             return result
         except Exception:
             print("exception on function: func_name = " + name + ", arguments = " + str(args))
+            errorLogger("exception on function: func_name = " + name + ", arguments = " + str(args))
             return f(*args, **kwargs)
 
     # wrapped.__doc__ = f.__doc__

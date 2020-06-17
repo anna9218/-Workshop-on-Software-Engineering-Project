@@ -1,70 +1,74 @@
 import unittest
-from src.main.CommunicationLayer import WebSocketService
+from src.main.CommunicationLayer import WebService
+# from src.main.CommunicationLayer import WebSocketService
 
+# TODO - mocks
 class MyTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         self.__username = "Yarin"
         self.__store_name = "Some Store"
-        self.__success = ['TODO'] # TODO
 
     def test_open_store(self):
         # valid
-        WebSocketService.open_store(self.__store_name, self.__username, self.__success)
-        self.assertIsNotNone(WebSocketService.get_store(self.__store_name))
+        WebService.create_new_publisher(self.__store_name, self.__username)
+        self.assertIsNotNone(WebService.get_store(self.__store_name))
 
         # not valid
-        WebSocketService.open_store(self.__store_name, self.__username, self.__success)
-        WebSocketService.open_store(self.__store_name, "another user", self.__success)
+        self.assertFalse(WebService.create_new_publisher(self.__store_name, self.__username))
+        self.assertFalse(WebService.create_new_publisher(self.__store_name, "another user"))
 
     def test_add_subscriber(self):
-        WebSocketService.open_store(self.__store_name, self.__username, self.__sucsses)
+        WebService.create_new_publisher("store number 2", self.__username)
         # valid
-        WebSocketService.add_subscriber_to_store(self.__store_name, self.__username, self.__success) # TODO?
-        self.assertEqual(True, WebSocketService.is_subscribed_to_store(self.__store_name, self.__username))
+        # WebService.add_subscriber_to_store(self.__store_name, self.__username)
+        self.assertEqual(True, WebService.is_subscribed_to_store("store number 2", self.__username))
 
         # not valid
-        self.assertNotEqual(True, WebSocketService.is_subscribed_to_store(self.__store_name, "Ron"))
-        self.assertNotEqual(True, WebSocketService.is_subscribed_to_store("Other Store", self.__username))
-        self.assertFalse(WebSocketService.add_subscriber_to_store(self.__store_name, self.__username, self.__success))
+        self.assertFalse(WebService.is_subscribed_to_store(self.__store_name, "Ron"))
+        self.assertNotEqual(True, WebService.is_subscribed_to_store("Other Store", self.__username))
+        self.assertFalse(WebService.add_subscriber_to_store(self.__store_name, self.__username))
 
         # add another subscriber to same store
-        WebSocketService.add_subscriber_to_store(self.__store_name, "new owner", self.__success)
-        self.assertEqual(True, WebSocketService.is_subscribed_to_store(self.__store_name, "new owner"))
+        WebService.add_subscriber_to_store("store number 2", "new owner")
+        self.assertEqual(True, WebService.is_subscribed_to_store("store number 2", "new owner"))
 
         # subscribe self.user to another store
-        WebSocketService.add_subscriber_to_store("New Store", self.__username, self.__success)
-        self.assertEqual(True, WebSocketService.is_subscribed_to_store("New Store", self.__username))
+        WebService.create_new_publisher("New Store", self.__username)
+        self.assertEqual(True, WebService.is_subscribed_to_store("New Store", self.__username))
+
+        WebService.add_subscriber_to_store("New Store", "Ron")
+        self.assertEqual(True, WebService.is_subscribed_to_store("New Store", self.__username))
 
     def test_remove_subscriber(self):
-        WebSocketService.open_store(self.__store_name, "first owner", self.__success)
-        WebSocketService.add_subscriber_to_store(self.__store_name, self.__username, self.__success)
+        WebService.create_new_publisher("remove test store", "first owner")
+        WebService.add_subscriber_to_store("remove test store", self.__username)
 
         # valid
-        self.assertEquals(0, WebSocketService.remove_subscriber_from_store(self.__store_name, self.__username, self.__success))
-        self.assertEqual(False, WebSocketService.is_subscribed_to_store(self.__store_name, self.__username))
-        self.assertEquals(1, len(WebSocketService.get_store(self.__store_name).subscribers()))
+        self.assertEqual(0, WebService.remove_subscriber_from_store("remove test store", self.__username))
+        self.assertEqual(False, WebService.is_subscribed_to_store("remove test store", self.__username))
+        self.assertEqual(1, WebService.get_store("remove test store").amount_of_subscribers())
 
         # not valid
-        self.assertEquals(-1, WebSocketService.remove_subscriber_from_store(self.__store_name, self.__username, self.__success))
-        self.assertEquals(-1, WebSocketService.remove_subscriber_from_store("Store", self.__username, self.__success))
-        self.assertEquals(-1, WebSocketService.remove_subscriber_from_store(self.__store_name, "Username", self.__success))
+        self.assertEqual(-1, WebService.remove_subscriber_from_store(self.__store_name, self.__username))
+        self.assertEqual(-2, WebService.remove_subscriber_from_store("Store", self.__username))
+        self.assertEqual(-1, WebService.remove_subscriber_from_store(self.__store_name, "Username"))
 
-    def test_update_queue_after_purchase(self):
-        # WebSocketService.handle_purchase(user_name=self.__username, )
-        WebSocketService.open_store(self.__store_name, self.__username, self.__success)
-
-        # valid
-        WebSocketService.notifyPurchase(self.__username, self.__store_name, self.__success)
-        WebSocketService.notifyPurchase("Other User", self.__store_name, self.__success)
-
-        # not valid - unexist store
-        WebSocketService.notifyPurchase("Other User", "Store", self.__success)
-
-
-    def test_update_queue_after_remove_owner(self):
-        # TODO
-        self.assertEqual(True, False)
+    # def test_update_queue_after_purchase(self):
+    #     # WebService.handle_purchase(user_name=self.__username, )
+    #     WebService.create_new_publisher(self.__store_name, self.__username)
+    #
+    #     # valid
+    #     WebService.handle_purchase_msg(self.__store_name)
+    #     WebService.notifyPurchase("Other User", self.__store_name)
+    #
+    #     # not valid - unexist store
+    #     WebService.notifyPurchase("Other User", "Store")
+    #
+    #
+    # def test_update_queue_after_remove_owner(self):
+    #     # TODO
+    #     self.assertEqual(True, False)
 
 
 if __name__ == '__main__':
