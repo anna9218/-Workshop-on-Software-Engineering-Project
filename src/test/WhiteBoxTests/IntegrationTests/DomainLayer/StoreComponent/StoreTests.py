@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 import jsonpickle
 
@@ -27,13 +28,14 @@ class StoreTests(unittest.TestCase):
                                                                             [ManagerPermission.EDIT_INV]))
 
         dis_details = {'name': "p1", 'product': "Eytan"}
+        later_date = datetime(2021, 8, 21)
         pre_con__details = {'product': "Eytan", 'min_amount': 2, 'min_basket_price': None}
-        leaf_pol1 = ConditionalDiscountPolicy(2.5, dis_details, pre_con__details)
+        leaf_pol1 = ConditionalDiscountPolicy(2.5, later_date, dis_details, pre_con__details)
         dis_details = {'name': "p2", 'product': "Eytan"}
         pre_con__details = {'product': "all", 'min_amount': None, 'min_basket_price': 1}
-        leaf_pol2 = ConditionalDiscountPolicy(5, dis_details, pre_con__details)
+        leaf_pol2 = ConditionalDiscountPolicy(5, later_date, dis_details, pre_con__details)
         self.__policy = DiscountPolicy(jsonpickle.encode(leaf_pol1), jsonpickle.encode(leaf_pol2),
-                                       CompositeFlag.XOR, 10, "Comp_Pol")
+                                       CompositeFlag.XOR, 10, "Comp_Pol", later_date)
         self.store.get_discount_policies().insert(0, self.__policy)
 
         # self.__product1 = {"name": "Chair", "price": 100, "category": "Furniture", "amount": 10}

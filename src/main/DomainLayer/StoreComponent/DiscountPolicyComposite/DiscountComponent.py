@@ -2,6 +2,7 @@
     Declares interface for composite pattern and implements default behaviour.
 """
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 
 class DiscountComponent(ABC):
@@ -19,6 +20,7 @@ class DiscountComponent(ABC):
 
     @abstractmethod
     def update(self, percentage: float,
+               valid_until: datetime,
                discount_details: {'name': str,
                                   'product': str},
                discount_precondition: {'product': str,
@@ -41,6 +43,14 @@ class DiscountComponent(ABC):
 
     @abstractmethod
     def get_discount_type(self):
+        pass
+
+    @abstractmethod
+    def get_valid_until_date(self):
+        pass
+
+    @abstractmethod
+    def set_valid_until_date(self, new_date: datetime):
         pass
 
     def __eq__(self, other):

@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 import jsonpickle
 
@@ -1612,9 +1613,11 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
     def test_define_discount_policy(self):
         dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
-
+        later_date = datetime(2021, 8, 21)
         # All valid - no precondition
-        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date,
+                                                                           dis_details)
+        print(result['msg'])
         self.assertTrue(result['response'])
         self.assertIsNotNone(
             jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(), "p1")
@@ -1624,8 +1627,8 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
 
         # All valid - with precondition
-        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
-                                                                           pre_con__details)
+        result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date,
+                                                                           dis_details, pre_con__details)
         self.assertTrue(result['response'])
         self.assertIsNotNone(
             jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(), "p2")
@@ -1633,14 +1636,15 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
     def test_define_composite_policy(self):
         dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        later_date = datetime(2021, 8, 21)
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details)
         dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
         pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details,
                                                                   pre_con__details)
 
         result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "p1", "p2", "and",
-                                                                            8.5, "p1_or_p2")
+                                                                            8.5, "p1_or_p2", later_date)
         self.assertTrue(result['response'])
         self.assertIsNotNone(
             jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
@@ -1655,10 +1659,10 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                                                                     "p2")['response']))
 
         dis_details = {'name': "p3", 'product': self.__product_as_dictionary['name']}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details)
 
         result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "p1_or_p2", "p3",
-                                                                            "xor", 8.5, "(p1_or_p2)_xor_p3")
+                                                                            "xor", 8.5, "(p1_or_p2)_xor_p3", later_date)
         self.assertTrue(result['response'])
         self.assertIsNotNone(
             jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
@@ -1681,34 +1685,36 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                                                         [self.__product_as_dictionary2])
 
         dis_details = {'name': "p4", 'product': self.__product_as_dictionary2['name']}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details)
 
         result = self.__store_owner_or_manager_role.define_composite_policy(self.__store.get_name(), "(p1_or_p2)_xor_p3"
                                                                             , "p4", "xor", 8.5,
-                                                                            "((p1_or_p2)_xor_p3)_xor_p4")
+                                                                            "((p1_or_p2)_xor_p3)_xor_p4", later_date)
         self.assertFalse(result['response'])
 
     def test_update_discount_policy(self):
         dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        later_date = datetime(2021, 8, 21)
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details)
         dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
         pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details,
                                                                   pre_con__details)
 
-        result = self.__store_owner_or_manager_role.update_discount_policy(self.__store.get_name(), "p1", percentage=13)
+        result = self.__store_owner_or_manager_role.update_discount_policy(self.__store.get_name(), "p1",
+                                                                           13, None)
         self.assertTrue(result['response'])
         self.assertEqual(13, jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy
                                                (self.__store.get_name(), "p1")['response']).get_percentage())
 
     def test_get_discount_policy(self):
         dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        later_date = datetime(2021, 8, 21)
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details)
         dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
         pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details,
                                                                   pre_con__details)
-
         self.assertEqual("Successful.", self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(),
                                                                                                "p1")['msg'])
 
@@ -1717,10 +1723,11 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
     def test_delete_discount_policy(self):
         dis_details = {'name': "p1", 'product': self.__product_as_dictionary['name']}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details)
+        later_date = datetime(2021, 8, 21)
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details)
         dis_details = {'name': "p2", 'product': self.__product_as_dictionary['name']}
         pre_con__details = {'product': self.__product_as_dictionary['name'], 'min_amount': 2, 'min_basket_price': None}
-        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, dis_details,
+        self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date, dis_details,
                                                                   pre_con__details)
 
         result = self.__store_owner_or_manager_role.delete_policy(self.__store.get_name(), "p1")

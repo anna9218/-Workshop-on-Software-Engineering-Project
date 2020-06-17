@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import jsonpickle
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.CompositeFlag import CompositeFlag
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy, DiscountComponent
@@ -758,6 +758,7 @@ class Store:
     # ------------- discount policy start --------------
     def define_discount_policy(self,
                                percentage: float,
+                               valid_until: datetime,
                                discount_details: {'name': str,
                                                   'product': str},
                                discount_precondition: {'product': str,
@@ -769,6 +770,9 @@ class Store:
         # Check input validity
         if not 0 <= percentage <= 100:
             return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
+
+        if not datetime.today().date() < valid_until.date():
+            return Response.ret(False, "The last day of the discount is invalid.")
 
         discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
         if discount_details['name'] in discount_policies_names:
@@ -811,15 +815,16 @@ class Store:
                     discount_precondition['min_basket_price'] = 0
 
         if discount_precondition is None:
-            new_policy: DiscountComponent = VisibleDiscountPolicy(percentage, discount_details)
+            new_policy: DiscountComponent = VisibleDiscountPolicy(percentage, valid_until, discount_details)
         else:
-            new_policy: DiscountComponent = ConditionalDiscountPolicy(percentage, discount_details,
+            new_policy: DiscountComponent = ConditionalDiscountPolicy(percentage, valid_until, discount_details,
                                                                       discount_precondition)
         self.__discount_policies.insert(0, new_policy)
         return {'response': True, 'msg': "Policy added successfully."}
 
     def update_discount_policy(self, policy_name: str,
                                percentage: float = -999,
+                               valid_until: datetime = None,
                                discount_details: {'name': str,
                                                   'product': str} = None,
                                discount_precondition: {'product': str,
@@ -831,6 +836,10 @@ class Store:
         # Check input validity
         if not (0 <= percentage <= 100 or percentage == -999):
             return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
+
+        if valid_until is not None:
+            if not datetime.today().date() < valid_until.date():
+                return Response.ret(False, "The last day of the discount is invalid.")
 
         discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
         if policy_name not in discount_policies_names:
@@ -866,10 +875,10 @@ class Store:
             if pol.get_name() == policy_name:
                 policy = pol
                 break
-        return policy.update(percentage, discount_details, discount_precondition)
+        return policy.update(percentage, valid_until, discount_details, discount_precondition)
 
     def define_composite_policy(self, policy1_name: str, policy2_name: str, flag: str, percentage: float,
-                                name: str):
+                                name: str, valid_until: datetime):
 
         policy1: DiscountComponent = None
         policy2: DiscountComponent = None
@@ -901,13 +910,16 @@ class Store:
         if not 0 <= percentage <= 100:
             return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
 
+        if not datetime.today().date() < valid_until.date():
+            return Response.ret(False, "The last day of the discount is invalid.")
+
         discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
         if name in discount_policies_names:
             return {'response': False, 'msg': "Policy already exist."}
 
         # Add the new policy
         new_policy = DiscountPolicy(jsonpickle.encode(policy1), jsonpickle.encode(policy2),
-                                    flag_as_enum, percentage, name)
+                                    flag_as_enum, percentage, name, valid_until)
         self.__discount_policies.insert(0, new_policy)
         self.delete_policy(policy1.get_name())
         self.delete_policy(policy2.get_name())

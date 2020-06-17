@@ -2,22 +2,23 @@
     uc 4.2 - define and update purchase and discount policies
 """
 import jsonpickle
-import datetime
+from datetime import datetime, date
 from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
 class DefineAndUpdatePoliciesTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
-        self.__dates: [dict] = [jsonpickle.encode(datetime.date.today())]
+        self.__dates: [dict] = [jsonpickle.encode(date.today())]
         self.register_user(self._username, self._password)
         self.login(self._username, self._password)
-        print(self.open_store(self._store_name))
+        self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
                                    [{"name": "product1", "price": 10, "category": "general", "amount": 10,
                                      "purchase_type": 0, "discount_type": 0},
                                     {"name": "product2", "price": 5, "category": "general", "amount": 10,
                                      "purchase_type": 0, "discount_type": 0}])
+        self.__later_date = datetime(2021, 8, 21)
 
     def test_success(self):
         # ------------ purchase policy options -----------
@@ -34,12 +35,13 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
 
         # ------------ simple discount policies ------------
         # .......... add policy + valid input ..........
-        result = self.define_discount_policy(self._store_name, 10, {'name': "policy1", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "policy1", 'product': "product1"},
                                              {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
         self.assertTrue(result)
 
-        result = self.define_discount_policy(self._store_name, 10, {'name': "policy2", 'product': "product1"},
-                                             None)
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "policy2", 'product': "product1"}, None)
         self.assertTrue(result)
 
         # .......... update policy + valid input ..........
@@ -50,10 +52,11 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
         self.assertTrue(result)
 
         # ------------ composite discount policies ------------
-        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "p1_xor_p2")
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "p1_xor_p2",
+                                              self.__later_date)
         self.assertTrue(result)
 
-        # .......... add policy + valid input ..........
+        # .......... update composite policy + valid input ..........
         result = self.update_discount_policy(self._store_name, "p1_xor_p2", 7.5)
         self.assertTrue(result)
 
@@ -104,50 +107,65 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
                                           {"name": "policy1"})
         self.assertFalse(res)
 
-        # ------------ discount policy ------------
+        # ------------ discount policy ---------------------------------------------------------------------------------
         # add two good simple policies.
-        self.define_discount_policy(self._store_name, 10, {'name': "policy1", 'product': "product1"},
+        self.define_discount_policy(self._store_name, 10, self.__later_date, {'name': "policy1", 'product': "product1"},
                                     {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
-        self.define_discount_policy(self._store_name, 10, {'name': "policy2", 'product': "product1"},
+        self.define_discount_policy(self._store_name, 10, self.__later_date, {'name': "policy2", 'product': "product1"},
                                     None)
         # .......... add policy ..........
         # already existing policy
-        result = self.define_discount_policy(self._store_name, 10, {'name': "policy1", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "policy1", 'product': "product1"},
                                              {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
         self.assertFalse(result)
 
-        result = self.define_discount_policy(self._store_name, 10, {'name': "policy2", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "policy2", 'product': "product1"},
                                              None)
         self.assertFalse(result)
 
         # Illegal product
-        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product11"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "pol1", 'product': "product11"},
                                              {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
         self.assertFalse(result)
 
-        result = self.define_discount_policy(self._store_name, 10, {'name': "pol2", 'product': "product11"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "pol2", 'product': "product11"},
                                              None)
         self.assertFalse(result)
 
         # Illegal percentage
-        result = self.define_discount_policy(self._store_name, -10, {'name': "pol1", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, -10, self.__later_date,
+                                             {'name': "pol1", 'product': "product1"},
                                              {'product': 'product1', 'min_amount': 3, 'min_basket_price': None})
         self.assertFalse(result)
 
-        result = self.define_discount_policy(self._store_name, 1090, {'name': "pol2", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, 1090, self.__later_date,
+                                             {'name': "pol2", 'product': "product1"},
                                              None)
         self.assertFalse(result)
 
         # Illegal pre condition
-        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "pol1", 'product': "product1"},
                                              {'product': 'product11', 'min_amount': 3, 'min_basket_price': None})
         self.assertFalse(result)
 
-        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "pol1", 'product': "product1"},
                                              {'product': 'product1', 'min_amount': -9, 'min_basket_price': None})
         self.assertFalse(result)
 
-        result = self.define_discount_policy(self._store_name, 10, {'name': "pol1", 'product': "product1"},
+        result = self.define_discount_policy(self._store_name, 10, self.__later_date,
+                                             {'name': "pol1", 'product': "product1"},
+                                             {'product': 'product1', 'min_amount': 3, 'min_basket_price': -10.7})
+        self.assertFalse(result)
+
+        # illegal valid date
+        result = self.define_discount_policy(self._store_name, 10, datetime(202, 2, 20),
+                                             {'name': "pol1", 'product': "product1"},
                                              {'product': 'product1', 'min_amount': 3, 'min_basket_price': -10.7})
         self.assertFalse(result)
 
@@ -210,27 +228,36 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
                                                                                                      -1})
         self.assertFalse(result)
 
+        # illegal valid date
+        result = self.update_discount_policy(self._store_name, "policy1", valid_util=datetime(2020, 2, 20))
+        self.assertFalse(result)
+
         # Composite policy
 
         # add policies
         # illegal sub-policies.
-        result = self.define_composite_policy(self._store_name, "policy11", "policy2", "xor", 2.5, "p1_xor_p2")
+        result = self.define_composite_policy(self._store_name, "policy11", "policy2", "xor", 2.5, "p1_xor_p2",
+                                              self.__later_date)
         self.assertFalse(result)
 
         # illegal flag.
-        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xand", 2.5, "p1_xor_p2")
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xand", 2.5, "p1_xor_p2",
+                                              self.__later_date)
         self.assertFalse(result)
 
         # illegal percentage.
-        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", -2.5, "p1_xor_p2")
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", -2.5, "p1_xor_p2",
+                                              self.__later_date)
         self.assertFalse(result)
 
         # illegal flag.
-        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "policy1")
+        result = self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "policy1",
+                                              self.__later_date)
         self.assertFalse(result)
 
         # creating good composite policy
-        self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "p1_xor_p2")
+        self.define_composite_policy(self._store_name, "policy1", "policy2", "xor", 2.5, "p1_xor_p2",
+                                     self.__later_date)
 
         # update policy
         # illegal percentage
@@ -246,11 +273,18 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
         self.assertFalse(result)
 
         # illegal new name
-        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4, {'name': "", 'product': 'all'})
+        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4,
+                                             discount_details={'name': "", 'product': 'all'})
         self.assertFalse(result)
 
         # illegal new product
-        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4, {'name': "new_policy", 'product': 'all2'})
+        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4,
+                                             discount_details={'name': "new_policy", 'product': 'all2'})
+        self.assertFalse(result)
+
+        # illegal valid date
+        result = self.update_discount_policy(self._store_name, "p1xor_p2", 4,
+                                             valid_util=datetime(2020, 2, 2))
         self.assertFalse(result)
 
     def tearDown(self) -> None:
