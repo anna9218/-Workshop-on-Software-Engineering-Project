@@ -53,5 +53,9 @@ class DiscountComponent(ABC):
     def set_valid_until_date(self, new_date: datetime):
         pass
 
+    @abstractmethod
+    def get_as_dictionary(self):
+        pass
+
     def __eq__(self, other):
         pass

@@ -948,6 +948,9 @@ class Store:
     def get_discount_policies(self):
         return self.__discount_policies
 
+    def get_discount_policies_as_dictionary_lst(self):
+        return [policy.get_as_dictionary() for policy in self.__discount_policies]
+
     def __repr__(self):
         return repr("Store")
 

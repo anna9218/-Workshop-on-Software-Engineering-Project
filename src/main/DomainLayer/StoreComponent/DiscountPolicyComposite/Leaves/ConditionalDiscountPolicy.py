@@ -8,13 +8,9 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 
 class ConditionalDiscountPolicy(DiscountComponent):
 
-    def get_valid_until_date(self):
-        return self.__valid_until
-
-    def set_valid_until_date(self, new_date: datetime):
-        self.__valid_until = new_date
-
-    def __init__(self, percentage: float, valid_until: datetime,
+    def __init__(self,
+                 percentage: float,
+                 valid_until: datetime,
                  discount_details: {'name': str,
                                     'product': str},
                  discount_precondition: {'product': str,
@@ -27,6 +23,19 @@ class ConditionalDiscountPolicy(DiscountComponent):
         self.__product: str = discount_details['product']
         self.__precondition: {} = discount_precondition
         self.__valid_until = valid_until
+
+    def get_as_dictionary(self):
+        return {'name': self.__name,
+                'percentage': self.__percentage,
+                'product': self.__product,
+                'valid_until': self.__valid_until,
+                'precondition': self.__precondition}
+
+    def get_valid_until_date(self):
+        return self.__valid_until
+
+    def set_valid_until_date(self, new_date: datetime):
+        self.__valid_until = new_date
 
     def get_price_after_discount(self, price: float):
         return price * ((100 - self.__percentage) / 100)

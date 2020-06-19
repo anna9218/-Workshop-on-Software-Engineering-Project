@@ -13,14 +13,21 @@ class DiscountComponent_As_Jsonpickle:
 
 class DiscountPolicy(DiscountComponent):
 
-    def get_valid_until_date(self):
-        return self.__valid_until
+    def get_as_dictionary(self):
+        return {'name': self.__name,
+                'percentage': self.__percentage,
+                'product': self.__product,
+                'valid_until': self.__valid_until,
+                'precondition': None}
 
-    def set_valid_until_date(self, new_date: datetime):
-        self.__valid_until = new_date
-
-    def __init__(self, policy1: DiscountComponent_As_Jsonpickle, policy2: DiscountComponent_As_Jsonpickle,
-                 flag: CompositeFlag, percentage: float, name: str, valid_until: datetime):
+    def __init__(self,
+                 policy1: DiscountComponent_As_Jsonpickle,
+                 policy2: DiscountComponent_As_Jsonpickle,
+                 flag: CompositeFlag,
+                 percentage: float,
+                 name: str,
+                 # Product Exist
+                 valid_until: datetime):
         super().__init__()
         self.__policy1: DiscountComponent = jsonpickle.decode(policy1)
         self.__policy2: DiscountComponent = jsonpickle.decode(policy2)
@@ -31,6 +38,13 @@ class DiscountPolicy(DiscountComponent):
         self.__valid_until = valid_until
         self.__policy1.set_valid_until_date(valid_until)
         self.__policy2.set_valid_until_date(valid_until)
+
+    def get_valid_until_date(self):
+        return self.__valid_until
+
+    def set_valid_until_date(self, new_date: datetime):
+        self.__valid_until = new_date
+
 
     def is_worthy(self, amount: int, basket_price: float, prod_lst: [str]):
         if self.__flag.value == CompositeFlag.AND.value:

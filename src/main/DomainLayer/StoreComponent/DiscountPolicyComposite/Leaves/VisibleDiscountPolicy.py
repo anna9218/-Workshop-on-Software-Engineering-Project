@@ -7,6 +7,24 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 
 class VisibleDiscountPolicy(DiscountComponent):
 
+    def get_as_dictionary(self):
+        return {'name': self.__name,
+                'percentage': self.__percentage,
+                'product': self.__product,
+                'valid_until': self.__valid_until,
+                'precondition': None}
+
+    def __init__(self,
+                 percentage: float,
+                 valid_until: datetime,
+                 discount_details: {'name': str, 'product': str}
+                 ):
+        super().__init__()
+        self.__name = discount_details['name']
+        self.__percentage = percentage
+        self.__product = discount_details['product']
+        self.__valid_until = valid_until
+
     def get_valid_until_date(self):
         return self.__valid_until
 
@@ -24,13 +42,6 @@ class VisibleDiscountPolicy(DiscountComponent):
 
     def get_percentage(self):
         return self.__percentage
-
-    def __init__(self, percentage: float, valid_until: datetime, discount_details: {'name': str, 'product': str}):
-        super().__init__()
-        self.__name = discount_details['name']
-        self.__percentage = percentage
-        self.__product = discount_details['product']
-        self.__valid_until = valid_until
 
     @logger
     def get_name(self):
