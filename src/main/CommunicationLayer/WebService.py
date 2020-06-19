@@ -18,18 +18,18 @@ app = Flask(__name__)
 CORS(app)
 
 socket = SocketIO(app, cors_allowed_origins='*')
+# # socket = SocketIO(app, logger=True, engineio_logger=True,
+# #                   cors_allowed_origins='*', async_mode='eventlet')
+
+# eventlet.monkey_patch()
+#
+# app = Flask(__name__)
+# CORS(app)
+# app.secret_key = os.environ.get('SECRET')
+# app.config['WTF_CSRF_SECRET_KEY'] = "\xae\x5c{Xasa\x3b\x8e\x83\x19\xad\x24\x19\asda"
 # socket = SocketIO(app, logger=True, engineio_logger=True,
-#                   cors_allowed_origins='*', async_mode='eventlet')
-
-eventlet.monkey_patch()
-
-app = Flask(__name__)
-CORS(app)
-app.secret_key = os.environ.get('SECRET')
-app.config['WTF_CSRF_SECRET_KEY'] = "\xae\x5c{Xasa\x3b\x8e\x83\x19\xad\x24\x19\asda"
-sio = SocketIO(app, logger=True, engineio_logger=True,
-               cors_allowed_origins='*', async_mode='eventlet')
-
+#                cors_allowed_origins='*', async_mode='eventlet')
+#
 
 # 1 - purchase
 # 2 - add+remove manager
@@ -408,10 +408,6 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
-        #   Websocket.open_store(store_name, SubscriberRole.username, result)
-        # TODO - add some func at websocket that registers the owner
-        # WebSocketService.open_store(store_name, SubscriberRole.username, result)
-        # if response:
         websocket_open_store(TradeControlService.get_curr_username(), store_name)
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened.")
@@ -502,10 +498,9 @@ def connect():
 
 def websocket_open_store(username, storename):
     if get_store(storename) is None:
-        # print(f"open store (name = {storename}) msg from {username} ")
-        if _users:
-            append_user_to_room(storename, username)
-            print (f"append user {username} to store {storename}")
+        # print(f"new: open store (store name = {storename}) msg from {username} ")
+        append_user_to_room(storename, username)
+        print (f"append user {username} to new store {storename}")
         create_new_publisher(storename, username)
         return True
     return False
@@ -552,7 +547,7 @@ def notify_all(store_name, msg):
 
 
 def handle_purchase_msg(store_name):
-    # msg = f"a purchase has been done at store {store_name}"
+    msg = f"a purchase has been done at store {store_name}"
     # print(f"send msg: {msg}")
     notify_all(store_name, jsonify(messages=msg, store=store_name))
 
