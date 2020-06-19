@@ -59,6 +59,7 @@ class OpenStore extends React.Component {
 
     const promise = theService.openStore(this.state.storeNameInput); // goes to register.js and sends to backend
     promise.then((data) => {
+      console.log(data);
       alert(data["msg"]);
       if(data["data"]){ // store created
           // redirect to store owner home page

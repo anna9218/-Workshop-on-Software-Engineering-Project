@@ -20,9 +20,10 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-socket = SocketIO(app, cors_allowed_origins='*')
+socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
 # # socket = SocketIO(app, logger=True, engineio_logger=True,
 # #                   cors_allowed_origins='*', async_mode='eventlet')
+# flask_request = request
 
 # eventlet.monkey_patch()
 #
@@ -505,7 +506,8 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
-        websocket_open_store(TradeControlService.get_curr_username(), store_name)
+        # websocket_open_store(TradeControlService.get_curr_username(), store_name)
+        create_new_publisher(store_name, TradeControlService.get_curr_username())
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened.")
 
@@ -593,12 +595,16 @@ def connect():
 #     join_room(room=data['store'], sid=_users[data['username']])
 #     print(f"{data['username']} has been subscribed to store {data['storename']}")
 
-def websocket_open_store(username, storename):
+@socket.on('join')
+def websocket_open_store(data):
+    username= data['username']
+    storename= data['store']
+    print(f"open store u= {username}, s = {storename}")
+    # socket.emit('message', {}) - works!
     if get_store(storename) is None:
         # print(f"new: open store (store name = {storename}) msg from {username} ")
-        append_user_to_room(storename, username)
+        append_user_to_room(storename, username, request.sid)
         print (f"append user {username} to new store {storename}")
-        create_new_publisher(storename, username)
         return True
     return False
 
@@ -614,9 +620,10 @@ def create_new_publisher(storename, username):
     return False
 
 
-def append_user_to_room(storename, username):
-    _users[username] = request.sid
-    # print(f"users = {_users}")
+def append_user_to_room(storename, username, sid):
+    _users[username] = sid
+    # _users[username] = flask_request.sid
+    print(f"users = {_users}")
     join_room(room=storename, sid=_users[username])
     # print(f"{username} has been subscribed to store {storename}")
 

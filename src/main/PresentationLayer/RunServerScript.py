@@ -4,7 +4,7 @@ import _thread as thread
 import eventlet
 
 from src.main.CommunicationLayer import WebService
-from eventlet import wsgi
+# from eventlet import wsgi
 
 
 def run_server():

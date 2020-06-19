@@ -6,14 +6,15 @@ import io from 'socket.io-client';
 // const io = require("socket.io-client");
 // var socketio = require('socket.io-client'); //('http://127.0.0.1:5000'); // TODO- maybe another port?
 
-var socket = {socket: io.connect('http://127.0.0.1:5000', {transports: ["polling"], autoConnect: true, forceNew: true})};
+// var socket = {socket: io.connect('http://127.0.0.1:5000', {transports: ["polling"], autoConnect: true, forceNew: true})};
+var socket = {socket: io.connect('http://127.0.0.1:5000', {transports: ["websocket"], autoConnect: true, forceNew: true})};
 var nickname = {nickname:''};
 var storeName = {storeName:''};
 var counter = {counter:0};
 
 export async function init (nickname, store_name){
   if (!this.counter){
-    this.nickname = {nickname: nickname};
+    this.nickname = {nickName: nickname};
     this.storeName = {storeName: store_name};
     console.log("this nickname:" + this.nickname.nickname);
     console.log("this storename:" + this.storeName.storeName);
@@ -36,13 +37,14 @@ export async function init (nickname, store_name){
 
 // };
 export const connect = async (host, username) => {
-  socket.socket.io.emit("join", {username: nickname, store: storeName});
+  // socket.socket.io.emit("join", {username: nickname, store: storeName});
+  socket.socket.emit("join", {username: nickname.nickname, store: storeName.storeName});
   await setHandlers(); 
 }
 
 
 export const setHandlers = async () => {
-  socket.socket.io.on("message", (data) => {
+  socket.socket.on("message", (data) => {
     // const {storeName, msg} = data;
     console.log("got msg!")
     const msgs = JSON.parse(data).messages;
@@ -59,10 +61,10 @@ export const setHandlers = async () => {
 export const disconnect = () => {
 // disconnect (username, storename){
   // this.socket.emit("unsbscribe", { username: username, room: storename });
-  socket.socket.io.emit("unsubscribe", JSON.parse({ username: nickname, store: storeName }));
+  socket.socket.emit("unsubscribe", JSON.parse({ username: nickname, store: storeName }));
 }
 
 export const register_new_store = (storename) => {
-  socket.socket.io.emit("join", { username: nickname, store:storename });
+  socket.socket.emit("join", { username: nickname, store:storename });
 }
 
