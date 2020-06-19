@@ -7,6 +7,7 @@ from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointmen
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 import jsonpickle
 
 
@@ -898,12 +899,95 @@ class TradeControl:
         return store.update_purchase_policy(details)
 
     @logger
-    def define_discount_policy(self, store_name: str, details):
-        pass
+    def define_discount_policy(self, store_name: str,
+                               percentage: float,
+                               valid_until: datetime,
+                               discount_details: {'name': str,
+                                                  'product': str},
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None
+                               ) \
+            -> {'response': bool, 'msg': str}:
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+
+        if (not store.is_owner(self.__curr_user.get_nickname()) and
+            not store.is_manager(self.__curr_user.get_nickname()) and
+            store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(self.__curr_user.get_nickname(),
+                                                                                       ManagerPermission.EDIT_POLICIES)):
+            return {'response': False, 'msg': "You don't have the permissions to change policy."}
+
+        try:
+            return store.define_discount_policy(percentage, valid_until, discount_details, discount_precondition)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
     @logger
-    def update_discount_policy(self, store_name: str, details):
-        pass
+    def update_discount_policy(self, store_name: str, policy_name: str,
+                               percentage: float = -999,
+                               valid_until: datetime = None,
+                               discount_details: {'name': str,
+                                                  'product': str} = None,
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None
+                               ) \
+            -> {'response': bool, 'msg': str}:
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+
+        if (not store.is_owner(self.__curr_user.get_nickname()) and
+            not store.is_manager(self.__curr_user.get_nickname()) and
+            store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(self.__curr_user.get_nickname(),
+                                                                                       ManagerPermission.EDIT_POLICIES)):
+            return {'response': False, 'msg': "You don't have the permissions to change policy."}
+
+        try:
+            return store.update_discount_policy(policy_name, percentage, valid_until, discount_details,
+                                                discount_precondition)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
+    @logger
+    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float, name: str, valid_until: datetime):
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+
+        if (not store.is_owner(self.__curr_user.get_nickname()) and
+            not store.is_manager(self.__curr_user.get_nickname()) and
+            store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(self.__curr_user.get_nickname(),
+                                                                                       ManagerPermission.EDIT_POLICIES)):
+            return {'response': False, 'msg': "You don't have the permissions to change policy."}
+        try:
+            return store.define_composite_policy(policy1_name, policy2_name, flag, percentage, name, valid_until)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
+    @logger
+    def get_discount_policy(self, store_name: str, policy_name: str):
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            return store.get_discount_policy(policy_name)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
+    @logger
+    def delete_policy(self, store_name: str, policy_name: str):
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            return store.delete_policy(policy_name)
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
 
     @staticmethod
     @logger
