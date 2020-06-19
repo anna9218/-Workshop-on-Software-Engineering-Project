@@ -4,7 +4,7 @@ import {BrowserRouter as Router,  Route, Link } from 'react-router-dom'
 // import { browserHistory } from "react-router";
 import {Container, Button, Accordion, Card, Table, Form, Col, Row, InputGroup, FormControl, FormCheck} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-import * as BackOption from '../../components/Actions/GeneralActions/Back';
+import * as BackOption from '../Actions/GeneralActions/Back';
 import {IoMdCloseCircle} from 'react-icons/io' 
 import { confirmAlert } from 'react-confirm-alert'; 
 
@@ -59,7 +59,7 @@ function AddPurchaseForm(props){
       else if(policyTypes.includes('forbidden_dates') && (dates === null || dates.length === 0))
         alert("For forbidden dates, you must select at least one date.")
       else{
-        const promise = theService.addPurchasePolicy(props.storeName, policyName, policyProducts, 
+        const promise = theService.addAndUpdatePurchasePolicy('add', props.storeName, policyName, policyProducts, 
             minAmount, maxAmount, dates, policyTypes.includes('bundle') ? true : null); // goes to register.js and sends to backend
         promise.then((data) => {
             if(data !== undefined){
@@ -68,11 +68,14 @@ function AddPurchaseForm(props){
                     buttons: [
                         {   label: 'Add another product',
                             onClick: () => { // reset the form in order to add another product
-                            //   setPolicyName("");
-                            //   setProductPrice("");
-                            //   setProductCategory("");
-                            //   setProductAmount("");
-                            //   setPurchaseType(null);
+                                setPolicyProducts([]);
+                                setPolicyTypes([]);
+                                setMinAmount(null);
+                                setMaxAmount(null);
+                                setDates(null);
+                                setShowMinAmount(false)
+                                setShowMaxAmount(false)
+                                setShowDates(false)
                         }},
                         {   label: 'Done',
                             onClick: () => {BackOption.BackToHome(props.history)}

@@ -113,36 +113,36 @@ class OwnerAPI extends React.Component {
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointowner", 
-                                                                               store: this.state.selectedStore}}>
+                                                                               store: this.state.selectedStore, props: this.props}}>
                         Appoint Additional Owner
                     </Button>
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removeowner", 
-                                                                               store: this.state.selectedStore}}>
+                                                                               store: this.state.selectedStore, props: this.props}}>
                         Remove Owner
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
-                                                                               store: this.state.selectedStore}}>
+                                                                               store: this.state.selectedStore, props: this.props}}>
                         Appoint Additional Manager
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/editpermissions", 
-                                                                               store: this.state.selectedStore}}>
+                                                                               store: this.state.selectedStore, props: this.props}}>
                         Edit Manager’s Permissions
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removemanager", 
-                                                                               store: this.state.selectedStore}}>
+                                                                               store: this.state.selectedStore, props: this.props}}>
                         Remove A Store Manager
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/storehistory", 
-                                                                             store: this.state.selectedStore}}>
+                                                                             store: this.state.selectedStore, props: this.props}}>
                         View Store’s Purchase History
                     </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/managestorepolicies", 
-                                                                               store: this.state.selectedStore}}>
+                                                                               store: this.state.selectedStore, props: this.props}}>
                         Manage Store Policies
                     </Button>
 

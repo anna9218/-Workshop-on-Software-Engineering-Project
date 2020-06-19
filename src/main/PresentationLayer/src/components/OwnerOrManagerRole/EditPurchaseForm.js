@@ -11,12 +11,15 @@ function EditPurchaseForm(props){
     useEffect(() => {
         // console.log(props.location.state.storeName)
         setStoreName(props.storeName)
+        fetchPurchasePolicies(props.storeName)
         fetchStoreProducts(props.storeName)
       }, []);
 
 
     const [storeName, setStoreName] = useState("");
-    const [policyName, setPolicyName] = useState("");
+    const [policyName, setPolicyName] = useState('Select policy');
+    const [policies, setPolicies] = useState([]);
+    // const [selectedPolicy, setSelectedPolicy] = useState('');
     const [storeProducts, setStoreProducts] = useState(["There are no products in the store inventory..."]);
     const [policyProducts, setPolicyProducts] = useState([]);
     const [policyTypes, setPolicyTypes] = useState([]);
@@ -26,8 +29,67 @@ function EditPurchaseForm(props){
     const [showMinAmount, setShowMinAmount] = useState(false);
     const [showMaxAmount, setShowMaxAmount] = useState(false);
     const [showDates, setShowDates] = useState(false);
-  
-    const fetchStoreProducts = (store_name) =>{
+    const [checkBundle, setCheckBundle] = useState(false);
+    
+    const setSelectedPolicy = async (policy_name) => {
+        setPolicyProducts([]);
+        setPolicyTypes([]);
+        setMinAmount(null);
+        setMaxAmount(null);
+        setDates(null);
+        setShowMinAmount(false)
+        setShowMaxAmount(false)
+        setShowDates(false)
+        setCheckBundle(false)
+        // policy ={"name", "products", "min_amount", "max_amount", "dates", "bundle"}
+        policies.map(policy => {
+            if(policy["name"] === policy_name){
+                setPolicyName(policy_name);
+                setPolicyProducts(policy["products"]);
+                setDates(null);
+                
+                if(policy['min_amount'] !== undefined){
+                    policyTypes.push('min_amount')
+                    setMinAmount(policy["min_amount"]);
+                    setShowMinAmount(true)
+                }
+                if(policy['max_amount'] !== undefined){
+                    policyTypes.push('max_amount')
+                    setMaxAmount(policy["max_amount"]);
+                    setShowMaxAmount(true)
+                }
+                if(policy['dates'] !== undefined){
+                    var stringDates = policy["dates"].map(date => (new Date(date)).toLocaleDateString())
+                    setDates(stringDates);
+                    policyTypes.push('dates')
+                    setShowDates(true)
+                }
+                if(policy['bundle'] !== undefined){
+                    updatePolicyType('bundle')
+                    setCheckBundle(true)
+                }
+                
+            }
+        })
+    }
+
+    const fetchPurchasePolicies = async (store_name) =>{
+        const promise = theService.getPolicies('purchase', store_name); // goes to register.js and sends to backend
+        promise.then((data) => {
+            if(data !== undefined){
+                if (data["data"] != null){   // if there are stores to display
+                    setPolicies(data["data"]);
+                }
+                else{
+                    alert(data["msg"])
+                    setPolicies(["There are no purchase policies..."]);      // no products to display
+                }
+            }
+
+        });
+    };
+
+    const fetchStoreProducts = async (store_name) =>{
         const promise = theService.displayStoresProducts(store_name); // goes to register.js and sends to backend
         promise.then((data) => {
             if(data !== undefined){
@@ -43,17 +105,17 @@ function EditPurchaseForm(props){
         });
     };
 
-    const addPolicyHandler = async () =>{
+    const editPolicyHandler = async () =>{
 
-      if(policyTypes.includes('min_amount') && (minAmount === null || minAmount < 0))
+      if(showMinAmount && (minAmount === null || minAmount < 0))
         alert("Minimum amount need to be set and must be bigger than 0.")
-      else if(policyTypes.includes('max_amount') && (maxAmount === null || maxAmount < 0))
+      else if(showMaxAmount && (maxAmount === null || maxAmount < 0))
         alert("Maximum amount need to be set and must be bigger than 0.")
-      else if(policyTypes.includes('forbidden_dates') && (dates === null || dates.length === 0))
+      else if(showDates && (dates === null || dates.length === 0))
         alert("For forbidden dates, you must select at least one date.")
       else{
-        const promise = theService.addPurchasePolicy(props.storeName, policyName, policyProducts, 
-            minAmount, maxAmount, dates, policyTypes.includes('bundle') ? true : null); // goes to register.js and sends to backend
+        const promise = theService.addAndUpdatePurchasePolicy('update', props.storeName, policyName, policyProducts, 
+            minAmount, maxAmount, dates, checkBundle ? true : null); // goes to register.js and sends to backend
         promise.then((data) => {
             if(data !== undefined){
                 confirmAlert({
@@ -61,11 +123,8 @@ function EditPurchaseForm(props){
                     buttons: [
                         {   label: 'Add another product',
                             onClick: () => { // reset the form in order to add another product
-                            //   setPolicyName("");
-                            //   setProductPrice("");
-                            //   setProductCategory("");
-                            //   setProductAmount("");
-                            //   setPurchaseType(null);
+                                setPolicyName('Select policy')
+                                fetchPurchasePolicies(storeName)
                         }},
                         {   label: 'Done',
                             onClick: () => {BackOption.BackToHome(props.history)}
@@ -78,21 +137,23 @@ function EditPurchaseForm(props){
       
     };
   
-    const addPolicyType = async (policy_type) =>{
+    const updatePolicyType =  (policy_type) =>{
+        if(policy_type === 'min_amount')
+            setMinAmount(null);
+        else if(policy_type === 'max_amount')
+            setMaxAmount(null); 
+        else if(policy_type === 'forbidden_dates')
+            setDates(null);
+        
         if(policyTypes.includes(policy_type)){
             policyTypes.pop(policy_type)
-            if(policy_type === 'min_amount')
-                setMinAmount(null);
-            else if(policy_type === 'max_amount')
-                setMaxAmount(null); 
-            else if(policy_type === 'forbidden_dates')
-                setDates(null);
+            
         }
         else {
             policyTypes.push(policy_type)
         }
     };
-
+    
     const detailsFilled = () => {
       if(policyName !== "" && policyProducts.length > 0 ){
             return true;
@@ -127,53 +188,68 @@ function EditPurchaseForm(props){
           <Container>
             <h4 style={{marginTop:"2%"}}>Edit Purchase Policy</h4>
             <Form className='add_policy'>
-              <Form.Label>Choose the policy name:</Form.Label>
-              <Form.Control id="policy-name" required type="text" placeholder="Policy name"
-              onChange={(event => {
-                setPolicyName(event.target.value)
-              })}/>
+                <Form.Group controlId="products_ControlSelect2" value={policyName} onChange={ event => {
+                    event.target.value === 'Select policy' ? setPolicyName('Select policy') : setSelectedPolicy(event.target.value)
+                    }}>
+                    <Form.Label>Please choose a policy:</Form.Label>
+                    <Form.Control as="select">
+                        <option>Select policy</option>
+                        {policies !== null ?
+                            policies.map(policy => (
+                            <option value={policy["name"]}>{policy["name"]}</option>
+                            ))
+                            : null
+                        }
+                    </Form.Control>
+                </Form.Group>
+
+            { policyName !== "Select policy" ? <div>
+              <Form.Label>Policy name:</Form.Label>
+              <Form.Control id="policy-name" required type="text" placeholder={policyName} disabled={true}/>
   
               <Form.Label style={{marginTop:"2%"}}>Enter the purchase type (at least one):</Form.Label>
                 <div key={`inline-checkbox`} className="mb-3" style={{ border: "1px solid", borderColor: "#CCCCCC"}}>
                     <div style={{marginLeft:"4%"}}>
                     <Row style={{marginTop: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-8%"}}>
-                            <Form.Check inline label="Minimum product amount" type="checkbox" id={`minimun-amount`}  onChange={(event => {
-                                                                                                                        addPolicyType('min_amount')
+                            <Form.Check inline label="Minimum product amount" checked={showMinAmount} type="checkbox" id={`minimun-amount`}  onChange={(event => {
+                                                                                                                        updatePolicyType('min_amount')
                                                                                                                         showMinAmount ? setShowMinAmount(false) : setShowMinAmount(true)
                                                                                                                         })} />
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control type="number" min="0"  disabled={!showMinAmount} required placeholder="Enter minimum amount" onChange={(event => {setMinAmount(event.target.valueAsNumber)})}/>
+                            <Form.Control type="number" min="0"  disabled={!showMinAmount} required placeholder={minAmount} onChange={(event => {setMinAmount(event.target.valueAsNumber)})}/>
                         </Col>
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-8%"}}>
-                            <Form.Check inline label="Maximum product amount" value={minAmount} type="checkbox" id={`maximum-amount`} name="formHorizontalRadios" onChange={(event => {
-                                                                                                                        addPolicyType('max_amount')
+                            <Form.Check inline label="Maximum product amount" checked={showMaxAmount} type="checkbox" id={`maximum-amount`} name="formHorizontalRadios" onChange={(event => {
+                                                                                                                        updatePolicyType('max_amount')
                                                                                                                         showMaxAmount ? setShowMaxAmount(false) : setShowMaxAmount(true);
                                                                                                                         })} />
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control type="number" min="0" data-bind="value:replyNumber" disabled={!showMaxAmount} required placeholder="Enter maximum amount" onChange={(event => {setMaxAmount(event.target.valueAsNumber)})}/>
+                            <Form.Control type="number" min="0" data-bind="value:replyNumber" disabled={!showMaxAmount} required placeholder={maxAmount} onChange={(event => {setMaxAmount(event.target.valueAsNumber)})}/>
                         </Col>
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-19%"}}>
-                            <Form.Check inline label="Bundle" type="checkbox" id={`bundel`} name="formHorizontalRadios" onChange={(event => {addPolicyType('bundle')})}/>
+                            <Form.Check inline label="Bundle" type="checkbox" id={`bundle`} checked={checkBundle} name="formHorizontalRadios" onChange={(event => { 
+                                                                                                                        updatePolicyType('bundle')
+                                                                                                                        checkBundle ? setCheckBundle(false) : setCheckBundle(true) })}/>
                         </Form.Label>
                     </Row>
                     <Row style={{marginTop: "1.5%", marginBottom: "1%"}}>
                         <Form.Label column  sm="6" style={{left: "-14%"}}>
-                            <Form.Check inline label="Forbidden dates" type="checkbox" id={`Forbidden-dates`} name="formHorizontalRadios" onChange={(event => {
-                                                                                                                        addPolicyType('forbidden_dates')
+                            <Form.Check inline label="Forbidden dates" type="checkbox" checked={showDates} id={`Forbidden-dates`} name="formHorizontalRadios" onChange={(event => {
+                                                                                                                        updatePolicyType('forbidden_dates')
                                                                                                                         showDates ? setShowDates(false) : setShowDates(true)
                                                                                                                         })}/>
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control id="product-name" disabled={!showDates} required type="date" min={(new Date()).toUTCString()} onChange={(event => dates === null? setDates([(event.target.valueAsDate)]) :
-                                                                                                                                           ! dates.map(date => date.toLocaleDateString()).includes((event.target.valueAsDate).toLocaleDateString()) ? 
-                                                                                                                                                setDates(dates.concat([(event.target.valueAsDate)])) : alert("This date has been selected already."))}/>
+                            <Form.Control id="product-name" disabled={!showDates} required type="date" min={(new Date()).toUTCString()} onChange={(event => dates === null? setDates([(event.target.valueAsDate).toLocaleDateString()]) :
+                                                                                                                                           ! dates.includes((event.target.valueAsDate).toLocaleDateString()) ? 
+                                                                                                                                                setDates(dates.concat([(event.target.valueAsDate).toLocaleDateString()])) : alert("This date has been selected already."))}/>
                         </Col>
 
                         {dates !== null && dates.length > 0 && showDates?
@@ -184,7 +260,7 @@ function EditPurchaseForm(props){
                                     {/* <option>No products were</option> */}
                                     {dates !== null ?
                                         dates.map(date => (
-                                        <Row><Link class="text-decoration-none" onClick={event => removeDates(date)}> <IoMdCloseCircle /> {date.toLocaleDateString()}</Link></Row>
+                                        <Row><Link class="text-decoration-none" onClick={event => removeDates(date)}> <IoMdCloseCircle /> {date}</Link></Row>
                                         ))
                                         : null
                                     }
@@ -228,8 +304,11 @@ function EditPurchaseForm(props){
   
               {/* <ShowDiscount showDiscount={showDiscount} setDiscountType={setDiscountType} discountType={discountType} setDiscountPercentage={setDiscountPercentage} /> */}
               
+            
+            <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={editPolicyHandler}>Update Policy!</Button>
+          
+            </div> : null}
             </Form>
-            <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={addPolicyHandler}>Update Policy!</Button>
           </Container>
   
         </div>

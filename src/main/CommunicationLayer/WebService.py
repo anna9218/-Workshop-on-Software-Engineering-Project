@@ -12,6 +12,7 @@ from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermiss
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 from src.main.ServiceLayer.TradeControlService import TradeControlService
 from flask_socketio import SocketIO, join_room, leave_room
 
@@ -329,8 +330,8 @@ def get_policies():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        policy_name = request_dict.get('policy_name')  # str
-        response = StoreOwnerOrManagerRole.get_policies(policy_name, store_name)
+        policy_type = request_dict.get('policy_type')  # str
+        response = StoreOwnerOrManagerRole.get_policies(policy_type, store_name)
         return jsonify(msg=response["msg"], data=response["response"])
 
     return jsonify(msg="Oops, communication error.")
@@ -362,11 +363,40 @@ def set_purchase_operator():
 
 from datetime import datetime
 
+#
+# @app.route('/add_purchase_policy', methods=['POST'])
+# def add_purchase_policy():
+#     if request.is_json:
+#         request_dict = request.get_json()
+#         store_name = request_dict.get('store_name')
+#         policy_name = request_dict.get('policy_name')
+#         products = request_dict.get('products')
+#         min_amount = request_dict.get('min_amount')
+#         max_amount = request_dict.get('max_amount')
+#         bundle = request_dict.get('bundle')
+#         string_dates = request_dict.get('dates')
+#         dates = []
+#         # convert string to dates
+#         if string_dates is None:
+#             dates = None
+#         else:
+#             for date in string_dates:
+#                 dates += [parse(date)]
+#
+#         details = {"name": policy_name, "products": products,
+#                     "min_amount": min_amount, "max_amount": max_amount,
+#                     "dates": dates, "bundle": bundle}
+#         response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
+#         return jsonify(msg=response['msg'], data=response['response'])
+#
+#     return jsonify(msg="Oops, communication error.")
 
-@app.route('/add_purchase_policy', methods=['POST'])
-def add_purchase_policy():
+
+@app.route('/add_and_update_purchase_policy', methods=['POST'])
+def add_and_update_purchase_policy():
     if request.is_json:
         request_dict = request.get_json()
+        action_type = request_dict.get('action_type')
         store_name = request_dict.get('store_name')
         policy_name = request_dict.get('policy_name')
         products = request_dict.get('products')
@@ -385,15 +415,14 @@ def add_purchase_policy():
         details = {"name": policy_name, "products": products,
                     "min_amount": min_amount, "max_amount": max_amount,
                     "dates": dates, "bundle": bundle}
-        response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
+        if action_type == 'add':
+            response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
+        else:
+            response = StoreOwnerOrManagerRole.update_purchase_policy(store_name, details)
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
 
-    # def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
-    #                                                             "min_amount": int or None, "max_amount": int or None,
-    #                                                             "dates": [dict] or None, "bundle": bool or None})\
-    #         -> {'response': bool, 'msg': str}:
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -519,11 +548,21 @@ def view_user_purchase_history():
     if request.is_json:
         request_dict = request.get_json()
         viewed_user = request_dict.get('nickname')
-    #     response = SystemManagerRole.view_user_purchase_history(viewed_user)
-    #     if response:  # if not None
-    #         return jsonify(msg="success", data=response)
-    # return jsonify(msg="fail", data=response)
-    return jsonify(data=["user_purchase1", "user_purchase2"])
+        response = SystemManagerRole.view_user_purchase_history(viewed_user)
+        if response:  # if not None
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="Oops, error with communication!", data=response)
+
+
+@app.route('/view_any_store_purchase_history', methods=['POST'])
+def view_any_store_purchase_history():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        response = SystemManagerRole.view_store_purchases_history(store_name)
+        if response:  # if not None
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="Oops, error with communication!", data=response)
 
 
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#

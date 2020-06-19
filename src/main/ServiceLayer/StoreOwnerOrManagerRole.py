@@ -164,14 +164,14 @@ class StoreOwnerOrManagerRole:
     # uc 4.2
     @staticmethod
     @logger
-    def get_policies(purchase_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
+    def get_policies(policy_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
         """
             according to the given type, displays a list of policies for the store
         :param purchase_type: can be "purchase" or "discount"
         :param store_name:
         :return: list of policies or empty list, returns None if user is not owner of the store or store doesn't exist
         """
-        return TradeControl.get_instance().get_policies(purchase_type, store_name)
+        return TradeControl.get_instance().get_policies(policy_type, store_name)
 
     # uc 4.2.1
     @staticmethod
