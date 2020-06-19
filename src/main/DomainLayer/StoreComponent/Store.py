@@ -1,6 +1,7 @@
 import datetime
 
 from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.AppiontmentAgreement import AppointmentAgreement
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
@@ -27,6 +28,7 @@ class Store:
         self.__purchases = []
         # default operator is 'and'
         self.__operator = "and"
+        self.__StoreOwnerAppointmentAgreements: [AppointmentAgreement] = []
 
     @logger
     def add_products(self, user_nickname: str,
@@ -350,7 +352,7 @@ class Store:
 
     @logger
     def get_owners(self):
-        x= [owner_appointment.get_appointee() for owner_appointment in self.__StoreOwnerAppointments]
+        x = [owner_appointment.get_appointee() for owner_appointment in self.__StoreOwnerAppointments]
         return x
     @logger
     def get_managers(self):
