@@ -78,7 +78,7 @@ function ShoppingCart(props){
 
   return (
       <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-        <h1>Shopping Cart</h1>
+        <h1 style={{marginTop:"2%"}}>Shopping Cart</h1>
         <Container>
         {
           // shopping cart = [{store_name, basket = [{product_name, amount}]}]
@@ -111,14 +111,14 @@ function ShoppingCart(props){
 
         {
           shoppingCart.length > 0 ? 
-            <Button variant="dark" id="purchaseBtn" as={Link} to="/confirm_purchase" >
+            <Row style={{marginLeft:"0%"}}><Button variant="dark" id="purchaseBtn" as={Link} to="/confirm_purchase" >
               Purchase Shopping Cart
-            </Button>
+            </Button></Row>
             : null
         }
 
-      <Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props)}>Back</Button>
-
+        <div style={{marginTop:"-3.45%", marginRight:"58%"}}><Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props)}>Back</Button>
+        </div>
       </Container>
     </div>
          

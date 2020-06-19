@@ -116,6 +116,10 @@ class OwnerAPI extends React.Component {
                                                                                store: this.state.selectedStore}}>
                         Appoint Additional Owner
                     </Button>
+                    <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removeowner", 
+                                                                               store: this.state.selectedStore}}>
+                        Remove Owner
+                    </Button>
 
                     <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
                                                                                store: this.state.selectedStore}}>

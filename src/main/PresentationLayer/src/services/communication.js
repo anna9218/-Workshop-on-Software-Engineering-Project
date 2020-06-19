@@ -163,12 +163,34 @@ export async function fetchManagersAppointees(store_name){
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
+
+export async function fetchOwnersAppointees(store_name){
+    return axios.post('http://localhost:5000/get_owners_appointees', {
+        store_name: store_name,
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 //--------------------------- END OF MANAGRT ROLE -------------------------------------//
 
 //--------------------------- OWNER & MANAGER ROLE --------------------------------------------//
 
 export async function fetchOwnedStores(){
     return axios.get('http://localhost:5000/get_owned_stores')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function getPurchasePoliciesOperator(store_name){
+    return axios.post('http://localhost:5000/get_purchase_operator', {
+        store_name: store_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function setPurchasePoliciesOperator(store_name, operator){
+    return axios.post('http://localhost:5000/set_purchase_operator', {
+        store_name: store_name,
+        operator: operator
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -234,6 +256,14 @@ export async function appointStoreOwner(appointee_nickname, store_name){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function removeOwner(store_name, nickname){
+    return axios.post('http://localhost:5000/remove_owner', {
+        store_name: store_name,
+        nickname: nickname
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function removeManager(store_name, nickname){
     return axios.post('http://localhost:5000/remove_manager', {
         store_name: store_name,
@@ -241,6 +271,8 @@ export async function removeManager(store_name, nickname){
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
+
+
 
 export async function editManagerPermissions(store_name, appointee_nickname, permissions){
     return axios.post('http://localhost:5000/edit_manager_permissions', {
@@ -251,6 +283,14 @@ export async function editManagerPermissions(store_name, appointee_nickname, per
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function fetchStorePurchaseHistory(store_name){
+    return axios.post('http://localhost:5000/view_store_purchases_history', {
+        store_name: store_name,
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+
 export async function getPolicies(policy_name, store_name){
     return axios.post('http://localhost:5000/get_policies', {
         store_name: store_name,
@@ -258,6 +298,21 @@ export async function getPolicies(policy_name, store_name){
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
+
+export async function addPurchasePolicy(store_name, policy_name, products, min_amount, max_amount, dates, bundle){
+    return axios.post('http://localhost:5000/add_purchase_policy', {
+        store_name: store_name,
+        policy_name: policy_name,
+        products: products,
+        min_amount: min_amount,
+        max_amount: max_amount,
+        dates: dates,
+        bundle: bundle
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+
 
 
 //--------------------------- END OF OWNER ROLE -------------------------------------//
@@ -272,12 +327,12 @@ export async function fetchUserPurchaseHistory(nickname){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function fetchStorePurchaseHistory(store_name){
-    return axios.post('http://localhost:5000/view_store_purchases_history', {
-        store_name: store_name
-    })
-    .then((response) => (response.data), (error) => {console.log(error)});
-}
+// export async function fetchStorePurchaseHistory(store_name){
+//     return axios.post('http://localhost:5000/view_store_purchases_history', {
+//         store_name: store_name
+//     })
+//     .then((response) => (response.data), (error) => {console.log(error)});
+// }
 
 //--------------------------- END OF SYSTEM MANAGE ----------------------------------//
 

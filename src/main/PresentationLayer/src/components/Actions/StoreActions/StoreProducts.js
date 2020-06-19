@@ -9,10 +9,9 @@ import * as theService from '../../../services/communication';
 
 function StoreProducts(props) {
   useEffect(() => {
-    console.log(props.location.state.storeName)
-    setStoreName(props.location.state.storeName)
+    setStoreName(props.storeName);
     console.log(storeName);
-    fetchStoreProducts(props.location.state.storeName);
+    fetchStoreProducts(props.storeName);
     // setHistory(useHistory());
   }, []);
 

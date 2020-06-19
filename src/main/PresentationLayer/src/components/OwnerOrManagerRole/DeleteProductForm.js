@@ -27,7 +27,8 @@ function DeleteProductsForm(props){
                     setAllStoreProducts(data["data"]);
                 }
                 else{
-                    setAllStoreProducts(data["msg"]);      // no products to display
+                    alert(data["msg"] );
+                    setAllStoreProducts([]);      // no products to display
                 }
             }
         })

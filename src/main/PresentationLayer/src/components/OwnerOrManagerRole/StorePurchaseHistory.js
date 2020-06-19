@@ -5,49 +5,40 @@ import * as theService from '../../services/communication';
 import * as BackOption from '../Actions/GeneralActions/Back'
 
 
-function PersonalPurchaseHistory(props){
+function StorePurchaseHistory(props){
   useEffect(() => {
-    fetchPersonalPurchaseHistory();
+    setSelectedStore(props.location.store)
+    fetchPersonalPurchaseHistory(props.location.store);
   }, []);
 
 
   const [purchaseHistory, setPurchaseHistory] = useState([]); 
-  const [stores, setStores] = useState([]); 
+  const [store, setSelectedStore] = useState(""); 
 
-  const fetchPersonalPurchaseHistory = async () => {
-    const promise = theService.fetchPersonalPurchaseHistory(); // goes to register.js and sends to backend
+  const fetchPersonalPurchaseHistory = async (store_name) => {
+    const promise = theService.fetchStorePurchaseHistory(store_name); // goes to register.js and sends to backend
     promise.then((data) => {
-      if(data["data"].length === 0)
-            alert("You don't have any purchases.");
-      else{
-          setPurchaseHistory(data["data"])
-          const list_of_stores = [];
-      
-          data["data"].forEach(purchase => {
-            if(list_of_stores.indexOf(purchase['store_name']) < 0){
-              list_of_stores.push(purchase['store_name'])
-            }
-          });
-          setStores(list_of_stores)
-      }
-      
+        if(data["data"].length === 0)
+            alert("There are no purchases in store "+ store_name + ".");
+        else
+            setPurchaseHistory(data["data"])
     });
   };
 
   return (
     <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-      <h1 style={{marginTop:"1%"}}>Personal Purchase History</h1>
+      <h1 style={{marginTop:"1%"}}>Store Purchase History</h1>
 
-      <Accordion style={{marginTop:"1%"}}>
-        {stores.map(store => (
-           <Card>
-           <Card.Header>
-           <Accordion.Toggle as={Button} type="radio" variant="link" eventKey="0">
-               Purchases from store {store}
-           </Accordion.Toggle>
-           </Card.Header>
-           <Accordion.Collapse eventKey="0">
-           <Card.Body>
+      {/* <Accordion style={{marginTop:"1%"}}> */}
+        {/* {stores.map(store => ( */}
+           {/* <Card> */}
+           {/* <Card.Header> */}
+           {/* <Accordion.Toggle as={Button} type="radio" variant="link" eventKey="0"> */}
+               {/* Purchases from store {store} */}
+           {/* </Accordion.Toggle> */}
+           {/* </Card.Header> */}
+           {/* <Accordion.Collapse eventKey="0"> */}
+           {/* <Card.Body> */}
              {/*********** Single purchase display ********/}
              {/* purchaseHistory = [{store_name, nickname, date, total_price, products=[{amount, product_name, products_price}]}] */}
              {/* purchase =  {store_name, nickname, date, total_price, products=[{amount, product_name, products_price}]}*/}
@@ -57,6 +48,7 @@ function PersonalPurchaseHistory(props){
                     <Table striped bordered hover >
                       <thead>
                           <tr>
+                              {/* <th>Buier</th> */}
                               <th>Product Name</th>
                               <th>Price</th>
                               <th>Amount</th>
@@ -67,6 +59,7 @@ function PersonalPurchaseHistory(props){
                           // product = {product_name, product_price, amount}
                           purchase["products"].map(product => (
                             <tr>
+                                {/* <td>{product["nickname"]}</td> */}
                                 <td>{product["product_name"]}</td>
                                 <td>{product["product_price"]}</td>
                                 <td>{product["amount"]}</td>
@@ -76,16 +69,17 @@ function PersonalPurchaseHistory(props){
                       </tbody>
                     </Table>
                     <Form style={{marginLeft:"3%"}}>
+                    <Row><p>Buier: {purchase["nickname"]}</p></Row>
                     <Row><p>Date: {purchase["date"]}</p></Row>
                     <Row><p>Total Price: {purchase["total_price"]}</p></Row>
                     </Form>
                   </div> : null
              ))}
-             </Card.Body>
-            </Accordion.Collapse>
-        </Card>
-        ))}
-      </Accordion>
+             {/* </Card.Body> */}
+            {/* </Accordion.Collapse> */}
+        {/* </Card> */}
+        {/* ))} */}
+      {/* </Accordion> */}
 
       <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
       
@@ -93,4 +87,4 @@ function PersonalPurchaseHistory(props){
   );
 }
 
-export default PersonalPurchaseHistory;
+export default StorePurchaseHistory;
