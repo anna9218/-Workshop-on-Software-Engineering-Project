@@ -356,8 +356,7 @@ class Store:
 
     @logger
     def get_owners(self):
-        x = [owner_appointment.get_appointee() for owner_appointment in self.__StoreOwnerAppointments]
-        return x
+        return [owner_appointment.get_appointee() for owner_appointment in self.__StoreOwnerAppointments]
 
     @logger
     def get_managers(self):

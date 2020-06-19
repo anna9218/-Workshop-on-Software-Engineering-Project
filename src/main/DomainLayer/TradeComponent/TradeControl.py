@@ -491,11 +491,16 @@ class TradeControl:
             viewed_user = self.get_subscriber(nickname)
             if viewed_user:
                 ls = []
-                list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), viewed_user.get_purchase_history()))
+                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                     "nickname": purchase.get_nickname(),
+                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                     "total_price": purchase.get_total_price(),
+                                                     "products": purchase.get_products()}), viewed_user.get_purchase_history()))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for user " + nickname}
                 return {'response': ls, 'msg': nickname + " purchases history was retrieved successfully"}
-
+            else:
+                return {'response': None, 'msg': "Error, Subscriber " +nickname+ " doesn't exist by that name."}
         else:
             return {'response': None, 'msg': "User is not a system manager"}
 
@@ -505,14 +510,20 @@ class TradeControl:
             viewed_store = self.get_store(store_name)
             if viewed_store:
                 ls = []
-                list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
-                         viewed_store.get_purchases(self.__curr_user.get_nickname())))
+                owner_nickname = (viewed_store.get_owners()[0]).get_nickname()
+                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                     "nickname": purchase.get_nickname(),
+                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                     "total_price": purchase.get_total_price(),
+                                                     "products": purchase.get_products()}),
+                         viewed_store.get_purchases(owner_nickname)))
                 if len(ls) == 0:
-                    return {'response': [], 'msg': "There are no previous purchases for store " + store_name}
-                return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully"}
-
+                    return {'response': [], 'msg': "There are no previous purchases for store " + store_name+"."}
+                return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully!"}
+            else:
+                return {'response': None, 'msg': "Error, Store " + store_name + " doesn't exist."}
         else:
-            return {'response': None, 'msg': "User is not a system manager"}
+            return {'response': None, 'msg': "Error, User is not a system manager"}
 
     @logger
     def is_manager(self, nickname):
@@ -771,10 +782,10 @@ class TradeControl:
             purchases = store.get_purchases(self.__curr_user.get_nickname())
             lst = []
             list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
-                                                 "nickname": purchase.get_nickname(),
-                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                 "total_price": purchase.get_total_price(),
-                                                 "products": purchase.get_products()}), purchases))
+                                                  "nickname": purchase.get_nickname(),
+                                                  "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                  "total_price": purchase.get_total_price(),
+                                                  "products": purchase.get_products()}), purchases))
             # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
             #          store.get_purchases(self.__curr_user.get_nickname())))
             if len(lst) == 0:
@@ -784,10 +795,10 @@ class TradeControl:
 
     # ------------------- 4.2 --------------------
     @logger
-    def get_policies(self, purchase_type: str, store_name: str) -> [dict] or None:
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
         """
                 according to the given type, displays a list of policies for the store
-        :param purchase_type: can be "purchase" or "discount"
+        :param policy_type: can be "purchase" or "discount"
         :param store_name:
         :return: list of policies or empty list, returns None if user is not owner of the store or if invalid flag
         """
@@ -795,9 +806,9 @@ class TradeControl:
         if store is None or not store.is_owner(self.__curr_user.get_nickname()):
             return {'response': None, 'msg': "Store doesn't exist, or user un-authorized for this action"}
 
-        if purchase_type == "purchase":
+        if policy_type == "purchase":
             return {'response': store.get_purchase_policies(), 'msg': "Great Success! Purchase policies retrieved"}
-        elif purchase_type == "discount":
+        elif policy_type == "discount":
             return {'response': store.get_discount_policies(), 'msg': "Great Success! Purchase policies retrieved"}
         return {'response': None, 'msg': "Not a valid choice of purchase type"}
 
@@ -1064,7 +1075,7 @@ class TradeControl:
     def get_user_type(self):
         roles = []
         if self.__curr_user.get_nickname() is "TradeManager":
-            return "SYS-MANAGER"
+            return "SYSTEMMANAGER"
         if self.__curr_user.is_registered():
             roles.append("SUBSCRIBER")
         for store in self.__stores:
@@ -1072,7 +1083,6 @@ class TradeControl:
                 roles.append("OWNER")
             elif store.is_manager(self.__curr_user.get_nickname()):
                 roles.append("MANAGER")
-
 
         if "OWNER" in roles:
             return "OWNER"

@@ -143,6 +143,9 @@ export async function initSystem(){
 }
 //--------------------------- END OF INIT SYSTEM -------------------------------------//
 
+
+
+
 //--------------------------- MANAGRT ROLE --------------------------------------------//
 
 export async function fetchManagedStores(){
@@ -291,16 +294,17 @@ export async function fetchStorePurchaseHistory(store_name){
 }
 
 
-export async function getPolicies(policy_name, store_name){
+export async function getPolicies(policy_type, store_name){
     return axios.post('http://localhost:5000/get_policies', {
         store_name: store_name,
-        policy_name: policy_name
+        policy_type: policy_type
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function addPurchasePolicy(store_name, policy_name, products, min_amount, max_amount, dates, bundle){
-    return axios.post('http://localhost:5000/add_purchase_policy', {
+export async function addAndUpdatePurchasePolicy(action_type, store_name, policy_name, products, min_amount, max_amount, dates, bundle){
+        return axios.post('http://localhost:5000/add_and_update_purchase_policy', {
+        action_type: action_type,
         store_name: store_name,
         policy_name: policy_name,
         products: products,
@@ -327,12 +331,12 @@ export async function fetchUserPurchaseHistory(nickname){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-// export async function fetchStorePurchaseHistory(store_name){
-//     return axios.post('http://localhost:5000/view_store_purchases_history', {
-//         store_name: store_name
-//     })
-//     .then((response) => (response.data), (error) => {console.log(error)});
-// }
+export async function SystemManagerfetchStorePurchaseHistory(store_name){
+    return axios.post('http://localhost:5000/view_any_store_purchase_history', {
+        store_name: store_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 
 //--------------------------- END OF SYSTEM MANAGE ----------------------------------//
 

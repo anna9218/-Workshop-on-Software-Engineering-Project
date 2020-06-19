@@ -16,8 +16,8 @@ function ManageStorePolicies(props) {
     // console.log(props.location.state.storeName)
     setStoreName(props.location.store)
     // console.log(storeName);
-    fetchPurchasePolicies("purchase", props.location.store);
-    fetchDiscountPolicies("discount", props.location.store);
+    // fetchPurchasePolicies("purchase", props.location.store);
+    // fetchDiscountPolicies("discount", props.location.store);
     // setHistory(useHistory());
   }, []);
 
@@ -95,7 +95,7 @@ const fetchDiscountPolicies = () => {}
                 </Form>
             </div>
             <div style={{marginTop: "5%"}}>
-                { purchaseAction === "addPurchasePolicy" ? <AddPurchaseForm storeName={storeName} history={props.location.props} /> : null }
+                { purchaseAction === "addPurchasePolicy" ? <AddPurchaseForm storeName={storeName}  history={props.location.props} /> : null }
             </div>
             <div style={{marginTop: "5%"}}>
                 { purchaseAction === "editPurchasePolicy" ? <EditPurchaseForm storeName={storeName} history={props.location.props} /> : null }
