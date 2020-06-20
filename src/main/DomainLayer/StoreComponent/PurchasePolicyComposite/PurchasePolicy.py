@@ -16,6 +16,7 @@ class PurchasePolicy(PurchaseComponent):
     def __init__(self):
         super().__init__()
         self.__children: [PurchaseComponent] = []
+        self.__products_names: [str] = []
 
     def can_purchase(self, details: [{"product_name": str, "amount": int}], curr_date: datetime):
         """
@@ -53,6 +54,7 @@ class PurchasePolicy(PurchaseComponent):
             for policy in policies["response"]:
                 self.__children.append(policy)
             self._name = details["name"]
+            self.__products_names = details['products']
             # self.__operator = details["operator"]
             return {'response': True, 'msg': "Great Success! Policy added"}
         return {'response': False, 'msg': "Oops...failed to add policy:\n" + policies["msg"]
@@ -112,6 +114,7 @@ class PurchasePolicy(PurchaseComponent):
         dictionary = {}
         if self._name != "":
             dictionary["name"] = self._name
+            dictionary["products"] = self.__products_names
         for policy in self.__children:
             dictionary = policy.get_details(dictionary)
         return dictionary
@@ -127,8 +130,12 @@ class PurchasePolicy(PurchaseComponent):
                 and details.get("min_amount") >= details.get("max_amount"):
             return {'response': False, 'msg': "Minimum amount cannot exceed maximum amount"}
 
-        for policy in self.__children:
-            policy.update(details)
+        policies = self.__get_policy_type(details)
+
+        self.__children.clear()
+        for policy in policies["response"]:
+            self.__children.append(policy)
+            self.__products_names = details['products']
         return {'response': True, 'msg': "Great Success! Policy updated"}
 
     def set_name(self, policy_name: str):

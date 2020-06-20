@@ -5,6 +5,8 @@ import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import './App.css';
 import * as theService from './services/communication';
 import BackToHome from './components/Actions/GeneralActions/Back'
+import * as BackOption from './components/Actions/GeneralActions/Back'
+
 import { IoMdCart, IoMdSearch, IoMdHome} from "react-icons/io";
 import { FaSistrix, FaCartArrowDown, Fahome, FaCartPlus, FaShareSquare } from "react-icons/fa";
 
@@ -40,11 +42,12 @@ import EditPermissions from './components/OwnerOrManagerRole/EditPermissions'
 import ManageStorePolicies from './components/OwnerOrManagerRole/ManageStorePolicies'
 import DisplayNotifications from './components/OwnerOrManagerRole/Notifications'
 import StorePurchaseHistory from './components/OwnerOrManagerRole/StorePurchaseHistory'
-import AddPurchaseForm from './components/OwnerOrManagerRole/AddPurchaseForm'
+import AddPurchasePolicyForm from './components/OwnerOrManagerRole/AddPurchasePolicyForm'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
 import SystemManagerAPI from './components/SystemManagerRole/SystemManagerAPI'
+import DailyVisitorsCut from './components/SystemManagerRole/DailyVisitorsCut'
 
 
 class App extends React.Component{
@@ -56,7 +59,8 @@ class App extends React.Component{
       searchInput: '',
       categories: [],
       height: window.innerHeight,
-      width: window.innerWidth
+      width: window.innerWidth,
+      userState: 'GUEST'
     }
     this.byNameHandler = this.byNameHandler.bind(this);
     this.byKeywordHandler = this.byKeywordHandler.bind(this);
@@ -64,7 +68,7 @@ class App extends React.Component{
     this.searchInputHandler = this.searchInputHandler.bind(this);
     this.fetchCategories = this.fetchCategories.bind(this);
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-
+    this.getUserState = this.getUserState.bind(this);
 
   }
 
@@ -99,30 +103,36 @@ class App extends React.Component{
     this.setState({height: window.innerHeight, width: window.innerWidth})
   }
 
+  getUserState = () => {
+    const promise = theService.getUserType().then((data) => {
+      if(data !== undefined){
+        this.setState({userState: data["data"]});
+      }
+    })
+    if(this.state.userState === 'GUEST')
+      return ''
+    return this.state.userState
+  }
   render(){
     return (
       <Router>
         <div className="App">
           {/* Navigation Bar */}
           <Navbar id="navbar" bg="dark" variant="dark">
-            <Navbar.Brand as={Link} id="navbar-logo" to="/">Trade Control</Navbar.Brand>
+            <Navbar.Brand  id="navbar-logo" >Trade Control</Navbar.Brand>
+            <Link to={{pathname:'/'+  this.getUserState()}} title="Home page" >
+                <IoMdHome class='fa-icon-effect' color='white' />
+
+            </Link>
             <Nav id="navbar-nav" className="mr-auto">
                {/* this space is currently only a filer for navbar decoration */}
             </Nav>
 
             <div style={{marginRight: "1%"}}>
-              <Link to={{pathname:'/viewcart', history: this.props}}>
-                <IoMdHome class='fa-icon-effect' color='white'/>
-               {/* <Button class='fa-icon-effect' style={{marginTop: "1%"}} variant="outline-info" id="back-btn" onClick={event => BackToHome(this.props)}>Back</Button> */}
-
-              </Link>
+              
             </div>
 
-           
-            {/* <Nav id="navbar-nav" className="mr-auto" style={{float: "right"}}> */}
-           
             <Form inline id="form">
-
               <Col style={{marginLeft:"82%"}}>
                   <Link to={{pathname:'/viewcart', history: this.props}} >
                        <IoMdCart class="fa-icon-effect" data-toggle="tooltip" data-placement="bottom" title="Shopping cart" size="90%" variant="outline-info" color='white'/>
@@ -166,12 +176,12 @@ class App extends React.Component{
           <Route path="/subscriber" exact render={(props) => <SubscriberAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/openstore" exact render={(props) => <OpenStore screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/history" exact render={(props) => <PersonalPurchaseHistory screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          
+          {/* owner */}
           <Route path="/owner" exact render={(props) => <OwnerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/manageinventory/:store" exact render={(props) => <ManageInventory screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/manager" exact render={(props) => <ManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/addproduct" exact render={(props) => <AddProductsForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
-
-          {/* owner */}
           <Route path="/appointowner" exact render={(props) => <AppointOwner screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/appointmanager" exact render={(props) => <AppointStoreManager screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/editpermissions" exact render={(props) => <EditPermissions screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
@@ -179,12 +189,17 @@ class App extends React.Component{
           <Route path="/managestorepolicies" exact render={(props) => <ManageStorePolicies screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/removeowner" exact render={(props) => <RemoveOwner screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/storehistory" exact render={(props) => <StorePurchaseHistory screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
-          <Route path="/addpurchase" exact render={(props) => <AddPurchaseForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/addpurchase" exact render={(props) => <AddPurchasePolicyForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
-          {/* owner */}
+          {/* system manager */}
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/dailyvisitors" exact render={(props) => <DailyVisitorsCut screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/notifications" exact render={(props) => <DisplayNotifications screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+
+          {/* <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} /> */}
+          <Route path="/systemhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+
 
 
           <Route path="/back" exact render={(props) => <BackToHome screenWidth= {this.state.width} screenHeight= {this.state.height-100} history={this.props} {...props} />} />

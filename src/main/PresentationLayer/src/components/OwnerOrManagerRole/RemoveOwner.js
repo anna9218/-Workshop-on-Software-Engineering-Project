@@ -64,7 +64,7 @@ function RemoveOwner(props){
             <Form >
                  <Form.Group as={Row} style={{marginRight:"0%" , marginLeft: "0%"}}>
                  <div><Button variant="dark"  onClick={removeOwnerHandler}>Commit</Button></div>
-                 <div style={{marginLeft:"1%"}}> <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button></div>
+                 {/* <div style={{marginLeft:"1%"}}> <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button></div> */}
                  </Form.Group>
              </Form>
             </div>

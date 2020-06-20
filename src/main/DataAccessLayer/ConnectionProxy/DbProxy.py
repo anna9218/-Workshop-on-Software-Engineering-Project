@@ -2,6 +2,7 @@ from peewee import Expression, OP
 from src.Logger import errorLogger, loggerStaticMethod, logger
 from src.main.DataAccessLayer.ConnectionProxy.DbSubject import DbSubject
 from src.main.DataAccessLayer.ConnectionProxy.RealDb import RealDb
+from src.main.ResponseFormat import ret
 
 
 def and_exprs(const_lst: [Expression]):
@@ -40,6 +41,7 @@ class DbProxy(DbSubject):
             self.__isConnected = False
             if DbProxy.__realSubject:
                 DbProxy.__instance = self.__realSubject
+                self.__real_doesnt_exist_error_msg = "We having some tech problems, but we will rise again!"
                 self.__realSubject.connect()
                 self.__realSubject.create_tables()
             else:
@@ -77,16 +79,29 @@ class DbProxy(DbSubject):
         pass
 
     def read(self, tbl, where_expr: Expression = None):
-        pass
+        if self.__realSubject is None:
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.delete(tbl, where_expr)
 
     def write(self, tbl, attributes_as_dictionary: {}):
-        pass
+        if self.__realSubject is None:
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.write(tbl, attributes_as_dictionary)
 
     def update(self, tbl, attributes_as_dictionary: {}, where_expr: Expression):
-        pass
+        if self.__realSubject is None:
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.update(tbl, attributes_as_dictionary, where_expr)
 
     def delete(self, tbl, where_expr: Expression):
-        pass
+        if self.__realSubject is None:
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.delete(tbl, where_expr)
+
+    def execute(self, queries):
+        if self.__realSubject is None:
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.execute(queries)
 
     def __delete__(self):
         DbProxy.__instance = None

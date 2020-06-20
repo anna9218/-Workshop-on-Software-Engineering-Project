@@ -1,5 +1,12 @@
 import unittest
+from datetime import datetime
 
+import jsonpickle
+
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.CompositeFlag import CompositeFlag
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.Leaves.ConditionalDiscountPolicy import \
+    ConditionalDiscountPolicy
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
@@ -19,6 +26,17 @@ class StoreTests(unittest.TestCase):
         self.manager.register("Not Eytan", "Yes Password")
         self.store.get_store_manager_appointments().append(StoreAppointment(self.owner, self.manager,
                                                                             [ManagerPermission.EDIT_INV]))
+
+        dis_details = {'name': "p1", 'product': "Eytan"}
+        later_date = datetime(2021, 8, 21)
+        pre_con__details = {'product': "Eytan", 'min_amount': 2, 'min_basket_price': None}
+        leaf_pol1 = ConditionalDiscountPolicy(2.5, later_date, dis_details, pre_con__details)
+        dis_details = {'name': "p2", 'product': "Eytan"}
+        pre_con__details = {'product': "all", 'min_amount': None, 'min_basket_price': 1}
+        leaf_pol2 = ConditionalDiscountPolicy(5, later_date, dis_details, pre_con__details)
+        self.__policy = DiscountPolicy(jsonpickle.encode(leaf_pol1), jsonpickle.encode(leaf_pol2),
+                                       CompositeFlag.XOR, 10, "Comp_Pol", later_date)
+        self.store.get_discount_policies().insert(0, self.__policy)
 
         # self.__product1 = {"name": "Chair", "price": 100, "category": "Furniture", "amount": 10}
         # self.__product2 = {"name": "TV", "price": 10, "category": "Electric", "amount": 1}
@@ -967,6 +985,19 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(store.is_owner('owner3'))
         self.assertFalse(store.is_manager('manager1'))
         self.assertTrue(store.is_manager('manager2'))
+
+    def test_purchase_immediate(self):
+        # purchase_immediate(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
+        # ret format{'amount': 2, 'product_name': 'Eytan', 'product_price': 10} != 9
+        result = self.store.purchase_immediate("Eytan", 10, 2, 0, ["Eytan"])
+        self.assertEqual(18, result['product_price'])
+
+        result = self.store.purchase_immediate("Eytan", 10, 2, 3, ["Eytan"])
+        self.assertEqual(20, result['product_price'])
+
+        result = self.store.purchase_immediate("Eytan2", 10, 2, 3, ["Eytan"])
+        self.assertEqual(20, result['product_price'])
+
 
     # # @logger
     def tearDown(self) -> None:

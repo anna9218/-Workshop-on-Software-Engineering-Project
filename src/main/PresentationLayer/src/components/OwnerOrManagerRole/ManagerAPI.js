@@ -149,43 +149,43 @@ class ManagerAPI extends React.Component {
                     {/* opptional actions for manager - according to his permissions */}
 
                     { this.hasPermission(1) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/manageinventory/" + this.state.store, 
-                                                                                                        store: this.state.store}} >
+                                                                                                        store: this.state.store, props: this.props}} >
                                                   Manage Stock
                                               </Button>
                                         : null }   
 
                     { this.hasPermission(4) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointowner", 
-                                                                                                        store: this.state.store}}>
+                                                                                                        store: this.state.store, props: this.props}}>
                                                   Appoint Additional Owner
                                               </Button>
                                         : null }  
                     { this.hasPermission(5) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
-                                                                                                        store: this.state.store}}>
+                                                                                                        store: this.state.store, props: this.props}}>
                                           Appoint Additional Manager
                                       </Button>
                                       : null }  
 
                     { this.hasPermission(6) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/editpermissions", 
-                                                                                                        store: this.state.store}}>
+                                                                                                        store: this.state.store, props: this.props}}>
                                             Edit Manager’s Permissions
                                         </Button>
                                         : null }  
 
                     { this.hasPermission(7) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/removemanager", 
-                                                                                                        store: this.state.store}}>
+                                                                                                        store: this.state.store, props: this.props}}>
                                             Remove A Store Manager
                                         </Button>
                                         : null }  
 
 
                     { this.hasPermission(10) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/storehistory", 
-                                                                                                     store: this.state.selectedStore}}>
+                                                                                                     store: this.state.selectedStore, props: this.props}}>
                                             View Store’s Purchase History
                                         </Button>
                                         : null }  
 
                     { this.hasPermission(2) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/managestorepolicies", 
-                                                                                                     store: this.state.selectedStore}}>
+                                                                                                     store: this.state.selectedStore, props: this.props}}>
                                             Manage Store Policies
                                         </Button>
                                         : null }  

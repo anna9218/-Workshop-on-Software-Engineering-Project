@@ -21,8 +21,13 @@ class OpenStore extends React.Component {
       super(props);
       this.state = {
         storeNameInput: "",
+        nickname: "",
       }
 
+      const promise = theService.getNickname();
+      promise.then((data) => {
+        this.setState({nickname: data['data']})
+      })
       // bind handlers
       this.storeNameInputHandler = this.storeNameInputHandler.bind(this);
       this.openStoreHandler = this.openStoreHandler.bind(this);
@@ -30,6 +35,7 @@ class OpenStore extends React.Component {
 
   storeNameInputHandler = (event) =>{
     this.setState({storeNameInput: event.target.value});
+    
   };
 
   openStoreHandler = async () =>{
@@ -37,7 +43,7 @@ class OpenStore extends React.Component {
     // REAL TIME
     const something = theService.getUserType()
     something.then((data) => {
-      if(data["data"] == "OWNER"){
+      if(data["data"] === "OWNER"){
         // Notifications.register_new_store('s2');
         theNotifications.register_new_store('s2');
       }
@@ -48,7 +54,8 @@ class OpenStore extends React.Component {
         // Notifications.useState(Username='y');
 
         // Notifications({Username:'y', Storename: 's'});
-        theNotifications.init('y', 's');
+       
+        theNotifications.init(this.state.nickname, this.state.storeNameInput);
 
         // Notifications.username = 'y';
         // Notifications.storename = 's';

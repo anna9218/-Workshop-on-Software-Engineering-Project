@@ -117,6 +117,12 @@ export async function confirmPurchase(address, purchase_details){
 
 //--------------------------- SUBSCRIBER ROLE ---------------------------------------//
 
+
+export async function getNickname(){
+    return axios.get('http://localhost:5000/get_curr_user_nickname')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function openStore(store_name){
     return axios.post('http://localhost:5000/open_store', {
         store_name: store_name
@@ -142,6 +148,9 @@ export async function initSystem(){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 //--------------------------- END OF INIT SYSTEM -------------------------------------//
+
+
+
 
 //--------------------------- MANAGRT ROLE --------------------------------------------//
 
@@ -291,16 +300,17 @@ export async function fetchStorePurchaseHistory(store_name){
 }
 
 
-export async function getPolicies(policy_name, store_name){
+export async function getPolicies(policy_type, store_name){
     return axios.post('http://localhost:5000/get_policies', {
         store_name: store_name,
-        policy_name: policy_name
+        policy_type: policy_type
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function addPurchasePolicy(store_name, policy_name, products, min_amount, max_amount, dates, bundle){
-    return axios.post('http://localhost:5000/add_purchase_policy', {
+export async function addAndUpdatePurchasePolicy(action_type, store_name, policy_name, products, min_amount, max_amount, dates, bundle){
+        return axios.post('http://localhost:5000/add_and_update_purchase_policy', {
+        action_type: action_type,
         store_name: store_name,
         policy_name: policy_name,
         products: products,
@@ -312,6 +322,30 @@ export async function addPurchasePolicy(store_name, policy_name, products, min_a
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function addAndUpdateDiscountPolicy(action_type, store_name, policy_name, product_name, date, percentage, product, min_amount, min_purchase_price){
+    return axios.post('http://localhost:5000/add_and_update_dicount_policy', {
+        action_type: action_type,
+        store_name: store_name,
+        policy_name: policy_name,
+        product_name: product_name,
+        date: date,
+        percentage: percentage,
+        product: product,
+        min_amount: min_amount,
+        min_purchase_price: min_purchase_price
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function deletePolicy(policy_type, store_name, policy_name){
+    return axios.post('http://localhost:5000/delete_policy', {
+        policy_type: policy_type,
+        store_name: store_name,
+        policy_name: policy_name,
+        
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 
 
 
@@ -327,12 +361,20 @@ export async function fetchUserPurchaseHistory(nickname){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-// export async function fetchStorePurchaseHistory(store_name){
-//     return axios.post('http://localhost:5000/view_store_purchases_history', {
-//         store_name: store_name
-//     })
-//     .then((response) => (response.data), (error) => {console.log(error)});
-// }
+export async function SystemManagerfetchStorePurchaseHistory(store_name){
+    return axios.post('http://localhost:5000/view_any_store_purchase_history', {
+        store_name: store_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function getVisitorsCut(start_date, end_date){
+    return axios.post('http://localhost:5000/get_visitors_cut', {
+        start_date: start_date,
+        end_date: end_date
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 
 //--------------------------- END OF SYSTEM MANAGE ----------------------------------//
 

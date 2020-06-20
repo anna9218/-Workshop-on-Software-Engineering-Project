@@ -153,6 +153,10 @@ class User:
                 self.__purchase_history.remove(p)
 
     @logger
+    def get_password(self):
+        return self.__registrationState.get_password()
+
+    @logger
     def get_shopping_cart(self) -> ShoppingCart:
         return self.__shoppingCart
 
