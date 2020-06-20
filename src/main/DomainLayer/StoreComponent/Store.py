@@ -206,7 +206,7 @@ class Store:
     def product_in_inventory(self, product_name: str):
         return self.__inventory.get_product(product_name) is not None
 
-    # @logger
+    @logger
     def add_owner(self, appointer_nickname: str, appointee: User) -> bool:
         """
         appointee has to be registered.

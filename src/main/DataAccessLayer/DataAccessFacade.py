@@ -1,4 +1,4 @@
-from src.Logger import errorLogger
+from src.Logger import errorLogger, logger, loggerStaticMethod
 from src.main.DataAccessLayer.ConnectionProxy.DbProxy import DbProxy
 from src.main.DataAccessLayer.UserDataComponent.UserData import UserData
 
@@ -34,6 +34,7 @@ class DataAccessFacade:
     @staticmethod
     def get_instance():
         """ Static access method. """
+        loggerStaticMethod("DataAccessFacade.get_instance", [])
         if DataAccessFacade.__instance is None:
             DataAccessFacade()
         return DataAccessFacade.__instance
@@ -48,9 +49,11 @@ class DataAccessFacade:
             self.__proxy.connect()
             DataAccessFacade.__instance = self
 
+    @logger
     def get_proxy(self):
         return self.__proxy
 
+    @logger
     def write_user(self, username: str, password: str, is_system_manager: bool = False):
         """
         Write a user to db.
@@ -62,6 +65,7 @@ class DataAccessFacade:
         """
         return UserData.get_instance().write(username, password, is_system_manager)
 
+    @logger
     def read_users(self, attributes_to_read=None, username: str = "", password: str = "",
                    is_system_manager: bool = None):
         """
@@ -81,6 +85,7 @@ class DataAccessFacade:
             attributes_to_read = []
         return UserData.get_instance().read(attributes_to_read, username, password, is_system_manager)
 
+    @logger
     def update_users(self, old_username: str = "", old_password: str = "", old_is_system_manager: bool = None,
                      new_username: str = "", new_password: str = "", new_is_system_manager: bool = None):
         """
@@ -108,6 +113,7 @@ class DataAccessFacade:
                                               new_password,
                                               new_is_system_manager)
 
+    @logger
     def delete_users(self, username: str = "", password: str = "", is_system_manager: bool = None):
         """
         Delete users from the DB.
@@ -121,3 +127,6 @@ class DataAccessFacade:
         :return: the number of deleted rows.
         """
         return UserData.get_instance().delete(username, password, is_system_manager)
+
+    def __repr__(self):
+        return repr("DataAccessFacade")
