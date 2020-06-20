@@ -316,6 +316,21 @@ export async function addAndUpdatePurchasePolicy(action_type, store_name, policy
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function addAndUpdateDiscountPolicy(action_type, store_name, policy_name, product_name, date, percentage, product, min_amount, min_purchase_price){
+    return axios.post('http://localhost:5000/add_and_update_dicount_policy', {
+        action_type: action_type,
+        store_name: store_name,
+        policy_name: policy_name,
+        product_name: product_name,
+        date: date,
+        percentage: percentage,
+        product: product,
+        min_amount: min_amount,
+        min_purchase_price: min_purchase_price
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 
 
 

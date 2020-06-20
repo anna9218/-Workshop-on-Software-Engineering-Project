@@ -42,7 +42,7 @@ import EditPermissions from './components/OwnerOrManagerRole/EditPermissions'
 import ManageStorePolicies from './components/OwnerOrManagerRole/ManageStorePolicies'
 import DisplayNotifications from './components/OwnerOrManagerRole/Notifications'
 import StorePurchaseHistory from './components/OwnerOrManagerRole/StorePurchaseHistory'
-import AddPurchaseForm from './components/OwnerOrManagerRole/AddPurchaseForm'
+import AddPurchasePolicyForm from './components/OwnerOrManagerRole/AddPurchasePolicyForm'
 
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
@@ -188,7 +188,7 @@ class App extends React.Component{
           <Route path="/managestorepolicies" exact render={(props) => <ManageStorePolicies screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/removeowner" exact render={(props) => <RemoveOwner screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/storehistory" exact render={(props) => <StorePurchaseHistory screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
-          <Route path="/addpurchase" exact render={(props) => <AddPurchaseForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/addpurchase" exact render={(props) => <AddPurchasePolicyForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
           {/* owner */}
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />

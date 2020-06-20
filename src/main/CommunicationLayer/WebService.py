@@ -424,6 +424,34 @@ def add_and_update_purchase_policy():
     return jsonify(msg="Oops, communication error.")
 
 
+@app.route('/add_and_update_dicount_policy', methods=['POST'])
+def add_and_update_dicount_policy():
+    if request.is_json:
+        request_dict = request.get_json()
+        action_type = request_dict.get('action_type')
+        store_name = request_dict.get('store_name')
+        policy_name = request_dict.get('policy_name')
+        product_name = request_dict.get('product_name')
+        date = parse(request_dict.get('date'))
+        percentage = request_dict.get('percentage')
+        product = request_dict.get('product')
+        min_amount = request_dict.get('min_amount')
+        min_purchase_price = request_dict.get('min_purchase_price')
+
+        discount_details = {'name': policy_name, 'product': product_name}
+        discount_precondition = {'product': product,
+                                'min_amount': min_amount,
+                                'min_basket_price': min_purchase_price}
+
+        if action_type == 'add':
+            response = StoreOwnerOrManagerRole.define_discount_policy(store_name, percentage, date, discount_details, discount_precondition)
+        else:
+            response = StoreOwnerOrManagerRole.update_discount_policy(store_name, percentage, date, discount_details, discount_precondition)
+        return jsonify(msg=response['msg'], data=response['response'])
+
+    return jsonify(msg="Oops, communication error.")
+
+
 @app.route('/add_product', methods=['POST'])
 def add_product():
     if request.is_json:

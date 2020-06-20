@@ -7,7 +7,7 @@ import * as BackOption from '../Actions/GeneralActions/Back';
 import {IoMdCloseCircle} from 'react-icons/io' 
 import { confirmAlert } from 'react-confirm-alert'; 
 
-function EditPurchaseForm(props){
+function EditPurchasePolicyForm(props){
     useEffect(() => {
         // console.log(props.location.state.storeName)
         setStoreName(props.storeName)
@@ -315,4 +315,4 @@ function EditPurchaseForm(props){
     );
   }
 
-export default EditPurchaseForm;
+export default EditPurchasePolicyForm;

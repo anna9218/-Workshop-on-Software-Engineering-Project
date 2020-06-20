@@ -946,7 +946,15 @@ class Store:
     # ------------- 4.2 --------------
 
     def get_discount_policies(self):
+        # pol : DiscountPolicy
+        # return [{'name': pol.get_name(),
+        #          'percentage': pol.get_percentage(),
+        #          'date': pol.get_valid_until_date()}
+        #          'product': pol.()}
+        #           for pol in self.__discount_policies]
+
         return self.__discount_policies
+
 
     def __repr__(self):
         return repr("Store")
