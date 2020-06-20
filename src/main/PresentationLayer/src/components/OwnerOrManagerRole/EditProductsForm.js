@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Container, Button, Form} from 'react-bootstrap'
+import {Container, Button, Form, Row} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import * as BackOption from '../Actions/GeneralActions/Back'
 import { confirmAlert } from 'react-confirm-alert'; 
@@ -40,7 +40,8 @@ function EditProductsForm(props){
                     setAllStoreProducts(data["data"]);
                 }
                 else{
-                    setAllStoreProducts(data["msg"]);      // no products to display
+                    alert(data["msg"])
+                    setAllStoreProducts([]);      // no products to display
                 }
             }
         })
@@ -53,62 +54,75 @@ function EditProductsForm(props){
                 setProductAmount(product["amount"]);
                 setProductCategory(product["category"]);
                 setProductPrice(product["price"]);
-                if(product["purchase_type"] === "DEFUALT"){
+                if(product["purchase_type"] === "DEFAULT"){ 
                     setImmidiateChecked(true);
                     setAuctionChecked(false);
                     setLotteryChecked(false);
                     setPurchaseType(0);
+                    setNewPurchaseType(0);
                 }
                 else if(product["purchase_type"] === "AUCTION"){
                     setImmidiateChecked(false);
                     setAuctionChecked(true);
                     setLotteryChecked(false);
                     setPurchaseType(1);
+                    setNewPurchaseType(1);
+
                 }
                 else{
                     setImmidiateChecked(false);
                     setAuctionChecked(false);
                     setLotteryChecked(true);
                     setPurchaseType(2);
+                    setNewPurchaseType(2);
                 }
             }
         })
     }
 
     const editProductHandler = async () => {
-        const promise = theService.editProduct(props.storeName, productName, newProductName, newProductAmount, newProductPrice, newProductCategory, newPurchaseType)
-        promise.then((data) => {
-            if(data !== undefined){
-                confirmAlert({
-                    title: data["msg"],
-                    buttons: [
-                      {
-                        label: 'Add another product',
-                        onClick: () => { // reset the form in order to add another product
-                            // reset form
-                            setProductName(null);
-                            setProductAmount(null);
-                            setProductCategory(null);
-                            setProductPrice(null);
-                            setImmidiateChecked(false);
-                            setAuctionChecked(false);
-                            setLotteryChecked(false);
-                            setNewProductAmount(null);
-                            setNewProductCategory(null);
-                            setNewProductName(null);
-                            setNewProductPrice(null);
-                            setNewPurchaseType(null);
-                            getProductList();
+        alert(parseInt(newProductAmount))
+        if(newProductName !== null && newProductName === "")
+            alert("Oops, Product's name can't be an empty string.");
+        else if(newProductAmount !== null && parseInt(newProductAmount) < 0)
+            alert("Oops, Product's amount can't be less than 0.");
+        else if(newProductPrice !== null && parseFloat(newProductPrice) < 0)
+            alert("Oops, Product's price can't be less than 0.");
+        else {
+            const promise = theService.editProduct(props.storeName, productName, newProductName, newProductAmount, newProductPrice, newProductCategory, newPurchaseType)
+            promise.then((data) => {
+                if(data !== undefined){
+                    confirmAlert({
+                        title: data["msg"],
+                        buttons: [
+                        {
+                            label: 'Add another product',
+                            onClick: () => { // reset the form in order to add another product
+                                // reset form
+                                setProductName(null);
+                                setProductAmount(null);
+                                setProductCategory(null);
+                                setProductPrice(null);
+                                setImmidiateChecked(false);
+                                setAuctionChecked(false);
+                                setLotteryChecked(false);
+                                setNewProductAmount(null);
+                                setNewProductCategory(null);
+                                setNewProductName(null);
+                                setNewProductPrice(null);
+                                setNewPurchaseType(null);
+                                getProductList();
+                            }
+                        },
+                        {
+                            label: 'Done',
+                            onClick: () => {BackOption.BackToHome(props.history)}  
                         }
-                      },
-                      {
-                        label: 'Done',
-                        onClick: () => {BackOption.BackToHome(props.history)}  
-                      }
-                    ]
-                });
-            }
-        });
+                        ]
+                    });
+                }
+            });
+        }
     }
 
   return (
@@ -162,10 +176,27 @@ function EditProductsForm(props){
 
                         <Form.Label>Enter the purchase type:</Form.Label>
 
+                        {/* <div style={{marginTop:"3%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
+
+                            <Form style={{marginRight:"5%" , marginLeft: "5%", marginBottom:"2%"}}>
+                                <Row><Form.Check inline type="radio" label="Add Products" name="formHorizontalRadios"id="Radios1"/>
+                                </Row>
+                                <Row><Form.Check inline type="radio" label="Remove Products" name="formHorizontalRadios"id="Radios2"/>
+                                </Row>
+                                <Row><Form.Check inline type="radio" label="Edit Products Details" name="formHorizontalRadios"id="Radios3"/>
+                                </Row>
+                            </Form>
+                        </div> */}
+
                         <div key={`inline-checkbox`} className="mb-3" style={{border: "1px solid", borderColor: "#CCCCCC"}}>
-                            <Form.Check inline label="Immidiate Purcahse" type="checkbox" id={`immidiate-purchase`} defaultChecked={immidiateChecked} onChange={(event => {setNewPurchaseType(0)})} />
+                            <div style={{marginLeft:"2%"}}>
+                                <Row><Form.Check inline label="Immidiate Purcahse" type="radio" id={`immidiate-purchase2`} name="formHorizontalRadios" checked={immidiateChecked} onChange={(event => {setNewPurchaseType(0); setImmidiateChecked(true); setAuctionChecked(false); setLotteryChecked(false)})} /></Row>
+                                <Row><Form.Check inline label="Auction Purchase" type="radio" id={`auction-purchase2`} name="formHorizontalRadios" checked={auctionChecked} onChange={(event => {setNewPurchaseType(1); setImmidiateChecked(false); setAuctionChecked(true); setLotteryChecked(false)})} /></Row>
+                                <Row><Form.Check inline label="Lottery Purchase" type="radio" id={`lottery-purchase2`} name="formHorizontalRadios" checked={lotteryChecked} onChange={(event => {setNewPurchaseType(2); setAuctionChecked(false); setAuctionChecked(false); setLotteryChecked(true)})}/></Row>
+                            </div>
+                            {/* <Form.Check inline label="Immidiate Purcahse" type="checkbox" id={`immidiate-purchase`} defaultChecked={immidiateChecked} onChange={(event => {setNewPurchaseType(0)})} />
                             <Form.Check inline label="Auction Purchase" type="checkbox" id={`auction-purchase`} defaultChecked={auctionChecked} onChange={(event => {setNewPurchaseType(1)})} />
-                            <Form.Check inline label="Lottery Purchase" type="checkbox" id={`lottery-purchase`} defaultChecked={lotteryChecked} onChange={(event => {setNewPurchaseType(2)})}/>
+                            <Form.Check inline label="Lottery Purchase" type="checkbox" id={`lottery-purchase`} defaultChecked={lotteryChecked} onChange={(event => {setNewPurchaseType(2)})}/> */}
                         </div>
 
                     </Form>

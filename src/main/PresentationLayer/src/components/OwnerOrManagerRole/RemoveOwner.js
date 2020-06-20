@@ -4,43 +4,45 @@ import {Button, Form, Row} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import * as BackOption from '../Actions/GeneralActions/Back'
 
-function RemoveManager(props){
+function RemoveOwner(props){
     useEffect(() => {
         setSelectedStore(props.location.store);
-        fetchManagersAppointees();
+        fetchOwnersAppointees();
     }, []);
 
     const [selectedStore, setSelectedStore] = useState("");
     const [subscriberNickname, setSubscriberNickname] = useState("");
-    const [managers, setManagers] = useState(["No managers were appointed by you..."]);
+    const [owners, setOwners] = useState(["No owners were appointed by you..."]);
 
 
-    const fetchManagersAppointees = async () => {
-        const promise = theService.fetchManagersAppointees(props.location.store);  // goes to communication.js and sends to server
+    const fetchOwnersAppointees = async () => {
+        const promise = theService.fetchOwnersAppointees(props.location.store);  // goes to communication.js and sends to server
         promise.then((data) => {
             if (data["data"].length > 0){   // if there are owned stores
-                setManagers(data["data"]);
+                setOwners(data["data"]);
                 setSubscriberNickname(data["data"][0]);
             }
             else {
-                setManagers(["No managers were appointed by you..."])
+                setOwners(["No owners were appointed by you..."])
             }
         });
     };
 
-    const removeManagerHandler = async () =>{
-        if(managers[0] === "No managers were appointed by you..."){
-            alert("No managers were appointed by you...");
+    const removeOwnerHandler = () =>{
+        if(owners[0] === "No owners were appointed by you..."){
+            alert("No owners were appointed by you...");
+
         }
         else{
-            const promise = theService.removeManager(selectedStore, subscriberNickname);
+            const promise = theService.removeOwner(selectedStore, subscriberNickname);
             promise.then((data) => {
                 alert(data["msg"]);
-
+                alert(data["data"]);
+    
                 // reset feilds
                 setSelectedStore(selectedStore);
                 setSubscriberNickname("");
-                fetchManagersAppointees();
+                fetchOwnersAppointees();
             });
         }
         
@@ -48,12 +50,12 @@ function RemoveManager(props){
 
     return (
         <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-          <h2>{selectedStore} - Remove Store Manager</h2>
+          <h2>{selectedStore} - Remove Store Owner</h2>
           <div style={{marginLeft: "30%", marginRight: "30%" , marginTop: "2%"}}>
-            <Form.Group controlId="managers_appointees" onChange={ event => {setSubscriberNickname(event.target.value)}}>
-            <Form.Label>Please choose a manager to remove:</Form.Label>
+            <Form.Group controlId="owners_appointees" onChange={ event => {setSubscriberNickname(event.target.value)}}>
+            <Form.Label>Please choose a owner to remove:</Form.Label>
             <Form.Control as="select">
-                {managers.map(nickname => (
+                {owners.map(nickname => (
                     <option value={nickname}>{nickname}</option>
                 ))}
             </Form.Control>
@@ -61,8 +63,8 @@ function RemoveManager(props){
 
             <Form >
                  <Form.Group as={Row} style={{marginRight:"0%" , marginLeft: "0%"}}>
-                 <div><Button variant="dark" onClick={removeManagerHandler}>Commit</Button></div>
-                 <div style={{marginLeft:"1%"}}> <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button></div>
+                 <div><Button variant="dark"  onClick={removeOwnerHandler}>Commit</Button></div>
+                 {/* <div style={{marginLeft:"1%"}}> <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button></div> */}
                  </Form.Group>
              </Form>
             </div>
@@ -71,4 +73,4 @@ function RemoveManager(props){
     );
 }
 
-export default RemoveManager;
+export default RemoveOwner;

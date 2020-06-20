@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+.fa-icon-effect:hover {
+  border-radius: 100%;
+  /* border-bottom-left-radius: 10%; */
+  /* border-bottom-right-radius: 10%; */
+  /* border-: 10%; */
+  color: #272323 !important;
+  background-color:  white;
+  
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  transform: scale(1.2)
+}

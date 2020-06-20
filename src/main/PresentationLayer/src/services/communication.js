@@ -117,6 +117,12 @@ export async function confirmPurchase(address, purchase_details){
 
 //--------------------------- SUBSCRIBER ROLE ---------------------------------------//
 
+
+export async function getNickname(){
+    return axios.get('http://localhost:5000/get_curr_user_nickname')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function openStore(store_name){
     return axios.post('http://localhost:5000/open_store', {
         store_name: store_name
@@ -143,6 +149,9 @@ export async function initSystem(){
 }
 //--------------------------- END OF INIT SYSTEM -------------------------------------//
 
+
+
+
 //--------------------------- MANAGRT ROLE --------------------------------------------//
 
 export async function fetchManagedStores(){
@@ -163,12 +172,34 @@ export async function fetchManagersAppointees(store_name){
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
+
+export async function fetchOwnersAppointees(store_name){
+    return axios.post('http://localhost:5000/get_owners_appointees', {
+        store_name: store_name,
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 //--------------------------- END OF MANAGRT ROLE -------------------------------------//
 
 //--------------------------- OWNER & MANAGER ROLE --------------------------------------------//
 
 export async function fetchOwnedStores(){
     return axios.get('http://localhost:5000/get_owned_stores')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function getPurchasePoliciesOperator(store_name){
+    return axios.post('http://localhost:5000/get_purchase_operator', {
+        store_name: store_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function setPurchasePoliciesOperator(store_name, operator){
+    return axios.post('http://localhost:5000/set_purchase_operator', {
+        store_name: store_name,
+        operator: operator
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -234,6 +265,14 @@ export async function appointStoreOwner(appointee_nickname, store_name){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function removeOwner(store_name, nickname){
+    return axios.post('http://localhost:5000/remove_owner', {
+        store_name: store_name,
+        nickname: nickname
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function removeManager(store_name, nickname){
     return axios.post('http://localhost:5000/remove_manager', {
         store_name: store_name,
@@ -241,6 +280,8 @@ export async function removeManager(store_name, nickname){
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
+
+
 
 export async function editManagerPermissions(store_name, appointee_nickname, permissions){
     return axios.post('http://localhost:5000/edit_manager_permissions', {
@@ -251,13 +292,61 @@ export async function editManagerPermissions(store_name, appointee_nickname, per
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function getPolicies(policy_name, store_name){
-    return axios.post('http://localhost:5000/get_policies', {
+export async function fetchStorePurchaseHistory(store_name){
+    return axios.post('http://localhost:5000/view_store_purchases_history', {
         store_name: store_name,
-        policy_name: policy_name
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
+
+
+export async function getPolicies(policy_type, store_name){
+    return axios.post('http://localhost:5000/get_policies', {
+        store_name: store_name,
+        policy_type: policy_type
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function addAndUpdatePurchasePolicy(action_type, store_name, policy_name, products, min_amount, max_amount, dates, bundle){
+        return axios.post('http://localhost:5000/add_and_update_purchase_policy', {
+        action_type: action_type,
+        store_name: store_name,
+        policy_name: policy_name,
+        products: products,
+        min_amount: min_amount,
+        max_amount: max_amount,
+        dates: dates,
+        bundle: bundle
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function addAndUpdateDiscountPolicy(action_type, store_name, policy_name, product_name, date, percentage, product, min_amount, min_purchase_price){
+    return axios.post('http://localhost:5000/add_and_update_dicount_policy', {
+        action_type: action_type,
+        store_name: store_name,
+        policy_name: policy_name,
+        product_name: product_name,
+        date: date,
+        percentage: percentage,
+        product: product,
+        min_amount: min_amount,
+        min_purchase_price: min_purchase_price
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function deletePolicy(policy_type, store_name, policy_name){
+    return axios.post('http://localhost:5000/delete_policy', {
+        policy_type: policy_type,
+        store_name: store_name,
+        policy_name: policy_name,
+        
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 
 
 //--------------------------- END OF OWNER ROLE -------------------------------------//
@@ -272,9 +361,17 @@ export async function fetchUserPurchaseHistory(nickname){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function fetchStorePurchaseHistory(store_name){
-    return axios.post('http://localhost:5000/view_store_purchases_history', {
+export async function SystemManagerfetchStorePurchaseHistory(store_name){
+    return axios.post('http://localhost:5000/view_any_store_purchase_history', {
         store_name: store_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function getVisitorsCut(start_date, end_date){
+    return axios.post('http://localhost:5000/get_visitors_cut', {
+        start_date: start_date,
+        end_date: end_date
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }

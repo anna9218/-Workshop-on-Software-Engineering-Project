@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.Logger import logger
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
@@ -11,7 +13,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.1.1
     @staticmethod
     def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
-        int, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
+        float, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
@@ -49,7 +51,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.3
     @staticmethod
     @logger
-    def appoint_additional_owner( appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+    def appoint_additional_owner(appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -58,10 +60,10 @@ class StoreOwnerOrManagerRole:
         """
         return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
 
-
-    @logger
     # use case 4.4
-    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+    @staticmethod
+    @logger
+    def remove_owner(appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
         """
         the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
         and owners appointee_nickname appointed.
@@ -105,13 +107,14 @@ class StoreOwnerOrManagerRole:
 
     # @logger
     @staticmethod
-    def get_managers_appointees(store_name) -> list:
+    def get_appointees(store_name, managers_or_owners: str) -> list:
         """
         returns for the current manager/owner all the managers he appointed
         :param store_name: name of the store
+        :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
         :return: list of the managers nicknames
         """
-        return TradeControl.get_instance().get_managers_appointees(store_name)
+        return TradeControl.get_instance().get_appointees(store_name, managers_or_owners)
 
     # use case 4.7
     @staticmethod
@@ -150,20 +153,25 @@ class StoreOwnerOrManagerRole:
     # -------- UC 4.2 -------------------
     @staticmethod
     @logger
+    def get_purchase_operator(store_name: str):
+        return TradeControl.get_instance().get_store_purchase_operator(store_name)
+
+    @staticmethod
+    @logger
     def set_purchase_operator(store_name: str, operator: str):
-        TradeControl.define_store_purchase_operator(store_name, operator)
+        TradeControl.get_instance().define_store_purchase_operator(store_name, operator)
 
     # uc 4.2
     @staticmethod
     @logger
-    def get_policies(purchase_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
+    def get_policies(policy_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
         """
             according to the given type, displays a list of policies for the store
         :param purchase_type: can be "purchase" or "discount"
         :param store_name:
         :return: list of policies or empty list, returns None if user is not owner of the store or store doesn't exist
         """
-        return TradeControl.get_instance().get_policies(purchase_type, store_name)
+        return TradeControl.get_instance().get_policies(policy_type, store_name)
 
     # uc 4.2.1
     @staticmethod
@@ -191,7 +199,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None})\
+                                                                "dates": [datetime] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
@@ -210,10 +218,9 @@ class StoreOwnerOrManagerRole:
     # uc 4.2.3
     @staticmethod
     @logger
-  #  def update_discount_policy():
-  #      return TradeControl.get_instance().update_discount_policy()
-    def update_discount_policy(self, store_name: str, policy_name: str,
+    def update_discount_policy(store_name: str, policy_name: str,
                                percentage: float = -999,
+                               valid_until: datetime = None,
                                discount_details: {'name': str,
                                                   'product': str} = None,
                                discount_precondition: {'product': str,
@@ -225,6 +232,7 @@ class StoreOwnerOrManagerRole:
         Updating an existing policy, either visible, conditional or composite.
         The key word "all" will flag that the policy is on the entire basket.
 
+        :param valid_until: the last date the policy is valid.
         :param store_name.
         :param policy_name: the policy to update.
         :param percentage: for updating the percentage attribute.
@@ -234,16 +242,15 @@ class StoreOwnerOrManagerRole:
                 DOES NOT AVAILABLE FOR COMPOSITE AND VISIBLE POLICIES.
         :return: true if successful, else false.
         """
-        return TradeControl.get_instance().update_discount_policy(store_name, policy_name, percentage, discount_details,
-                                                                  discount_precondition)
+        return TradeControl.get_instance().update_discount_policy(store_name, policy_name, percentage, valid_until,
+                                                                  discount_details, discount_precondition)
 
     # uc 4.2.4
     @staticmethod
     @logger
-#    def define_discount_policy():
- #       return TradeControl.get_instance().define_discount_policy()
-    def define_discount_policy(self, store_name: str,
+    def define_discount_policy(store_name: str,
                                percentage: float,
+                               valid_until: datetime,
                                discount_details: {'name': str,
                                                   'product': str},
                                discount_precondition: {'product': str,
@@ -255,6 +262,7 @@ class StoreOwnerOrManagerRole:
         Define SIMPLE discount policy, either visible or conditional.
         The key word "all" will flag that the policy or constraint are on the entire basket.
 
+        :param valid_until: the last date the policy is valid.
         :param store_name.
         :param percentage: the percentage of the discount.
         :param discount_details:  the name and the product of the policy.
@@ -262,17 +270,19 @@ class StoreOwnerOrManagerRole:
                         have a constraint either on the entire basket, or a specific product.
         :return: True if successful, else false.
         """
-        return TradeControl.get_instance().define_discount_policy(store_name, percentage, discount_details,
+        return TradeControl.get_instance().define_discount_policy(store_name, percentage, valid_until, discount_details,
                                                                   discount_precondition)
 
+    @staticmethod
     @logger
-    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
-                                percentage: float, name: str) -> {}:
+    def define_composite_policy(store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float, name: str, valid_until: datetime) -> {}:
         """
         Define a policy that composite from exactly 2 policies.
         Both policies should have the same product for success.
         The keyword "all" will flag that the policies are on the entire basket.
 
+        :param valid_until: the last date the policy is valid.
         :param store_name.
         :param policy1_name: the policy uid.
         :param policy2_name: the policy uid.
@@ -282,10 +292,11 @@ class StoreOwnerOrManagerRole:
         :return: True if successful, else false.
         """
         return (TradeControl.get_instance()).define_composite_policy(store_name, policy1_name, policy2_name, flag,
-                                                                     percentage, name)
+                                                                     percentage, name, valid_until)
 
+    @staticmethod
     @logger
-    def get_discount_policy(self, store_name: str, policy_name: str) -> {}:
+    def get_discount_policy(store_name: str, policy_name: str) -> {}:
         """
         return the policy.
 
@@ -295,8 +306,9 @@ class StoreOwnerOrManagerRole:
         """
         return (TradeControl.get_instance()).get_discount_policy(store_name, policy_name)
 
+    @staticmethod
     @logger
-    def delete_policy(self, store_name: str, policy_name: str):
+    def delete_policy(store_name: str, policy_name: str):
         """
         Delete the policy with the name @policy_name, if exist.
 
@@ -312,7 +324,7 @@ class StoreOwnerOrManagerRole:
     @staticmethod
     # for managing inventory - uc 4.1
     def get_owned_stores():
-        return TradeControl.get_instance().get_stores_names()
+        return TradeControl.get_instance().get_owned_stores()
 
     @staticmethod
     def get_managed_stores():
