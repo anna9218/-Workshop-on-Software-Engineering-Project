@@ -177,14 +177,16 @@ class TradeControl:
                                                               "product_name": product.get_name(),
                                                               "price": product.get_price(),
                                                               "category": product.get_category(),
-                                                              "amount": s.get_inventory().get_amount(product.get_name())}), products))
+                                                              "amount": s.get_inventory().get_amount(
+                                                                  product.get_name())}), products))
         if len(list_of_products) == 0:
             return {'response': list_of_products, 'msg': "Error! There are no results"}
         return {'response': list_of_products, 'msg': "Products was retrieved successfully"}
 
     @logger
     def filter_products_by(self,
-                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
+                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str,
+                                          "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
                            max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
                                                                                                   'msg': str}:
@@ -260,6 +262,7 @@ class TradeControl:
             #       "_Registration__username": "s",
             #    "_Store__StoreManagerAppointments": [],
             # 'msg': 'Store info was retrieved successfully'}
+
     # @logger
     def get_store_info(self, store_name) -> dict:
         """
@@ -291,9 +294,9 @@ class TradeControl:
 
         res = []
         list(map(lambda curr: res.append({"name": curr["product"].get_name(), "price": curr["product"].get_price(),
-               "category": curr["product"].get_category(), "amount": curr["amount"],
-               "discount_type": curr["product"].get_discount_type().name,
-               "purchase_type": curr["product"].get_purchase_type().name}), inventory))
+                                          "category": curr["product"].get_category(), "amount": curr["amount"],
+                                          "discount_type": curr["product"].get_discount_type().name,
+                                          "purchase_type": curr["product"].get_purchase_type().name}), inventory))
 
         return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
@@ -495,12 +498,13 @@ class TradeControl:
                                                      "nickname": purchase.get_nickname(),
                                                      "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
                                                      "total_price": purchase.get_total_price(),
-                                                     "products": purchase.get_products()}), viewed_user.get_purchase_history()))
+                                                     "products": purchase.get_products()}),
+                         viewed_user.get_purchase_history()))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for user " + nickname}
                 return {'response': ls, 'msg': nickname + " purchases history was retrieved successfully"}
             else:
-                return {'response': None, 'msg': "Error, Subscriber " +nickname+ " doesn't exist by that name."}
+                return {'response': None, 'msg': "Error, Subscriber " + nickname + " doesn't exist by that name."}
         else:
             return {'response': None, 'msg': "User is not a system manager"}
 
@@ -518,7 +522,7 @@ class TradeControl:
                                                      "products": purchase.get_products()}),
                          viewed_store.get_purchases(owner_nickname)))
                 if len(ls) == 0:
-                    return {'response': [], 'msg': "There are no previous purchases for store " + store_name+"."}
+                    return {'response': [], 'msg': "There are no previous purchases for store " + store_name + "."}
                 return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully!"}
             else:
                 return {'response': None, 'msg': "Error, Store " + store_name + " doesn't exist."}
@@ -632,7 +636,6 @@ class TradeControl:
             return store.remove_owner(self.__curr_user.get_nickname(), appointee_nickname)
         return {'response': [], 'msg': "Error! remove store owner failed."}
 
-
     @logger
     def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
@@ -692,7 +695,6 @@ class TradeControl:
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
 
-
     def get_manager_permissions(self, store_name) -> list:
         """
         :param store_name:
@@ -738,10 +740,10 @@ class TradeControl:
         """
         store: Store = self.get_store(store_name)
         if store is not None and \
-            self.__curr_user.is_registered() and \
-            self.__curr_user.is_logged_in() and \
-            (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
-                self.__curr_user.get_nickname())):
+                self.__curr_user.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
+                    self.__curr_user.get_nickname())):
             return store.get_appointees(self.__curr_user.get_nickname(), managers_or_owners)
         return []
 
@@ -809,7 +811,8 @@ class TradeControl:
         if policy_type == "purchase":
             return {'response': store.get_purchase_policies(), 'msg': "Great Success! Purchase policies retrieved"}
         elif policy_type == "discount":
-            return {'response': store.get_discount_policies(), 'msg': "Great Success! Purchase policies retrieved"}
+            return {'response': store.get_discount_policies_as_dictionary_lst(), 'msg':
+                    "Great Success! Purchase policies retrieved"}
         return {'response': None, 'msg': "Not a valid choice of purchase type"}
 
     @logger
@@ -836,7 +839,8 @@ class TradeControl:
     @logger
     def define_purchase_policy(self, store_name: str,
                                details: {"name": str, "products": [str], "min_amount": int or None,
-                                         "max_amount": int or None, "dates": [datetime] or None, "bundle": bool or None}) \
+                                         "max_amount": int or None, "dates": [datetime] or None,
+                                         "bundle": bool or None}) \
             -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
@@ -860,7 +864,8 @@ class TradeControl:
             return {'response': False, 'msg': "Error! Policy name, product(s) and at least one rule must be added"}
 
         if store.purchase_policy_exists(details):
-            return {'response': False, 'msg': "Error! A policy by the given name already exist, or a policy with the same details exists."}
+            return {'response': False,
+                    'msg': "Error! A policy by the given name already exist, or a policy with the same details exists."}
 
         if not store.is_owner(self.__curr_user.get_nickname()):
             return {'response': False, 'msg': "Oopsie poopsie...User un-authorized for this action"}
@@ -914,9 +919,10 @@ class TradeControl:
             return {'response': False, 'msg': "Store doesn't exist"}
 
         if (not store.is_owner(self.__curr_user.get_nickname()) and
-            not store.is_manager(self.__curr_user.get_nickname()) and
-            store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(self.__curr_user.get_nickname(),
-                                                                                       ManagerPermission.EDIT_POLICIES)):
+                not store.is_manager(self.__curr_user.get_nickname()) and
+                store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(
+                    self.__curr_user.get_nickname(),
+                    ManagerPermission.EDIT_POLICIES)):
             return {'response': False, 'msg': "You don't have the permissions to change policy."}
 
         try:
@@ -940,9 +946,10 @@ class TradeControl:
             return {'response': False, 'msg': "Store doesn't exist"}
 
         if (not store.is_owner(self.__curr_user.get_nickname()) and
-            not store.is_manager(self.__curr_user.get_nickname()) and
-            store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(self.__curr_user.get_nickname(),
-                                                                                       ManagerPermission.EDIT_POLICIES)):
+                not store.is_manager(self.__curr_user.get_nickname()) and
+                store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(
+                    self.__curr_user.get_nickname(),
+                    ManagerPermission.EDIT_POLICIES)):
             return {'response': False, 'msg': "You don't have the permissions to change policy."}
 
         try:
@@ -959,9 +966,10 @@ class TradeControl:
             return {'response': False, 'msg': "Store doesn't exist"}
 
         if (not store.is_owner(self.__curr_user.get_nickname()) and
-            not store.is_manager(self.__curr_user.get_nickname()) and
-            store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(self.__curr_user.get_nickname(),
-                                                                                       ManagerPermission.EDIT_POLICIES)):
+                not store.is_manager(self.__curr_user.get_nickname()) and
+                store.is_manager(self.__curr_user.get_nickname()) and store.has_permission(
+                    self.__curr_user.get_nickname(),
+                    ManagerPermission.EDIT_POLICIES)):
             return {'response': False, 'msg': "You don't have the permissions to change policy."}
         try:
             return store.define_composite_policy(policy1_name, policy2_name, flag, percentage, name, valid_until)
@@ -988,7 +996,6 @@ class TradeControl:
         except Exception:
             return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
-
     @staticmethod
     @logger
     def at_least_one(details: {"name": str, "operator": str, "products": [str], "min_amount": int or None,
@@ -1012,6 +1019,7 @@ class TradeControl:
     def reset_purchase_policies(self, store_name: str):
         store = self.get_store(store_name)
         store.reset_policies()
+
     # ------------------- 4.2 --------------------
 
     # ----------- Getters & Setters --------------
