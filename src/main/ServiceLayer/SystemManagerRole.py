@@ -1,5 +1,7 @@
 from src.Logger import logger
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.main.DomainLayer.UserComponent.User import User
+from src.main.ResponseFormat import ret
 
 
 class SystemManagerRole:
@@ -26,6 +28,18 @@ class SystemManagerRole:
         :return: list of purchases
         """
         return TradeControl.get_instance().view_store_purchases_history(store_name)
+
+    @staticmethod
+    @logger
+    def add_system_manager(username: str, password: str):
+        """
+        Add new system manager(a.k.a admin)
+
+        :param username: new admin's username
+        :param password: new admin's password
+        :return: True if successful, False else.
+        """
+        return (TradeControl.get_instance()).add_system_manager(username, password)
 
     def __repr__(self):
         return repr("SystemManagerRole")

@@ -1617,7 +1617,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         # All valid - no precondition
         result = self.__store_owner_or_manager_role.define_discount_policy(self.__store.get_name(), 10, later_date,
                                                                            dis_details)
-        print(result['msg'])
         self.assertTrue(result['response'])
         self.assertIsNotNone(
             jsonpickle.decode(self.__store_owner_or_manager_role.get_discount_policy(self.__store.get_name(), "p1")

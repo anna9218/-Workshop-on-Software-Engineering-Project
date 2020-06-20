@@ -13,7 +13,7 @@ class GuestRoleTest(unittest.TestCase):
     def setUp(self) -> None:
         self.__guest_role = GuestRole()
         self.__trade_control_mock = TradeControl.get_instance()
-        self.__security_mock = Security().get_instance()
+        self.__security_mock = Security.get_instance()
         self.__payment_proxy_mock = PaymentProxy.get_instance()
         self.__delivery_proxy_mock = DeliveryProxy.get_instance()
         self.__nickname = "anna9218"
