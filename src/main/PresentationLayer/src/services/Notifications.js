@@ -44,15 +44,22 @@ export const setHandlers = async () => {
   socket.socket.io.on("message", (data) => {
     // const {storeName, msg} = data;
     console.log("got msg!")
+    // list of msgs
+    // const msgs = data["messages"];
     const msgs = JSON.parse(data).messages;
+    alert("hiiiii")
+    alert(msgs)
+    // eden: display the notification without button
+    
     console.log(msgs);
   //   this.gui.add_notification(msgs); // TODO - tell einat to add this func
   //   <OpenStore msg={msgs} />
   });
-  // socket.socket.io.on("connect", () => {
-  //   socket.socket.io.emit("subscribe", { username: username, room: storename });
-  //   //  maybe:         socket.emit("subscribe", { username: {username}, room: {storename} });
-  // });
+  socket.socket.io.on("agreement", () => {
+    // eden: display the notification with button (create a function)
+    // socket.socket.io.emit("subscribe", { username: username, room: storename });
+    //  maybe:         socket.emit("subscribe", { username: {username}, room: {storename} });
+  });
 };
 
 export const disconnect = () => {

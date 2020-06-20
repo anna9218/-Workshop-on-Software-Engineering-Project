@@ -117,6 +117,12 @@ export async function confirmPurchase(address, purchase_details){
 
 //--------------------------- SUBSCRIBER ROLE ---------------------------------------//
 
+
+export async function getNickname(){
+    return axios.get('http://localhost:5000/get_curr_user_nickname')
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
 export async function openStore(store_name){
     return axios.post('http://localhost:5000/open_store', {
         store_name: store_name

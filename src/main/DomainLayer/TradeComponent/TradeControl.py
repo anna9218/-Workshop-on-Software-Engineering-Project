@@ -1055,7 +1055,9 @@ class TradeControl:
 
     @logger
     def get_curr_username(self):
-        return self.__curr_user.get_nickname()
+        if self.__curr_user is not None and self.__curr_user.is_logged_in():
+            return self.__curr_user.get_nickname()
+        return ""
 
     @logger
     def get_owned_stores(self):

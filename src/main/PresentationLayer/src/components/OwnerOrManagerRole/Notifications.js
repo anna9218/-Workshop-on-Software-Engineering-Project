@@ -11,6 +11,15 @@ function DisplayNotifications(props) {
         setNotifications(notifications.concat(notification));
     }
 
+    // notifications = [ 
+    //                     {'notification_type': str, 'msg': str },
+    //                     {'notification_type': str, 'msg': str },
+    //                     {'notification_type': str, 'msg': str },
+    //                     {'notification_type': str, 'msg': str },
+    //                     {'notification_type': str, 'msg': str },
+    //                     {'notification_type': str, 'msg': str },
+    //                 ]
+
     return(
         <div >
             <p1>Notifications</p1>
@@ -24,7 +33,7 @@ function DisplayNotifications(props) {
                 <tbody>
                     <tr>
                         {
-                        notifications.length == 0 ?
+                        notifications.length === 0 ?
                             <td>No New Notifications</td>
                             :
                             notifications.map((notification) => (

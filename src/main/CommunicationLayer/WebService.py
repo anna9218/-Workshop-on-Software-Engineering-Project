@@ -643,6 +643,11 @@ def get_user_type():
     return jsonify(data=result)
 
 
+@app.route('/get_curr_user_nickname', methods=['GET'])
+def get_curr_user_nickname():
+    result = TradeControlService.get_curr_username()
+    return jsonify(data=result)
+
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
 
 _users = {}  # dict of <username>: <its session ID>
@@ -672,6 +677,7 @@ def join(data):
     join_room(room=data['store'], sid=_users[data['username']])
     print(f"{data['username']} has been subscribed to store {data['storename']}")
 
+
 # TODO- replace it with call from open store. assume _users already includes the username and its websocket
 def open_store(username, storename):
     print(f"open store (name = {storename}) msg from {username} ")
@@ -684,6 +690,7 @@ def open_store(username, storename):
     # print(f"store = {store}")
     _stores.append(store)
     store.subscribe_owner(username)
+
 
 @socket.on('unsbscribe')
 def leave(data):
