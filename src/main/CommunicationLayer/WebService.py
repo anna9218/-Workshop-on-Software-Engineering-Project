@@ -23,7 +23,6 @@ CORS(app)
 socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
 # # socket = SocketIO(app, logger=True, engineio_logger=True,
 # #                   cors_allowed_origins='*', async_mode='eventlet')
-# flask_request = request
 
 # eventlet.monkey_patch()
 #
@@ -605,6 +604,7 @@ def websocket_open_store(data):
         # print(f"new: open store (store name = {storename}) msg from {username} ")
         append_user_to_room(storename, username, request.sid)
         print (f"append user {username} to new store {storename}")
+        # create_new_publisher(storename, username) TODO??
         return True
     return False
 
@@ -643,7 +643,6 @@ def unsbscribe(username, storename):
 
 def notify_all(store_name, msg):
     # socket.send(msgs, json=True, room=storename)
-    # TODO - does it sends even if not logged in? maybe use the written store-funcs
     print(f"room = {store_name}, msg = {msg}")
     socket.emit('message', msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
     # socket.send({
@@ -651,7 +650,6 @@ def notify_all(store_name, msg):
     #     }, room=store_name)
 
 def handle_purchase_msg(store_name):
-    # if result:  # should be True or dict - TODO change the call to be inside if (result)
     msg = f"a purchase has been done at store {store_name}"
     # print(f"send msg: {msg}")
     notify_all(store_name, jsonify(messages=msg, store=store_name))
