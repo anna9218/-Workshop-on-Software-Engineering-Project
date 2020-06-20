@@ -8,7 +8,7 @@ import AddPurchasePolicyForm from './AddPurchasePolicyForm';
 import EditPurchasePolicyForm from './EditPurchasePolicyForm';
 import AddDiscountPolicyForm from './AddDiscountPolicyForm';
 import EditDiscountPolicyForm from './EditDiscountPolicyForm';
-
+import DeleteDiscountPolicy from './DeleteDiscountPolicy';
 
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -145,9 +145,9 @@ function ManageStorePolicies(props) {
                 <Form style={{marginRight:"5%" , marginLeft: "5%", marginBottom:"2%"}}>
                     <Row><Form.Check onClick={addDiscountHandler} type="radio" label="Add Discount Policy" name="formHorizontalRadios" id="Radios1"/>
                     </Row>
-                    <Row><Form.Check inline onClick={editDiscountHandler} type="radio" label="Edit Discount Policy" name="formHorizontalRadios" id="Radios2"/>
-                    </Row>
                     <Row><Form.Check inline onClick={addComplexDiscountPolicyHandler} type="radio" label="Add Complex Discount Policy" name="formHorizontalRadios" id="Radios3"/>
+                    </Row>
+                    <Row><Form.Check inline onClick={editDiscountHandler} type="radio" label="Edit Discount Policy" name="formHorizontalRadios" id="Radios2"/>
                     </Row>
                     <Row><Form.Check inline onClick={deleteDiscountPolicyHandler} type="radio" label="Delete Discount Policy" name="formHorizontalRadios" id="Radios3"/>
                     </Row>
@@ -163,7 +163,7 @@ function ManageStorePolicies(props) {
                 { discountAction === "addComplexDiscountPolicy" ? <PurchaseCombinationsForm storeName={storeName} history={props.location.props} /> : null }
             </div>
             <div style={{marginTop: "5%"}}>
-                { discountAction === "deleteDiscountPolicy" ? <PurchaseCombinationsForm storeName={storeName} history={props.location.props} /> : null }
+                { discountAction === "deleteDiscountPolicy" ? <DeleteDiscountPolicy storeName={storeName} history={props.location.props} /> : null }
             </div>
 
             {/* <Button style={{marginTop: "1%"}}  variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props.location.props)}>Back</Button> */}

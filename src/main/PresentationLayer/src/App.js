@@ -47,6 +47,7 @@ import AddPurchasePolicyForm from './components/OwnerOrManagerRole/AddPurchasePo
 // system manager
 import PurchaseHistoryUsersStores from './components/SystemManagerRole/PurchaseHistoryUsersStores'
 import SystemManagerAPI from './components/SystemManagerRole/SystemManagerAPI'
+import DailyVisitorsCut from './components/SystemManagerRole/DailyVisitorsCut'
 
 
 class App extends React.Component{
@@ -190,13 +191,13 @@ class App extends React.Component{
           <Route path="/storehistory" exact render={(props) => <StorePurchaseHistory screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/addpurchase" exact render={(props) => <AddPurchasePolicyForm screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
-          {/* owner */}
+          {/* system manager */}
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          <Route path="/dailyvisitors" exact render={(props) => <DailyVisitorsCut screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/notifications" exact render={(props) => <DisplayNotifications screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
-          {/* system manager */}
-          <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          {/* <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} /> */}
           <Route path="/systemhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
 
 

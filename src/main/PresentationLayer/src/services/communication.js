@@ -331,6 +331,15 @@ export async function addAndUpdateDiscountPolicy(action_type, store_name, policy
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+export async function deletePolicy(policy_type, store_name, policy_name){
+    return axios.post('http://localhost:5000/delete_policy', {
+        policy_type: policy_type,
+        store_name: store_name,
+        policy_name: policy_name,
+        
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
 
 
 
@@ -349,6 +358,14 @@ export async function fetchUserPurchaseHistory(nickname){
 export async function SystemManagerfetchStorePurchaseHistory(store_name){
     return axios.post('http://localhost:5000/view_any_store_purchase_history', {
         store_name: store_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function getVisitorsCut(start_date, end_date){
+    return axios.post('http://localhost:5000/get_visitors_cut', {
+        start_date: start_date,
+        end_date: end_date
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }

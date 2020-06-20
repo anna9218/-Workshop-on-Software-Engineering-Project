@@ -121,14 +121,11 @@ function EditPurchasePolicyForm(props){
                 confirmAlert({
                     title: data["msg"],
                     buttons: [
-                        {   label: 'Add another product',
+                        {   label: 'Ok',
                             onClick: () => { // reset the form in order to add another product
-                                setPolicyName('Select policy')
                                 fetchPurchasePolicies(storeName)
-                        }},
-                        {   label: 'Done',
-                            onClick: () => {BackOption.BackToHome(props.history)}
-                        }]
+                                setPolicyName('Select policy')
+                        }}]
                 });
             }
 
@@ -188,7 +185,7 @@ function EditPurchasePolicyForm(props){
           <Container>
             <h4 style={{marginTop:"2%"}}>Edit Purchase Policy</h4>
             <Form className='add_policy'>
-                <Form.Group controlId="products_ControlSelect2" value={policyName} onChange={ event => {
+                <Form.Group controlId="products_ControlSelect2" value={policyName}  onChange={ event => {
                     event.target.value === 'Select policy' ? setPolicyName('Select policy') : setSelectedPolicy(event.target.value)
                     }}>
                     <Form.Label>Please choose a policy:</Form.Label>
@@ -218,7 +215,7 @@ function EditPurchasePolicyForm(props){
                                                                                                                         })} />
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control type="number" min="0"  disabled={!showMinAmount} required placeholder={minAmount} onChange={(event => {setMinAmount(event.target.valueAsNumber)})}/>
+                            <Form.Control type="number" min={0} title="Has to be bigger than 0."  disabled={!showMinAmount} required placeholder={minAmount} onChange={(event => {setMinAmount(event.target.valueAsNumber)})}/>
                         </Col>
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
@@ -229,7 +226,7 @@ function EditPurchasePolicyForm(props){
                                                                                                                         })} />
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control type="number" min="0" data-bind="value:replyNumber" disabled={!showMaxAmount} required placeholder={maxAmount} onChange={(event => {setMaxAmount(event.target.valueAsNumber)})}/>
+                            <Form.Control type="number" min={0} title="Has to be bigger than 0." data-bind="value:replyNumber" disabled={!showMaxAmount} required placeholder={maxAmount} onChange={(event => {setMaxAmount(event.target.valueAsNumber)})}/>
                         </Col>
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
@@ -247,7 +244,7 @@ function EditPurchasePolicyForm(props){
                                                                                                                         })}/>
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control id="product-name" disabled={!showDates} required type="date" min={(new Date()).toUTCString()} onChange={(event => dates === null? setDates([(event.target.valueAsDate).toLocaleDateString()]) :
+                            <Form.Control id="product-name" disabled={!showDates} required type="date" min={(new Date()).toJSON().split('T')[0]} onChange={(event => dates === null? setDates([(event.target.valueAsDate).toLocaleDateString()]) :
                                                                                                                                            ! dates.includes((event.target.valueAsDate).toLocaleDateString()) ? 
                                                                                                                                                 setDates(dates.concat([(event.target.valueAsDate).toLocaleDateString()])) : alert("This date has been selected already."))}/>
                         </Col>
@@ -299,13 +296,8 @@ function EditPurchasePolicyForm(props){
                         </div>
                     </div></div> : null}
     
-              
-              {/* <Form.Check type="checkbox" label="Add Discount Type" onChange={handleShowDiscount} style={{position: "relative", right: "43%"}}/> */}
-  
-              {/* <ShowDiscount showDiscount={showDiscount} setDiscountType={setDiscountType} discountType={discountType} setDiscountPercentage={setDiscountPercentage} /> */}
-              
             
-            <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={editPolicyHandler}>Update Policy!</Button>
+            <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" type='reset' disabled={!detailsFilled()} onClick={editPolicyHandler}>Update Policy!</Button>
           
             </div> : null}
             </Form>

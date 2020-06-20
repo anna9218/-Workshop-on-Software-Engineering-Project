@@ -66,20 +66,20 @@ function AddPurchaseForm(props){
                 confirmAlert({
                     title: data["msg"],
                     buttons: [
-                        {   label: 'Add another product',
+                        {   label: 'Ok',
                             onClick: () => { // reset the form in order to add another product
-                                setPolicyProducts([]);
-                                setPolicyTypes([]);
-                                setMinAmount(null);
-                                setMaxAmount(null);
-                                setDates(null);
-                                setShowMinAmount(false)
-                                setShowMaxAmount(false)
-                                setShowDates(false)
-                        }},
-                        {   label: 'Done',
-                            onClick: () => {BackOption.BackToHome(props.history)}
-                        }]
+                                if(data['data']){
+                                    // setPolicyProducts([]);
+                                    // setPolicyTypes([]);
+                                    // setMinAmount(null);
+                                    // setMaxAmount(null);
+                                    // setDates(null);
+                                    // setShowMinAmount(false)
+                                    // setShowMaxAmount(false)
+                                    // setShowDates(false)
+                                }
+                                
+                        }}]
                 });
             }
 
@@ -154,7 +154,7 @@ function AddPurchaseForm(props){
                                                                                                                         })} />
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control type="number" min="0"  disabled={!showMinAmount} required placeholder="Enter minimum amount" onChange={(event => {setMinAmount(event.target.valueAsNumber)})}/>
+                            <Form.Control type="number" min={0} title="Has to be bigger than 0."  disabled={!showMinAmount} required placeholder="Enter minimum amount" onChange={(event => {setMinAmount(event.target.valueAsNumber)})}/>
                         </Col>
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
@@ -165,7 +165,7 @@ function AddPurchaseForm(props){
                                                                                                                         })} />
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control type="number" min="0" data-bind="value:replyNumber" disabled={!showMaxAmount} required placeholder="Enter maximum amount" onChange={(event => {setMaxAmount(event.target.valueAsNumber)})}/>
+                            <Form.Control type="number" min={0} title="Has to be bigger than 0." data-bind="value:replyNumber" disabled={!showMaxAmount} required placeholder="Enter maximum amount" onChange={(event => {setMaxAmount(event.target.valueAsNumber)})}/>
                         </Col>
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
@@ -181,7 +181,7 @@ function AddPurchaseForm(props){
                                                                                                                         })}/>
                         </Form.Label>
                         <Col sm="6" style={{left: "-8%"}}>
-                            <Form.Control id="product-name" disabled={!showDates} required type="date" min={(new Date()).toUTCString()} onChange={(event => dates === null? setDates([(event.target.valueAsDate)]) :
+                            <Form.Control id="product-name" disabled={!showDates} required type="date" min={(new Date()).toJSON().split('T')[0]} onChange={(event => dates === null? setDates([(event.target.valueAsDate)]) :
                                                                                                                                            ! dates.map(date => date.toLocaleDateString()).includes((event.target.valueAsDate).toLocaleDateString()) ? 
                                                                                                                                                 setDates(dates.concat([(event.target.valueAsDate)])) : alert("This date has been selected already."))}/>
                         </Col>
@@ -233,13 +233,9 @@ function AddPurchaseForm(props){
                         </div>
                     </div></div> : null}
     
-              
-              {/* <Form.Check type="checkbox" label="Add Discount Type" onChange={handleShowDiscount} style={{position: "relative", right: "43%"}}/> */}
-  
-              {/* <ShowDiscount showDiscount={showDiscount} setDiscountType={setDiscountType} discountType={discountType} setDiscountPercentage={setDiscountPercentage} /> */}
+            <Button style={{marginBottom:"2%"}} variant="dark" type='reset' id="open-store-button" disabled={!detailsFilled()} onClick={addPolicyHandler}>Add Policy!</Button>
               
             </Form>
-            <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={addPolicyHandler}>Add Policy!</Button>
           </Container>
   
         </div>

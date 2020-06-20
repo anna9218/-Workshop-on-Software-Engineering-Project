@@ -66,7 +66,7 @@ function EditDiscountPolicyForm(props){
         });
     };
 
-    const setSelectedPolicy = async (policy_name) => {
+    const setSelectedPolicy =  (policy_name) => {
         setDate(null);
         setPercentage(0);
         setSelectedProduct("Select Product")
@@ -76,46 +76,36 @@ function EditDiscountPolicyForm(props){
 
         setMinProductAmount(null);
         setMinPurchasePrice(null);
-        setProductPreCondition(null);
+        setProductPreCondition("Any product");
         
         setShowMinProductPreCondition(false)
         setShowMinPurchasePreCondition(false)
         setShowProductPreCondition(false)
 
-        // setPolicyProducts([]);
-        // setPolicyTypes([]);
-        // setMinAmount(null);
-        // setMaxAmount(null);
-        // setDates(null);
-
-        // policy ={"name", "products", "min_amount", "max_amount", "dates", "bundle"}
         policies.map(policy => {
             if(policy["name"] === policy_name){
-                // setPolicyName(policy_name);
-                // setPolicyProducts(policy["products"]);
-                // setDates(null);
+                setPolicyName(policy_name);
+                setPercentage(policy['percentage']);
+                setSelectedProduct(policy["product"]);
+                setDate(policy["valid_until"]);
                 
-                // if(policy['min_amount'] !== undefined){
-                //     policyTypes.push('min_amount')
-                //     setMinAmount(policy["min_amount"]);
-                //     setShowMinAmount(true)
-                // }
-                // if(policy['max_amount'] !== undefined){
-                //     policyTypes.push('max_amount')
-                //     setMaxAmount(policy["max_amount"]);
-                //     setShowMaxAmount(true)
-                // }
-                // if(policy['dates'] !== undefined){
-                //     var stringDates = policy["dates"].map(date => (new Date(date)).toLocaleDateString())
-                //     setDates(stringDates);
-                //     policyTypes.push('dates')
-                //     setShowDates(true)
-                // }
-                // if(policy['bundle'] !== undefined){
-                //     updatePolicyType('bundle')
-                //     setCheckBundle(true)
-                // }
-                
+                if(policy['precondition'] !== undefined && policy['precondition'] !== null){
+                    addPreCondition('product')
+                    setShowProductPreCondition(true)
+                    setProductPreCondition(policy['precondition']['product'])
+
+                    if(policy['precondition']['min_amount'] !== 0 && policy['precondition']['min_amount'] !== null){
+                        addPreCondition('min_product_amount')
+                        setShowMinProductPreCondition(true)
+                        setMinProductAmount(policy['precondition']['min_amount'])
+                    }
+
+                    if(policy['precondition']['min_basket_price'] !== 0 && policy['precondition']['min_basket_price'] !== null){
+                        addPreCondition('min_purchase_price')
+                        setShowMinPurchasePreCondition(true)
+                        setMinPurchasePrice(policy['precondition']['min_basket_price'])
+                    }
+                }
             }
         })
     }
@@ -133,10 +123,6 @@ function EditDiscountPolicyForm(props){
       else{
           
         const promise = theService.addAndUpdateDiscountPolicy('update', storeName, policyName, selectedProduct, date, percentage, !showProductPreCondition ? null : (productPreCondition === "Any product" ? "all" : productPreCondition), minProductAmount, minPurchasePrice)
-        // const promise = theService.addAndUpdateDiscountPolicy('update', storeName, policyName, selectedProduct, date, percentage,   (productPreCondition === "Any product" ? "all" : productPreCondition), minProductAmount, minPurchasePrice)
-
-        // const promise = theService.addAndUpdatePurchasePolicy('add', props.storeName, policyName, selectedProduct, 
-            // minAmount, maxAmount, date, preConditions.includes('bundle') ? true : null); // goes to register.js and sends to backend
         promise.then((data) => {
             if(data !== undefined){
                 confirmAlert({
@@ -144,6 +130,10 @@ function EditDiscountPolicyForm(props){
                     buttons: [
                         {   label: 'Ok',
                             onClick: () => { // reset the form in order to add another product
+                                if(data['data']){
+                                    setPolicyName('Select policy')
+                                    fetchDiscountPolicies(storeName)
+                                }
                                 // setDate(null);
                                 // setPercentage(0);
                                 // setSelectedProduct("Select Product")
@@ -199,9 +189,9 @@ function EditDiscountPolicyForm(props){
         <div style={{marginTop:"2%" , marginLeft: "20%", marginRight: "20%", border: "1px solid", borderColor: "#CCCCCC"}}>
   
           <Container>
-            <h4 style={{marginTop:"2%"}}>Add a New Discount Policy</h4>
+            <h4 style={{marginTop:"2%"}}>Update a New Discount Policy</h4>
             <Form className='add_policy'>
-                <Form.Group controlId="products_ControlSelect2" value={policyName} onChange={ event => {
+                <Form.Group controlId="products_ControlSelect2" value={policyName} type='reset' onChange={ event => {
                         event.target.value === 'Select policy' ? setPolicyName('Select policy') : setSelectedPolicy(event.target.value)
                         }}>
                         <Form.Label>Please choose a policy:</Form.Label>
@@ -236,11 +226,11 @@ function EditDiscountPolicyForm(props){
                 </Form.Group>
 
                 <Form.Label >Enter percentage:</Form.Label>
-                <Form.Control id="Discount percentage" required type="number" placeholder="Discount percentage" value={percentage}
+                <Form.Control id="Discount percentage" required type="number" min={0} max={100} title="percentage has to be between 0 to 100." placeholder="Discount percentage" value={percentage}
                         onChange={(event => {setPercentage(event.target.valueAsNumber)})}/>
                 
                 <Form.Label  style={{marginTop:"2%"}}>Enter expiration date:</Form.Label>
-                <Form.Control id="policy-name" required type="date" placeholder="Discount expiration date" 
+                <Form.Control id="policy-name" required type="date" placeholder="Discount expiration date" min={(new Date()).toJSON().split('T')[0]} value={(new Date(date)).toJSON().split('T')[0]}
                         onChange={(event => {setDate(event.target.valueAsDate)})}/>
 
               <Form.Label style={{marginTop:"2%"}}>Select additional dicount pre-conditions:</Form.Label>
@@ -248,7 +238,7 @@ function EditDiscountPolicyForm(props){
                     <div style={{marginLeft:"4%"}}>
                     <Row style={{marginTop: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-17%"}}>
-                            <Form.Check inline label="Buy with:" type="checkbox" id={`minimun-amount`} value={showProductPreCondition} onChange={(event => {
+                            <Form.Check inline label="Buy with:" type="checkbox" checked={showProductPreCondition} id={`minimun-amount`} value={showProductPreCondition} onChange={(event => {
                                                                                                                         addPreCondition('product')
                                                                                                                         showProductPreCondition ? setShowProductPreCondition(false) : setShowProductPreCondition(true)
                                                                                                                         })} />
@@ -267,7 +257,7 @@ function EditDiscountPolicyForm(props){
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-8.1%"}}>
-                            <Form.Check inline label="Minimum purchase price" value={showMinPurchasePreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
+                            <Form.Check inline label="Minimum purchase price" checked={showMinPurchasePreCondition} value={showMinPurchasePreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
                                                                                                                         addPreCondition('min_purchase_price')
                                                                                                                         showMinPurchasePreCondition ? setShowMinPurchasePreCondition(false) : setShowMinPurchasePreCondition(true);
                                                                                                                         })} />
@@ -278,7 +268,7 @@ function EditDiscountPolicyForm(props){
                     </Row>
                     <Row style={{marginTop: "1.5%", marginBottom: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-7.2%"}}>
-                            <Form.Check inline label="Minimum product amount" disabled={showProductPreCondition && "Any product" === productPreCondition} value={showMinProductPreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
+                            <Form.Check inline label="Minimum product amount" checked={showMinProductPreCondition} disabled={showProductPreCondition && "Any product" === productPreCondition} value={showMinProductPreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
                                                                                                                         addPreCondition('min_product_amount')
                                                                                                                         showMinProductPreCondition ? setShowMinProductPreCondition(false) : setShowMinProductPreCondition(true);
                                                                                                                         })} />
@@ -289,7 +279,7 @@ function EditDiscountPolicyForm(props){
                     </Row>
                     </div>
                 </div>
-                <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={addPolicyHandler}>Add Policy!</Button>
+                <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={addPolicyHandler}>Update Policy!</Button>
 
              </div> : null }   
                 

@@ -443,14 +443,32 @@ def add_and_update_dicount_policy():
                                 'min_amount': min_amount,
                                 'min_basket_price': min_purchase_price}
 
+        if product is None and min_amount is None and min_purchase_price is None:
+            discount_precondition = None
         if action_type == 'add':
             response = StoreOwnerOrManagerRole.define_discount_policy(store_name, percentage, date, discount_details, discount_precondition)
         else:
-            response = StoreOwnerOrManagerRole.update_discount_policy(store_name, percentage, date, discount_details, discount_precondition)
+            response = StoreOwnerOrManagerRole.update_discount_policy(store_name, policy_name, percentage, date, discount_details, discount_precondition)
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
 
+
+@app.route('/delete_policy', methods=['POST'])
+def delete_policy():
+    if request.is_json:
+        request_dict = request.get_json()
+        policy_type = request_dict.get('policy_type')
+        store_name = request_dict.get('store_name')
+        policy_name = request_dict.get('policy_name')
+
+        if policy_type == 'discount':
+            response = StoreOwnerOrManagerRole.delete_policy(store_name, policy_name)
+        else:
+            response = {'response': False, 'msg': 'need to implement delete_purchase_policy'}
+        return jsonify(msg=response['msg'], data=response['response'])
+
+    return jsonify(msg="Oops, communication error.")
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -592,6 +610,24 @@ def view_any_store_purchase_history():
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
 
+
+@app.route('/get_visitors_cut', methods=['POST'])
+def get_visitors_cut():
+    if request.is_json:
+        request_dict = request.get_json()
+        # start_date = request_dict.get('start_date')
+        # start_date = request_dict.get('start_date')
+        # response = SystemManagerRole.get_visitors_cut(start_date, start_date)
+        response = {'msg': 'succc',
+                    'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
+                                 {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3, 'store_owners': 3, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1, 'store_owners': 3, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 0, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5, 'store_owners': 4, 'system_managers': 3}]}
+        if response:  # if not None
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="Oops, error with communication!", data=response)
 
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 

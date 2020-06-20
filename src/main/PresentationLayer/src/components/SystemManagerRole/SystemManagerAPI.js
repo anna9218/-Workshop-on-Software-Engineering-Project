@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import {Link, Redirect, Router} from 'react-router-dom'
 import * as theService from '../../services/communication';
-import * as BackOption from '../Actions/GeneralActions/Back';
 
 
 // WHAT A SUBSCRIBER CAN DO?
@@ -111,6 +110,10 @@ class systemManagerAPI extends React.Component{
 
                     <Button variant="secondary" size="lg" block as={Link} to="/systemhistory">
                         View System Purchase History
+                    </Button>
+
+                    <Button variant="secondary" size="lg" block as={Link} to="/dailyvisitors">
+                        Daily Visitors Cut
                     </Button>
                 </Row>
             </Container>

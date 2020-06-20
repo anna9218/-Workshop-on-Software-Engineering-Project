@@ -73,20 +73,22 @@ function AddDiscountPolicyForm(props){
                     buttons: [
                         {   label: 'Ok',
                             onClick: () => { // reset the form in order to add another product
-                                // setDate(null);
-                                // setPercentage(0);
-                                // setSelectedProduct("Select Product")
-                                // setPolicyName("")
+                                setDate(null);
+                                setPercentage(0);
+                                setSelectedProduct("Select Product")
+                                setPolicyName("")
                                 
-                                // setPreConditions([]);
+                                setPreConditions([]);
 
-                                // setMinProductAmount(null);
-                                // setMinPurchasePrice(null);
-                                // setProductPreCondition(null);
+                                setShowMinProductPreCondition(false)
+                                setShowMinPurchasePreCondition(false)
+                                setShowProductPreCondition(false)
+
+                                setMinProductAmount(null);
+                                setMinPurchasePrice(null);
+                                setProductPreCondition("Any product");
                                 
-                                // setShowMinProductPreCondition(false)
-                                // setShowMinPurchasePreCondition(false)
-                                // setShowProductPreCondition(false)
+                                
                         }},
                         // {   label: 'Done',
                         //     onClick: () => {BackOption.BackToHome(props.history)}
@@ -148,11 +150,11 @@ function AddDiscountPolicyForm(props){
                 </Form.Group>
 
                 <Form.Label >Enter percentage:</Form.Label>
-                <Form.Control id="Discount percentage" required type="number" placeholder="Discount percentage" value={percentage}
+                <Form.Control id="Discount percentage" required type="number" min={0} max={100} title="percentage has to be between 0 to 100." placeholder="Discount percentage" value={percentage}
                         onChange={(event => {setPercentage(event.target.valueAsNumber)})}/>
                 
                 <Form.Label  style={{marginTop:"2%"}}>Enter expiration date:</Form.Label>
-                <Form.Control id="policy-name" required type="date" placeholder="Discount expiration date" 
+                <Form.Control id="policy-name" required type="date" placeholder="Discount expiration date"  min={(new Date()).toJSON().split('T')[0]}
                         onChange={(event => {setDate(event.target.valueAsDate)})}/>
 
               <Form.Label style={{marginTop:"2%"}}>Select additional dicount pre-conditions:</Form.Label>
@@ -160,7 +162,7 @@ function AddDiscountPolicyForm(props){
                     <div style={{marginLeft:"4%"}}>
                     <Row style={{marginTop: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-17%"}}>
-                            <Form.Check inline label="Buy with:" type="checkbox" id={`minimun-amount`} value={showProductPreCondition} onChange={(event => {
+                            <Form.Check inline label="Buy with:" type="checkbox" id={`minimun-amount`} checked={showProductPreCondition} onChange={(event => {
                                                                                                                         addPreCondition('product')
                                                                                                                         showProductPreCondition ? setShowProductPreCondition(false) : setShowProductPreCondition(true)
                                                                                                                         })} />
@@ -179,7 +181,7 @@ function AddDiscountPolicyForm(props){
                     </Row>
                     <Row style={{marginTop: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-8.1%"}}>
-                            <Form.Check inline label="Minimum purchase price" value={showMinPurchasePreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
+                            <Form.Check inline label="Minimum purchase price" checked={showMinPurchasePreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
                                                                                                                         addPreCondition('min_purchase_price')
                                                                                                                         showMinPurchasePreCondition ? setShowMinPurchasePreCondition(false) : setShowMinPurchasePreCondition(true);
                                                                                                                         })} />
@@ -190,7 +192,7 @@ function AddDiscountPolicyForm(props){
                     </Row>
                     <Row style={{marginTop: "1.5%", marginBottom: "1.5%"}}>
                         <Form.Label column  sm="6" style={{left: "-7.2%"}}>
-                            <Form.Check inline label="Minimum product amount" disabled={showProductPreCondition && "Any product" === productPreCondition} value={showMinProductPreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
+                            <Form.Check inline label="Minimum product amount" disabled={showProductPreCondition && "Any product" === productPreCondition} checked={showMinProductPreCondition} type="checkbox" id={`minimum-price`} name="formHorizontalRadios" onChange={(event => {
                                                                                                                         addPreCondition('min_product_amount')
                                                                                                                         showMinProductPreCondition ? setShowMinProductPreCondition(false) : setShowMinProductPreCondition(true);
                                                                                                                         })} />
@@ -201,9 +203,9 @@ function AddDiscountPolicyForm(props){
                     </Row>
                     </div>
                 </div>
+            <Button style={{marginBottom:"2%"}} type='reset' variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={addPolicyHandler}>Add Policy!</Button>
                 
             </Form>
-            <Button style={{marginBottom:"2%"}} variant="dark" id="open-store-button" disabled={!detailsFilled()} onClick={addPolicyHandler}>Add Policy!</Button>
           </Container>
   
         </div>

@@ -9,9 +9,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 export function BackToHome(props){
     // const history = BrowserRouter.browserHistory
-    alert(props)
     const promise = theService.getUserType().then((data) => {
-      alert(props)
 
         if(data !== undefined){
             if(data["data"] === "OWNER"){

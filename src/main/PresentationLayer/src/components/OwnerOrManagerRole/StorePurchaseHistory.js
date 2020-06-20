@@ -69,7 +69,7 @@ function StorePurchaseHistory(props){
                       </tbody>
                     </Table>
                     <Form style={{marginLeft:"3%"}}>
-                    <Row><p>Buier: {purchase["nickname"]}</p></Row>
+                    <Row><p>Buyer: {purchase["nickname"]}</p></Row>
                     <Row><p>Date: {purchase["date"]}</p></Row>
                     <Row><p>Total Price: {purchase["total_price"]}</p></Row>
                     </Form>

@@ -273,8 +273,9 @@ class StoreOwnerOrManagerRole:
         return TradeControl.get_instance().define_discount_policy(store_name, percentage, valid_until, discount_details,
                                                                   discount_precondition)
 
+    @staticmethod
     @logger
-    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+    def define_composite_policy(store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str, valid_until: datetime) -> {}:
         """
         Define a policy that composite from exactly 2 policies.
@@ -293,8 +294,9 @@ class StoreOwnerOrManagerRole:
         return (TradeControl.get_instance()).define_composite_policy(store_name, policy1_name, policy2_name, flag,
                                                                      percentage, name, valid_until)
 
+    @staticmethod
     @logger
-    def get_discount_policy(self, store_name: str, policy_name: str) -> {}:
+    def get_discount_policy(store_name: str, policy_name: str) -> {}:
         """
         return the policy.
 
@@ -304,8 +306,9 @@ class StoreOwnerOrManagerRole:
         """
         return (TradeControl.get_instance()).get_discount_policy(store_name, policy_name)
 
+    @staticmethod
     @logger
-    def delete_policy(self, store_name: str, policy_name: str):
+    def delete_policy(store_name: str, policy_name: str):
         """
         Delete the policy with the name @policy_name, if exist.
 
