@@ -37,6 +37,10 @@ class TradeControl:
             TradeControl.__instance = self
 
     @logger
+    def get_sys_managers_amount(self):
+        return len(self.__managers)
+
+    @logger
     # ------- TradeControlService function
     def add_system_manager(self, nickname: str, password: str) -> dict:
         """
@@ -664,17 +668,21 @@ class TradeControl:
         return {'response': False, 'msg': "User has no permissions"}
 
     @logger
-    def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool,
-                                                                                                     'msg': str}:
+    def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: [int or enumerate]) -> \
+            {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new manager that will be appointed
         :param store_name: store's name
-        :param permissions: ManagerPermission[] -> list of permissions (list of Enum)
+        :param permissions: ManagerPermission[] -> list of permissions (list of ints)
         :return: dict = {'response': bool, 'msg': str}
                  response = True on success, else False
         """
         appointee = self.get_subscriber(appointee_nickname)
         store = self.get_store(store_name)
+        try:
+            permissions_as_enums = [ManagerPermission(per) for per in permissions]
+        except Exception:
+            permissions_as_enums = permissions
 
         if appointee is None:
             return {'response': False, 'msg': "Appointee " + appointee_nickname + " is not a subscriber"}
@@ -689,7 +697,7 @@ class TradeControl:
                 self.__curr_user.is_logged_in() and \
                 (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
                     self.__curr_user.get_nickname())):
-            result = store.add_manager(self.__curr_user, appointee, permissions)
+            result = store.add_manager(self.__curr_user, appointee, permissions_as_enums)
             if result:
                 return {'response': True, 'msg': appointee_nickname + " was added successfully as a store manager"}
             return {'response': False, 'msg': "User has no permissions"}
