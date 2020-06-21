@@ -34,11 +34,12 @@ class ManageStoreTest(ProjectAT):
 
     def tearDown(self) -> None:
         self.logout()
+        self.login(self._username, self._password)
+        # self.set_user(self._username)
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 10}])
         self.remove_products_from_store(self._store_name, ["product"])
-        self.remove_store("store")
-        self.delete_user(self._username)
+        self.remove_store(self._store_name)
         self.delete_user(self._username)
         self.delete_manager("newManager", self._store_name)
         self.delete_user("newManager")

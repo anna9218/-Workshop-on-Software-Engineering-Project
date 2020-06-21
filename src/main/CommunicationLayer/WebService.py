@@ -18,9 +18,7 @@ from flask_socketio import SocketIO, join_room, leave_room
 
 app = Flask(__name__)
 CORS(app)
-# 1 - purchase
-# 2 - add+remove manager
-# 3 - else
+
 socket = SocketIO(app, cors_allowed_origins='*')
 # socket = SocketIO(app, logger=True, engineio_logger=True,
 #                   cors_allowed_origins='*', async_mode='eventlet')
@@ -168,9 +166,10 @@ def purchase_products():
 def confirm_purchase():
     if request.is_json:
         request_dict = request.get_json()
-        address = request_dict.get('address')
+        delivery_details = request_dict.get('delivery_details')
+        payment_details = request_dict.get('payment_details')
         details = request_dict.get("purchases")
-        response = GuestRole.confirm_payment(address, details)
+        response = GuestRole.confirm_payment(delivery_details, payment_details, details)
         if response:
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="purchase confirmation failed", data=response["response"], status=400)

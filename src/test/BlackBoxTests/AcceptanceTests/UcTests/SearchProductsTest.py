@@ -48,8 +48,6 @@ class SearchProductsTest(ProjectAT):
         self.remove_purchase(self._store_name, self.__date)
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 10}])
-        self.disconnect_payment_sys()
-        self.disconnect_delivery_sys()
         self.remove_products_from_store(self._store_name, ["product"])
         self.remove_store("store")
         self.delete_user(self._username)
