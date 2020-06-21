@@ -48,6 +48,12 @@ class DefineAndUpdatePoliciesTest(ProjectAT):
         result = self.update_discount_policy(self._store_name, "policy1", 3)
         self.assertTrue(result)
 
+        result = self.update_discount_policy(self._store_name, "policy1", discount_precondition={'product': "product2",
+                                                                                                 'min_amount': None,
+                                                                                                 'min_basket_price':
+                                                                                                     None})
+        self.assertTrue(result)
+
         result = self.update_discount_policy(self._store_name, "policy2", 5)
         self.assertTrue(result)
 
