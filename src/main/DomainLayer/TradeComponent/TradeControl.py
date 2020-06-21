@@ -996,6 +996,19 @@ class TradeControl:
         except Exception:
             return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
+    @logger
+    def delete_purchase_policy(self, store_name: str, policy_name: str):
+        store: Store = self.get_store(store_name)
+        if store is None:
+            return {'response': False, 'msg': "Store doesn't exist"}
+        try:
+            if store.delete_purchase_policy(policy_name):
+                return {'response': True, 'msg': "Policy deleted successfully."}
+            return {'response': False, 'msg': "Policy doesn't exists"}
+        except Exception:
+            return {'response': False, 'msg': "An unknown error has occurred. please try again."}
+
+
     @staticmethod
     @logger
     def at_least_one(details: {"name": str, "operator": str, "products": [str], "min_amount": int or None,

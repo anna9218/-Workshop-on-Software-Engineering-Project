@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import { browserHistory } from "react-router";
-import {Container, Button, Accordion, Card, Table, Form, Col, Row, InputGroup, FormControl, FormCheck} from 'react-bootstrap'
+import {Button, Accordion, Card, Table, Form, Col, Row, InputGroup} from 'react-bootstrap'
 import * as theService from '../../services/communication';
+import { confirmAlert } from 'react-confirm-alert'; 
 
 
 function SearchAndFilterProducts(props) {
@@ -21,10 +21,6 @@ function SearchAndFilterProducts(props) {
   const [filterMinPrice, setFilterMinPrice] = useState(-1);
   const [filterMaxPrice, setFilterMaxPrice] = useState(-1);
 
-//   const onButtonClickHandler = () => {
-//     alert('Product info Product info')
-//     //TODO, ADD OPTION TO VIEW PRICE, POLICIES
-//   };
 
   const addToCartHandler = async (store_name, product_name) => {
     // need - store_name, product_name, product_amount
@@ -32,19 +28,25 @@ function SearchAndFilterProducts(props) {
     promise.then((data => {
       if(data != null){
         if(data["msg"] != null){
-          alert(data["msg"]);
+            if(data['data'] === true){
+              confirmAlert({
+                title: data["msg"],
+                buttons: [
+                    {   label: 'ok',
+                        onClick: () => { // reset the form in order to add another product
+                        
+                    }},
+                  ]
+              });
+            }
+            else alert(data["msg"]);
         }
       }
     }))
   }
 
   const showAddToCartHandler = async () => {
-    if(showAddToCart){
-      setShowAddToCart(false);
-    }
-    else{
-      setShowAddToCart(true);
-    }
+      setShowAddToCart(!showAddToCart);
   }
 
   const SearchProductsHandler = () => {
@@ -74,7 +76,9 @@ function SearchAndFilterProducts(props) {
 const FilterProductsHandler = () => {
     if(filterType === 1){
         if(filterMinPrice > filterMaxPrice)
-            alert("Error, minimum price can't be bigger than maximum");
+            alert("Error, minimum price can't be greater than maximum");
+        else if(filterMinPrice < 0 ||  filterMaxPrice < 0)
+            alert("Error, minimum and maximum prices have to be greater than 0.");
         else{
             const promise = theService.filterProductsByRange(storeProducts, filterType, filterMinPrice, filterMaxPrice);
             promise.then((data) => {
@@ -86,12 +90,10 @@ const FilterProductsHandler = () => {
                     setFilterCategory("");
                     setFilterMaxPrice(-1);
                     setFilterMinPrice(-1);
-                    // alert(data["msg"]);      // no products to display
         
                 }
                 else{
                     setStoreProducts([]);
-                    // alert(data["msg"]);
                     alert("There are no results.");      // no products to display
                     setFilterType(0);
                     setFilterCategory("");
@@ -110,8 +112,6 @@ const FilterProductsHandler = () => {
             if(data != null){
               if (data["data"] != null && data["data"].length > 0){   // if there are stores to display
                 setStoreProducts(data["data"]);
-                // alert(data["msg"]);      // no products to display
-      
               }
               else{
                 setStoreProducts([]);
@@ -180,30 +180,10 @@ const FilterProductsHandler = () => {
                                 <Form.Check inline onClick={(event => {setFilterType(1)})} type="radio" label="By price range" name="formHorizontalRadios"id="Radios1"/>                                
                             </Form.Label>
                             <Col sm="10">
-                                <Form.Control disabled={(filterType !== 1)} placeholder="Enter min price" onChange={(event =>{
-                                        try{ 
-                                            let value = parseInt(event.target.value);
-                                            if(value < 0)
-                                                alert("Error - Price has to be bigger than 0.");
-                                            else
-                                                setFilterMinPrice(value);
-                                        }
-                                        catch(e){
-                                            alert("Error - Price has to be a number.");
-                                        }
-                                    })}/>
-                                <Form.Control disabled={(filterType !== 1)} style={{marginTop: "1%"}} placeholder="Enter max price"  onChange={(event =>{
-                                        try{ 
-                                            let value = parseInt(event.target.value);
-                                            if(value < 0)
-                                                alert("Error - Price has to be bigger than 0.");
-                                            else
-                                                setFilterMaxPrice(value);
-                                        }
-                                        catch(e){
-                                            alert("Error - Price has to be a number.");
-                                        }
-                                    })}/>
+                                <Form.Control type='number' min={0} disabled={(filterType !== 1)} placeholder="Enter min price" onChange={(event =>{
+                                                                                                                        setFilterMinPrice(event.target.valueAsNumber); })}/>
+                                <Form.Control type='number' min={0} disabled={(filterType !== 1)} style={{marginTop: "1%"}} placeholder="Enter max price"  onChange={(event =>{
+                                                                                                                        setFilterMaxPrice(event.target.valueAsNumber);})}/>
                             </Col>
                             <Form.Label column sm="2" >
                                 <Form.Check inline onClick={(event => {setFilterType(2)})} type="radio" label="By category" name="formHorizontalRadios"id="Radios1"/>                                
@@ -257,10 +237,9 @@ const FilterProductsHandler = () => {
                           showAddToCart ? 
                           <div>
                               <InputGroup className="mb-3">
-                                <Form.Control id="product-amount" required type="text" placeholder="Product amount" style={{width:"1px"}}
+                                <Form.Control id="product-amount" required type="number" placeholder="Product amount" style={{width:"1px"}}
                                   onChange={(event => {
-                                    try{
-                                      let value = parseInt(event.target.value);
+                                      let value = event.target.valueAsNumber
                                       if(value > 0 && value <= storeProduct["amount"]){
                                         setProductAmount(value);
                                         setAmountValidated(true);
@@ -268,10 +247,6 @@ const FilterProductsHandler = () => {
                                       else{
                                         setAmountValidated(false);                             
                                       }
-                                    }
-                                    catch(e){
-                                      setAmountValidated(false);
-                                    }
                                     
                                   })}/>
                                   

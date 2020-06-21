@@ -2,126 +2,151 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link} from 'react-router-dom'
 import * as theService from '../../../services/communication';
-import {Button, Jumbotron, Form, Row, Table, Container} from 'react-bootstrap'
-import * as BackOption from '../GeneralActions/Back'
+import {Button, Accordion, Card, Form, InputGroup, Table, Container} from 'react-bootstrap'
+import {IoMdCloseCircle} from 'react-icons/io' 
 
 
 function ShoppingCart(props){
   useEffect(() => {
-    // alert(props.history)
     fetchShoppingCart();
   }, []);
 
   const [shoppingCart, setShoppingCart] = useState([]);
 
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [showDeleteProduct, setShowDeleteProduct] = useState(false);
+  const [showUpdateAmount, setShowUpdateAmount] = useState(false);
+  const [updateAmount, setUpdateAmount] = useState(null);
 
   const fetchShoppingCart = async () => {
     const promise = theService.displayShoppingCart()
-    // const stores = await promise.json();
     promise.then((data) => {
       if(data != null){
         if(data["data"].length > 0)
           setShoppingCart(data["data"])
         else
           alert(data["msg"]);
+          setShoppingCart(data["data"])
+
       }
     });
   };
 
-  const onButtonClickHandler = () => {
-    alert('Product info Product info')
-    //TODO, ADD OPTION TO VIEW PRICE, POLICIES
-  };
 
-  const removeProductHandler = (event) => {
-    const promise = theService.updateShoppingCart("remove", event.target.value); // goes to register.js and sends to backend
-    promise.then((data) => {
-      alert(data["msg"])
-    });
-    //TODO - pass product
-  }
+  const updateOrRemoveProductHandler = (action_type, store_name, product_name) => {
+    var promise
+    if(action_type === 'update')
+       promise = theService.updateShoppingCart(action_type, product_name, store_name, updateAmount); // goes to register.js and sends to backend
+    else 
+       promise = theService.updateShoppingCart(action_type, product_name, store_name, 0); // goes to register.js and sends to backend
 
-  const updateProductAmountHandler = (event) => {
-    const promise = theService.updateShoppingCart("update", event.target.value); // goes to register.js and sends to backend
     promise.then((data) => {
-      alert(data["msg"])
+      if(data['data'] === true){
+        alert(data["msg"])
+        setUpdateAmount(null)
+        setShowDeleteProduct(false)
+        setShowUpdateAmount(false)
+        fetchShoppingCart()
+      }
+      else alert(data["msg"])
+
     });
     //TODO
   }
 
-  // const purchaseProductsHandler = (event) => {
-  //   const promise = theService.purchaseCart();
-  //   promise.then((data) => {
-  //     if(data != null){
-  //       alert(data["msg"])
-  //       // data["data"] ={ total_price, purchases=[{store_name, basket_price, products=[{product_name, product_price, amount}]}] }
-        
-  //     }
-  //   })
-  // }
 
-  const selectedProductsHandler = (event) => {
-        if(selectedProducts.includes(event.target.value)){
-            var index = selectedProducts.indexOf(event.target.value);
-            console.log(selectedProducts);
-            setSelectedProducts(selectedProducts.splice(index, index+1));
-            console.log(selectedProducts);
-        }
-        else{
-            console.log(selectedProducts);
-            setSelectedProducts(selectedProducts.concat(event.target.value));
-            console.log(selectedProducts);
-        }
-        console.log(selectedProducts);
-    }
 
   return (
       <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
         <h1 style={{marginTop:"2%"}}>Shopping Cart</h1>
         <Container>
-        {
-          // shopping cart = [{store_name, basket = [{product_name, amount}]}]
-          shoppingCart.map(basket => (
+        
+        <Accordion style={{marginTop:"2%"}} >
+        { shoppingCart.map(basket => (
             <div>
-              <h2>Store: {basket["store_name"]}</h2>
-              <Table striped bordered hover >
-          <thead>
-              <tr>
-                  <th>Product Name</th>
-                  <th>Price</th>
-                  <th>Amount</th>
-              </tr>
-          </thead>
-          <tbody>
-              {
-                  basket["basket"].map(storeProduct => (
-                    <tr>
-                        <td>{storeProduct["product_name"]}</td>
-                        <td>{storeProduct["price"]}</td>
-                        <td>{storeProduct["amount"]}</td>
-                    </tr>
-                  ))
-              }
-          </tbody>
-        </Table>
+              <Card>
+                  <Card.Header>
+                  <Accordion.Toggle as={Button} type="radio" variant="link" eventKey="0">
+                      Store: {basket["store_name"]}
+                  </Accordion.Toggle>
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                
+              {/* <h2>Store: {basket["store_name"]}</h2> */}
+                        <Table striped bordered hover >
+                        <thead>
+                            <tr>
+                                <th>
+                                  {/* for remove product from basket */}
+                                </th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th>
+                                  <Form.Check id="add-to-cart-checkbox" type="checkbox" checked={showUpdateAmount} label="Update Amount" onChange={(event) => setShowUpdateAmount(!showUpdateAmount)} />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                basket["basket"].map(storeProduct => (
+                                  <tr>
+                                      {
+                                        <div style={{position:'inherit',  marginTop:"10%"}}>
+                                            <Link class="fa-icon-resize"  title='Remove from basket' onClick={(event => {updateOrRemoveProductHandler("remove", basket["store_name"], storeProduct["product_name"])})}><IoMdCloseCircle /> </Link>
+                                        </div>
+                                      }
+                                      <td>{storeProduct["product_name"]}</td>
+                                      <td>{storeProduct["price"]}</td>
+                                      <td>{storeProduct["amount"]}</td>
+                                      <td>
+                                      {
+                                        showUpdateAmount ? 
+                                        <div>
+                                            <InputGroup className="mb-3">
+                                              <Form.Control id="product-amount" required type="number" min={0} placeholder="Enter amount" style={{width:"1px"}}
+                                                onChange={(event => {setUpdateAmount(event.target.valueAsNumber)
+                                                })}/>
+                                                
+                                              <InputGroup.Prepend>
+                                                <Button variant="dark" id="addToCartBtn" onClick={(event => {
+                                                  (updateAmount > 0) ? updateOrRemoveProductHandler("update", basket["store_name"], storeProduct["product_name"]) : alert("Please enter number greater than 0.");
+                                                  })}>
+                                                    update
+                                                </Button>
+                                              </InputGroup.Prepend>
+                                            </InputGroup>
+                                        </div>
+                                        : null
+                                      }
+                                      </td>
+                                      
+                                  </tr>
+                                ))
+                            }
+                        </tbody>
+                        </Table>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
             </div>
           ))
         }
+        </Accordion>
 
         {
           shoppingCart.length > 0 ? 
-            <Row style={{marginLeft:"0%"}}><Button variant="dark" id="purchaseBtn" as={Link} to="/confirm_purchase" >
+            <div style={{ marginTop:"2%"}}><Button variant="dark" id="purchaseBtn" as={Link} to="/confirm_purchase" >
               Purchase Shopping Cart
-            </Button></Row>
+            </Button></div>
             : null
         }
 
-        <div style={{marginTop:"-3.45%", marginRight:"58%"}}><Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props)}>Back</Button>
-        </div>
+        {/* <div style={{marginTop:"-3.45%", marginRight:"58%"}}><Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props)}>Back</Button>
+        </div> */}
       </Container>
     </div>
-         
+
       
   );
 }

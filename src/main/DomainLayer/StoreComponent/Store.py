@@ -943,6 +943,13 @@ class Store:
         self.__discount_policies.remove(policy)
         return Response.ret(True, "Policy deleted successfully.")
 
+    def delete_purchase_policy(self, policy_name: str):
+        policy_to_remove = self.get_policy(policy_name)
+        if policy_to_remove is None:
+            return False
+        self.__purchase_policies.remove(policy_to_remove)
+        return True
+
     # ------------- 4.2 --------------
 
     def get_discount_policies(self):

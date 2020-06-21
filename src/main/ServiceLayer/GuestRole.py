@@ -136,8 +136,9 @@ class GuestRole:
         """
         return TradeControl.get_instance().view_shopping_cart()
 
+    @staticmethod
     @logger
-    def update_shopping_cart(self, flag: str, products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
+    def update_shopping_cart(flag: str, products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
             -> {'response': bool, 'msg': str}:
         """
         :param flag: action option - "remove"/"update"

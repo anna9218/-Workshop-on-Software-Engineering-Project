@@ -5,27 +5,29 @@ import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import { confirmAlert } from 'react-confirm-alert'; 
 
-function DeleteDiscountPolicy(props){
+function DeletePolicy(props){
     useEffect(() => {
         setStoreName(props.storeName)
-        fetchDiscountPolicies(props.storeName)
+        setPolicyType(props.policyType)
+        fetchPolicies(props.policyType, props.storeName)
       }, []);
 
 
     const [storeName, setStoreName] = useState("");
+    const [policyType, setPolicyType] = useState("");
     const [policyName, setPolicyName] = useState('Select policy');
     const [policies, setPolicies] = useState([]);
 
 
-    const fetchDiscountPolicies = async (store_name) =>{
-        const promise = theService.getPolicies('discount', store_name); // goes to register.js and sends to backend
+    const fetchPolicies = async (policy_type, store_name) =>{
+        const promise = theService.getPolicies(policy_type, store_name); // goes to register.js and sends to backend
         promise.then((data) => {
             if(data !== undefined){
-                if (data["data"] != null){   // if there are stores to display
+                if (data["data"] != null || data['data'] === []){   // if there are stores to display
                     setPolicies(data["data"]);
                 }
                 else{
-                    alert(data["msg"])
+                    setPolicyName("There are no purchase policies...");      // no products to display
                     setPolicies(["There are no purchase policies..."]);      // no products to display
                 }
             }
@@ -36,7 +38,7 @@ function DeleteDiscountPolicy(props){
 
     const deletePolicyHandler = async () =>{
       
-        const promise = theService.deletePolicy('discount', storeName, policyName)
+        const promise = theService.deletePolicy(policyType, storeName, policyName)
         promise.then((data) => {
                 if(data !== undefined){
                     confirmAlert({
@@ -44,7 +46,7 @@ function DeleteDiscountPolicy(props){
                         buttons: [
                             {   label: 'Ok',
                                 onClick: () => { // reset the form in order to add another product
-                                    fetchDiscountPolicies(storeName)
+                                    fetchPolicies(policyType, storeName)
                                     setPolicyName('Select policy')
                             }},
                         ]
@@ -83,4 +85,4 @@ function DeleteDiscountPolicy(props){
  }
   
 
-export default DeleteDiscountPolicy;
+export default DeletePolicy;

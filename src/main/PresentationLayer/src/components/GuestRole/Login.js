@@ -3,7 +3,6 @@ import {Container, Button, Row, Form} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import * as theService from '../../services/communication';
-import * as BackOption from '../Actions/GeneralActions/Back';
 
 class Login extends React.Component{
     constructor(props) {
@@ -101,7 +100,7 @@ class Login extends React.Component{
              <Form >
                  <Form.Group as={Row} style={{marginRight:"1%" , marginLeft: "1%"}}>
                  <div><Button variant="dark" as={Link} to="./register">Register</Button></div>
-                 <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div>
+                 {/* <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div> */}
                  </Form.Group>
              </Form>
          </div>

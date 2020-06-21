@@ -72,10 +72,11 @@ function DailyVisitorsCut(props){
 
                 {showGraph ? 
                     <div>
-                        <div style={{ tableLayout:'fixed', position:'inherit' }}>
+                        <div >
                         <Chart
                             width={props["screenWidth"]}
                             height={props["screenHeight"]}
+                            position="relative"
                             chartType="ColumnChart"
                             loader={<div>Loading Chart</div>}
                             data={graphData}
@@ -88,7 +89,6 @@ function DailyVisitorsCut(props){
                             options={{
                                 title: 'Daily visitors cut',
                                 chartArea: { width: '50%', height: '70%' },
-                            position:'inherit',
                                 hAxis: {
                                     title: 'Date',
                                     // minValue: (new Date()).toLocaleDateString(),
