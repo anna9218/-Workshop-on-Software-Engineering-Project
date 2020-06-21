@@ -109,9 +109,10 @@ export async function purchaseCart(){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function confirmPurchase(address, purchase_details){
+export async function confirmPurchase(delivery_details, payment_details, purchase_details){
     return axios.post('http://localhost:5000/confirm_purchase', {
-        address: address,
+        delivery_details: delivery_details,
+        payment_details: payment_details,
         purchases: purchase_details
     })
     .then((response) => (response.data), (error) => {console.log(error)});

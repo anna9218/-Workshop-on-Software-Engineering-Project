@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import jsonpickle
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.CompositeFlag import CompositeFlag
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy, DiscountComponent
@@ -514,14 +514,14 @@ class Store:
         products_purchases = []
         basket_price = 0
         for product in basket.get_products():
-            if product["purchaseType"] == PurchaseType.DEFAULT:
+            if product["product"].get_purchase_type() == PurchaseType.DEFAULT:
                 purchase = self.purchase_immediate(product["product"].get_name(),
                                                    product["product"].get_price(),
                                                    product["amount"],
                                                    price_before_discount,
                                                    product_lst)
 
-            elif product["purchaseType"] == PurchaseType.AUCTION:
+            elif product["product"].get_purchase_type() == PurchaseType.AUCTION:
                 purchase = self.purchase_auction(product["product"].get_name(),
                                                  product["product"].get_price(), product["amount"])
             else:
@@ -555,7 +555,7 @@ class Store:
             if policy.get_product_name() == product_name:
                 if policy.is_worthy(amount, basket_price, prod_lst):
                     price = min(price, policy.get_price_after_discount(product_price))
-        return {"product_name": product_name, "product_price": price*amount, "amount": amount}
+        return {"product_name": product_name, "product_price": price, "amount": amount}
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger
@@ -726,8 +726,8 @@ class Store:
             -> {'response': bool, 'msg': str}:
         policy = self.get_policy(details["name"])
         if policy:
-            policy.update(details)
-            return {'response': True, 'msg': "Great Success! Policy updated"}
+            return policy.update(details)
+            # return {'response': True, 'msg': "Great Success! Policy updated"}
         return {'response': False, 'msg': "Oops...no policy exist by the given name"}
 
     @logger

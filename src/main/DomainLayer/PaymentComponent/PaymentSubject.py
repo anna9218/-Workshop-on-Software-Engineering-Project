@@ -8,19 +8,14 @@ class PaymentSubject(ABC):
         super().__init__()
 
     @abstractmethod
-    def connect(self):
-        pass
-
-    @abstractmethod
-    # need to check payment details with system once a system is set
-    def commit_payment(self, products_ls: {"total_price": float, "purchases": [dict]}) -> {'response': bool, 'msg': str}:
-        pass
-
-    @abstractmethod
-    def disconnect(self):
-        pass
-
-    @abstractmethod
     def is_connected(self) -> bool:
         pass
 
+    @abstractmethod
+    def commit_payment(self, payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}) -> {'response': bool, 'msg': str}:
+        pass
+
+    @abstractmethod
+    def cancel_pay(self, transaction_id: str) -> {'response': bool, 'msg': str}:
+        pass
