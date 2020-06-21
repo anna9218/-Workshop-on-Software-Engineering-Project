@@ -45,7 +45,8 @@ class OpenStore extends React.Component {
     user_type.then((data) => {
       if(data["data"] === "OWNER"){
         // Notifications.register_new_store('s2');
-        theNotifications.register_new_store( this.state.storeNameInput);
+        theNotifications.register_new_store(this.state.nickname, this.state.storeNameInput);
+        // theNotifications.register_new_store( this.state.storeNameInput);
       }
       else {        // FIRST TIME OWNER
         // <Notifications props={'y', 's'}/>

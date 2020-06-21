@@ -47,16 +47,14 @@ export const connect = async (host, username) => {
   await setHandlers();
 }
 
-
 export const setHandlers = async () => {
   socket.socket.on("message", (data) => {
     // const {storeName, msg} = data;
-    console.log("got msg!")
+    // console.log("got msg!")
     // list of msgs
 
     // const msgs = JSON.parse(data).messages;
      const msgs = data['messages'];
-    alert("hiiiii")
     alert(msgs)
     // eden: display the notification without button
     
@@ -64,7 +62,9 @@ export const setHandlers = async () => {
   //   this.gui.add_notification(msgs); // TODO - tell einat to add this func
   //   <OpenStore msg={msgs} />
   });
-  socket.socket.on("agreement", () => {
+  socket.socket.on("agreement", (data) => {
+    const msgs = data['messages'];
+    alert(msgs)
     // eden: display the notification with button (create a function)
     // socket.socket.io.emit("subscribe", { username: username, room: storename });
     //  maybe:         socket.emit("subscribe", { username: {username}, room: {storename} });
@@ -78,7 +78,14 @@ export const disconnect = () => {
   // socket.socket.emit("unsubscribe", JSON.parse({ username: this.nickname.nickname }));
 }
 
-export const register_new_store = (storename) => {
-  socket.socket.emit("join", { username: this.nickname.nickname, store:storename });
+export const register_new_store = (username, storename) => {
+// export const register_new_store = (storename) => {
+  console.log("on register store");
+  if (counter.counter == 1)
+    console.log("call set handlers");
+    setHandlers();
+  socket.socket.emit("join", { username: username, store:storename });
+  // else
+  //   alert("there were'nt init!!")
 }
 

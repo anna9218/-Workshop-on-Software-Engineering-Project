@@ -172,7 +172,7 @@ def purchase_products():
         # print(purchases)
         # print(purchases[0])
         # print(purchases[0]["store_name"])
-        # handle_purchase_msg(purchases[0]["store_name"]) TODO
+        handle_purchase_msg(purchases[0]["store_name"])
         # print("after handle")
         return jsonify(data=response)
     return jsonify(msg="purchase products failed", data=response["response"], status=400)
@@ -266,6 +266,7 @@ def appoint_store_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
         if response:
+            handle_agreement_msg(appointee_nickname, store_name)
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
 
@@ -577,7 +578,7 @@ def logout():
 
 
 @app.route('/open_store', methods=['POST'])
-async def open_store():
+def open_store():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
@@ -707,31 +708,35 @@ def connect():
 
 @socket.on('join')
 def websocket_open_store(data):
-    username= data['username']
-    storename= data['store']
-    print(f"open store u= {username}, s = {storename}")
-    # socket.emit('message', {}) - works!
-    if get_store(storename) is None:
-        # print(f"new: open store (store name = {storename}) msg from {username} ")
-        append_user_to_room(storename, username, request.sid)
-        print (f"append user {username} to new store {storename}")
-        # create_new_publisher(storename, username) TODO??
-        return True
-    return False
+    if data:
+        username= data['username']
+        storename= data['store']
+        print(f"open store u= {username}, s = {storename}")
+        # socket.emit('message', {}) - works!
+        print(f"stores are {_stores}")
+        if get_store(storename).is_subscribed_to_store(username):
+            # print(f"new: open store (store name = {storename}) msg from {username} ")
+            append_user_to_room(storename, username, request.sid)
+            print (f"append user {username} to new store {storename}")
+            # create_new_publisher(storename, username)
+        else:
+            print(f"store is already exists! {get_store(storename)}")
+    else:
+        print(f"recieved wrong join msg --> {data}")
+
 
 
 def create_new_publisher(storename, username):
     if get_store(storename) is None:
         if username == "":
             print("no curr username")
-            return False
-        store = StorePublisher(storename, username)
-        # print(f"store = {store}")
-        _stores.append(store)
-        # print(f"{storename} has been added by {username}")
-        store.subscribe_owner(username)
-        return True
-    return False
+        else:
+            store = StorePublisher(storename, username)
+            # print(f"store = {store}")
+            _stores.append(store)
+            # print(f"{storename} has been added by {username}")
+            store.subscribe_owner(username)
+
 
 
 def append_user_to_room(storename, username, sid):
@@ -756,24 +761,34 @@ def unsbscribe(username, storename):
     # print(f"{username} has been removed as subscriber of store {storename}")
 
 
-def notify_all(store_name, msg):
+def notify_all(store_name, msg, event):
     # socket.send(msgs, json=True, room=storename)
+    store = get_store(store_name)
+    store.add_msg(msg)
+    print (store)
     print(f"room = {store_name}, msg = {msg}")
-    socket.emit('message', msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
+    socket.emit(event, msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
     # socket.send({
     #         'messages': [msg]
     #     }, room=store_name)
 
 def handle_purchase_msg(store_name):
     msg = f"a purchase has been done at store {store_name}"
-    # print(f"send msg: {msg}")
-    notify_all(store_name, {'messages':msg, 'store':store_name})
+    print(f"send msg: {msg}")
+    notify_all(store_name, {'messages':msg, 'store':store_name}, 'message')
+    # notify_all(store_name, jsonify(messages=msg, store=store_name))
+
+# FOR ANNA
+def handle_agreement_msg(appointe_name, store_name):
+    msg = f"would you like to appoint {appointe_name} to owner at store {store_name}"
+    print(f"send msg: {msg}")
+    notify_all(store_name, {'messages':msg, 'store':store_name}, "agreement")
     # notify_all(store_name, jsonify(messages=msg, store=store_name))
 
 
 def handle_remove_owner_msg(user_name, store_name):
     msg = f"{user_name} was removed as owner from store {store_name}"
-    notify_all(store_name, {'username':user_name, 'messages':msg, 'store':store_name})
+    notify_all(store_name, {'username':user_name, 'messages':msg, 'store':store_name}, 'message')
     # notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
     # print(f"send msg: {msg}")
 
