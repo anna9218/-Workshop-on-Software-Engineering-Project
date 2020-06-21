@@ -18,18 +18,17 @@ def logger(f, name=None):
         name = f.__qualname__
 #
     def wrapped(*args, **kwargs):
-        try:
-            logger.fhwr.write("The function " + str(name) + " was called\n"
-            # -------------------- the two lines (maybe the upper one can cause errors) ----------------
-                              + "arguments: " + str(args) + "\n\n")
-                              # + "arguments: " + str(args) + str(kwargs) + "\n\n")
-            # ------------------------------------------------------------------------------------------
-            result = f(*args, **kwargs)
-            return result
-        except Exception:
-            print("exception on function: func_name = " + name + ", arguments = " + str(args))
-            errorLogger("exception on function: func_name = " + name + ", arguments = " + str(args))
-            return f(*args, **kwargs)
+        # try:
+        # logger.fhwr.write("The function " + str(name) + " was called\n"
+        # # -------------------- the two lines (maybe the upper one can cause errors) ----------------
+        #                   + "arguments: " + str(args) + "\n\n")
+        #                   # + "arguments: " + str(args) + str(kwargs) + "\n\n")
+        # # ------------------------------------------------------------------------------------------
+        result = f(*args, **kwargs)
+        return result
+        #except Exception:
+        print("exception on function: func_name = " + name + ", arguments = " + str(args))
+        return f(*args, **kwargs)
 
     # wrapped.__doc__ = f.__doc__
     return wrapped

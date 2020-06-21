@@ -36,3 +36,7 @@ class DbSubject(ABC):
     @abstractmethod
     def delete(self, tbl, where_expr: Expression):
         pass
+
+    @abstractmethod
+    def execute(self, queries):
+        pass

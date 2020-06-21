@@ -1,4 +1,3 @@
-import eventlet
 import jsonpickle
 from flask import Flask, request
 # import os
@@ -13,31 +12,18 @@ from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermiss
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
+from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 from src.main.ServiceLayer.TradeControlService import TradeControlService
 from flask_socketio import SocketIO, join_room, leave_room
-import os
 
 app = Flask(__name__)
 CORS(app)
-
-socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
-# # socket = SocketIO(app, logger=True, engineio_logger=True,
-# #                   cors_allowed_origins='*', async_mode='eventlet')
-# flask_request = request
-
-# eventlet.monkey_patch()
-#
-# app = Flask(__name__)
-# CORS(app)
-# app.secret_key = os.environ.get('SECRET')
-# app.config['WTF_CSRF_SECRET_KEY'] = "\xae\x5c{Xasa\x3b\x8e\x83\x19\xad\x24\x19\asda"
-# socket = SocketIO(app, logger=True, engineio_logger=True,
-#                cors_allowed_origins='*', async_mode='eventlet')
-#
-
 # 1 - purchase
 # 2 - add+remove manager
 # 3 - else
+socket = SocketIO(app, cors_allowed_origins='*')
+# socket = SocketIO(app, logger=True, engineio_logger=True,
+#                   cors_allowed_origins='*', async_mode='eventlet')
 
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
@@ -344,8 +330,8 @@ def get_policies():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        policy_name = request_dict.get('policy_name')  # str
-        response = StoreOwnerOrManagerRole.get_policies(policy_name, store_name)
+        policy_type = request_dict.get('policy_type')  # str
+        response = StoreOwnerOrManagerRole.get_policies(policy_type, store_name)
         return jsonify(msg=response["msg"], data=response["response"])
 
     return jsonify(msg="Oops, communication error.")
@@ -377,11 +363,40 @@ def set_purchase_operator():
 
 from datetime import datetime
 
+#
+# @app.route('/add_purchase_policy', methods=['POST'])
+# def add_purchase_policy():
+#     if request.is_json:
+#         request_dict = request.get_json()
+#         store_name = request_dict.get('store_name')
+#         policy_name = request_dict.get('policy_name')
+#         products = request_dict.get('products')
+#         min_amount = request_dict.get('min_amount')
+#         max_amount = request_dict.get('max_amount')
+#         bundle = request_dict.get('bundle')
+#         string_dates = request_dict.get('dates')
+#         dates = []
+#         # convert string to dates
+#         if string_dates is None:
+#             dates = None
+#         else:
+#             for date in string_dates:
+#                 dates += [parse(date)]
+#
+#         details = {"name": policy_name, "products": products,
+#                     "min_amount": min_amount, "max_amount": max_amount,
+#                     "dates": dates, "bundle": bundle}
+#         response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
+#         return jsonify(msg=response['msg'], data=response['response'])
+#
+#     return jsonify(msg="Oops, communication error.")
 
-@app.route('/add_purchase_policy', methods=['POST'])
-def add_purchase_policy():
+
+@app.route('/add_and_update_purchase_policy', methods=['POST'])
+def add_and_update_purchase_policy():
     if request.is_json:
         request_dict = request.get_json()
+        action_type = request_dict.get('action_type')
         store_name = request_dict.get('store_name')
         policy_name = request_dict.get('policy_name')
         products = request_dict.get('products')
@@ -400,15 +415,60 @@ def add_purchase_policy():
         details = {"name": policy_name, "products": products,
                     "min_amount": min_amount, "max_amount": max_amount,
                     "dates": dates, "bundle": bundle}
-        response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
+        if action_type == 'add':
+            response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
+        else:
+            response = StoreOwnerOrManagerRole.update_purchase_policy(store_name, details)
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
 
-    # def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
-    #                                                             "min_amount": int or None, "max_amount": int or None,
-    #                                                             "dates": [dict] or None, "bundle": bool or None})\
-    #         -> {'response': bool, 'msg': str}:
+
+@app.route('/add_and_update_dicount_policy', methods=['POST'])
+def add_and_update_dicount_policy():
+    if request.is_json:
+        request_dict = request.get_json()
+        action_type = request_dict.get('action_type')
+        store_name = request_dict.get('store_name')
+        policy_name = request_dict.get('policy_name')
+        product_name = request_dict.get('product_name')
+        date = parse(request_dict.get('date'))
+        percentage = request_dict.get('percentage')
+        product = request_dict.get('product')
+        min_amount = request_dict.get('min_amount')
+        min_purchase_price = request_dict.get('min_purchase_price')
+
+        discount_details = {'name': policy_name, 'product': product_name}
+        discount_precondition = {'product': product,
+                                'min_amount': min_amount,
+                                'min_basket_price': min_purchase_price}
+
+        if product is None and min_amount is None and min_purchase_price is None:
+            discount_precondition = None
+        if action_type == 'add':
+            response = StoreOwnerOrManagerRole.define_discount_policy(store_name, percentage, date, discount_details, discount_precondition)
+        else:
+            response = StoreOwnerOrManagerRole.update_discount_policy(store_name, policy_name, percentage, date, discount_details, discount_precondition)
+        return jsonify(msg=response['msg'], data=response['response'])
+
+    return jsonify(msg="Oops, communication error.")
+
+
+@app.route('/delete_policy', methods=['POST'])
+def delete_policy():
+    if request.is_json:
+        request_dict = request.get_json()
+        policy_type = request_dict.get('policy_type')
+        store_name = request_dict.get('store_name')
+        policy_name = request_dict.get('policy_name')
+
+        if policy_type == 'discount':
+            response = StoreOwnerOrManagerRole.delete_policy(store_name, policy_name)
+        else:
+            response = {'response': False, 'msg': 'need to implement delete_purchase_policy'}
+        return jsonify(msg=response['msg'], data=response['response'])
+
+    return jsonify(msg="Oops, communication error.")
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -506,8 +566,12 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
-        # websocket_open_store(TradeControlService.get_curr_username(), store_name)
-        create_new_publisher(store_name, TradeControlService.get_curr_username())
+        #   Websocket.open_store(store_name, SubscriberRole.username, result)
+        # TODO - add some func at websocket that registers the owner
+        # WebSocketService.open_store(store_name, SubscriberRole.username, result)
+        # if response:
+        # TODO: ask yarin about that
+        # open_store(TradeControlService.get_curr_username(), store_name)
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened.")
 
@@ -530,24 +594,40 @@ def view_user_purchase_history():
     if request.is_json:
         request_dict = request.get_json()
         viewed_user = request_dict.get('nickname')
-    #     response = SystemManagerRole.view_user_purchase_history(viewed_user)
-    #     if response:  # if not None
-    #         return jsonify(msg="success", data=response)
-    # return jsonify(msg="fail", data=response)
-    return jsonify(data=["user_purchase1", "user_purchase2"])
+        response = SystemManagerRole.view_user_purchase_history(viewed_user)
+        if response:  # if not None
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="Oops, error with communication!", data=response)
 
-# TODO???
-# @app.route('/view_store_purchases_history', methods=['POST'])
-# def view_store_purchases_history():
-#     if request.is_json:
-#         request_dict = request.get_json()
-#         store_name = request_dict.get('store_name')
-#     #     response = SystemManagerRole.view_store_purchases_history(store_name)
-#     #     if response:  # if not None
-#     #         return jsonify(msg="success", data=response)
-#     # return jsonify(msg="fail", data=response)
-#     return jsonify(data=["store_purchase1", "store_purchase2"])
-#
+
+@app.route('/view_any_store_purchase_history', methods=['POST'])
+def view_any_store_purchase_history():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        response = SystemManagerRole.view_store_purchases_history(store_name)
+        if response:  # if not None
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="Oops, error with communication!", data=response)
+
+
+@app.route('/get_visitors_cut', methods=['POST'])
+def get_visitors_cut():
+    if request.is_json:
+        request_dict = request.get_json()
+        # start_date = request_dict.get('start_date')
+        # start_date = request_dict.get('start_date')
+        # response = SystemManagerRole.get_visitors_cut(start_date, start_date)
+        response = {'msg': 'succc',
+                    'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
+                                 {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3, 'store_owners': 3, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1, 'store_owners': 3, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 0, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5, 'store_owners': 4, 'system_managers': 3}]}
+        if response:  # if not None
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="Oops, error with communication!", data=response)
 
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 
@@ -563,18 +643,21 @@ def get_user_type():
     return jsonify(data=result)
 
 
+@app.route('/get_curr_user_nickname', methods=['GET'])
+def get_curr_user_nickname():
+    result = TradeControlService.get_curr_username()
+    return jsonify(data=result)
+
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
 
 _users = {}  # dict of <username>: <its session ID>
-_stores: [StorePublisher] = []  # list of StorePublisher
+_stores : [StorePublisher] = [] # list of StorePublisher
 
-
-# @socket.on('')
 @socket.on('connect')
 def connect():
     print(f"connect event. sid --> {request.sid}")
-    owner_username = TradeControlService.get_curr_username()
-    print(f"curr_nickname = {owner_username}")
+    owner_username= TradeControlService.get_curr_username()
+    print (f"curr_nickname = {owner_username}")
     if (owner_username is not None):
         _users[owner_username] = request.sid
         # print ("in if")
@@ -583,65 +666,40 @@ def connect():
             if store.is_subscribed_to_store(owner_username):
                 # print("before join")
                 join_room(room=store.store_name(), sid=_users[owner_username])
-                print(f"username {owner_username} is added as a subscriber to store {store.store_name()} publisher")
+                print (f"username {owner_username} is added as a subscriber to store {store.store_name()} publisher")
 
-    print(f"users list: {_users}")
-
-
-# @socket.on('join')
-# def join(data):
-#     print("recieved join request")
-#     _users[data['username']] = request.sid
-#     join_room(room=data['store'], sid=_users[data['username']])
-#     print(f"{data['username']} has been subscribed to store {data['storename']}")
+    print (f"users list: {_users}")
 
 @socket.on('join')
-def websocket_open_store(data):
-    username= data['username']
-    storename= data['store']
-    print(f"open store u= {username}, s = {storename}")
-    # socket.emit('message', {}) - works!
-    if get_store(storename) is None:
-        # print(f"new: open store (store name = {storename}) msg from {username} ")
-        append_user_to_room(storename, username, request.sid)
-        print (f"append user {username} to new store {storename}")
-        return True
-    return False
+def join(data):
+    print("recieved join request")
+    _users[data['username']] = request.sid
+    join_room(room=data['store'], sid=_users[data['username']])
+    print(f"{data['username']} has been subscribed to store {data['storename']}")
 
 
-def create_new_publisher(storename, username):
-    if get_store(storename) is None:
-        store = StorePublisher(storename, username)
-        # print(f"store = {store}")
-        _stores.append(store)
-        # print(f"{storename} has been added by {username}")
-        store.subscribe_owner(username)
-        return True
-    return False
+# TODO- replace it with call from open store. assume _users already includes the username and its websocket
+def open_store(username, storename):
+    print(f"open store (name = {storename}) msg from {username} ")
+    if _users:
+        _users[username] = request.sid
+        print (f"users = {_users}")
+        join_room(room=storename, sid=_users[username])
+        print(f"{username} has been subscribed to store {storename}")
+    store = StorePublisher(storename, username)
+    # print(f"store = {store}")
+    _stores.append(store)
+    store.subscribe_owner(username)
 
 
-def append_user_to_room(storename, username, sid):
-    _users[username] = sid
-    # _users[username] = flask_request.sid
-    print(f"users = {_users}")
-    join_room(room=storename, sid=_users[username])
-    # print(f"{username} has been subscribed to store {storename}")
-
-
-@socket.on('unsubscribe')
+@socket.on('unsbscribe')
 def leave(data):
     # TODO - add check that exists
     leave_room(room=data['store'], sid=_users[data['username']])
     print(f"{data['username']} has been removed as subscriber of store {data['storename']}")
 
 
-# TODO - add a call from remove_owner func
-def unsbscribe(username, storename):
-    leave_room(room=storename, sid=_users[username])
-    # print(f"{username} has been removed as subscriber of store {storename}")
-
-
-def notify_all(store_name, msg):
+def send_notification(store_name, msg):
     # socket.send(msgs, json=True, room=storename)
     # TODO - does it sends even if not logged in? maybe use the written store-funcs
     print(f"room = {store_name}, msg = {msg}")
@@ -653,44 +711,18 @@ def notify_all(store_name, msg):
 def handle_purchase_msg(store_name):
     # if result:  # should be True or dict - TODO change the call to be inside if (result)
     msg = f"a purchase has been done at store {store_name}"
-    # print(f"send msg: {msg}")
-    notify_all(store_name, jsonify(messages=msg, store=store_name))
+    print(f"send msg: {msg}")
+    send_notification(store_name, jsonify(messages=msg, store=store_name))
 
 
 def handle_remove_owner_msg(user_name, store_name):
+    # if result:  # should be True or dict - TODO change the call to be inside if (result)
     msg = f"{user_name} was removed as owner from store {store_name}"
-    notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
-    # print(f"send msg: {msg}")
-
+    send_notification(store_name, jsonify(username=user_name, messages=msg, store=store_name))
+    print(f"send msg: {msg}")
 
 def get_store(store_name) -> StorePublisher:
     for store in _stores:
         if store.store_name() == store_name:
             return store
     return None
-
-
-def add_subscriber_to_store(store_name, owner_nickname):
-    store = get_store(store_name)
-    if store is None:
-        # print(f"store {store_name} is none, owner is {owner_nickname}")
-        return False
-    if store.is_subscribed_to_store(owner_nickname):
-        return False
-    store.subscribe_owner(owner_nickname)
-    return True
-
-
-def remove_subscriber_from_store(store_name, owner_nickname):
-    store = get_store(store_name)
-    if store is None:
-        return -2
-    return store.unsubscribe_owner(owner_nickname)
-
-
-def is_subscribed_to_store(store_name, nickname):
-    store = get_store(store_name)
-    if store is not None:
-        return store.is_subscribed_to_store(nickname)
-    # print(f"store {store_name} is none. nickname is {nickname}")
-    return False

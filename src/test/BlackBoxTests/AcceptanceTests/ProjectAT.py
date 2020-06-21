@@ -161,29 +161,31 @@ class ProjectAT(ABC, unittest.TestCase):
 
     def update_discount_policy(self, store_name: str, policy_name: str,
                                percentage: float = -999,
+                               valid_util: datetime = None,
                                discount_details: {'name': str,
                                                   'product': str} = None,
                                discount_precondition: {'product': str,
                                                        'min_amount': int or None,
                                                        'min_basket_price': str or None} or None = None):
-        return self.__bridge.update_discount_policy(store_name, policy_name, percentage, discount_details,
-                                                    discount_precondition)
+        return self.__bridge.update_discount_policy(store_name, policy_name, percentage, valid_util,
+                                                    discount_details, discount_precondition)
 
     def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
-                                percentage: float, name: str) -> {}:
-        return self.__bridge.define_composite_policy(store_name, policy1_name, policy2_name, flag, percentage, name)
+                                percentage: float, name: str, valid_until: datetime) -> {}:
+        return self.__bridge.define_composite_policy(store_name, policy1_name, policy2_name, flag, percentage, name,
+                                                     valid_until)
 
     def define_discount_policy(self, store_name: str,
                                percentage: float,
+                               valid_until: datetime,
                                discount_details: {'name': str,
                                                   'product': str},
                                discount_precondition: {'product': str,
                                                        'min_amount': int or None,
                                                        'min_basket_price': str or None} or None = None
                                ):
-        return self.__bridge.define_discount_policy(store_name, percentage, discount_details, discount_precondition)
-
-
+        return self.__bridge.define_discount_policy(store_name, percentage, valid_until, discount_details,
+                                                    discount_precondition)
 
     # @logger
     # 4.3 add store owner functions
