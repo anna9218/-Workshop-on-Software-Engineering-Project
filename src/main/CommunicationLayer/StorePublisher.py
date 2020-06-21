@@ -23,7 +23,7 @@ class StorePublisher:
         :param msg:
         :return:
         """
-        self.__msgs.append((self.__msgs.len(), msg))  # maybe len-1
+        self.__msgs.append((len(self.__msgs), msg))  # maybe len-1
         self.notifyAll()
 
     def notifyAll(self):
@@ -85,7 +85,11 @@ class StorePublisher:
         his appointment
         :param nick_name: owner-to-subscribe nickname
         """
-        self.__subscribers.append((len(self.__msgs), nick_name))  # maybe len-1
+        if (self.is_subscribed_to_store(nick_name)):
+            return False
+        self.__subscribers.append((nick_name, len(self.__msgs)))
+        # print(f"subscribers: {self.__subscribers}")
+        return True
         # return some validation?
 
     def unsubscribe_owner(self, nick_name):
@@ -94,10 +98,19 @@ class StorePublisher:
         if the owner is not on subscribers list - the func will do nothing
         :param nick_name: of the removed owner
         """
-        for (owner_name, last_read_msg) in self.__subscribers:
-            if owner_name == nick_name:
-                self.__subscribers.remove((owner_name, last_read_msg))
-                return 0
+        counter = 0
+        for subscriber in self.__subscribers:
+            if counter is not 0:
+                (owner_name, last_read_msg) = subscriber
+                if owner_name == nick_name:
+                    # print(f"owner {owner_name}, id {last_read_msg}, sub {subscriber}")
+                    self.__subscribers.remove(subscriber)
+                    # self.__subscribers.remove((owner_name, last_read_msg))
+                    # print(f"is subscribe --> {self.is_subscribed_to_store(owner_name)}")
+                    # print(f"subscribers: {self.__subscribers}")
+                    return 0
+            else:
+                counter = counter+1
         return -1
         # return some validation?
 
@@ -107,16 +120,28 @@ class StorePublisher:
     def subscribers(self):
         return self.__subscribers
 
+    def amount_of_subscribers(self):
+        return len(self.__subscribers)
+
     def amount_of_msgs(self):
         return len(self.__msgs)
 
     def is_subscribed_to_store(self, nickname):
-        for (owner_name, last_read_msg) in self.__subscribers:
+        if self.__subscribers is None:
+            # print ("is sub error")
+            return False
+        # print("is subscribe subscribers: " + str(self.__subscribers))
+        for (owner_name, last_read_msg) in self.__subscribers: # [(owner_nickname, 0)]
             if owner_name == nickname:
                 return True
+            # print(f"nickname = {owner_name}, last id = {last_read_msg}")
+        # print(f"cannot find owner {nickname}")
         return False
 
     def inc_last_unread_msg(self, user_name):
         for username, lastUnreadMsg in self.__subscribers:
             if user_name == username:
                 lastUnreadMsg += 1
+
+    def __repr__(self):
+        return repr(f"{self.__name} Publisher Details --> Subscribers: {self.__subscribers}, Msgs: {self.__msgs}")
