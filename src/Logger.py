@@ -16,19 +16,25 @@ def logger(f, name=None):
         logger.fhwr = open("EventLog.log", "w")
     if name is None:  # name = the name of the called function
         name = f.__qualname__
-#
+
+    #
     def wrapped(*args, **kwargs):
-        # try:
-        # logger.fhwr.write("The function " + str(name) + " was called\n"
-        # # -------------------- the two lines (maybe the upper one can cause errors) ----------------
-        #                   + "arguments: " + str(args) + "\n\n")
-        #                   # + "arguments: " + str(args) + str(kwargs) + "\n\n")
-        # # ------------------------------------------------------------------------------------------
-        result = f(*args, **kwargs)
-        return result
-        #except Exception:
-        print("exception on function: func_name = " + name + ", arguments = " + str(args))
-        return f(*args, **kwargs)
+        try:
+            args_str = ""
+            first_arg = 0
+            if args[0] == "StoreOwnerOrManager":
+                first_arg = 1
+            for arg in range(first_arg, len(args)):
+                args_str = args_str + str(args[arg])
+            logger.fhwr.write("The function " + str(name) + " was called\n"
+                          # -------------------- the two lines (maybe the upper one can cause errors) ----------------
+                              + "arguments: " + args_str + "\n\n")
+            # ------------------------------------------------------------------------------------------
+            result = f(*args, **kwargs)
+            return result
+        except Exception:
+            #print("exception on function: func_name = " + name + ", arguments = " + str(args_str))
+            return f(*args, **kwargs)
 
     # wrapped.__doc__ = f.__doc__
     return wrapped
@@ -43,18 +49,18 @@ def secureLogger(f, name=None):
     :return: call to the function with its arguments
     """
     try:
-        if logger.fhwr: # if logger.fhwr (the file "EventLog.log") is defined and open
+        if logger.fhwr:  # if logger.fhwr (the file "EventLog.log") is defined and open
             pass
     except:
         # else open it
         logger.fhwr = open("EventLog.log", "w")
     if name is None:
-        name = f.__qualname__ # name = the name of the called function
+        name = f.__qualname__  # name = the name of the called function
 
     def wrapped(*args, **kwargs):
         log_str = "The function " + name + " was called\n" + "arguments: ("
         for arg in args:
-            log_str += "string, " # the replacement of one argument in the word "string"
+            log_str += "string, "  # the replacement of one argument in the word "string"
         log_str += (")\n\n")
         logger.fhwr.write(log_str)
         result = f(*args, **kwargs)
@@ -71,7 +77,7 @@ def loggerStaticMethod(name, args):
     :param args: the arguments that sent on the call to the function
     """
     try:
-        if loggerStaticMethod.fhwr: # if the file already open
+        if loggerStaticMethod.fhwr:  # if the file already open
             pass
     except:
         # else open it
@@ -101,5 +107,3 @@ def errorLogger(msg):
     logger.addHandler(file_handler)
     # Print the message on the chosen format to the error-log's file
     logger.error(msg)
-
-

@@ -49,25 +49,40 @@ class TradeControlServiceTests(unittest.TestCase):
         pass
 
     def test_new_init_system(self):
+
+        # TODO: For v3
+        # self.assertTrue(TradeControlService.init_system()['response'])
+        # self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u1"))
+        # self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u2"))
+        # self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u3"))
+        # self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u4"))
+        # self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u5"))
+        # self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u6"))
+        # self.assertEqual(len((TradeControl.get_instance()).get_managers()), 1)
+        # self.assertIn((TradeControl.get_instance()).get_subscriber("u1"), (TradeControl.get_instance()).get_managers())
+        # self.assertIsNotNone((TradeControl.get_instance()).get_store("s1"))
+        # self.assertIsNotNone((TradeControl.get_instance()).get_store("s1").get_inventory().get_product("diapers"))
+        # self.assertIn((TradeControl.get_instance()).get_subscriber("u3"),
+        #               (TradeControl.get_instance()).get_store("s1").get_managers())
+        # self.assertEqual((TradeControl.get_instance()).get_curr_user(),
+        #                  (TradeControl.get_instance()).get_subscriber("u3"))
+        # self.assertIn((TradeControl.get_instance()).get_subscriber("u5"),
+        #               (TradeControl.get_instance()).get_store("s1").get_managers())
+        # self.assertIn((TradeControl.get_instance()).get_subscriber("u6"),
+        #               (TradeControl.get_instance()).get_store("s1").get_managers())
+
+        # TODO: For v4
         self.assertTrue(TradeControlService.init_system()['response'])
-        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u1"))
-        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u2"))
-        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u3"))
-        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u4"))
-        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u5"))
-        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u6"))
-        self.assertEqual(len((TradeControl.get_instance()).get_managers()), 1)
-        self.assertIn((TradeControl.get_instance()).get_subscriber("u1"), (TradeControl.get_instance()).get_managers())
-        self.assertIsNotNone((TradeControl.get_instance()).get_store("s1"))
-        self.assertIsNotNone((TradeControl.get_instance()).get_store("s1").get_inventory().get_product("diapers"))
-        self.assertIn((TradeControl.get_instance()).get_subscriber("u3"),
-                      (TradeControl.get_instance()).get_store("s1").get_managers())
-        self.assertEqual((TradeControl.get_instance()).get_curr_user(),
-                         (TradeControl.get_instance()).get_subscriber("u3"))
-        self.assertIn((TradeControl.get_instance()).get_subscriber("u5"),
-                      (TradeControl.get_instance()).get_store("s1").get_managers())
-        self.assertIn((TradeControl.get_instance()).get_subscriber("u6"),
-                      (TradeControl.get_instance()).get_store("s1").get_managers())
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("A1"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("U1"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("U2"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("U11"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("U12"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("U13"))
+        self.assertIn((TradeControl.get_instance()).get_subscriber("A1"), (TradeControl.get_instance()).get_managers())
+        self.assertIsNotNone((TradeControl.get_instance()).get_store("S2"))
+        self.assertEqual((TradeControl.get_instance()).get_curr_user().get_nickname(), "U11")
+        self.assertGreater(len((TradeControl.get_instance()).get_owned_stores()), 0)
 
     def tearDown(self):
         pass

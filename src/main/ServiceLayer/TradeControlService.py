@@ -23,7 +23,8 @@ class TradeControlService:
     def init_system():
         # Getting the file path
         abs_path = os.path.dirname(os.path.abspath(__file__))
-        rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
+        # rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
+        rel_path = os.path.join(abs_path, 'init_sys_file_v4.txt')
         if rel_path.split(".")[1] != "txt":
             print("Wrong format.")
             exit(1)
@@ -87,10 +88,10 @@ class TradeControlService:
         file = open(rel_path, "rt")
         try:
             for unedited_line in file:
-                line = unedited_line.replace("\n", "").lower()
+                line = unedited_line.replace("\n", "")
                 # Separating func_name, arg1, arg2...
                 func_blueprints = line.split(delimiter)
-                func = funcs_as_dictionary[func_blueprints[0]]
+                func = funcs_as_dictionary[func_blueprints[0].lower()]
                 # Two strategies - if function have arguments, and if doesn't
                 if len(func_blueprints) > 1:
                     # Getting the list of args
