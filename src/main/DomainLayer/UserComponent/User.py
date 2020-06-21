@@ -1,4 +1,5 @@
 from datetime import datetime
+import hashlib, binascii, os
 
 from src.Logger import secureLogger, logger
 from src.main.DomainLayer.StoreComponent.Product import Product
@@ -57,9 +58,18 @@ class User:
         self.__loginState.logout()
         return True
 
+    # @secureLogger
+    # def check_password(self, password):
+    #     return self.__registrationState.get_password() == password
+
     @secureLogger
-    def check_password(self, password):
-        return self.__registrationState.get_password() == password
+    def check_password(self, provided_password):
+        saved_password = self.__registrationState.get_password()
+        salt = saved_password[:64]
+        saved_password = saved_password[64:]
+        pass_hash = hashlib.pbkdf2_hmac('sha512', provided_password.encode('utf-8'), salt.encode('ascii'), 100000)
+        pass_hash = binascii.hexlify(pass_hash).decode('ascii')
+        return pass_hash == saved_password
 
     @logger
     def check_nickname(self, nickname):
