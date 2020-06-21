@@ -116,7 +116,7 @@ class App extends React.Component{
   render(){
     return (
       <Router>
-        <div className="App">
+        <div className="App" style={{width: this.state.width, height: this.state.height}}>
           {/* Navigation Bar */}
           <Navbar id="navbar" bg="dark" variant="dark">
             <Navbar.Brand  id="navbar-logo" >Trade Control</Navbar.Brand>

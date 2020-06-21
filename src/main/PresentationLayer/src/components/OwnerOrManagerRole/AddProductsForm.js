@@ -60,27 +60,27 @@ function AddProductsForm(props){
           <h1>Add a New Product</h1>
           <Form className='add_product'>
             <Form.Label>Choose the product name:</Form.Label>
-            <Form.Control id="product-name" value={productName} required type="text" placeholder="Product name"
+            <Form.Control id="product-name" value={productName} as="input" required type="text" placeholder="Product name"
             onChange={(event => {
               setProductName(event.target.value)
             })}/>
 
             <Form.Label>Set the price:</Form.Label>
-            <Form.Control id="product-price" value={productPrice} required type="text" required placeholder="Product price" 
+            <Form.Control id="product-price" value={productPrice} as="input" required type="number" min={0} required placeholder="Product price" 
             onChange={(event => {
-              setProductPrice(event.target.value)
+              setProductPrice(event.target.valueAsNumber)
             })}/>
           
             <Form.Label>Enter the category:</Form.Label>
-            <Form.Control id="product-category" value={productCategory} required type="text" placeholder="Category" 
+            <Form.Control id="product-category" value={productCategory} as="input" required type="text" placeholder="Category" 
             onChange={(event => {
               setProductCategory(event.target.value)
             })}/>
           
             <Form.Label>Enter the amount:</Form.Label>
-            <Form.Control id="product-amount" value={productAmount} required type="text" placeholder="Product amount" 
+            <Form.Control id="product-amount" value={productAmount} as="input" required type="number" min={0} placeholder="Product amount" 
             onChange={(event => {
-              setProductAmount(event.target.value)
+              setProductAmount(event.target.valueAsNumber)
             })}/>
 
             <Form.Label>Enter the purchase type:</Form.Label>
