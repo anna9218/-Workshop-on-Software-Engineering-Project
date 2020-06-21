@@ -97,11 +97,11 @@ function DailyVisitorsCut(props){
                                     title: 'Visitors',
                                 },
                                 colors: ["rgb(255,178,211)", 'rgb(255,85,171)', "rgb(15,41,144)", "rgb(0,89,196)", "rgb(91,180,233)"],
-                                animation: {
-                                    startup: true,
-                                    easing: 'linear',
-                                    duration: 1000,
-                                  },
+                                // animation: {
+                                //     startup: true,
+                                //     easing: 'linear',
+                                //     duration: 1000,
+                                //   },
                             }}
                             legendToggle
                         /> 
