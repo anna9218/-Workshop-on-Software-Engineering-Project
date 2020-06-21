@@ -251,6 +251,8 @@ def remove_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.remove_owner(appointee_nickname, store_name)
         if response:
+            # handle_remove_owner_msg() TODO
+            # remove_subscriber_from_store()
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, communication error--")
 # remove_owner(self, appointee_nickname: str, store_name: str)
@@ -575,7 +577,7 @@ def logout():
 
 
 @app.route('/open_store', methods=['POST'])
-def open_store():
+async def open_store():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
@@ -683,7 +685,7 @@ def connect():
     print(f"connect event. sid --> {request.sid}")
     owner_username = TradeControlService.get_curr_username()
     print(f"curr_nickname = {owner_username}")
-    if (owner_username is not None):
+    if (owner_username != ""):
         _users[owner_username] = request.sid
         # print ("in if")
         for store in _stores:
@@ -720,6 +722,9 @@ def websocket_open_store(data):
 
 def create_new_publisher(storename, username):
     if get_store(storename) is None:
+        if username == "":
+            print("no curr username")
+            return False
         store = StorePublisher(storename, username)
         # print(f"store = {store}")
         _stores.append(store)
@@ -730,6 +735,7 @@ def create_new_publisher(storename, username):
 
 
 def append_user_to_room(storename, username, sid):
+    print(f"sid (in append) = {sid}")
     _users[username] = sid
     # _users[username] = flask_request.sid
     print(f"users = {_users}")
@@ -761,12 +767,14 @@ def notify_all(store_name, msg):
 def handle_purchase_msg(store_name):
     msg = f"a purchase has been done at store {store_name}"
     # print(f"send msg: {msg}")
-    notify_all(store_name, jsonify(messages=msg, store=store_name))
+    notify_all(store_name, {'messages':msg, 'store':store_name})
+    # notify_all(store_name, jsonify(messages=msg, store=store_name))
 
 
 def handle_remove_owner_msg(user_name, store_name):
     msg = f"{user_name} was removed as owner from store {store_name}"
-    notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
+    notify_all(store_name, {'username':user_name, 'messages':msg, 'store':store_name})
+    # notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
     # print(f"send msg: {msg}")
 
 

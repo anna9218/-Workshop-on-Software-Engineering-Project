@@ -21,8 +21,8 @@ def logger(f, name=None):
         try:
             logger.fhwr.write("The function " + str(name) + " was called\n"
             # -------------------- the two lines (maybe the upper one can cause errors) ----------------
-                              + "arguments: " + str(args) + "\n\n")
-                              # + "arguments: " + str(args) + str(kwargs) + "\n\n")
+            #                   + "arguments: " + str(args) + "\n\n")
+                              + "arguments: " + str(args) + str(kwargs) + "\n\n")
             # ------------------------------------------------------------------------------------------
             result = f(*args, **kwargs)
             return result

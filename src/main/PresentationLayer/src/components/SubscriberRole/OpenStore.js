@@ -41,11 +41,11 @@ class OpenStore extends React.Component {
   openStoreHandler = async () =>{
 
     // REAL TIME
-    const something = theService.getUserType()
-    something.then((data) => {
+    const user_type = theService.getUserType()
+    user_type.then((data) => {
       if(data["data"] === "OWNER"){
         // Notifications.register_new_store('s2');
-        theNotifications.register_new_store('s2');
+        theNotifications.register_new_store( this.state.storeNameInput);
       }
       else {        // FIRST TIME OWNER
         // <Notifications props={'y', 's'}/>
