@@ -15,17 +15,26 @@ class TradeControlService:
     @staticmethod
     def init_system():
         loggerStaticMethod("init_system", [])
-        if not DeliveryProxy.get_instance().is_connected() and not PaymentProxy.get_instance().is_connected():
-            if TradeControl.get_instance().register_guest("TradeManager", "123456789"):
-                if not DeliveryProxy.get_instance().connect():
-                    return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
-                if not PaymentProxy.get_instance().connect():
-                    return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
-                res = TradeControl.get_instance().add_system_manager("TradeManager", "123456789")
-                if res['response']:
-                    return {'response': True, 'msg': "Init system was successful!"}
-                return {'response': False, 'msg': "Init system failed! " + res['msg']}
-        return {'response': False, 'msg': "Init system failed!"}
+        if TradeControl.get_instance().register_guest("TradeManager", "123456789"):
+            if not DeliveryProxy.get_instance().is_connected():
+                return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
+            if not PaymentProxy.get_instance().is_connected():
+                return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
+            res = TradeControl.get_instance().add_system_manager("TradeManager", "123456789")
+            if res['response']:
+                return {'response': True, 'msg': "Init system was successful!"}
+            return {'response': False, 'msg': "Init system failed! " + res['msg']}
+        # if not DeliveryProxy.get_instance().is_connected() and not PaymentProxy.get_instance().is_connected():
+        #     if TradeControl.get_instance().register_guest("TradeManager", "123456789"):
+        #         if not DeliveryProxy.get_instance().connect():
+        #             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
+        #         if not PaymentProxy.get_instance().connect():
+        #             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
+        #         res = TradeControl.get_instance().add_system_manager("TradeManager", "123456789")
+        #         if res['response']:
+        #             return {'response': True, 'msg': "Init system was successful!"}
+        #         return {'response': False, 'msg': "Init system failed! " + res['msg']}
+        # return {'response': False, 'msg': "Init system failed!"}
 
     @staticmethod
     def get_user_type():
@@ -39,7 +48,7 @@ class TradeControlService:
     def get_curr_username():
         return TradeControl.get_instance().get_curr_username()
 
-    # functions for tests???
+    # functions for tests
     @staticmethod
     def remove_user(nickname: str):
         TradeControl.get_instance().unsubscribe(nickname)
@@ -49,40 +58,57 @@ class TradeControlService:
         TradeControl.get_instance().remove_manager(store_name, appointee_nickname)
 
     @staticmethod
+    def remove_store(store_name: str):
+        TradeControl.get_instance().close_store(store_name)
+
+    # external system tests functions
+    @staticmethod
     def is_payment_connected():
         return PaymentProxy.get_instance().is_connected()
+
+    @staticmethod
+    def commit_payment( payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}):
+        return PaymentProxy.get_instance().commit_payment(payment_details)
+
+    @staticmethod
+    def cancel_payment(transaction_id: str):
+        return PaymentProxy.get_instance().cancel_pay(transaction_id)
+
+    def cause_payment_timeout(self):
+        PaymentProxy.get_instance().cause_timeout_error()
+
+    def cause_payment_con_error(self):
+        PaymentProxy.get_instance().cause_connection_error()
+
+    def set_connection_payment_back(self):
+        PaymentProxy.get_instance().set_connection_back()
 
     @staticmethod
     def is_delivery_connected():
         return DeliveryProxy.get_instance().is_connected()
 
     @staticmethod
-    def remove_store(store_name: str):
-        TradeControl.get_instance().close_store(store_name)
+    def deliver(delivery_details: {'name': str, 'address': str, 'city': str, 'country': str,
+                                                  'zip': str}):
+        return DeliveryProxy.get_instance().deliver_products(delivery_details)
 
     @staticmethod
-    def connect_delivery():
-        DeliveryProxy.get_instance().connect()
+    def cancel_delivery(transaction_id: str):
+        return DeliveryProxy.get_instance().cancel_supply(transaction_id)
 
     @staticmethod
-    def connect_payment():
-        PaymentProxy.get_instance().connect()
+    def cause_delivery_timeout():
+        DeliveryProxy.get_instance().cause_timeout_error()
 
     @staticmethod
-    def disconnect_delivery():
-        DeliveryProxy.get_instance().disconnect()
+    def cause_delivery_con_error():
+        DeliveryProxy.get_instance().cause_connection_error()
 
     @staticmethod
-    def disconnect_payment():
-        PaymentProxy.get_instance().disconnect()
-
-    @staticmethod
-    def commit_payment(product_ls):
-        return PaymentProxy.get_instance().commit_payment(product_ls)
-
-    @staticmethod
-    def deliver(address: str, products_ls):
-        return DeliveryProxy.get_instance().deliver_products(address, products_ls)
+    def set_connection_delivery_back():
+        DeliveryProxy.get_instance().set_connection_back()
+    # end external system tests functions
 
     @staticmethod
     def subscribe_user(nickname: str, password: str):

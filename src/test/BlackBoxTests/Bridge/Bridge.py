@@ -19,22 +19,6 @@ class Bridge(ABC):
     def init_sys(self) -> bool:
         pass
 
-    @abstractmethod
-    def is_payment_connected(self) -> bool:
-        pass
-
-    @abstractmethod
-    def is_delivery_connected(self) -> bool:
-        pass
-
-    @abstractmethod
-    def cause_connection_err_payment(self):
-        pass
-
-    @abstractmethod
-    def cause_connection_err_delivery(self):
-        pass
-
     # Register tests bridged functions
     @abstractmethod
     def register_user(self, nickname: str, password: str) -> bool:
@@ -93,7 +77,10 @@ class Bridge(ABC):
         pass
 
     @abstractmethod
-    def confirm_purchase(self, address: str, purchase_ls: dict) -> bool:
+    def confirm_purchase(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+                        payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                          'ccv': str, 'id': str},
+                        purchase_ls: []) -> bool:
         pass
 
     @abstractmethod
@@ -123,7 +110,7 @@ class Bridge(ABC):
     @abstractmethod
     def add_products_to_store(self, store_name: str, products_details:
                                             [{"name": str, "price": int, "category": str, "amount": int,
-                                              "purchase_type": int, "discount_type": int}]) -> bool:
+                                              "purchase_type": int}]) -> bool:
         pass
 
     @abstractmethod
@@ -226,28 +213,54 @@ class Bridge(ABC):
 
     # Payment System tests bridged functions
     @abstractmethod
-    def connect_payment_sys(self):
+    def is_payment_connected(self) -> bool:
         pass
 
     @abstractmethod
-    def commit_payment(self, product_ls) -> bool:
+    def commit_payment(self, payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
         pass
 
     @abstractmethod
-    def disconnect_payment_sys(self):
+    def cancel_payment_supply(self, transaction_id: str) -> bool:
+        pass
+
+    @abstractmethod
+    def cause_payment_timeout(self):
+        pass
+
+    @abstractmethod
+    def cause_payment_con_error(self):
+        pass
+
+    @abstractmethod
+    def set_connection_payment_back(self):
         pass
 
     # delivery System tests bridged functions
     @abstractmethod
-    def connect_delivery_sys(self):
+    def deliver(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str,
+                                                  'zip': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
         pass
 
     @abstractmethod
-    def deliver(self, address: str, products_ls) -> bool:
+    def cancel_delivery_supply(self, transaction_id: str) -> bool:
         pass
 
     @abstractmethod
-    def disconnect_delivery_sys(self):
+    def is_delivery_connected(self) -> bool:
+        pass
+
+    @abstractmethod
+    def cause_delivery_timeout(self):
+        pass
+
+    @abstractmethod
+    def cause_delivery_con_error(self):
+        pass
+
+    @abstractmethod
+    def set_connection_delivery_back(self):
         pass
 
     @abstractmethod

@@ -160,7 +160,6 @@ class GuestRole:
 
     @staticmethod
     @logger
-    # TODO: Einat ---> change to dictionary with informative messages-> {'response': dict, 'msg': str}
     def purchase_products():
         """
             purchase all products in the guest shopping cart, according to purchase policy and discount policy
@@ -174,7 +173,6 @@ class GuestRole:
         return TradeControl.get_instance().purchase_products()
 
     @staticmethod
-    # TODO: Einat ---> change to dictionary with informative messages-> {'response': dict, 'msg': str}
     def purchase_basket(store_name: str):
         """
             single basket purchase by given store name, according to purchase policy and discount policy
@@ -190,20 +188,26 @@ class GuestRole:
 
     @staticmethod
     @logger
-    def confirm_payment(address: str, purchase_ls: dict) -> {'response': bool, 'msg': str}:
+    def confirm_payment(delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+                        payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                          'ccv': str, 'id': str},
+                        purchase_ls: []) \
+            -> {'response': bool, 'msg': str}:
         """
             purchase confirmation and addition to user & store purchases
+        :param payment_details: dict of payment details
+        :param delivery_details: dict of delivery details
         :param purchase_ls: dict
                 [{"store_name": str, "basket_price": float, "products": [{"product_name", "product_price", "amount"}]}]
         :return: dict = {'response': bool, 'msg': str}
                  response = true if successful, otherwise false
         """
-        pay_success = PaymentProxy.get_instance().commit_payment(purchase_ls)
+        pay_success = PaymentProxy.get_instance().commit_payment(payment_details)
         if pay_success['response']:
-            # username: str, address: str, products: [])
-            deliver_success = DeliveryProxy.get_instance().deliver_products(address, purchase_ls)
+            # pay_success['msg'] = transaction_id for payment
+            deliver_success = DeliveryProxy.get_instance().deliver_products(delivery_details)
             if not deliver_success['response']:
-                PaymentProxy.get_instance().cancel_payment(purchase_ls)
+                PaymentProxy.get_instance().cancel_pay(pay_success['tid'])
                 return {'response': False, 'msg': deliver_success['msg'] + " Payment was canceled."}
             else:
                 return TradeControl.get_instance().accept_purchases(purchase_ls)

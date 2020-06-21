@@ -103,8 +103,11 @@ class RealBridge(Bridge):
     def purchase_products(self) -> dict:
         return self.__guest_role.purchase_products()
 
-    def confirm_purchase(self, address: str, purchase_ls: dict):
-        return self.__guest_role.confirm_payment(address, purchase_ls)
+    def confirm_purchase(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+                         payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                           'ccv': str, 'id': str},
+                         purchase_ls: []):
+        return self.__guest_role.confirm_payment(delivery_details, payment_details, purchase_ls)
 
     def remove_purchase(self, store_name: str, purchase_date: datetime):
         self.__trade_control_srv.remove_purchase(store_name, purchase_date)
@@ -128,7 +131,7 @@ class RealBridge(Bridge):
     # uc 4.1
     def add_products_to_store(self, store_name: str,
                               products_details: [{"name": str, "price": int, "category": str, "amount": int,
-                                                  "purchase_type": int, "discount_type": int}]) -> bool:
+                                                  "purchase_type": int}]) -> bool:
         return self.__store_owner_or_manager.add_products(store_name, products_details)
 
     def edit_products_in_store(self, store_name: str, product_name: str, op: str, new_value: str):
@@ -233,24 +236,45 @@ class RealBridge(Bridge):
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 7
-    def connect_payment_sys(self):
-        self.__trade_control_srv.connect_payment()
+    def commit_payment(self,  payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
+        return self.__trade_control_srv.commit_payment(payment_details)
 
-    def disconnect_payment_sys(self):
-        self.__trade_control_srv.disconnect_payment()
+    def cancel_payment_supply(self, transaction_id: str) -> bool:
+        return self.__trade_control_srv.cancel_payment(transaction_id)
 
-    def commit_payment(self, product_ls) -> bool:
-        return self.__trade_control_srv.commit_payment(product_ls)
+    def cause_payment_timeout(self):
+        self.__trade_control_srv.cause_payment_timeout()
+
+    def cause_payment_con_error(self):
+        self.__trade_control_srv.cause_payment_con_error()
+
+    def set_connection_payment_back(self):
+        self.__trade_control_srv.set_connection_payment_back()
 
     # uc 8
-    def connect_delivery_sys(self):
-        self.__trade_control_srv.connect_delivery()
+    def deliver(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str,
+                                                  'zip': str}) -> {'response': bool, 'msg': str}:
+        return self.__trade_control_srv.deliver(delivery_details)
 
-    def deliver(self, address: str, products_ls) -> {'response': bool, 'msg': str}:
-        return self.__trade_control_srv.deliver(address, products_ls)
+    def cancel_delivery_supply(self, transaction_id: str) -> bool:
+        return self.__trade_control_srv.cancel_delivery(transaction_id)["response"]
 
-    def disconnect_delivery_sys(self):
-        self.__trade_control_srv.disconnect_delivery()
+    def cause_delivery_timeout(self):
+        self.__trade_control_srv.cause_delivery_timeout()
+
+    def cause_delivery_con_error(self):
+        self.__trade_control_srv.cause_delivery_con_error()
+
+    def set_connection_delivery_back(self):
+        self.__trade_control_srv.set_connection_delivery_back()
 
     def set_user(self, nickname: str):
         self.__trade_control_srv.set_user(nickname)
+
+    # def reset_all(self):
+    #     self.__guest_role = GuestRole()
+    #     self.__trade_control_srv = TradeControlService()
+    #     self.__subscriber = SubscriberRole()
+    #     self.__store_owner_or_manager = StoreOwnerOrManagerRole()
+    #     self.__system_manager = SystemManagerRole()
