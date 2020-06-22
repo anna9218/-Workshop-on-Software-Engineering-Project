@@ -531,7 +531,8 @@ class TradeControl:
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for store " + store_name}
                 return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully"}
-
+            else:
+                return {'response': None, 'msg': "Error, Store " + store_name + " doesn't exist."}
         else:
             return {'response': None, 'msg': "User is not a system manager"}
 
@@ -1099,7 +1100,7 @@ class TradeControl:
     def get_user_type(self):
         roles = []
 
-        if self.__curr_user in self.__managers:
+        if self.__curr_user.get_nickname() in [user.get_nickname() for user in self.__managers]:
             return "SYSTEMMANAGER"
         if self.__curr_user.is_registered():
             roles.append("SUBSCRIBER")

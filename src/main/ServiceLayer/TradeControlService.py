@@ -10,6 +10,7 @@ from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 from src.main.ResponseFormat import ret
 from ast import literal_eval
+import os
 
 
 class TradeControlService:
@@ -130,7 +131,7 @@ class TradeControlService:
                             file.close()
                             return func_return_value
         except Exception as ex:
-            # print(ex)
+            print(ex)
             file.close()
             return ret(False, "An unknown error has occurred. Please check the input file arguments.")
 

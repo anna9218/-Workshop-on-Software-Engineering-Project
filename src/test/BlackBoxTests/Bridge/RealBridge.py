@@ -228,11 +228,11 @@ class RealBridge(Bridge):
 
     # uc 6.4
     def manager_view_user_purchases(self, nickname: str):
-        purchase_ls = self.__system_manager.view_user_purchase_history(nickname)
+        purchase_ls = self.__system_manager.view_user_purchase_history(nickname)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     def manager_view_shop_purchase_history(self, store_name: str):
-        purchase_ls = self.__system_manager.view_store_purchases_history(store_name)
+        purchase_ls = self.__system_manager.view_store_purchases_history(store_name)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 7

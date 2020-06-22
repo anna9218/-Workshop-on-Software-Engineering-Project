@@ -9,10 +9,10 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
-        self.__manager = "TradeManager"
-        self.__manager_password = "123456789"
+        self.__manager = "u1"
+        self.__manager_password = "pass"
         self.init_sys()
-        self.login("TradeManager", "123456789")
+        self.login("u1", "pass")
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
                                        [{"name": "product", "price": 10, "category": "general", "amount": 10,
