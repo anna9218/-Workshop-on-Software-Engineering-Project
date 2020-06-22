@@ -1,6 +1,6 @@
 from peewee import Expression, OP
 from src.Logger import errorLogger
-from src.main.DataAccessLayer.ConnectionProxy.RealDb import RealDb
+from src.main.DataAccessLayer.ConnectionProxy.Tables import User
 from src.main.DataAccessLayer.ConnectionProxy.DbProxy import DbProxy, and_exprs
 
 """
@@ -25,7 +25,7 @@ class UserData:
             errorLogger("This class is a singleton!")
             raise Exception("This class is a singleton!")
         else:
-            self.__tbl = RealDb.User
+            self.__tbl = User
             self.__attr_username = "username"
             self.__attr_password = "password"
             self.__attr_is_system_manager = "is_system_manager"

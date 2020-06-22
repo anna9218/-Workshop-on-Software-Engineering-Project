@@ -3,8 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-router-dom'
 import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-import { confirmAlert } from 'react-confirm-alert'; 
-
+import { confirmAlert } from 'react-confirm-alert';
 // import {connect} from '../../services/Notifications';
 // import theNotifications from '../../services/Notifications';
 // import {register_new_store, connect} from '../../services/Notifications';
@@ -42,11 +41,12 @@ class OpenStore extends React.Component {
   openStoreHandler = async () =>{
 
     // REAL TIME
-    const something = theService.getUserType()
-    something.then((data) => {
+    const user_type = theService.getUserType()
+    user_type.then((data) => {
       if(data["data"] === "OWNER"){
         // Notifications.register_new_store('s2');
-        theNotifications.register_new_store('s2');
+        theNotifications.register_new_store(this.state.nickname, this.state.storeNameInput);
+        // theNotifications.register_new_store( this.state.storeNameInput);
       }
       else {        // FIRST TIME OWNER
         // <Notifications props={'y', 's'}/>
@@ -67,6 +67,7 @@ class OpenStore extends React.Component {
 
     const promise = theService.openStore(this.state.storeNameInput); // goes to register.js and sends to backend
     promise.then((data) => {
+      alert(data["msg"]);
       if(data["data"]){ // store created
           confirmAlert({
             title: data["msg"],

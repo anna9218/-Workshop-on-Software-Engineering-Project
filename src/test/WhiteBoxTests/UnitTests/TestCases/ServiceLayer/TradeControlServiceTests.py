@@ -19,26 +19,48 @@ class TradeControlServiceTests(unittest.TestCase):
         self.__payment_proxy_mock.connect = MagicMock(return_value=True)
 
     def test_init_system(self):
-        # test pre conditions:
-        self.__payment_proxy_mock.is_connected = MagicMock(return_value=False)
-        res = self.__trade.init_system()  # returns False - only payment isn't connected
-        self.assertFalse(res['response'])
+        # # test pre conditions:
+        # res = self.__trade.init_system()  # returns False - payment and delivery already connected
+        # self.assertFalse(res['response'])
+        #
+        # self.__payment_proxy_mock.is_connected = MagicMock(return_value=False)
+        # res = self.__trade.init_system()  # returns False - only payment isn't connected
+        # self.assertFalse(res['response'])
+        #
+        # self.__delivery_proxy_mock.is_connected = MagicMock(return_value=False)
+        # res = self.__trade.init_system()  # returns True - both aren't connected
+        # self.assertTrue(res['response'])
+        #
+        # res = self.__trade.init_system()
+        # self.assertFalse(res['response'])  # should fail - DeliveryProxy & PaymentProxy are already connected
+        #
+        # # test post conditions:
+        # self.assertTrue(TradeControl.get_instance().get_subscriber("TradeManager").is_registered())
+        # res = TradeControl.get_instance().get_subscriber("TradeManager") in TradeControl.get_instance().get_managers()
+        # self.assertTrue(res)
+        # self.assertEqual(len(TradeControl.get_instance().get_managers()), 1)
+        pass
 
-        self.__delivery_proxy_mock.is_connected = MagicMock(return_value=False)
-        res = self.__trade.init_system()  # returns False - both aren't connected
-        self.assertFalse(res['response'])
-
-        res = self.__trade.init_system()
-        self.assertFalse(res['response'])  # should fail - DeliveryProxy & PaymentProxy are already connected
-
-        # test post conditions:
-        self.__delivery_proxy_mock.is_connected = MagicMock(return_value=True)
-        self.__payment_proxy_mock.is_connected = MagicMock(return_value=True)
-        self.__trade.init_system()
-        self.assertTrue(TradeControl.get_instance().get_subscriber("TradeManager").is_registered())
-        res = TradeControl.get_instance().get_subscriber("TradeManager") in TradeControl.get_instance().get_managers()
-        self.assertTrue(res)
-        self.assertEqual(len(TradeControl.get_instance().get_managers()), 1)
+    def test_new_init_system(self):
+        self.assertTrue(TradeControlService.init_system()['response'])
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u1"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u2"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u3"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u4"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u5"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("u6"))
+        self.assertEqual(len((TradeControl.get_instance()).get_managers()), 1)
+        self.assertIn((TradeControl.get_instance()).get_subscriber("u1"), (TradeControl.get_instance()).get_managers())
+        self.assertIsNotNone((TradeControl.get_instance()).get_store("s1"))
+        self.assertIsNotNone((TradeControl.get_instance()).get_store("s1").get_inventory().get_product("diapers"))
+        self.assertIn((TradeControl.get_instance()).get_subscriber("u3"),
+                      (TradeControl.get_instance()).get_store("s1").get_managers())
+        self.assertEqual((TradeControl.get_instance()).get_curr_user(),
+                         (TradeControl.get_instance()).get_subscriber("u3"))
+        self.assertIn((TradeControl.get_instance()).get_subscriber("u5"),
+                      (TradeControl.get_instance()).get_store("s1").get_managers())
+        self.assertIn((TradeControl.get_instance()).get_subscriber("u6"),
+                      (TradeControl.get_instance()).get_store("s1").get_managers())
 
     def __repr__(self):
         return repr("TradeControlServiceTests")
