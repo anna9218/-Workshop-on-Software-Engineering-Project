@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from peewee import *
 
@@ -15,12 +16,29 @@ def create_tables():
     """
     Should happen once, only when the DB is empty.
     """
-    return database.create_tables([User, Store, Product, StoreManagerAppointment])
+    tables = [Statistic, User, Store, Product, StoreManagerAppointment, StoreOwnerAppointment,
+              ProductsInBasket, Purchase, ProductsInPurchase, DiscountPolicy,
+              CompositeDiscountPolicy, ConditionalDiscountPolicy]
+    return database.create_tables([Statistic, User, Store, Product, StoreManagerAppointment, StoreOwnerAppointment,
+                                   ProductsInBasket, Purchase, ProductsInPurchase, DiscountPolicy,
+                                   CompositeDiscountPolicy, ConditionalDiscountPolicy])
 
 
 class BaseModel(Model):
     class Meta:
         database = database
+
+
+class Statistic(BaseModel):
+    """
+    table: statistic
+    """
+    date = DateTimeField(primary_key=True, default=datetime.now())
+    guests = IntegerField(null=False, default=0)
+    subscribers = IntegerField(null=False, default=0)
+    store_managers = IntegerField(null=False, default=0)
+    store_owners = IntegerField(null=False, default=0)
+    system_managers = IntegerField(null=False, default=0)
 
 
 class User(BaseModel):
@@ -45,6 +63,7 @@ class Product(BaseModel):
     """
     table: product
     """
+    product_id = IntegerField(primary_key=True)
     product_name = CharField(null=False)
     store_name = ForeignKeyField(Store, db_column="store_name", on_delete="Cascade", on_update="Cascade")
     price = FloatField(null=False)
@@ -53,7 +72,9 @@ class Product(BaseModel):
     purchase_type = IntegerField(null=False)
 
     class Meta:
-        primary_key = CompositeKey("product_name", "store_name")
+        indexes = (
+            (("product_name", "store_name"), True),
+        )
 
 
 class StoreManagerAppointment(BaseModel):
@@ -79,3 +100,98 @@ class StoreManagerAppointment(BaseModel):
     class Meta:
         primary_key = CompositeKey("appointee_username", "store_name")
 
+
+class StoreOwnerAppointment(BaseModel):
+    """
+    table: store owner appointment
+    """
+    appointee_username = ForeignKeyField(User, db_column="appointee_username", on_delete="Cascade",
+                                         on_update="Cascade")
+    store_name = ForeignKeyField(Store, db_column="store_name", on_delete="Cascade", on_update="Cascade")
+    appointer_username = ForeignKeyField(User, db_column="appointer_username", on_delete="Cascade",
+                                         on_update="Cascade")
+
+    class Meta:
+        primary_key = CompositeKey("appointee_username", "store_name")
+
+
+class ProductsInBasket(BaseModel):
+    """
+    table: products in basket
+    """
+    username = ForeignKeyField(User, db_column="username", on_delete="Cascade",
+                               on_update="Cascade")
+    product_ref = ForeignKeyField(Product, db_column="product_ref", on_delete="Cascade", on_update="Cascade")
+    amount = IntegerField(null=False)
+
+    class Meta:
+        primary_key = CompositeKey("username", "product_ref")
+
+
+class Purchase(BaseModel):
+    """
+    table: purchase
+    """
+
+    purchase_id = IntegerField(primary_key=True)
+    username = ForeignKeyField(User, db_column="username", on_delete="Cascade", on_update="Cascade")
+    store_name = ForeignKeyField(Store, db_column="store_name", on_delete="Cascade", on_update="Cascade")
+    total_price = FloatField(null=False)
+    date = DateTimeField(null=False, default=datetime.now())
+
+
+class ProductsInPurchase(BaseModel):
+    """
+    table: products in purchase
+    """
+    purchase_id = ForeignKeyField(Purchase, null=False, db_column="purchase_id", on_delete="Cascade",
+                                  on_update="Cascade")
+    product_ref = ForeignKeyField(Product, db_column="product_ref", on_delete="Cascade", on_update="Cascade")
+    product_purchase_price = FloatField(null=False)  # Not the same as the product.price due to policies.
+    amount = IntegerField(null=False)
+
+    class Meta:
+        primary_key = CompositeKey("purchase_id", "product_ref")
+
+
+class DiscountPolicy(BaseModel):
+    """
+    table: discount policy
+    """
+    discount_policy_id = IntegerField(primary_key=True)
+    policy_name = CharField(null=False)
+    store_name = ForeignKeyField(Store, db_column="store_name", on_update="Cascade", on_delete="Cascade")
+    product_name = CharField(null=False)
+    percentage = FloatField(null=False)
+    valid_until = DateTimeField(null=False)
+    is_active = BooleanField(null=False, default=True)
+
+    class Meta:
+        indexes = (
+            (("policy_name", "store_name"), True),
+
+        )
+
+
+class ConditionalDiscountPolicy(BaseModel):
+    """
+    table: conditional discount policy
+    """
+    policy_ref = ForeignKeyField(DiscountPolicy, null=False, db_column="policy_ref", on_delete="Cascade",
+                                 on_update="Cascade", primary_key=True)
+    precondition_product = CharField(null=False)
+    precondition_min_amount = CharField(null=True, default=None)
+    precondition_min_basket_price = CharField(null=True, default=None)
+
+
+class CompositeDiscountPolicy(BaseModel):
+    """
+    table: composite discount policy
+    """
+    policy_ref = ForeignKeyField(DiscountPolicy, null=False, db_column="policy_ref",
+                                 on_update="Cascade", on_delete="Cascade", primary_key=True)
+    policy1_ref = ForeignKeyField(DiscountPolicy, null=False, db_column="policy1_ref",
+                                  on_update="Cascade", on_delete="Cascade")
+    policy2_ref = ForeignKeyField(DiscountPolicy, null=False, db_column="policy2_ref",
+                                  on_update="Cascade", on_delete="Cascade")
+    flag = IntegerField(null=False)

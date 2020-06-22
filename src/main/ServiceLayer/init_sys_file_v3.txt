@@ -11,6 +11,6 @@ add_products//s1//[{"name": "diapers", "price": 30, "category": "pooping", "amou
 appoint_store_manager//u3//s1//[5, 6, 1]
 logout
 login//u3//pass
-logout
 appoint_store_manager//u5//s1//[5, 6, 1]
 appoint_store_manager//u6//s1//[5, 6, 1]
+logout

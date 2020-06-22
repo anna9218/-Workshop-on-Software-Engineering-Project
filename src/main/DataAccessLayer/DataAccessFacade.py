@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import peewee
 
 from src.Logger import errorLogger
@@ -6,6 +8,9 @@ from src.main.DataAccessLayer.ConnectionProxy.DbProxy import DbProxy
 from src.main.DataAccessLayer.UserDataComponent.UserData import UserData
 from src.main.DataAccessLayer.StoreDataComponent.StoreData import StoreData
 from src.main.DataAccessLayer.StoreDataComponent.ProductData import ProductData
+from src.main.DataAccessLayer.UserDataComponent.StatisticData import StatisticData
+from src.main.DataAccessLayer.UserDataComponent.ProductsInBasket import ProductsInBasketData
+from src.main.DataAccessLayer.StoreDataComponent.StoreOwnerAppointmentData import StoreOwnerAppointmentData
 from src.main.DataAccessLayer.StoreDataComponent.StoreManagerAppointmentData import StoreManagerAppointmentData
 
 """
@@ -50,7 +55,7 @@ class DataAccessFacade:
             errorLogger("This class is a singleton!")
             raise Exception("This class is a singleton!")
         else:
-            self.__proxy = DbProxy()
+            self.__proxy = DbProxy.get_instance()
             self.__proxy.connect()
             self.__execution_failed_error_msg = "We having some tech problems, but we will rise again!"
             DataAccessFacade.__instance = self
@@ -243,6 +248,7 @@ class DataAccessFacade:
         example(if old_username != ""), it will composite the constraint-
                                                where(user.username == username).
 
+        :param product_id:
         :param purchase_type:
         :param product_name: pk
         :param store_name: pk
@@ -256,8 +262,9 @@ class DataAccessFacade:
         if attributes_to_read is None:
             attributes_to_read = []
         try:
-            return ret(ProductData.get_instance().read(attributes_to_read, product_name, store_name, price, category,
-                                                       amount, purchase_type), "Successful.")
+            return ret(
+                ProductData.get_instance().read(attributes_to_read, None, product_name, store_name, price, category,
+                                                amount, purchase_type), "Successful.")
         except Exception:
             return ret([], self.__execution_failed_error_msg)
 
@@ -291,10 +298,9 @@ class DataAccessFacade:
         """
         try:
             return self.__proxy.execute(
-                [ProductData.get_instance().update(old_product_name, old_store_name, old_price, old_category, old_amount,
-                                                  old_purchase_type,
-                                                  new_product_name, new_store_name, new_price, new_category, new_amount,
-                                                  new_purchase_type)])
+                [ProductData.get_instance().update(None, old_product_name, old_store_name, old_price, old_category,
+                                                   old_amount, old_purchase_type, new_product_name, new_store_name,
+                                                   new_price, new_category, new_amount, new_purchase_type)])
         except Exception as e:
             # print(e)
             return ret(False, self.__execution_failed_error_msg)
@@ -317,7 +323,8 @@ class DataAccessFacade:
         """
         try:
             return self.__proxy.execute(
-                [ProductData.get_instance().delete(product_name, store_name, price, category, amount, purchase_type)])
+                [ProductData.get_instance().delete(None, product_name, store_name, price, category, amount,
+                                                   purchase_type)])
         except Exception:
             return ret(False, self.__execution_failed_error_msg)
 
@@ -464,3 +471,299 @@ class DataAccessFacade:
                                                                        permissions_lst))])
         except Exception:
             return ret(False, self.__execution_failed_error_msg)
+
+    def read_products_in_baskets(self, attributes_to_read=None, username: str = "", store_name: str = "",
+                                 product_name: str = "", amount: int = None):
+        """
+        Read products in basket from db.
+        Raise exception if an attribute in attributes_to_read is illegal.
+        <attribute> will composite a constraint of where to read.
+        example(if old_username != ""), it will composite the constraint-
+                                               where(user.username == username).
+
+        :param store_name: pk
+        :param product_name: pk
+        :param username: pk.
+        :param amount:
+        :param attributes_to_read: the list of attributes that will return from the db.
+                                    type: [str]
+
+        :return: list of dictionaries that contain attributes_to_read fields.
+        """
+        if attributes_to_read is None:
+            attributes_to_read = []
+        product_as_lst = self.read_products(["product_id"], store_name=store_name, product_name=product_name)[
+            'response']
+        product_ref = None
+        if len(product_as_lst) > 0:
+            if product_name != "" and store_name != "":
+                product_ref = product_as_lst[0]['product_id']
+        else:
+            if product_name != "" or store_name != "":
+                return ret([], self.__execution_failed_error_msg)
+
+        try:
+            return ret((ProductsInBasketData.get_instance()).read(attributes_to_read, username, product_ref, amount),
+                       "Successful.")
+        except Exception as e:
+            # print(e)
+            return ret([], self.__execution_failed_error_msg)
+
+    def write_products_in_basket(self, username: str, store_name: str, product_name: str, amount: int):
+        """
+        Write product in basket to db.
+
+        :param product_name: pk.
+        :param store_name: pk.
+        :param username:
+        :param amount:
+        :return: size of user tbl after inserting the new one.
+        """
+        product_as_lst = self.read_products(["product_id"], store_name=store_name, product_name=product_name)[
+            'response']
+        product_ref = None
+        if len(product_as_lst) > 0:
+            product_ref = product_as_lst[0]['product_id']
+        else:
+            return ret(False, "Product " + product_name + "  doesn't exist in store " + store_name + ".")
+
+        try:
+            return self.__proxy.execute([ProductsInBasketData.get_instance().write(username, product_ref, amount)])
+        except Exception as e:
+            # print(e)
+            return ret(False, self.__execution_failed_error_msg)
+
+    def update_products_in_baskets(self, old_username: str = "", old_store_name: str = "", old_product_name: str = "",
+                                   old_amount: int = None,
+                                   new_username: str = "", new_store_name: str = "", new_product_name: str = "",
+                                   new_amount: int = None):
+        """
+        Update products in basket in the db.
+        old_<attribute> will composite a constraint of where to update.
+        example(if old_username != ""), it will composite the constraint-
+                                                where(user.username == old_username).
+        new_<attribute> will update the <attribute> to the new value.
+        example(if new_username != ""), it will update-
+                                                update(user.username = new_username).
+
+        :return: the number of updated rows.
+        """
+        product_as_lst = self.read_products(["product_id"], store_name=old_store_name, product_name=old_product_name)[
+            'response']
+        old_product_ref = None
+        if len(product_as_lst) > 0:
+            if old_product_name != "" and old_store_name != "":
+                old_product_ref = product_as_lst[0]['product_id']
+
+        product_as_lst = self.read_products(["product_id"], store_name=new_store_name, product_name=new_product_name)[
+            'response']
+        new_product_ref = None
+        if len(product_as_lst) > 0:
+            if new_product_name != "" and new_store_name != "":
+                new_product_ref = product_as_lst[0]['product_id']
+
+        try:
+            return self.__proxy.execute([(ProductsInBasketData.get_instance()).update(old_username, old_product_ref,
+                                                                                      old_amount, new_username,
+                                                                                      new_product_ref, new_amount)])
+        except Exception as e:
+            # print(e)
+            return ret(False, self.__execution_failed_error_msg)
+
+    def delete_products_in_baskets(self, username: str = "", store_name: str = "", product_name: str = "",
+                                   amount: int = None):
+        """
+        Delete product in basket from the DB.
+        <attribute> will composite a constraint of where to delete.
+        example(if old_username != ""), it will composite the constraint-
+                                               where(user.username == username).
+
+        :return: the number of deleted rows.
+        """
+
+        product_as_lst = self.read_products(["product_id"], store_name=store_name, product_name=product_name)[
+            'response']
+        product_ref = None
+        if len(product_as_lst) > 0:
+            if product_name != "" or store_name != "":
+                product_ref = product_as_lst[0]['product_id']
+
+        try:
+            return self.__proxy.execute([(ProductsInBasketData.get_instance()).delete(username, product_ref, amount)])
+        except Exception as e:
+            # print(e)
+            return ret(False, self.__execution_failed_error_msg)
+
+    def read_store_owner_appointments(self, attributes_to_read=None,
+                                      appointee_username: str = "",
+                                      store_name: str = "",
+                                      appointer_username: str = ""):
+        """
+        Read store manager appointment from db.
+        Raise exception if an attribute in attributes_to_read is illegal.
+        <attribute> will composite a constraint of where to read.
+        example(if old_username != ""), it will composite the constraint-
+                                               where(user.username == username).
+
+        :param attributes_to_read: lst of attributes to read.
+        :param appointee_username: pk.
+        :param store_name: pk.
+        :param appointer_username:
+        """
+        if attributes_to_read is None:
+            attributes_to_read = []
+        try:
+            return ret((StoreOwnerAppointmentData.get_instance()).read(attributes_to_read,
+                                                                       appointee_username,
+                                                                       store_name,
+                                                                       appointer_username),
+                       "Successful.")
+        except Exception:
+            return ret([], self.__execution_failed_error_msg)
+
+    def write_store_owner_appointment(self, appointee_username: str, store_name: str, appointer_username: str):
+        """
+        write store manager appointment to db.
+
+        :param appointee_username: pk
+        :param store_name:pk
+        :param appointer_username:
+        :return:
+        """
+        try:
+            return self.__proxy.execute(
+                [StoreOwnerAppointmentData.get_instance().write(appointee_username, store_name, appointer_username)])
+        except Exception:
+            return ret(False, self.__execution_failed_error_msg)
+
+    def update_store_owner_appointments(self, old_appointee_username: str = "", old_store_name: str = "",
+                                        old_appointer_username: str = "",
+                                        new_appointee_username: str = "", new_store_name: str = "",
+                                        new_appointer_username: str = ""):
+        """
+        Update store manager appointment in the db.
+        old_<attribute> will composite a constraint of where to update.
+        example(if old_username != ""), it will composite the constraint-
+                                                where(user.username == old_username).
+        new_<attribute> will update the <attribute> to the new value.
+        example(if new_username != ""), it will update-
+                                                update(user.username = new_username).
+
+        :return: the number of updated rows.
+        """
+        try:
+            return self.__proxy.execute(
+                [StoreOwnerAppointmentData.get_instance().update(old_appointee_username, old_store_name,
+                                                                 old_appointer_username,
+                                                                 new_appointee_username, new_store_name,
+                                                                 new_appointer_username)])
+        except Exception:
+            return ret(False, self.__execution_failed_error_msg)
+
+    def delete_store_owner_appointments(self, appointee_username: str = "", store_name: str = "",
+                                        appointer_username: str = ""):
+        """
+        Delete store manager appointments from the DB.
+        <attribute> will composite a constraint of where to delete.
+        example(if old_username != ""), it will composite the constraint-
+                                               where(user.username == username).
+
+        :return: the number of deleted rows.
+        """
+        try:
+            return self.__proxy.execute(
+                [StoreOwnerAppointmentData.get_instance().delete(appointee_username, store_name,
+                                                                 appointer_username)])
+        except Exception:
+            return ret(False, self.__execution_failed_error_msg)
+
+    def read_statistics(self, attributes_to_read=None, date: datetime = None, guests: int = None,
+                        subscribers: int = None, store_managers: int = None, store_owners: int = None,
+                        system_managers: int = None):
+        """
+        Read statistics from db.
+        Raise exception if an attribute in attributes_to_read is illegal.
+        <attribute> will composite a constraint of where to read.
+        example(if old_username != ""), it will composite the constraint-
+                                               where(user.username == username).
+
+        :param date:
+        :param guests:
+        :param subscribers:
+        :param store_managers:
+        :param store_owners:
+        :param system_managers:
+        :param attributes_to_read: the list of attributes that will return from the db.
+                                    type: [str]
+
+        :return: list of dictionaries that contain attributes_to_read fields.
+        """
+        if attributes_to_read is None:
+            attributes_to_read = []
+        try:
+            return ret(
+                (StatisticData.get_instance()).read(attributes_to_read, date, guests, subscribers, store_managers,
+                                                    store_owners, system_managers), "Successful.")
+        except Exception as e:
+            # print(e)
+            return ret([], self.__execution_failed_error_msg)
+
+    def write_statistic(self, date: datetime = datetime(datetime.now().year, datetime.now().month, datetime.now().day), guests: int = 0, subscribers: int = 0,
+                        store_managers: int = 0, store_owners: int = 0, system_managers: int = 0):
+        """
+        Write a statistics to db.
+        :return: size of user tbl after inserting the new one.
+        """
+        try:
+            return self.__proxy.execute([(StatisticData.get_instance()).write(date, guests, subscribers, store_managers,
+                                                                              store_owners, system_managers)])
+        except Exception as e:
+            # print(e)
+            return ret([], self.__execution_failed_error_msg)
+
+    def update_statistics(self, old_date: datetime = None, old_guests: int = None, old_subscribers: int = None,
+                          old_store_managers: int = None, old_store_owners: int = None, old_system_managers: int = None,
+                          new_date: datetime = None, new_guests: int = None, new_subscribers: int = None,
+                          new_store_managers: int = None, new_store_owners: int = None,
+                          new_system_managers: int = None):
+        """
+        Update statistics in the db.
+        old_<attribute> will composite a constraint of where to update.
+        example(if old_username != ""), it will composite the constraint-
+                                                where(user.username == old_username).
+        new_<attribure> will update the <attribute> to the new value.
+        example(if new_username != ""), it will update-
+                                                update(user.username = new_username).
+        :return: the number of updated rows.
+        """
+        try:
+            return self.__proxy.execute([(StatisticData.get_instance()).update(old_date, old_guests, old_subscribers,
+                                                                               old_store_managers,
+                                                                               old_store_owners, old_system_managers,
+                                                                               new_date, new_guests, new_subscribers,
+                                                                               new_store_managers,
+                                                                               new_store_owners, new_system_managers
+                                                                               )
+                                         ])
+        except Exception as e:
+            # print(e)
+            return ret([], self.__execution_failed_error_msg)
+
+    def delete_statistics(self, date: datetime = None, guests: int = None, subscribers: int = None,
+                          store_managers: int = None, store_owners: int = None, system_managers: int = None):
+        """
+        Delete statistics from the DB.
+        <attribute> will composite a constraint of where to delete.
+        example(if old_username != ""), it will composite the constraint-
+                                               where(user.username == username).
+
+        :return: the number of deleted rows.
+        """
+        try:
+            return self.__proxy.execute(
+                [(StatisticData.get_instance()).delete(date, guests, subscribers, store_managers,
+                                                       store_owners, system_managers)
+                 ])
+        except Exception as e:
+            # print(e)
+            return ret([], self.__execution_failed_error_msg)
