@@ -1,11 +1,16 @@
 import os
 import _thread as thread
+
+import eventlet
+
 from src.main.CommunicationLayer import WebService
+# from eventlet import wsgi
 
 
 def run_server():
-    WebService.app.run()
-
+    # WebService.app.run()
+    WebService.socket.run(WebService.app)
+    # wsgi.server(eventlet.listen(('', 5000)), WebService.app)
 
 def run_client():
     # Setting the option for https

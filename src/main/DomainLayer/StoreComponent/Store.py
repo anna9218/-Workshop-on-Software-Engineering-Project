@@ -1,4 +1,5 @@
-from datetime import datetime
+import datetime
+# from datetime import datetime
 import jsonpickle
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.CompositeFlag import CompositeFlag
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy, DiscountComponent
@@ -210,7 +211,7 @@ class Store:
     def product_in_inventory(self, product_name: str):
         return self.__inventory.get_product(product_name) is not None
 
-    # @logger
+    @logger
     def add_owner(self, appointer_nickname: str, appointee: User) -> bool:
         """
         appointee has to be registered.
@@ -514,14 +515,16 @@ class Store:
         products_purchases = []
         basket_price = 0
         for product in basket.get_products():
-            if product["purchaseType"] == PurchaseType.DEFAULT:
+            if product["product"].get_purchase_type() == PurchaseType.DEFAULT:
+            # if product["purchaseType"] == PurchaseType.DEFAULT:
                 purchase = self.purchase_immediate(product["product"].get_name(),
                                                    product["product"].get_price(),
                                                    product["amount"],
                                                    price_before_discount,
                                                    product_lst)
 
-            elif product["purchaseType"] == PurchaseType.AUCTION:
+            elif product["product"].get_purchase_type()  == PurchaseType.AUCTION:
+            # elif product["purchaseType"] == PurchaseType.AUCTION:
                 purchase = self.purchase_auction(product["product"].get_name(),
                                                  product["product"].get_price(), product["amount"])
             else:

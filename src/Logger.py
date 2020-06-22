@@ -102,3 +102,5 @@ def errorLogger(msg):
     logger.addHandler(file_handler)
     # Print the message on the chosen format to the error-log's file
     logger.error(msg)
+
+

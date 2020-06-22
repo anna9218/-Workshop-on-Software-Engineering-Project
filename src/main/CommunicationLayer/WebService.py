@@ -1,3 +1,4 @@
+import eventlet
 import jsonpickle
 from flask import Flask, request
 # import os
@@ -15,15 +16,28 @@ from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 from src.main.ServiceLayer.SystemManagerRole import SystemManagerRole
 from src.main.ServiceLayer.TradeControlService import TradeControlService
 from flask_socketio import SocketIO, join_room, leave_room
+import os
 
 app = Flask(__name__)
 CORS(app)
+
+socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
+# # socket = SocketIO(app, logger=True, engineio_logger=True,
+# #                   cors_allowed_origins='*', async_mode='eventlet')
+
+# eventlet.monkey_patch()
+#
+# app = Flask(__name__)
+# CORS(app)
+# app.secret_key = os.environ.get('SECRET')
+# app.config['WTF_CSRF_SECRET_KEY'] = "\xae\x5c{Xasa\x3b\x8e\x83\x19\xad\x24\x19\asda"
+# socket = SocketIO(app, logger=True, engineio_logger=True,
+#                cors_allowed_origins='*', async_mode='eventlet')
+#
+
 # 1 - purchase
 # 2 - add+remove manager
 # 3 - else
-socket = SocketIO(app, cors_allowed_origins='*')
-# socket = SocketIO(app, logger=True, engineio_logger=True,
-#                   cors_allowed_origins='*', async_mode='eventlet')
 
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
@@ -158,7 +172,7 @@ def purchase_products():
         # print(purchases)
         # print(purchases[0])
         # print(purchases[0]["store_name"])
-        # handle_purchase_msg(purchases[0]["store_name"]) TODO
+        handle_purchase_msg(purchases[0]["store_name"])
         # print("after handle")
         return jsonify(data=response)
     return jsonify(msg="purchase products failed", data=response["response"], status=400)
@@ -237,6 +251,8 @@ def remove_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.remove_owner(appointee_nickname, store_name)
         if response:
+            # handle_remove_owner_msg() TODO
+            # remove_subscriber_from_store()
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, communication error--")
 # remove_owner(self, appointee_nickname: str, store_name: str)
@@ -250,6 +266,7 @@ def appoint_store_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
         if response:
+            handle_agreement_msg(appointee_nickname, store_name)
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
 
@@ -566,12 +583,8 @@ def open_store():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         result = SubscriberRole.open_store(store_name)
-        #   Websocket.open_store(store_name, SubscriberRole.username, result)
-        # TODO - add some func at websocket that registers the owner
-        # WebSocketService.open_store(store_name, SubscriberRole.username, result)
-        # if response:
-        # TODO: ask yarin about that
-        # open_store(TradeControlService.get_curr_username(), store_name)
+        # websocket_open_store(TradeControlService.get_curr_username(), store_name)
+        create_new_publisher(store_name, TradeControlService.get_curr_username())
         return jsonify(data=result['response'], msg=result['msg'])
     return jsonify(msg="Oops, store wasn't opened.")
 
@@ -629,6 +642,19 @@ def get_visitors_cut():
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
 
+# TODO???
+# @app.route('/view_store_purchases_history', methods=['POST'])
+# def view_store_purchases_history():
+#     if request.is_json:
+#         request_dict = request.get_json()
+#         store_name = request_dict.get('store_name')
+#     #     response = SystemManagerRole.view_store_purchases_history(store_name)
+#     #     if response:  # if not None
+#     #         return jsonify(msg="success", data=response)
+#     # return jsonify(msg="fail", data=response)
+#     return jsonify(data=["store_purchase1", "store_purchase2"])
+#
+
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 
 @app.route('/init_system', methods=['GET'])
@@ -651,14 +677,16 @@ def get_curr_user_nickname():
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
 
 _users = {}  # dict of <username>: <its session ID>
-_stores : [StorePublisher] = [] # list of StorePublisher
+_stores: [StorePublisher] = []  # list of StorePublisher
 
+
+# @socket.on('')
 @socket.on('connect')
 def connect():
     print(f"connect event. sid --> {request.sid}")
-    owner_username= TradeControlService.get_curr_username()
-    print (f"curr_nickname = {owner_username}")
-    if (owner_username is not None):
+    owner_username = TradeControlService.get_curr_username()
+    print(f"curr_nickname = {owner_username}")
+    if (owner_username != ""):
         _users[owner_username] = request.sid
         # print ("in if")
         for store in _stores:
@@ -666,63 +694,133 @@ def connect():
             if store.is_subscribed_to_store(owner_username):
                 # print("before join")
                 join_room(room=store.store_name(), sid=_users[owner_username])
-                print (f"username {owner_username} is added as a subscriber to store {store.store_name()} publisher")
+                print(f"username {owner_username} is added as a subscriber to store {store.store_name()} publisher")
 
-    print (f"users list: {_users}")
+    print(f"users list: {_users}")
+
+
+# @socket.on('join')
+# def join(data):
+#     print("recieved join request")
+#     _users[data['username']] = request.sid
+#     join_room(room=data['store'], sid=_users[data['username']])
+#     print(f"{data['username']} has been subscribed to store {data['storename']}")
 
 @socket.on('join')
-def join(data):
-    print("recieved join request")
-    _users[data['username']] = request.sid
-    join_room(room=data['store'], sid=_users[data['username']])
-    print(f"{data['username']} has been subscribed to store {data['storename']}")
+def websocket_open_store(data):
+    if data:
+        username= data['username']
+        storename= data['store']
+        print(f"open store u= {username}, s = {storename}")
+        # socket.emit('message', {}) - works!
+        print(f"stores are {_stores}")
+        if get_store(storename).is_subscribed_to_store(username):
+            # print(f"new: open store (store name = {storename}) msg from {username} ")
+            append_user_to_room(storename, username, request.sid)
+            print (f"append user {username} to new store {storename}")
+            # create_new_publisher(storename, username)
+        else:
+            print(f"store is already exists! {get_store(storename)}")
+    else:
+        print(f"recieved wrong join msg --> {data}")
 
 
-# TODO- replace it with call from open store. assume _users already includes the username and its websocket
-def open_store(username, storename):
-    print(f"open store (name = {storename}) msg from {username} ")
-    if _users:
-        _users[username] = request.sid
-        print (f"users = {_users}")
-        join_room(room=storename, sid=_users[username])
-        print(f"{username} has been subscribed to store {storename}")
-    store = StorePublisher(storename, username)
-    # print(f"store = {store}")
-    _stores.append(store)
-    store.subscribe_owner(username)
+
+def create_new_publisher(storename, username):
+    if get_store(storename) is None:
+        if username == "":
+            print("no curr username")
+        else:
+            store = StorePublisher(storename, username)
+            # print(f"store = {store}")
+            _stores.append(store)
+            # print(f"{storename} has been added by {username}")
+            store.subscribe_owner(username)
 
 
-@socket.on('unsbscribe')
+
+def append_user_to_room(storename, username, sid):
+    print(f"sid (in append) = {sid}")
+    _users[username] = sid
+    # _users[username] = flask_request.sid
+    print(f"users = {_users}")
+    join_room(room=storename, sid=_users[username])
+    # print(f"{username} has been subscribed to store {storename}")
+
+
+@socket.on('unsubscribe')
 def leave(data):
     # TODO - add check that exists
     leave_room(room=data['store'], sid=_users[data['username']])
     print(f"{data['username']} has been removed as subscriber of store {data['storename']}")
 
 
-def send_notification(store_name, msg):
+# TODO - add a call from remove_owner func
+def unsbscribe(username, storename):
+    leave_room(room=storename, sid=_users[username])
+    # print(f"{username} has been removed as subscriber of store {storename}")
+
+
+def notify_all(store_name, msg, event):
     # socket.send(msgs, json=True, room=storename)
-    # TODO - does it sends even if not logged in? maybe use the written store-funcs
+    store = get_store(store_name)
+    store.add_msg(msg)
+    print (store)
     print(f"room = {store_name}, msg = {msg}")
-    socket.emit('message', msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
+    socket.emit(event, msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
     # socket.send({
     #         'messages': [msg]
     #     }, room=store_name)
 
 def handle_purchase_msg(store_name):
-    # if result:  # should be True or dict - TODO change the call to be inside if (result)
     msg = f"a purchase has been done at store {store_name}"
     print(f"send msg: {msg}")
-    send_notification(store_name, jsonify(messages=msg, store=store_name))
+    notify_all(store_name, {'messages':msg, 'store':store_name}, 'message')
+    # notify_all(store_name, jsonify(messages=msg, store=store_name))
+
+# FOR ANNA
+def handle_agreement_msg(appointe_name, store_name):
+    msg = f"would you like to appoint {appointe_name} to owner at store {store_name}"
+    print(f"send msg: {msg}")
+    notify_all(store_name, {'messages':msg, 'store':store_name}, "agreement")
+    # notify_all(store_name, jsonify(messages=msg, store=store_name))
 
 
 def handle_remove_owner_msg(user_name, store_name):
-    # if result:  # should be True or dict - TODO change the call to be inside if (result)
     msg = f"{user_name} was removed as owner from store {store_name}"
-    send_notification(store_name, jsonify(username=user_name, messages=msg, store=store_name))
-    print(f"send msg: {msg}")
+    notify_all(store_name, {'username':user_name, 'messages':msg, 'store':store_name}, 'message')
+    # notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
+    # print(f"send msg: {msg}")
+
 
 def get_store(store_name) -> StorePublisher:
     for store in _stores:
         if store.store_name() == store_name:
             return store
     return None
+
+
+def add_subscriber_to_store(store_name, owner_nickname):
+    store = get_store(store_name)
+    if store is None:
+        # print(f"store {store_name} is none, owner is {owner_nickname}")
+        return False
+    if store.is_subscribed_to_store(owner_nickname):
+        return False
+    store.subscribe_owner(owner_nickname)
+    return True
+
+
+def remove_subscriber_from_store(store_name, owner_nickname):
+    store = get_store(store_name)
+    if store is None:
+        return -2
+    return store.unsubscribe_owner(owner_nickname)
+
+
+def is_subscribed_to_store(store_name, nickname):
+    store = get_store(store_name)
+    if store is not None:
+        return store.is_subscribed_to_store(nickname)
+    # print(f"store {store_name} is none. nickname is {nickname}")
+    return False
