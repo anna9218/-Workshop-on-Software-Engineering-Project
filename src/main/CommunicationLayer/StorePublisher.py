@@ -23,7 +23,7 @@ class StorePublisher:
         :param msg:
         :return:
         """
-        self.__msgs.append((self.__msgs.len(), msg))  # maybe len-1
+        self.__msgs.append((len(self.__msgs), msg))  # maybe len-1
         self.notifyAll()
 
     def notifyAll(self):
@@ -142,3 +142,6 @@ class StorePublisher:
         for username, lastUnreadMsg in self.__subscribers:
             if user_name == username:
                 lastUnreadMsg += 1
+
+    def __repr__(self):
+        return repr(f"{self.__name} Publisher Details --> Subscribers: {self.__subscribers}, Msgs: {self.__msgs}")
