@@ -277,7 +277,8 @@ def handle_appointment_agreement_response():
                 status = StoreOwnerOrManagerRole.get_appointment_status(appointee_nickname, store_name)
                 if status == AppointmentStatus.APPROVED:
                     response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
-                    notify_all(store_name, {'username': appointee_nickname, 'messages': f"New owner {appointee_nickname } appointed at store {store_name}!"})
+                    msg = f"New owner {appointee_nickname } appointed at store {store_name}!"
+                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg})
             return jsonify(msg=response["msg"])
     return jsonify(msg="Oops, communication error")
 
