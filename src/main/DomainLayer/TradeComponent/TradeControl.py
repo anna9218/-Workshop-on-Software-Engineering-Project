@@ -974,6 +974,7 @@ class TradeControl:
     @logger
     def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str, valid_until: datetime):
+
         store: Store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
