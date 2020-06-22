@@ -23,8 +23,8 @@ class TradeControlService:
     def init_system():
         # Getting the file path
         abs_path = os.path.dirname(os.path.abspath(__file__))
-        # rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
-        rel_path = os.path.join(abs_path, 'init_sys_file_v4.txt')
+        rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
+        # rel_path = os.path.join(abs_path, 'init_sys_file_v4.txt')
         if rel_path.split(".")[1] != "txt":
             print("Wrong format.")
             exit(1)
@@ -132,14 +132,14 @@ class TradeControlService:
                             file.close()
                             return func_return_value
         except Exception as ex:
-            print(ex)
+            # print(ex)
             file.close()
             return ret(False, "An unknown error has occurred. Please check the input file arguments.")
 
         # connecting to external systems.
-        if not DeliveryProxy.get_instance().is_connected():
+        if not DeliveryProxy.get_instance().connect():
             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
-        if not PaymentProxy.get_instance().is_connected():
+        if not PaymentProxy.get_instance().connect():
             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
 
         file.close()
