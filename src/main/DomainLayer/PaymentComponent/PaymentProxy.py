@@ -1,10 +1,11 @@
 from src.Logger import errorLogger, logger, loggerStaticMethod
 from src.main.DomainLayer.PaymentComponent.PaymentSubject import PaymentSubject
+from src.main.DomainLayer.PaymentComponent.RealPayment import RealPayment
 
 
 class PaymentProxy(PaymentSubject):
     __instance = None
-    __realSubject = None
+    __realSubject = RealPayment()
 
     @staticmethod
     def get_instance():
@@ -21,66 +22,64 @@ class PaymentProxy(PaymentSubject):
             raise Exception("This class is a singleton!")
         else:
             super().__init__()
-            self.__isConnected = False
-            if PaymentProxy.__realSubject:
-                PaymentProxy.__instance = self.__realSubject
-            else:
-                PaymentProxy.__instance = self
-
-    @logger
-    def connect(self):
-        try:
-            if not self.__isConnected:
-                self.__isConnected = True
-                return True
-            else:
-                return False
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
-
-    @logger
-    # need to check payment details with system once a system is set
-    def commit_payment(self, products_ls: {"total_price": float, "purchases": [dict]}) -> {'response': bool, 'msg': str}:
-        try:
-            if not self.__isConnected:
-                return {'response': False, 'msg': "Payment failed. payment system is not connected"}
-            if not self.__check_valid_details(products_ls):
-                return {'response': False, 'msg': "Payment failed. invalid payment details"}
-
-            else:
-                return {'response': True, 'msg': "Payment was successful"}
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
-
-    @logger
-    def disconnect(self):
-        try:
-            if self.__isConnected:
-                self.__isConnected = False
-                return True
-            else:
-                return False
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
-
-    @logger
-    def cancel_payment(self, purchase_ls):
-        return True
+            PaymentProxy.__instance = self
 
     @logger
     def is_connected(self) -> bool:
-        return self.__isConnected
-
-    @staticmethod
-    def __check_valid_details(products_ls) -> bool:
-        loggerStaticMethod("__check_valid_details", [products_ls])
-        if len(products_ls["purchases"]) == 0 or products_ls["total_price"] == 0:
+        if self.__realSubject is None:
             return False
-        else:
-            return True
+        return self.__realSubject.is_connected()
+
+    @logger
+    # need to check payment details with system once a system is set
+    def commit_payment(self, payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}) -> {'response': bool, 'msg': str}:
+        """
+
+        :param payment_details:
+        :return: dict = {'response': bool, 'msg': str}:
+                 response = true if successful, otherwise false
+        """
+        if self.__realSubject is None:
+            return {'response': False, 'msg': "Payment failed. System is down!"}
+
+        if not self.__realSubject.is_connected():
+            return {'response': False, 'msg': "Payment failed. Delivery system is not connected"}
+
+        payed = self.__realSubject.commit_payment(payment_details)
+
+        if payed["response"]:
+            return {"response": True, "msg": "Payment was successful. Transaction ID: " + payed["msg"], "tid": payed["msg"]}
+        return payed
+
+    @logger
+    def cancel_pay(self, transaction_id: str) -> {'response': bool, 'msg': str}:
+        """
+
+        :param transaction_id:
+        :return: dict = {'response': bool, 'msg': str}:
+                 response = true if successful, otherwise false
+        """
+
+        if self.__realSubject is None:
+            return {'response': False, 'msg': "Payment cancellation failed. System is down!"}
+
+        if not self.__realSubject.is_connected():
+            return {'response': False, 'msg': "Payment cancellation failed. Delivery system is not connected."}
+
+        return self.__realSubject.cancel_pay(transaction_id)
+
+    def cause_connection_error(self):
+        self.__realSubject.cause_connection_error()
+
+    def cause_timeout_error(self):
+        self.__realSubject.cause_timeout_error()
+
+    def set_connection_back(self):
+        self.__realSubject.set_connection_back()
+
+    def set_real(self, real: RealPayment or None):
+        self.__realSubject = real
 
     def __delete__(self):
         PaymentProxy.__instance = None

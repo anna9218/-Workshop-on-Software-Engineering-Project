@@ -132,11 +132,14 @@ class PurchasePolicy(PurchaseComponent):
 
         policies = self.__get_policy_type(details)
 
-        self.__children.clear()
-        for policy in policies["response"]:
-            self.__children.append(policy)
-            self.__products_names = details['products']
-        return {'response': True, 'msg': "Great Success! Policy updated"}
+        if len(policies["response"]) > 0:
+            self.__children.clear()
+            for policy in policies["response"]:
+                self.__children.append(policy)
+                self.__products_names = details['products']
+            return {'response': True, 'msg': "Great Success! Policy updated"}
+        return {'response': False, 'msg': "Oops...failed to add policy:\n" + policies["msg"]
+                                          + "\n please check all details are correct and try again"}
 
     def set_name(self, policy_name: str):
         self._name = policy_name

@@ -15,23 +15,39 @@ class PurchaseProductsTest(ProjectAT):
         self.add_products_to_store(self._store_name,
                                    [{"name": "product", "price": 10, "category": "general", "amount": 10,
                                      "purchase_type": 0, "discount_type": 0}])
-        self.connect_delivery_sys()
-        self.connect_payment_sys()
         self.add_products_to_cart("product", self._store_name, 5, 0, 0)
         self.__date = datetime.now()
+        self.__payment_details = {'card_number': "123", 'month': "march", 'year': "1991", 'holder': "s",
+                                  'ccv': "111", 'id': "333"}
+        self.__delivery_details = {'name': "nickname", 'address': "address 12", 'city': "ct", 'country': "i",
+                                   'zip': "123"}
 
     def test_success(self):
         # valid none empty cart purchase
         purchase_ls = self.purchase_products()
         self.assertTrue(len(purchase_ls) != 0)
         # confirmation
-        res = self.confirm_purchase("some address 1/2", purchase_ls)
+        res = self.confirm_purchase(self.__delivery_details, self.__payment_details, purchase_ls)
         self.assertTrue(res)
 
     def test_fail(self):
-        # invalid address
+        # one or more invalid detail in delivery details
         purchase_ls = self.purchase_products()
-        res = self.confirm_purchase("", purchase_ls)
+        res = self.confirm_purchase({'name': "nickname", 'address': "address 12", 'city': "ct", 'country': "i"},
+                                    self.__payment_details, purchase_ls) # missing zip
+        self.assertFalse(res['response'])
+        purchase_ls = self.purchase_products()
+        res = self.confirm_purchase({'name': "nickname", 'address': "address 12", 'city': "ct"},
+                                    self.__payment_details, purchase_ls)  # missing zip and country
+        self.assertFalse(res['response'])
+        # one or more invalid detail in payment details
+        purchase_ls = self.purchase_products()
+        res = self.confirm_purchase(self.__delivery_details, {'card_number': "123", 'month': "march", 'year': "1991",
+                                                              'holder': "s", 'ccv': "111"}, purchase_ls) # missing id
+        self.assertFalse(res['response'])
+        purchase_ls = self.purchase_products()
+        res = self.confirm_purchase(self.__delivery_details, {'card_number': "123", 'month': "march", 'year': "1991",
+                                                              'holder': "s"}, purchase_ls)  # missing id and ccv
         self.assertFalse(res['response'])
         # empty cart
         self.update_shopping_cart("remove",
@@ -43,8 +59,6 @@ class PurchaseProductsTest(ProjectAT):
         self.remove_purchase(self._store_name, self.__date)
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 10}])
-        self.disconnect_payment_sys()
-        self.disconnect_delivery_sys()
         self.remove_products_from_store(self._store_name, ["product"])
         self.remove_store("store")
         self.delete_user(self._username)

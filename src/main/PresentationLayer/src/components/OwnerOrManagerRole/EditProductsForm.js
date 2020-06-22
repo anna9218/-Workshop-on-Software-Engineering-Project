@@ -81,7 +81,7 @@ function EditProductsForm(props){
     }
 
     const editProductHandler = async () => {
-        alert(parseInt(newProductAmount))
+        // alert(parseInt(newProductAmount))
         if(newProductName !== null && newProductName === "")
             alert("Oops, Product's name can't be an empty string.");
         else if(newProductAmount !== null && parseInt(newProductAmount) < 0)
@@ -151,27 +151,27 @@ function EditProductsForm(props){
                 <div>
                     <Form className='edit_product'>
                         <Form.Label>Choose the product name:</Form.Label>
-                        <Form.Control id="product-name" value={newProductName} required type="text" placeholder={productName}
+                        <Form.Control id="product-name" value={newProductName} as="input" required type="text" placeholder={productName}
                         onChange={(event => {
                         setNewProductName(event.target.value)
                         })}/>
 
                         <Form.Label>Set the price:</Form.Label>
-                        <Form.Control id="product-price" value={newProductPrice} required type="text" required placeholder={productPrice} 
+                        <Form.Control id="product-price" value={newProductPrice} as="input" required type="number" min={0} required placeholder={productPrice} 
                         onChange={(event => {
-                        setNewProductPrice(event.target.value)
+                        setNewProductPrice(event.target.valueAsNumber)
                         })}/>
                     
                         <Form.Label>Enter the category:</Form.Label>
-                        <Form.Control id="product-category" value={newProductCategory} required type="text" placeholder={productCategory}
+                        <Form.Control id="product-category" value={newProductCategory} as="input" required type="text" placeholder={productCategory}
                         onChange={(event => {
                         setNewProductCategory(event.target.value)
                         })}/>
                     
                         <Form.Label>Enter the amount:</Form.Label>
-                        <Form.Control id="product-amount" value={newProductAmount} required type="text" placeholder={productAmount}
+                        <Form.Control id="product-amount" value={newProductAmount} as="input" required type="number" min={0} placeholder={productAmount}
                         onChange={(event => {
-                        setNewProductAmount(event.target.value)
+                        setNewProductAmount(event.target.valueAsNumber)
                         })}/>
 
                         <Form.Label>Enter the purchase type:</Form.Label>

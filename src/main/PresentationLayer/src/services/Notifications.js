@@ -55,6 +55,7 @@ export const setHandlers = async () => {
 
     // const msgs = JSON.parse(data).messages;
      const msgs = data['messages'];
+     // TODO: eden call to add messages to my msgs list 
     alert(msgs)
     // eden: display the notification without button
     
@@ -81,7 +82,7 @@ export const disconnect = () => {
 export const register_new_store = (username, storename) => {
 // export const register_new_store = (storename) => {
   console.log("on register store");
-  if (counter.counter == 1)
+  if (counter.counter === 1)
     console.log("call set handlers");
     setHandlers();
   socket.socket.emit("join", { username: username, store:storename });

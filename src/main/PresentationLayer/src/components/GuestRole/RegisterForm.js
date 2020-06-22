@@ -4,30 +4,17 @@ import {Container, Button, Form, Row, Col} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import {Link, useHistory, Redirect} from 'react-router-dom';
 import * as BackOption from '../Actions/GeneralActions/Back';
-
-// function RegisterForm(){
-//     useEffect(() => {
-//         setCount(count + 1);
-//         fetchStores();
-//       }, []);
-
-    
-//     const [count, setCount] = useState(1);
-// }
+import { confirmAlert } from 'react-confirm-alert'; 
 
 
 class RegisterForm extends React.Component{
     constructor(props) {
         super(props);
-        // this.emailEl = React.createRef();
-        // this.passwordEl = React.createRef();
         this.state = {
             nickname: '',
             password: '',
-            // history: useHistory(),
         };
-        // this.nickname='';
-        // this.password='';
+
         this.handleRegister = this.handleRegister.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -36,23 +23,26 @@ class RegisterForm extends React.Component{
     handleRegister = event =>{
         event.preventDefault();
         const promise = theService.register(this.state.nickname, this.state.password) // goes to register.js and sends to backend
-        promise.then((data) => {alert(data["msg"])})
-        // alert("msg")
-        // this.state.history.push("/");
-        // browserHistory.push('/');
-
-
-        //   <Route>
-        //       <Redirect to={{
-        //     pathname: '/login',
-        //     search: '?utm=your+face',
-        //     state: { referrer: currentLocation }
-        //   }}/>
-
-        // <Redirect to="/"/>
-        // TODO - redirect to other page
-
-        // if (result.status == 200){
+        promise.then((data) => {
+            if(data['data']){
+                confirmAlert({
+                    title: data["msg"],
+                    buttons: [
+                        {   label: 'Register',
+                            onClick: () => { // reset the form in order to add another product
+                                this.setState({nickname: ''});
+                                this.setState({password: ''});
+                        }},
+                        {
+                            label: 'Login',
+                            onClick: () => {
+                                this.props.history.push("./login")}
+                        }
+                    ]
+                });
+            }
+            else alert(data["msg"])
+        })
     }
 
     handleEmailChange(event){
@@ -76,7 +66,7 @@ class RegisterForm extends React.Component{
                             <Form.Label as="legend" column sm={6}>
                                 Please enter a unique nickname and password:
                             </Form.Label>
-                           <Form.Control style={{marginRight:"3%" , marginLeft: "3%"}} type="text" id="email" name="email" placeholder="Nickname" value={this.state.email} onChange={this.handleEmailChange} />
+                           <Form.Control style={{marginRight:"3%" , marginLeft: "3%"}} type="text" id="email" name="email" placeholder="Nickname" value={this.state.nickname} onChange={this.handleEmailChange} />
                             <Form.Control style={{marginTop:"1%", marginRight:"3%" , marginLeft: "3%"}} type="password" id="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
                         </Form.Group>
                     </fieldset>
@@ -90,7 +80,7 @@ class RegisterForm extends React.Component{
                 <Form >
                     <Form.Group as={Row} style={{marginRight:"1%" , marginLeft: "1%"}}>
                     <div><Button variant="dark" as={Link} to="./login">Login</Button></div>
-                    <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div>
+                    {/* <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div> */}
                     </Form.Group>
                 </Form>
             </div>

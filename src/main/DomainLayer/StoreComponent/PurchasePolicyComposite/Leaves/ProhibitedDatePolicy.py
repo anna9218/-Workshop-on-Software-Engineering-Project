@@ -26,7 +26,7 @@ class ProhibitedDatePolicy(PurchaseComponent):
 
     def equals(self, details: {"products": [str], "min_amount": int or None, "max_amount": int or None,
                                "dates": [dict] or None, "bundle": bool or None}) -> bool:
-        if details.get("dates") and set(self.__products) == set(details["products"]):
+        if details.get("dates") and set(self.__products) == set(details["products"]) and set(self.__bad_dates) == set(details["dates"]):
             return True
         return False
 

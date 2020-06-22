@@ -28,7 +28,7 @@ class systemManagerAPI extends React.Component{
       this.searchInputHandler = this.searchInputHandler.bind(this);
       this.fetchCategories = this.fetchCategories.bind(this);
       this.logoutHandler = this.logoutHandler.bind(this);
-      this.logoutHandler = this.logoutHandler.bind(this);
+    //   this.logoutHandler = this.logoutHandler.bind(this);
     }
 
     byNameHandler = () =>{
@@ -54,6 +54,7 @@ class systemManagerAPI extends React.Component{
         const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
+          // TODO: yarin  
             this.props.history.push("/");
         });
     };

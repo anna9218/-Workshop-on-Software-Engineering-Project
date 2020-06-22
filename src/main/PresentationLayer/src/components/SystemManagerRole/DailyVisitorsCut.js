@@ -52,30 +52,29 @@ function DailyVisitorsCut(props){
                 <h1>View Visitors Cut</h1>
 
                 <div style={{marginTop:"2%" , marginLeft: "30%", marginRight: "30%", border: "1px solid", borderColor: "#CCCCCC"}}>
-                <Container>
-                    <h4 style={{marginTop:"2%"}}>Please enter dates range</h4>
-                    <Form>
+                    <Container>
+                        <h4 style={{marginTop:"2%"}}>Please enter dates range</h4>
+                        <Form>
 
-                        <Form.Label  style={{marginTop:"2%"}}>Start date:</Form.Label>
-                        <Form.Control required type="date" placeholder="Start date" max={(new Date()).toJSON().split('T')[0]} onChange={(event => {setStartDate(event.target.valueAsDate)})}/>
-                        <Form.Label  style={{marginTop:"2%"}}>End date:</Form.Label>
-                        <Form.Control required type="date" placeholder="End date" min={(new Date(startDate)).toJSON().split('T')[0]} max={(new Date()).toJSON().split('T')[0]} onChange={(event => {setEndDate(event.target.valueAsDate)})} disabled={startDate === null}/>
+                            <Form.Label  style={{marginTop:"2%"}}>Start date:</Form.Label>
+                            <Form.Control required type="date" placeholder="Start date" max={(new Date()).toJSON().split('T')[0]} onChange={(event => {setStartDate(event.target.valueAsDate)})}/>
+                            <Form.Label  style={{marginTop:"2%"}}>End date:</Form.Label>
+                            <Form.Control required type="date" placeholder="End date" min={(new Date(startDate)).toJSON().split('T')[0]} max={(new Date()).toJSON().split('T')[0]} onChange={(event => {setEndDate(event.target.valueAsDate)})} disabled={startDate === null}/>
 
-                        <Button style={{marginTop:"2%", marginBottom:"2%"}} variant="dark" id="open-store-button" type='reset'
-                        //  disabled={startDate === null || endDate === null} 
-                         onClick={fetchVisitorsCut}>View Cut!</Button>
-        
-                    </Form>
-                </Container>
-        
+                            <Button style={{marginTop:"2%", marginBottom:"2%"}} variant="dark" id="open-store-button" type='reset'
+                            //  disabled={startDate === null || endDate === null}
+                            onClick={fetchVisitorsCut}>View Cut!</Button>
+
+                        </Form>
+                    </Container>
                 </div>
 
                 {showGraph ? 
-                    <div>
-                        <div style={{ tableLayout:'fixed', position:'inherit' }}>
+                    <div style={{ tableLayout:'fixed', position:'inherit' }}>
                         <Chart
-                            width={props["screenWidth"]}
-                            height={props["screenHeight"]}
+                            id="chart"
+                            width={"100%"}
+                            height={"100vh"}
                             chartType="ColumnChart"
                             loader={<div>Loading Chart</div>}
                             data={graphData}
@@ -87,11 +86,12 @@ function DailyVisitorsCut(props){
                            
                             options={{
                                 title: 'Daily visitors cut',
-                                chartArea: { width: '50%', height: '70%' },
-                            position:'inherit',
+                                chartArea: { width: '50%', height: '80%' },
+                                position:'inherit',
                                 hAxis: {
                                     title: 'Date',
                                     // minValue: (new Date()).toLocaleDateString(),
+
                                 },
                                 vAxis: {
                                     title: 'Visitors',
@@ -106,7 +106,7 @@ function DailyVisitorsCut(props){
                             legendToggle
                         /> 
                     </div> 
-                </div> : null}
+                : null}
                 
             </div>
             

@@ -131,22 +131,6 @@ def get_categories():
     return jsonify(data=["category1", "category2"])
 
 
-# @app.route('/filter_products_by', methods=['POST'])
-# def filter_products_by():
-#     return jsonify(data=["Product1"])
-#     # if request.is_json:
-#     #     request_dict = request.get_json()
-#     #     products = request_dict.get('products')
-#     #     filter_option = request_dict.get('filter_option')  # by name, keyword or category
-#     #     input = request_dict.get('input')
-#     #     if filter_option == 1:
-#     #         min = input.min
-#     #         max = input.max
-#     #         response = GuestRole.search_products_by(products, filter_option, min, max)  # list of Products (Object)
-#     #     else:
-#     #         response = GuestRole.search_products_by(products, filter_option, input)  # list of Products (Object)
-
-
 @app.route('/add_products_to_cart', methods=['POST'])
 def add_products_to_cart():
     if request.is_json:
@@ -158,9 +142,21 @@ def add_products_to_cart():
     # return jsonify(msg="Registration failed", data=response['response'], status=400)
 
 
-@app.route('/update_shopping_cart', methods=['POST'])
-def update_shopping_cart():
-    return jsonify(msg="Updated successfully!")
+@app.route('/update_or_remove_from_shopping_cart', methods=['POST'])
+def update_or_remove_from_shopping_cart():
+    # flag: str, products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
+
+    if request.is_json:
+        request_dict = request.get_json()
+        action_type = request_dict.get('action_type')
+        products_details = [{'product_name': request_dict.get("product_name"),
+                             'store_name': request_dict.get("store_name"),
+                             'amount': request_dict.get("amount")
+                            }]
+        response = GuestRole.update_shopping_cart(action_type, products_details)
+        if response:
+            return jsonify(msg=response['msg'], data=response['response'])
+    return jsonify(msg="purchase confirmation failed", data=response["response"], status=400)
 
 
 @app.route('/purchase_products', methods=['GET'])
@@ -182,9 +178,10 @@ def purchase_products():
 def confirm_purchase():
     if request.is_json:
         request_dict = request.get_json()
-        address = request_dict.get('address')
+        delivery_details = request_dict.get('delivery_details')
+        payment_details = request_dict.get('payment_details')
         details = request_dict.get("purchases")
-        response = GuestRole.confirm_payment(address, details)
+        response = GuestRole.confirm_payment(delivery_details, payment_details, details)
         if response:
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="purchase confirmation failed", data=response["response"], status=400)
@@ -326,10 +323,10 @@ def edit_manager_permissions():
         permissions = request_dict.get('permissions')  # str
         response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, numbersToEnum(permissions))
         if response:
-            return jsonify(msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
+            return jsonify(data=response, msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
         else:
-            return jsonify(msg="Oops, update permissions failed.")
-    return jsonify(msg="Oops, communication error.")
+            return jsonify(data=False, msg="Oops, update permissions failed.")
+    return jsonify(data=False, msg="Oops, communication error.")
 
 
 @app.route('/view_store_purchases_history', methods=['POST'])
@@ -379,34 +376,6 @@ def set_purchase_operator():
 
 
 from datetime import datetime
-
-#
-# @app.route('/add_purchase_policy', methods=['POST'])
-# def add_purchase_policy():
-#     if request.is_json:
-#         request_dict = request.get_json()
-#         store_name = request_dict.get('store_name')
-#         policy_name = request_dict.get('policy_name')
-#         products = request_dict.get('products')
-#         min_amount = request_dict.get('min_amount')
-#         max_amount = request_dict.get('max_amount')
-#         bundle = request_dict.get('bundle')
-#         string_dates = request_dict.get('dates')
-#         dates = []
-#         # convert string to dates
-#         if string_dates is None:
-#             dates = None
-#         else:
-#             for date in string_dates:
-#                 dates += [parse(date)]
-#
-#         details = {"name": policy_name, "products": products,
-#                     "min_amount": min_amount, "max_amount": max_amount,
-#                     "dates": dates, "bundle": bundle}
-#         response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
-#         return jsonify(msg=response['msg'], data=response['response'])
-#
-#     return jsonify(msg="Oops, communication error.")
 
 
 @app.route('/add_and_update_purchase_policy', methods=['POST'])
@@ -465,7 +434,28 @@ def add_and_update_dicount_policy():
         if action_type == 'add':
             response = StoreOwnerOrManagerRole.define_discount_policy(store_name, percentage, date, discount_details, discount_precondition)
         else:
+            new_policy_name = request_dict.get('new_policy_name')
+            discount_details = {'name': new_policy_name, 'product': product_name}
             response = StoreOwnerOrManagerRole.update_discount_policy(store_name, policy_name, percentage, date, discount_details, discount_precondition)
+        return jsonify(msg=response['msg'], data=response['response'])
+
+    return jsonify(msg="Oops, communication error.")
+
+
+@app.route('/add_composite_dicount_policy', methods=['POST'])
+def add_composite_dicount_policy():
+    if request.is_json:
+        request_dict = request.get_json()
+        store_name = request_dict.get('store_name')
+        policy1 = request_dict.get('policy1')
+        policy2 = request_dict.get('policy2')
+        date = parse(request_dict.get('date'))
+        percentage = request_dict.get('percentage')
+        new_policy_name = request_dict.get('new_policy_name')
+        operator = request_dict.get('operator')
+
+        response = StoreOwnerOrManagerRole.define_composite_policy(store_name, policy1, policy2, operator, percentage, new_policy_name, date)
+
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
@@ -482,10 +472,12 @@ def delete_policy():
         if policy_type == 'discount':
             response = StoreOwnerOrManagerRole.delete_policy(store_name, policy_name)
         else:
-            response = {'response': False, 'msg': 'need to implement delete_purchase_policy'}
+            response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, policy_name)
+            # response = {'response': False, 'msg': 'need to implement delete_purchase_policy'}
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
+
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -642,7 +634,7 @@ def get_visitors_cut():
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
 
-# TODO???
+
 # @app.route('/view_store_purchases_history', methods=['POST'])
 # def view_store_purchases_history():
 #     if request.is_json:

@@ -181,16 +181,14 @@ class TradeControl:
                                                               "product_name": product.get_name(),
                                                               "price": product.get_price(),
                                                               "category": product.get_category(),
-                                                              "amount": s.get_inventory().get_amount(
-                                                                  product.get_name())}), products))
+                                                              "amount": s.get_inventory().get_amount(product.get_name())}), products))
         if len(list_of_products) == 0:
             return {'response': list_of_products, 'msg': "Error! There are no results"}
         return {'response': list_of_products, 'msg': "Products was retrieved successfully"}
 
     @logger
     def filter_products_by(self,
-                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str,
-                                          "amount": (int or None)}],
+                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
                            max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
                                                                                                   'msg': str}:
@@ -298,9 +296,9 @@ class TradeControl:
 
         res = []
         list(map(lambda curr: res.append({"name": curr["product"].get_name(), "price": curr["product"].get_price(),
-                                          "category": curr["product"].get_category(), "amount": curr["amount"],
-                                          "discount_type": curr["product"].get_discount_type().name,
-                                          "purchase_type": curr["product"].get_purchase_type().name}), inventory))
+               "category": curr["product"].get_category(), "amount": curr["amount"],
+               "discount_type": curr["product"].get_discount_type().name,
+               "purchase_type": curr["product"].get_purchase_type().name}), inventory))
 
         return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
@@ -497,13 +495,15 @@ class TradeControl:
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_user = self.get_subscriber(nickname)
             if viewed_user:
+                purchases = viewed_user.get_purchase_history()
                 ls = []
                 list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
                                                      "nickname": purchase.get_nickname(),
                                                      "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
                                                      "total_price": purchase.get_total_price(),
-                                                     "products": purchase.get_products()}),
-                         viewed_user.get_purchase_history()))
+                                                     "products": purchase.get_products()}), purchases))
+                # ls = []
+                # list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), viewed_user.get_purchase_history()))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for user " + nickname}
                 return {'response': ls, 'msg': nickname + " purchases history was retrieved successfully"}
@@ -517,21 +517,24 @@ class TradeControl:
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_store = self.get_store(store_name)
             if viewed_store:
+                owner_nickname = viewed_store.get_owners()[0].get_nickname()
+                purchases = viewed_store.get_purchases(owner_nickname)
                 ls = []
-                owner_nickname = (viewed_store.get_owners()[0]).get_nickname()
                 list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
                                                      "nickname": purchase.get_nickname(),
                                                      "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
                                                      "total_price": purchase.get_total_price(),
-                                                     "products": purchase.get_products()}),
-                         viewed_store.get_purchases(owner_nickname)))
+                                                     "products": purchase.get_products()}), purchases))
+                # ls = []
+                # list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
+                #          viewed_store.get_purchases(self.__curr_user.get_nickname())))
                 if len(ls) == 0:
-                    return {'response': [], 'msg': "There are no previous purchases for store " + store_name + "."}
-                return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully!"}
+                    return {'response': [], 'msg': "There are no previous purchases for store " + store_name}
+                return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully"}
             else:
                 return {'response': None, 'msg': "Error, Store " + store_name + " doesn't exist."}
         else:
-            return {'response': None, 'msg': "Error, User is not a system manager"}
+            return {'response': None, 'msg': "User is not a system manager"}
 
     @logger
     def is_manager(self, nickname):
@@ -543,9 +546,9 @@ class TradeControl:
     # ----------------------------------
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-    # @logger
+    @logger
     def add_products(self, store_name: str,
-                     products_details: [{"name": str, "price": float, "category": str, "amount": int,
+                     products_details: [{"name": str, "price": int, "category": str, "amount": int,
                                          "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
@@ -668,6 +671,7 @@ class TradeControl:
         return {'response': False, 'msg': "User has no permissions"}
 
     @logger
+     # TODO: eden check permissions with gui!!!!!
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: [int or enumerate]) -> \
             {'response': bool, 'msg': str}:
         """
@@ -742,16 +746,16 @@ class TradeControl:
     def get_appointees(self, store_name: str, managers_or_owners: str) -> list:
         """
         returns for the current manager/owner all the managers he appointed
-        :param store_name: name of the store
+        :param appointer_nickname:
         :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
-        :return: list of the managers nicknames
+        :return: returns a list of nicknames, of all the managers appointer_nickname appointed
         """
         store: Store = self.get_store(store_name)
         if store is not None and \
-                self.__curr_user.is_registered() and \
-                self.__curr_user.is_logged_in() and \
-                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
-                    self.__curr_user.get_nickname())):
+            self.__curr_user.is_registered() and \
+            self.__curr_user.is_logged_in() and \
+            (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
+                self.__curr_user.get_nickname())):
             return store.get_appointees(self.__curr_user.get_nickname(), managers_or_owners)
         return []
 
@@ -789,15 +793,15 @@ class TradeControl:
                 (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
             # if not store.get_purchases(self.__curr_user.get_nickname()):
             #     return {'response': [], 'msg': "There are no previous purchases"}
-            purchases = store.get_purchases(self.__curr_user.get_nickname())
             lst = []
+            purchases = store.get_purchases(self.__curr_user.get_nickname())
             list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
-                                                  "nickname": purchase.get_nickname(),
-                                                  "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                  "total_price": purchase.get_total_price(),
-                                                  "products": purchase.get_products()}), purchases))
+                                                 "nickname": purchase.get_nickname(),
+                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                 "total_price": purchase.get_total_price(),
+                                                 "products": purchase.get_products()}), purchases))
             # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
-            #          store.get_purchases(self.__curr_user.get_nickname())))
+            #          ))
             if len(lst) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': lst, 'msg': "Purchase history was retrieved successfully"}
@@ -845,6 +849,7 @@ class TradeControl:
         return store.get_purchase_operator()
 
     @logger
+    # TODO: eden check type of dates: [dict] / [datetime]
     def define_purchase_policy(self, store_name: str,
                                details: {"name": str, "products": [str], "min_amount": int or None,
                                          "max_amount": int or None, "dates": [datetime] or None,
@@ -969,6 +974,7 @@ class TradeControl:
     @logger
     def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str, valid_until: datetime):
+
         store: Store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
@@ -995,12 +1001,14 @@ class TradeControl:
             return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
     @logger
-    def delete_policy(self, store_name: str, policy_name: str):
+    def delete_purchase_policy(self, store_name: str, policy_name: str):
         store: Store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
         try:
-            return store.delete_policy(policy_name)
+            if store.delete_purchase_policy(policy_name):
+                return {'response': True, 'msg': "Policy deleted successfully."}
+            return {'response': False, 'msg': "Policy doesn't exists"}
         except Exception:
             return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
@@ -1092,7 +1100,8 @@ class TradeControl:
 
     def get_user_type(self):
         roles = []
-        if self.__curr_user.get_nickname() == "TradeManager":
+
+        if self.__curr_user.get_nickname() in [user.get_nickname() for user in self.__managers]:
             return "SYSTEMMANAGER"
         if self.__curr_user.is_registered():
             roles.append("SUBSCRIBER")

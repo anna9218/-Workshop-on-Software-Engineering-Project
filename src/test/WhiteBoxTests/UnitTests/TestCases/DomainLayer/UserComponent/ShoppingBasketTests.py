@@ -1,7 +1,5 @@
 import unittest
 
-from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
-from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubProduct import StubProduct
 
