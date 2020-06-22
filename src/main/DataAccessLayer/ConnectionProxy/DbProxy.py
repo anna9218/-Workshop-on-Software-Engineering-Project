@@ -40,7 +40,7 @@ class DbProxy(DbSubject):
             super().__init__()
             self.__isConnected = False
             if DbProxy.__realSubject:
-                DbProxy.__instance = self.__realSubject
+                DbProxy.__instance = self
                 self.__real_doesnt_exist_error_msg = "We having some tech problems, but we will rise again!"
                 self.__realSubject.connect()
                 self.__realSubject.create_tables()
@@ -49,57 +49,60 @@ class DbProxy(DbSubject):
 
     @logger
     def connect(self):
-        try:
-            if not self.__isConnected:
-                self.__isConnected = True
-                return True
-            else:
-                return False
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.connect()
 
     @logger
     def disconnect(self):
-        try:
-            if self.__isConnected:
-                self.__isConnected = False
-                return True
-            else:
-                return False
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.disconnect()
 
     @logger
     def is_connected(self) -> bool:
-        return self.__isConnected
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.is_connected()
 
     def create_tables(self):
         pass
 
+    def has_real_subject(self):
+        return not (self.__realSubject is None)
+
     def read(self, tbl, where_expr: Expression = None):
-        if self.__realSubject is None:
+        if not self.has_real_subject():
             return ret(False, self.__real_doesnt_exist_error_msg)
-        return self.__realSubject.delete(tbl, where_expr)
+        if not self.__realSubject.is_connected():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.read(tbl, where_expr)
 
     def write(self, tbl, attributes_as_dictionary: {}):
-        if self.__realSubject is None:
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        if not self.__realSubject.is_connected():
             return ret(False, self.__real_doesnt_exist_error_msg)
         return self.__realSubject.write(tbl, attributes_as_dictionary)
 
     def update(self, tbl, attributes_as_dictionary: {}, where_expr: Expression):
-        if self.__realSubject is None:
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        if not self.__realSubject.is_connected():
             return ret(False, self.__real_doesnt_exist_error_msg)
         return self.__realSubject.update(tbl, attributes_as_dictionary, where_expr)
 
     def delete(self, tbl, where_expr: Expression):
-        if self.__realSubject is None:
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        if not self.__realSubject.is_connected():
             return ret(False, self.__real_doesnt_exist_error_msg)
         return self.__realSubject.delete(tbl, where_expr)
 
     def execute(self, queries):
-        if self.__realSubject is None:
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        if not self.__realSubject.is_connected():
             return ret(False, self.__real_doesnt_exist_error_msg)
         return self.__realSubject.execute(queries)
 
