@@ -78,6 +78,9 @@ class PaymentProxy(PaymentSubject):
     def set_connection_back(self):
         self.__realSubject.set_connection_back()
 
+    def set_real(self, real: RealPayment or None):
+        self.__realSubject = real
+
     def __delete__(self):
         PaymentProxy.__instance = None
 

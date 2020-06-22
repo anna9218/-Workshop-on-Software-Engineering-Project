@@ -990,13 +990,13 @@ class StoreTests(unittest.TestCase):
         # purchase_immediate(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
         # ret format{'amount': 2, 'product_name': 'Eytan', 'product_price': 10} != 9
         result = self.store.purchase_immediate("Eytan", 10, 2, 0, ["Eytan"])
-        self.assertEqual(18, result['product_price'])
+        self.assertEqual(9, result['product_price'])
 
         result = self.store.purchase_immediate("Eytan", 10, 2, 3, ["Eytan"])
-        self.assertEqual(20, result['product_price'])
+        self.assertEqual(10, result['product_price'])
 
         result = self.store.purchase_immediate("Eytan2", 10, 2, 3, ["Eytan"])
-        self.assertEqual(20, result['product_price'])
+        self.assertEqual(10, result['product_price'])
 
 
     # # @logger

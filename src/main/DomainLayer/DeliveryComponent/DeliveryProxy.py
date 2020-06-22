@@ -82,6 +82,9 @@ class DeliveryProxy(DeliverySubject):
     def set_connection_back(self):
         self.__realSubject.set_connection_back()
 
+    def set_real(self, real: RealDelivery):
+        self.__realSubject = real
+
     def __delete__(self):
         DeliveryProxy.__instance = None
 
