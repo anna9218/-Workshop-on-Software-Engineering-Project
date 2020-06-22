@@ -655,7 +655,7 @@ class Store:
 
     @staticmethod
     @logger
-    def check_purchase_end_time(store_name: str, product_name: str):
+    def check_purchase_end_time():
         # temp function since we don't have functionality for purchasing policy
         return False
 

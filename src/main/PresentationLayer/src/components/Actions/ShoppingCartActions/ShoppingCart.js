@@ -72,7 +72,6 @@ function ShoppingCart(props){
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
                 
-              {/* <h2>Store: {basket["store_name"]}</h2> */}
                         <Table striped bordered hover >
                         <thead>
                             <tr>

@@ -717,11 +717,11 @@ class TradeControl:
         return False
 
     @logger
-    def get_managers_appointees(self, store_name: str) -> list:
+    def get_appointees(self, store_name: str, managers_or_owners: str) -> list:
         """
-        returns for the current manager/owner all the managers he appointed
-        :param store_name: name of the store
-        :return: list of the managers nicknames
+        :param appointer_nickname:
+        :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
+        :return: returns a list of nicknames, of all the managers appointer_nickname appointed
         """
         store: Store = self.get_store(store_name)
         if store is not None and \
@@ -729,7 +729,7 @@ class TradeControl:
             self.__curr_user.is_logged_in() and \
             (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
                 self.__curr_user.get_nickname())):
-            return store.get_managers_appointees(self.__curr_user.get_nickname())
+            return store.get_appointees(self.__curr_user.get_nickname(), managers_or_owners)
         return []
 
     @logger
@@ -767,8 +767,14 @@ class TradeControl:
             # if not store.get_purchases(self.__curr_user.get_nickname()):
             #     return {'response': [], 'msg': "There are no previous purchases"}
             lst = []
-            list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
-                     store.get_purchases(self.__curr_user.get_nickname())))
+            purchases = store.get_purchases(self.__curr_user.get_nickname())
+            list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
+                                                 "nickname": purchase.get_nickname(),
+                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                 "total_price": purchase.get_total_price(),
+                                                 "products": purchase.get_products()}), purchases))
+            # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
+            #          ))
             if len(lst) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': lst, 'msg': "Purchase history was retrieved successfully"}
@@ -977,7 +983,7 @@ class TradeControl:
 
     def get_user_type(self):
         if self.__curr_user.get_nickname() == "TradeManager":
-            return "SYS-MANAGER"
+            return "SYSTEMMANAGER"
         for store in self.__stores:
             if store.is_owner(self.__curr_user.get_nickname()):
                 return "OWNER"

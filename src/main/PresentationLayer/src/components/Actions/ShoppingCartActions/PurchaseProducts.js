@@ -82,17 +82,18 @@ class PurchaseProducts extends React.Component{
     return (
       <Container style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
         <div>
-          <h1>Purchase Products</h1>
+          <h1 style={{marginTop: "2%"}}>Purchase Products</h1>
         </div>
 
         {
           // purchase = {store_name, basket_price, products=[{product_name, product_price, amount}]}
           this.state.purchases.map(purchase => (
             <div style={{border: "1px solid", borderColor: "#CCCCCC"}}>
-              <h2 style={{position: "relative", right: "40%"}}>Store: {purchase["store_name"]}</h2>
+              <h2 style={{position: "relative", marginTop:"2%", marginBottom:"2%", right: "40%"}}>Store: {purchase["store_name"]}</h2>
               {
                 // purchaseProduct = [{product_name, product_price, amount}]
-                purchase["products"].map(purchaseProduct => (
+                // purchase["products"].map(purchaseProduct => (
+                  <div style={{marginRight: "2%", marginLeft:"2%"}}>
                   <Table striped bordered hover >
                     <thead>
                         <tr>
@@ -114,13 +115,14 @@ class PurchaseProducts extends React.Component{
                       }
                     </tbody>
                   </Table>
-                ))
+                  </div>
+                // ))
               }
               <p style={{position: "relative", right: "-43%"}} >Basket Price: {purchase["basket_price"]}</p>
               </div>
           ))
         }
-        <p>Total Price: {this.state.total_price}</p>
+        <p style={{marginTop:"2%"}}>Total Shopping cart Price: {this.state.total_price}</p>
 
         {/* here we ask the user for all details needed for payment confirmation (for now address only) */}
 

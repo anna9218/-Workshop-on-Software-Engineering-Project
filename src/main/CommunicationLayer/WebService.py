@@ -297,10 +297,10 @@ def edit_manager_permissions():
         permissions = request_dict.get('permissions')  # str
         response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, numbersToEnum(permissions))
         if response:
-            return jsonify(msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
+            return jsonify(data=response, msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
         else:
-            return jsonify(msg="Oops, update permissions failed.")
-    return jsonify(msg="Oops, communication error.")
+            return jsonify(data=False, msg="Oops, update permissions failed.")
+    return jsonify(data=False, msg="Oops, communication error.")
 
 
 @app.route('/view_store_purchases_history', methods=['POST'])
