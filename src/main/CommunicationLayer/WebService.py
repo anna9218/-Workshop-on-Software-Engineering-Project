@@ -23,6 +23,8 @@ app = Flask(__name__)
 CORS(app)
 
 socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
+
+
 # # socket = SocketIO(app, logger=True, engineio_logger=True,
 # #                   cors_allowed_origins='*', async_mode='eventlet')
 
@@ -115,11 +117,13 @@ def filter_products_by():
         if filter_option == 1:
             min_price = request_dict.get('min_price')
             max_price = request_dict.get('max_price')
-            response = GuestRole.filter_products_by(products_ls, filter_option, min_price=min_price, max_price=max_price)  # list of Products (Object)
+            response = GuestRole.filter_products_by(products_ls, filter_option, min_price=min_price,
+                                                    max_price=max_price)  # list of Products (Object)
         else:
             if filter_option == 2:
                 category = request_dict.get('category')
-                response = GuestRole.filter_products_by(products_ls, filter_option, category=category)  # list of Products (Object)
+                response = GuestRole.filter_products_by(products_ls, filter_option,
+                                                        category=category)  # list of Products (Object)
 
         return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error.", data=[])
@@ -225,7 +229,8 @@ def appoint_store_manager():
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         store_name = request_dict.get('store_name')  # str
         permissions = request_dict.get('permissions')  # list of tuples
-        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, numbersToEnum(permissions))
+        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name,
+                                                                 numbersToEnum(permissions))
         if response:
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
@@ -255,6 +260,8 @@ def remove_owner():
             # remove_subscriber_from_store()
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, communication error--")
+
+
 # remove_owner(self, appointee_nickname: str, store_name: str)
 
 
@@ -266,10 +273,15 @@ def appoint_store_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
         if response:
-            if response["response"] == "The request is pending approval":
+            if response["msg"] == "The request is pending approval":
                 # ----------------appointment agreement----------------------
                 msg = f"New owner appointment at store {store_name} - action required!"
-                notify_all(store_name, {'username': appointee_nickname, 'messages': msg})
+                notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+            elif response["response"]:
+                if add_subscriber_to_store(store_name, appointee_nickname):
+                    # TODO - we need to take into consideration LOGIN/LOGOUT
+                    print(_users)
+                    join_room(store_name, _users[appointee_nickname])
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
 
@@ -285,15 +297,17 @@ def handle_appointment_agreement_response():
             appointment_agreement_response = AppointmentStatus.DECLINED
         if appointment_agreement_response == 2:
             appointment_agreement_response = AppointmentStatus.APPROVED
-        response = StoreOwnerOrManagerRole.update_agreement_participants(appointee_nickname, store_name, appointment_agreement_response)
+        response = StoreOwnerOrManagerRole.update_agreement_participants(appointee_nickname, store_name,
+                                                                         appointment_agreement_response)
         if response:
             # check is the status of the agreement is approved already
             if response["response"]:
                 status = StoreOwnerOrManagerRole.get_appointment_status(appointee_nickname, store_name)
                 if status == AppointmentStatus.APPROVED:
                     response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
-                    msg = f"New owner {appointee_nickname } appointed at store {store_name}!"
-                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg})
+                    add_subscriber_to_store(store_name, appointee_nickname)
+                    msg = f"New owner {appointee_nickname} appointed at store {store_name}!"
+                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
             return jsonify(msg=response["msg"])
     return jsonify(msg="Oops, communication error")
 
@@ -351,7 +365,8 @@ def edit_manager_permissions():
         store_name = request_dict.get('store_name')  # str
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         permissions = request_dict.get('permissions')  # str
-        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, numbersToEnum(permissions))
+        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname,
+                                                                    numbersToEnum(permissions))
         if response:
             return jsonify(msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
         else:
@@ -407,6 +422,7 @@ def set_purchase_operator():
 
 from datetime import datetime
 
+
 #
 # @app.route('/add_purchase_policy', methods=['POST'])
 # def add_purchase_policy():
@@ -457,8 +473,8 @@ def add_and_update_purchase_policy():
                 dates += [parse(date)]
 
         details = {"name": policy_name, "products": products,
-                    "min_amount": min_amount, "max_amount": max_amount,
-                    "dates": dates, "bundle": bundle}
+                   "min_amount": min_amount, "max_amount": max_amount,
+                   "dates": dates, "bundle": bundle}
         if action_type == 'add':
             response = StoreOwnerOrManagerRole.define_purchase_policy(store_name, details)
         else:
@@ -484,15 +500,17 @@ def add_and_update_dicount_policy():
 
         discount_details = {'name': policy_name, 'product': product_name}
         discount_precondition = {'product': product,
-                                'min_amount': min_amount,
-                                'min_basket_price': min_purchase_price}
+                                 'min_amount': min_amount,
+                                 'min_basket_price': min_purchase_price}
 
         if product is None and min_amount is None and min_purchase_price is None:
             discount_precondition = None
         if action_type == 'add':
-            response = StoreOwnerOrManagerRole.define_discount_policy(store_name, percentage, date, discount_details, discount_precondition)
+            response = StoreOwnerOrManagerRole.define_discount_policy(store_name, percentage, date, discount_details,
+                                                                      discount_precondition)
         else:
-            response = StoreOwnerOrManagerRole.update_discount_policy(store_name, policy_name, percentage, date, discount_details, discount_precondition)
+            response = StoreOwnerOrManagerRole.update_discount_policy(store_name, policy_name, percentage, date,
+                                                                      discount_details, discount_precondition)
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
@@ -513,6 +531,7 @@ def delete_policy():
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
+
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -556,7 +575,8 @@ def edit_product():
             if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "category", category)["response"]:
                 errors.append("Category")
         if purchase_type is not None:
-            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "purchase_type", purchase_type)["response"]:
+            if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "purchase_type", purchase_type)[
+                "response"]:
                 errors.append("Purchase Type")
         if new_product_name is not None:
             if not StoreOwnerOrManagerRole.edit_product(store_name, product_name, "name", new_product_name)["response"]:
@@ -619,7 +639,7 @@ def open_store():
 @app.route('/view_personal_purchase_history', methods=['GET'])
 def view_personal_purchase_history():
     response = SubscriberRole.view_personal_purchase_history()
-    return jsonify(msg=response["msg"], data=response["response"]) # NEED TO BE CHEKED, STAM ASITI
+    return jsonify(msg=response["msg"], data=response["response"])  # NEED TO BE CHEKED, STAM ASITI
 
 
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
@@ -659,15 +679,22 @@ def get_visitors_cut():
         # start_date = request_dict.get('start_date')
         # response = SystemManagerRole.get_visitors_cut(start_date, start_date)
         response = {'msg': 'succc',
-                    'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
-                                 {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3, 'store_owners': 3, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1, 'store_owners': 3, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 0, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5, 'store_owners': 4, 'system_managers': 3}]}
+                    'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5,
+                                  'store_owners': 6, 'system_managers': 7},
+                                 {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3,
+                                  'store_owners': 10, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3,
+                                  'store_owners': 3, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1,
+                                  'store_owners': 3, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3,
+                                  'store_owners': 0, 'system_managers': 3},
+                                 {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5,
+                                  'store_owners': 4, 'system_managers': 3}]}
         if response:  # if not None
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
+
 
 # TODO???
 # @app.route('/view_store_purchases_history', methods=['POST'])
@@ -700,6 +727,7 @@ def get_user_type():
 def get_curr_user_nickname():
     result = TradeControlService.get_curr_username()
     return jsonify(data=result)
+
 
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
 
@@ -736,21 +764,20 @@ def connect():
 @socket.on('join')
 def websocket_open_store(data):
     if data:
-        username= data['username']
-        storename= data['store']
+        username = data['username']
+        storename = data['store']
         print(f"open store u= {username}, s = {storename}")
         # socket.emit('message', {}) - works!
         print(f"stores are {_stores}")
         if get_store(storename).is_subscribed_to_store(username):
             # print(f"new: open store (store name = {storename}) msg from {username} ")
             append_user_to_room(storename, username, request.sid)
-            print (f"append user {username} to new store {storename}")
+            print(f"append user {username} to new store {storename}")
             # create_new_publisher(storename, username)
         else:
             print(f"store is already exists! {get_store(storename)}")
     else:
         print(f"recieved wrong join msg --> {data}")
-
 
 
 def create_new_publisher(storename, username):
@@ -763,7 +790,6 @@ def create_new_publisher(storename, username):
             _stores.append(store)
             # print(f"{storename} has been added by {username}")
             store.subscribe_owner(username)
-
 
 
 def append_user_to_room(storename, username, sid):
@@ -792,30 +818,32 @@ def notify_all(store_name, msg, event):
     # socket.send(msgs, json=True, room=storename)
     store = get_store(store_name)
     store.add_msg(msg)
-    print (store)
+    print(store)
     print(f"room = {store_name}, msg = {msg}")
     socket.emit(event, msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
     # socket.send({
     #         'messages': [msg]
     #     }, room=store_name)
 
+
 def handle_purchase_msg(store_name):
     msg = f"a purchase has been done at store {store_name}"
     print(f"send msg: {msg}")
-    notify_all(store_name, {'messages':msg, 'store':store_name}, 'message')
+    notify_all(store_name, {'messages': msg, 'store': store_name}, 'message')
     # notify_all(store_name, jsonify(messages=msg, store=store_name))
+
 
 # FOR ANNA
 def handle_agreement_msg(appointe_name, store_name):
     msg = f"would you like to appoint {appointe_name} to owner at store {store_name}"
     print(f"send msg: {msg}")
-    notify_all(store_name, {'messages':msg, 'store':store_name}, "agreement")
+    notify_all(store_name, {'messages': msg, 'store': store_name}, "agreement")
     # notify_all(store_name, jsonify(messages=msg, store=store_name))
 
 
 def handle_remove_owner_msg(user_name, store_name):
     msg = f"{user_name} was removed as owner from store {store_name}"
-    notify_all(store_name, {'username':user_name, 'messages':msg, 'store':store_name}, 'message')
+    notify_all(store_name, {'username': user_name, 'messages': msg, 'store': store_name}, 'message')
     # notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
     # print(f"send msg: {msg}")
 

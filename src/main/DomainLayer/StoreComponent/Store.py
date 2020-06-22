@@ -266,7 +266,7 @@ class Store:
     @logger
     def check_appointment_exist(self, appointee: str) -> bool:
         for appointment in self.__StoreOwnerAppointmentAgreements:
-            if appointment.get_appointee.get_nickname() == appointee:
+            if appointment.get_appointee().get_nickname() == appointee:
                 return True
         return False
 
