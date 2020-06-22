@@ -64,8 +64,6 @@ class TradeControlServiceTests(unittest.TestCase):
         # self.assertIsNotNone((TradeControl.get_instance()).get_store("s1").get_inventory().get_product("diapers"))
         # self.assertIn((TradeControl.get_instance()).get_subscriber("u3"),
         #               (TradeControl.get_instance()).get_store("s1").get_managers())
-        # self.assertEqual((TradeControl.get_instance()).get_curr_user(),
-        #                  (TradeControl.get_instance()).get_subscriber("u3"))
         # self.assertIn((TradeControl.get_instance()).get_subscriber("u5"),
         #               (TradeControl.get_instance()).get_store("s1").get_managers())
         # self.assertIn((TradeControl.get_instance()).get_subscriber("u6"),
@@ -81,8 +79,6 @@ class TradeControlServiceTests(unittest.TestCase):
         self.assertIsNotNone((TradeControl.get_instance()).get_subscriber("U13"))
         self.assertIn((TradeControl.get_instance()).get_subscriber("A1"), (TradeControl.get_instance()).get_managers())
         self.assertIsNotNone((TradeControl.get_instance()).get_store("S2"))
-        self.assertEqual((TradeControl.get_instance()).get_curr_user().get_nickname(), "U11")
-        self.assertGreater(len((TradeControl.get_instance()).get_owned_stores()), 0)
 
     def tearDown(self):
         pass
