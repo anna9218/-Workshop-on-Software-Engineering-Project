@@ -34,7 +34,7 @@ function SearchAndFilterProducts(props) {
                 buttons: [
                     {   label: 'ok',
                         onClick: () => { // reset the form in order to add another product
-                        
+                        setProductAmount(0)
                     }},
                   ]
               });

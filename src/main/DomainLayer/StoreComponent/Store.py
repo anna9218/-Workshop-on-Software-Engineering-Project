@@ -523,14 +523,20 @@ class Store:
 
             elif product["product"].get_purchase_type() == PurchaseType.AUCTION:
                 purchase = self.purchase_auction(product["product"].get_name(),
-                                                 product["product"].get_price(), product["amount"])
+                                                 product["product"].get_price(),
+                                                 product["amount"],
+                                                 price_before_discount,
+                                                 product_lst)
             else:
                 purchase = self.purchase_lottery(product["product"].get_name(),
-                                                 product["product"].get_price(), product["amount"])
+                                                 product["product"].get_price(),
+                                                 product["amount"],
+                                                 price_before_discount,
+                                                 product_lst)
 
             if purchase is not None:
                 products_purchases.append(purchase)
-                basket_price += purchase["product_price"]
+                basket_price += purchase["product_price"]*purchase["amount"]
 
         if len(products_purchases) == 0:
             return {'response': None, 'msg': " No purchases can be made"}
@@ -559,17 +565,19 @@ class Store:
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger
-    def purchase_auction(self, product_name: str, product_price: int, amount: int):
+    def purchase_auction(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
         """
         :param store_name: store name
         :param product_name: product name
         :param product_price: product price
         :param amount: product amount
         :return: dictionary {"product_name": str, "product_price": float, "amount": int} or None
+        :param basket_price: for checking discount policy.
+        :param prod_lst:  for checking discount policy.
         """
         if not self.check_purchase_end_time():
             if self.did_win_auction():
-                return self.purchase_immediate(product_name, product_price, amount)
+                return self.purchase_immediate(product_name, product_price, amount, basket_price, prod_lst)
         else:
             # here ask guest for bidding amount
             # if it's higher than previous bids -> add new bid for the auction
@@ -578,18 +586,20 @@ class Store:
 
     # u.c 2.8.3 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger
-    def purchase_lottery(self, product_name: str, product_price: int, amount: int):
+    def purchase_lottery(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
         """
         :param product_name: product name
         :param product_price: product price
         :param amount: product amount
+        :param basket_price: for checking discount policy.
+        :param prod_lst:  for checking discount policy.
         :return: dictionary {"product_name": str, "product_price": float, "amount": int} or None
         """
-        if self.check_purchase_end_time():
+        if not self.check_purchase_end_time():
             if not self.does_price_exceed(product_price):
                 # buy tickets and return the amount bought with all other details
                 # here we'll return to 2.8.1
-                return self.purchase_immediate(product_name, product_price, amount)
+                return self.purchase_immediate(product_name, product_price, amount, basket_price, prod_lst)
         else:
             # here ask guest for bidding amount
             # if it's higher than previous bids -> add new bid for the auction

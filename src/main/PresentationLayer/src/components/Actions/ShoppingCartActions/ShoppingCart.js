@@ -21,8 +21,9 @@ function ShoppingCart(props){
     const promise = theService.displayShoppingCart()
     promise.then((data) => {
       if(data != null){
-        if(data["data"].length > 0)
+        if(data["data"].length > 0){
           setShoppingCart(data["data"])
+        }
         else
           alert(data["msg"]);
           setShoppingCart(data["data"])
