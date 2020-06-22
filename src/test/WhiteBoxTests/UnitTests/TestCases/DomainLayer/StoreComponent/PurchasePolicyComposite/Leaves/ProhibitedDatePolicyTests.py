@@ -10,7 +10,7 @@ class ProhibitedDatePolicyTests(unittest.TestCase):
         self.product_ls = ["product1", "product2"]
         self.curr_date = datetime.today()
         self.yesterday = jsonpickle.encode(timedelta(days=1))
-        self.dates = [jsonpickle.encode(self.curr_date)]
+        self.dates = [self.curr_date]
 
     def test_can_purchase(self):
         # valid purchase

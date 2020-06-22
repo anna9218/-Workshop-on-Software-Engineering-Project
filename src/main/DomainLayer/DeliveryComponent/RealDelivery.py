@@ -37,7 +37,7 @@ class RealDelivery(DeliverySubject):
         """
         try:
             res = requests.post(self.__url,
-                                data={'action_type': 'supply', 'name': delivery_details['name'],
+                                data={'action_type': 'supply', 'name': delivery_details.get('name'),
                                       'address': delivery_details.get('address'), 'city': delivery_details.get('city'),
                                       'country': delivery_details.get('country'), 'zip': delivery_details.get('zip')},
                                 timeout=self.__max_timeout)

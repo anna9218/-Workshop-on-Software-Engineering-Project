@@ -138,8 +138,11 @@ class ShoppingBasket:
         """
         for product in product_ls:
             prod_name = product["product_name"]
-            # if self.get_product_amount(prod_name) == 0:
-            self.remove_product(prod_name)
+            amount = self.get_product_amount(prod_name) - product['amount']
+            if amount == 0:
+                self.remove_product(prod_name)
+            else:
+                self.update_amount(prod_name, amount)
 
     def __repr__(self):
         return repr("ShoppingBasket")

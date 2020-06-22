@@ -92,3 +92,4 @@ class RealPayment(PaymentSubject):
     def set_connection_back(self):
         self.__url = 'https://cs-bgu-wsep.herokuapp.com/'
         self.__max_timeout = 10
+

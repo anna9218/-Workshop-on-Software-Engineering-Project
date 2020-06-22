@@ -9,16 +9,11 @@ from unittest.mock import MagicMock
 
 
 class TradeControlTestCase(unittest.TestCase):
-    # @logger
     def setUp(self):
         self.tradeControl = TradeControl.get_instance()
         self.user = StubUser()
         self.user.set_password_and_nickname("nickname", "password")
         self.purchase_policy_mock = PurchasePolicy()
-
-    #         self.tradeControl.manager = StubUser(self.tradeControl)
-    #         self.tradeControl.delivery_system = StubDelivery()
-    #         self.tradeControl.payment_system = StubPayment()
 
     def test_add_sys_manager_success_and_fail(self):
         managers_num = len(self.tradeControl.get_managers())
@@ -26,19 +21,16 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.add_system_manager("nickname", "password")['response'])
         self.assertEqual(len(self.tradeControl.get_managers()), managers_num + 1)
 
-    # @logger
     def test_register_guest(self):
         self.assertTrue(self.tradeControl.register_guest("eden", "passwoed")['response'])
         self.assertFalse(self.tradeControl.register_guest("eden", "passwoed")['response'])
 
-    # @logger
     def test_login_guest(self):
         self.assertFalse(self.tradeControl.login_subscriber("eden", "passwoed")['response'])
         self.assertTrue(self.tradeControl.register_guest("eden", "passwoed")['response'])
         self.assertTrue(self.tradeControl.login_subscriber("eden", "passwoed")['response'])
         self.assertFalse(self.tradeControl.login_subscriber("eden", "passwoed")['response'])
 
-    # @logger
     def test_subscribe_success_and_fail(self):
         subscribers_num = len(self.tradeControl.get_subscribers())
         self.assertTrue(self.tradeControl.subscribe(self.user))
@@ -219,7 +211,6 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertTrue(store1.is_manager("appointee"))
         self.assertFalse(store1.is_manager("a"))
 
-    # @logger
     def test_edit_manager_permissions(self):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")

@@ -9,7 +9,6 @@ from src.main.ServiceLayer.GuestRole import GuestRole
 
 
 class GuestRoleTest(unittest.TestCase):
-    # @logger
     def setUp(self) -> None:
         self.__guest_role = GuestRole()
         self.__trade_control_mock = TradeControl.get_instance()
@@ -129,7 +128,6 @@ class GuestRoleTest(unittest.TestCase):
         self.__trade_control_mock.get_instance().purchase_products = MagicMock(return_value=[])
         res = self.__guest_role.purchase_products()
         self.assertEqual([], res)
-
 
     def tearDown(self):
         self.__trade_control_mock.__delete__()
