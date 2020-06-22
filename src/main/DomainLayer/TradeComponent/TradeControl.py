@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from src.Logger import errorLogger, logger
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
@@ -542,7 +543,6 @@ class TradeControl:
 
     # ----------------------------------
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     # @logger
     def add_products(self, store_name: str,
                      products_details: [{"name": str, "price": float, "category": str, "amount": int,
@@ -662,10 +662,31 @@ class TradeControl:
                 self.__curr_user.is_logged_in() and \
                 (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
             result = store.add_owner(self.__curr_user.get_nickname(), appointee)
-            if result:
-                return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
-            return {'response': False, 'msg': "User has no permissions"}
+            return result
+            # if result:
+            #     return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
+            # return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
+
+    @logger
+    def update_agreement_participants(self, appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
+        """
+        :param appointee_nickname: nickname of the new owner that will be appointed
+        :param store_name: store the owner will be added to
+        :param owner_response: the owners response - declined/approved
+        :return: dict =  {'response': bool, 'msg': str}
+                 response = True on success, else False
+        """
+        store = self.get_store(store_name)
+        result = store.update_agreement_participants(appointee_nickname, self.__curr_user.get_nickname(), owner_response)
+        if result:
+            return {'response': True, 'msg': "Approved the appointment of " + appointee_nickname + " as a new store owner"}
+        return {'response': False, 'msg': "Declined the appointment of " + appointee_nickname + " as a new store owner"}
+
+    @logger
+    def get_appointment_status(self, appointee_nickname: str, store_name: str):
+        store = self.get_store(store_name)
+        return store.get_appointment_status(appointee_nickname)
 
     @logger
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: [int or enumerate]) -> \

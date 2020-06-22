@@ -1,5 +1,5 @@
 from src.Logger import logger
-from src.main.DomainLayer.StoreComponent import AppointmentStatus
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.UserComponent.User import User
 
 
@@ -11,7 +11,15 @@ class AppointmentAgreement:
         self.__agreement_participants: [{"participant": User, "status": AppointmentStatus}] = []
 
         for participant in agreement_participants:
-            self.__agreement_participants.append({"participant": participant, "status": AppointmentStatus.PENDING})
+            if participant.get_nickname() == appointer.get_nickname():
+                # set appointer's response as approved
+                self.__agreement_participants.append({"participant": participant, "status": AppointmentStatus.APPROVED})
+            else:
+                # set any other owner's response as pending
+                self.__agreement_participants.append({"participant": participant, "status": AppointmentStatus.PENDING})
+        # if there's only one owner - set the appointments status as approved
+        if len(agreement_participants) == 1:
+            self.set_appointment_status(AppointmentStatus.APPROVED)
 
     def get_appointment_status(self) -> AppointmentStatus:
         return self.__agreement_status
@@ -34,7 +42,7 @@ class AppointmentAgreement:
         Checks if it's possible to determine the status of the agreement already
         :param owner_nickname: nickname of an owner participating in the appointment agreement
         :param owner_response: owners response - can be DECLINED = 1, PENDING = 2, APPROVED = 3
-        :return: True if updated successfully, otherwise false
+        :return: True if the response was updated successfully, otherwise false
         """
         for participant in self.__agreement_participants:
             if participant["participant"].get_nickname() == owner_nickname:

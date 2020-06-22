@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
 
@@ -59,6 +60,23 @@ class StoreOwnerOrManagerRole:
                  response = True on success, else False
         """
         return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
+
+    @staticmethod
+    @logger
+    def update_agreement_participants(appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
+        """
+        :param appointee_nickname: nickname of the new owner that will be appointed
+        :param store_name: store the owner will be added to
+        :param owner_response: the owners response - declined/approved
+        :return: dict =  {'response': bool, 'msg': str}
+                 response = True on success, else False
+        """
+        return TradeControl.get_instance().update_agreement_participants(appointee_nickname, store_name, owner_response)
+
+    @staticmethod
+    @logger
+    def get_appointment_status(appointee_nickname: str, store_name: str):
+        return TradeControl.get_instance().get_appointment_status(appointee_nickname, store_name)
 
     # use case 4.4
     @staticmethod
