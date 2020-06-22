@@ -16,6 +16,7 @@ class PurchaseProducts extends React.Component{
       purchases: [], // purchases = [{store_name, basket_price, products=[{product_name, product_price, amount}]}]
       details_progress: 0,
       delivery_details_filled: false,
+      lock_purchase: false,
       name: "",
       address: "",
       city: "",
@@ -34,7 +35,8 @@ class PurchaseProducts extends React.Component{
     this.isPaymentFilled = this.isPaymentFilled.bind(this);
   }
 
-  handleConfirm = () => {
+  handleConfirm = ()  => {
+    this.setState({lock_purchase: true})
     var payment_details = {'card_number': this.state.card_number, 'month': this.state.month, 'year': this.state.year, 'holder': this.state.holder, 'ccv': this.state.ccv, 'id': this.state.id}
     var delivery_details = {'name': this.state.name, 'address': this.state.address, 'city': this.state.city, 'country': this.state.country, 'zip': this.state.zip}
     const promise = theService.confirmPurchase(delivery_details, payment_details, this.state.purchase_ls)
@@ -51,6 +53,8 @@ class PurchaseProducts extends React.Component{
       });
       }
     })
+    this.setState({lock_purchase: false})
+
   }
 
   componentWillMount = () =>{
@@ -175,7 +179,7 @@ class PurchaseProducts extends React.Component{
               <Form.Control id="id" value={this.state.id} required type="text" placeholder="ID" 
                     onChange={(event => {this.setState({id: event.target.value})})} style={{marginTop: "1%"}} />
 
-              <Button variant="secondary" style={{marginTop: "1%"}} onClick={this.handleConfirm} disabled={!this.isPaymentFilled()}>
+              <Button variant="secondary" style={{marginTop: "1%"}} onClick={this.handleConfirm} disabled={!this.isPaymentFilled() || this.state.lock_purchase}>
                 Confirm Purchase
               </Button>
           </div>

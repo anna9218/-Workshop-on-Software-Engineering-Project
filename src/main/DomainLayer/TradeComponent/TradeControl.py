@@ -489,8 +489,15 @@ class TradeControl:
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_user = self.get_subscriber(nickname)
             if viewed_user:
+                purchases = viewed_user.get_purchase_history()
                 ls = []
-                list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), viewed_user.get_purchase_history()))
+                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                     "nickname": purchase.get_nickname(),
+                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                     "total_price": purchase.get_total_price(),
+                                                     "products": purchase.get_products()}), purchases))
+                # ls = []
+                # list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), viewed_user.get_purchase_history()))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for user " + nickname}
                 return {'response': ls, 'msg': nickname + " purchases history was retrieved successfully"}
@@ -503,9 +510,17 @@ class TradeControl:
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_store = self.get_store(store_name)
             if viewed_store:
+                owner_nickname = viewed_store.get_owners()[0].get_nickname()
+                purchases = viewed_store.get_purchases(owner_nickname)
                 ls = []
-                list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
-                         viewed_store.get_purchases(self.__curr_user.get_nickname())))
+                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                     "nickname": purchase.get_nickname(),
+                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                     "total_price": purchase.get_total_price(),
+                                                     "products": purchase.get_products()}), purchases))
+                # ls = []
+                # list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
+                #          viewed_store.get_purchases(self.__curr_user.get_nickname())))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for store " + store_name}
                 return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully"}
