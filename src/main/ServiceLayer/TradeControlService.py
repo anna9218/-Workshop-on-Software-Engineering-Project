@@ -36,7 +36,8 @@ class TradeControlService:
                                "logout": SubscriberRole.logout,
                                "display_stores": GuestRole.display_stores,
                                "add_system_manager": SystemManagerRole.add_system_manager,
-                               "open_store": SubscriberRole.open_store,
+                               "open_store": TradeControlService.open_store,
+                               # "open_store": SubscriberRole.open_store,
                                "add_products": StoreOwnerOrManagerRole.add_products,
                                "appoint_store_manager": StoreOwnerOrManagerRole.appoint_store_manager,
                                 # Todo: test the below funcs.
@@ -143,6 +144,12 @@ class TradeControlService:
 
         file.close()
         return ret(True, "Init Done. Welcome to the new Amazon!")
+
+    @staticmethod
+    def open_store(store_name):
+        SubscriberRole.open_store(store_name)
+        from src.main.CommunicationLayer.WebService import create_new_publisher
+        create_new_publisher(store_name, TradeControlService.get_curr_username())
 
     @staticmethod
     def convert_to_datetime(arg: str):

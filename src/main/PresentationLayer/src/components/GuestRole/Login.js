@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom'
 import * as theService from '../../services/communication';
 import * as BackOption from '../Actions/GeneralActions/Back';
+import * as theWebsocket from '../../services/Notifications';
+
 
 class Login extends React.Component{
     constructor(props) {
@@ -39,6 +41,8 @@ class Login extends React.Component{
                 const userType = theService.getUserType();
                 userType.then((data) => {
                   if(data["data"] === "OWNER"){
+                      // websocket
+                      theWebsocket.login(this.state.nickname);
                     // if store owner - redirect to subscriber home page
                     this.props.history.push({pathname: '/owner', props: this.props});
                   }

@@ -3,6 +3,7 @@ import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-boot
 import {Link} from 'react-router-dom'
 import * as theService from '../../services/communication';
 import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
+import * as theWebsocket from '../../services/Notifications';
 
 
 class OwnerAPI extends React.Component {
@@ -21,6 +22,7 @@ class OwnerAPI extends React.Component {
         const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
+          theWebsocket.logout()
             this.props.history.push("/");
         });
     };
