@@ -17,6 +17,13 @@ class Registration:
         self.__password = self.make_password_hash(password)
 
     @logger
+    def register_from_db(self, username, password):
+        self.__isRegistered = True
+        self.__username = username
+        # self.__password = password
+        self.__password = password
+
+    @logger
     def unregistered(self):
         self.__isRegistered = False
         self.__username = None

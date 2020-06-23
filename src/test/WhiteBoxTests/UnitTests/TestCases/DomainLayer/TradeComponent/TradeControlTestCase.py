@@ -1,5 +1,7 @@
 import unittest
 
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
+from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
 from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
@@ -12,6 +14,11 @@ from unittest.mock import MagicMock
 
 class TradeControlTestCase(unittest.TestCase):
     def setUp(self):
+        if not ("testing" in rel_path):
+            raise ReferenceError("The Data Base is not the testing data base.\n"
+                                 "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                                 "\t\t\t\t and change rel_path to test_rel_path.\n"
+                                 "\t\t\t\tThanks :D")
         self.tradeControl = TradeControl.get_instance()
         self.user = StubUser()
         self.user.set_password_and_nickname("nickname", "password")
@@ -379,6 +386,15 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.unsubscribe("manager1")
         self.tradeControl.unsubscribe("manager2")
         self.tradeControl.unsubscribe("manager3")
+        (DataAccessFacade.get_instance()).delete_purchases()
+        # (DataAccessFacade.get_instance()).delete_discount_policies()
+        (DataAccessFacade.get_instance()).delete_statistics()
+        (DataAccessFacade.get_instance()).delete_store_owner_appointments()
+        (DataAccessFacade.get_instance()).delete_products_in_baskets()
+        (DataAccessFacade.get_instance()).delete_products()
+        (DataAccessFacade.get_instance()).delete_store_manager_appointments()
+        (DataAccessFacade.get_instance()).delete_stores()
+        (DataAccessFacade.get_instance()).delete_users()
 
     def __repr__(self):
         return repr("TradeControlTestCase")

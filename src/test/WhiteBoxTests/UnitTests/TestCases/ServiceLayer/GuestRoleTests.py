@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
 from src.main.DomainLayer.SecurityComponent.Security import Security
@@ -10,6 +11,11 @@ from src.main.ServiceLayer.GuestRole import GuestRole
 
 class GuestRoleTest(unittest.TestCase):
     def setUp(self) -> None:
+        if not ("testing" in rel_path):
+            raise ReferenceError("The Data Base is not the testing data base.\n"
+                                 "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                                 "\t\t\t\t and change rel_path to test_rel_path.\n"
+                                 "\t\t\t\tThanks :D")
         self.__guest_role = GuestRole()
         self.__trade_control_mock = TradeControl.get_instance()
         self.__security_mock = Security.get_instance()
