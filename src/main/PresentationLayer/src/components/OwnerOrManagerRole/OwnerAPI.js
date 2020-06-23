@@ -198,12 +198,15 @@ class OwnerAPI extends React.Component {
                                                     <div>
                                                         <div>{noti['msg']}</div>
                                                         <div style={{marginTop:"2%"}}>
-                                                            <Button variant='dark' onClick={Notifications.sendAgreementAnswer(noti, true)}>approve</Button>
-                                                            <Button variant='dark' onClick={Notifications.sendAgreementAnswer(noti, false)} style={{marginLeft:"3%"}}>decline</Button>
+                                                            <Button variant='dark' onClick={event => Notifications.sendAgreementAnswer(event, noti, true)}>approve</Button>
+                                                            <Button variant='dark' onClick={event => Notifications.sendAgreementAnswer(event, noti, true)} style={{marginLeft:"3%"}}>decline</Button>
                                                         </div>
                                                     </div> 
                                                     : 
-                                                    <div>{noti['msg']}</div>
+                                                    <div>
+                                                        <div>{noti['msg']} </div>
+                                                        <div style={{marginTop:"2%"}}><Button variant='dark' onClick={event => Notifications.removeNotification(noti['id'])} style={{marginLeft:"3%"}}>ok</Button></div>
+                                                    </div>
                                                 }
                                        
                                     />
