@@ -131,7 +131,7 @@ class ProductsInBasketData:
 
         return DbProxy.get_instance().update(self.__tbl, attributes_as_dictionary, where_expr)
 
-    def delete(self, username: str, product_ref: int, amount: int):
+    def delete(self, username: str = "", product_ref: int = None, amount: int = None):
         """
         Delete products in baskets from the DB.
         <attribute> will composite a constraint of where to delete.

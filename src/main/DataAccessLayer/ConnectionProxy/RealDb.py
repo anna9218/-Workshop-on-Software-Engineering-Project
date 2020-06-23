@@ -12,7 +12,8 @@ from peewee import *
 # # Use test_rel_path while testing only.
 # rel_path = test_rel_path
 # database = SqliteDatabase(rel_path, pragmas={'journal_mode': 'wal'})
-from src.main.DataAccessLayer.ConnectionProxy.Tables import database, create_tables,  User, Store, Product
+from src.main.DataAccessLayer.ConnectionProxy.Tables import database, create_tables, User, Store, Product, \
+    DiscountPolicy, CompositeDiscountPolicy, ConditionalDiscountPolicy, Purchase, ProductsInPurchase
 
 
 class RealDb(DbSubject):
@@ -113,11 +114,49 @@ class RealDb(DbSubject):
         """
         return tbl.delete().where(where_expr)
 
+    def read_discount_policies(self, where_expresion: {} = None):
+        exp1 = Expression(DiscountPolicy.discount_policy_id, OP.EQ, ConditionalDiscountPolicy.policy_ref)
+        exp2 = Expression(DiscountPolicy.discount_policy_id, OP.EQ, CompositeDiscountPolicy.policy_ref)
+        result = DiscountPolicy.select(DiscountPolicy.policy_name, DiscountPolicy.store_name,
+                                       DiscountPolicy.product_name,
+                                       DiscountPolicy.percentage, DiscountPolicy.valid_until, DiscountPolicy.is_active,
+                                       CompositeDiscountPolicy.policy1_ref, CompositeDiscountPolicy.policy2_ref,
+                                       CompositeDiscountPolicy.flag, ConditionalDiscountPolicy.precondition_product,
+                                       ConditionalDiscountPolicy.precondition_min_amount,
+                                       ConditionalDiscountPolicy.precondition_min_basket_price) \
+            .join(ConditionalDiscountPolicy, on=exp1, join_type=JOIN.LEFT_OUTER) \
+            .join(CompositeDiscountPolicy, on=exp2, join_type=JOIN.LEFT_OUTER).where(where_expresion).execute()
+        return result
+
     def execute(self, queries: []):
         with database.atomic() as transaction:  # Opens new transaction.
             try:
                 for query in queries:
                     query.execute()
+                return ret(True, "Successful.")
+            except Exception as e:
+                transaction.rollback()
+                # print(e)
+                return ret(False, "Failed.")
+
+    def execute_atomic_purchase_write(self, mother_write_query, daughters_write_queries_attributes: [{}],
+                                      other_update_stoke_queries: [], other_update_basket_queries: []):
+        with database.atomic() as transaction:  # Opens new transaction.
+            try:
+                purchase_id = mother_write_query.execute()
+                daughters_write_queries = []
+                for query_args in daughters_write_queries_attributes:
+                    query_args['purchase_id'] = purchase_id
+                    daughters_write_queries.insert(len(daughters_write_queries), ProductsInPurchase.insert(query_args))
+
+                queries = []
+                for i in range(len(daughters_write_queries)):
+                    queries.insert(len(queries), (other_update_stoke_queries[i], daughters_write_queries[i],
+                                                  other_update_basket_queries[i]))
+                for query in queries:
+                    query[0].execute()
+                    query[1].execute()
+                    query[2].execute()
                 return ret(True, "Successful.")
             except Exception as e:
                 transaction.rollback()

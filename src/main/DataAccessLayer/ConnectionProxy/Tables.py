@@ -17,11 +17,9 @@ def create_tables():
     Should happen once, only when the DB is empty.
     """
     tables = [Statistic, User, Store, Product, StoreManagerAppointment, StoreOwnerAppointment,
-              ProductsInBasket, Purchase, ProductsInPurchase, DiscountPolicy,
+              ProductsInBasket, Purchase, DiscountPolicy, ProductsInPurchase,
               CompositeDiscountPolicy, ConditionalDiscountPolicy]
-    return database.create_tables([Statistic, User, Store, Product, StoreManagerAppointment, StoreOwnerAppointment,
-                                   ProductsInBasket, Purchase, ProductsInPurchase, DiscountPolicy,
-                                   CompositeDiscountPolicy, ConditionalDiscountPolicy])
+    return database.create_tables(tables)
 
 
 class BaseModel(Model):
@@ -33,7 +31,8 @@ class Statistic(BaseModel):
     """
     table: statistic
     """
-    date = DateTimeField(primary_key=True, default=datetime.now())
+    date = DateTimeField(primary_key=True, default=datetime(datetime.now().year, datetime.now().month,
+                                                            datetime.now().day))
     guests = IntegerField(null=False, default=0)
     subscribers = IntegerField(null=False, default=0)
     store_managers = IntegerField(null=False, default=0)
@@ -68,7 +67,7 @@ class Product(BaseModel):
     store_name = ForeignKeyField(Store, db_column="store_name", on_delete="Cascade", on_update="Cascade")
     price = FloatField(null=False)
     category = CharField(null=False)
-    amount = IntegerField(null=False)
+    amount = IntegerField(null=False, constraints=[Check('amount >= 0')])
     purchase_type = IntegerField(null=False)
 
     class Meta:
@@ -122,7 +121,7 @@ class ProductsInBasket(BaseModel):
     username = ForeignKeyField(User, db_column="username", on_delete="Cascade",
                                on_update="Cascade")
     product_ref = ForeignKeyField(Product, db_column="product_ref", on_delete="Cascade", on_update="Cascade")
-    amount = IntegerField(null=False)
+    amount = IntegerField(null=False, constraints=[Check('amount >= 0')])
 
     class Meta:
         primary_key = CompositeKey("username", "product_ref")
@@ -136,6 +135,9 @@ class Purchase(BaseModel):
     purchase_id = IntegerField(primary_key=True)
     username = ForeignKeyField(User, db_column="username", on_delete="Cascade", on_update="Cascade")
     store_name = ForeignKeyField(Store, db_column="store_name", on_delete="Cascade", on_update="Cascade")
+    # product_name = CharField(null=False)
+    # product_purchase_price = FloatField(null=False)  # Not the same as the product.price due to policies.
+    # amount = IntegerField(null=False)
     total_price = FloatField(null=False)
     date = DateTimeField(null=False, default=datetime.now())
 
@@ -146,12 +148,13 @@ class ProductsInPurchase(BaseModel):
     """
     purchase_id = ForeignKeyField(Purchase, null=False, db_column="purchase_id", on_delete="Cascade",
                                   on_update="Cascade")
-    product_ref = ForeignKeyField(Product, db_column="product_ref", on_delete="Cascade", on_update="Cascade")
+    product_name = CharField(null=False)
+    # store_name = CharField(null=False)
     product_purchase_price = FloatField(null=False)  # Not the same as the product.price due to policies.
-    amount = IntegerField(null=False)
+    amount = IntegerField(null=False, constraints=[Check('amount >= 0')])
 
     class Meta:
-        primary_key = CompositeKey("purchase_id", "product_ref")
+        primary_key = CompositeKey("purchase_id", "product_name")
 
 
 class DiscountPolicy(BaseModel):

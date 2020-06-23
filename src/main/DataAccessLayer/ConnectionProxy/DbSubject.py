@@ -40,3 +40,12 @@ class DbSubject(ABC):
     @abstractmethod
     def execute(self, queries):
         pass
+
+    # @abstractmethod
+    # def read_discount_policies(self, where_expresion: {} = None):
+    #     pass
+
+    @abstractmethod
+    def execute_atomic_purchase_write(self, mother_write_query, daughters_write_queries_attributes: [{}],
+                                      other_update_stoke_queries: [], other_update_basket_queries: []):
+        pass

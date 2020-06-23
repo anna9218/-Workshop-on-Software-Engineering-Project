@@ -99,12 +99,28 @@ class DbProxy(DbSubject):
             return ret(False, self.__real_doesnt_exist_error_msg)
         return self.__realSubject.delete(tbl, where_expr)
 
+    # def read_discount_policies(self, where_expresion: {} = None):
+    #     if not self.has_real_subject():
+    #         return ret(False, self.__real_doesnt_exist_error_msg)
+    #     if not self.__realSubject.is_connected():
+    #         return ret(False, self.__real_doesnt_exist_error_msg)
+    #     return self.__realSubject.read_discount_policies()
+
     def execute(self, queries):
         if not self.has_real_subject():
             return ret(False, self.__real_doesnt_exist_error_msg)
         if not self.__realSubject.is_connected():
             return ret(False, self.__real_doesnt_exist_error_msg)
         return self.__realSubject.execute(queries)
+
+    def execute_atomic_purchase_write(self, mother_write_query, daughters_write_queries_attributes: [{}],
+                                      other_update_stoke_queries: [], other_update_basket_queries: []):
+        if not self.has_real_subject():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        if not self.__realSubject.is_connected():
+            return ret(False, self.__real_doesnt_exist_error_msg)
+        return self.__realSubject.execute_atomic_purchase_write(mother_write_query, daughters_write_queries_attributes,
+                                                                other_update_stoke_queries, other_update_basket_queries)
 
     def __delete__(self):
         DbProxy.__instance = None

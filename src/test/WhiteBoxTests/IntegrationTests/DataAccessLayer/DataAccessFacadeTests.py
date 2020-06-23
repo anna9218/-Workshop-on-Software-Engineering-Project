@@ -15,7 +15,10 @@ class DataAccessFacadeTests(unittest.TestCase):
                                  "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
                                  "\t\t\t\t and change rel_path to test_rel_path.\n"
                                  "\t\t\t\tThanks :D")
-        self.__today = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
+        self.__today_with_hour = datetime(datetime.now().year, datetime.now().month, datetime.now().day,
+                                          datetime.now().hour,
+                                          datetime.now().minute)
+        self.__today_without_hour = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
         try:
             create_tables()
         except Exception as e:
@@ -30,7 +33,7 @@ class DataAccessFacadeTests(unittest.TestCase):
             DataAccessFacade.get_instance().write_store("Eytan's store", "Eytan")
             DataAccessFacade.get_instance().write_product("Eytan's product",
                                                           "Eytan's store", 12.12,
-                                                          "Eytan's", 12, 0)
+                                                          "Eytan's", 13, 0)
             DataAccessFacade.get_instance().write_store_manager_appointment(
                 "Anna", "Eytan's store",
                 "Eytan", ["EDIT_INV", "CLOSE_STORE"])
@@ -40,6 +43,12 @@ class DataAccessFacadeTests(unittest.TestCase):
                                                                             "Eytan's store",
                                                                             "Eytan")
             (DataAccessFacade.get_instance()).write_statistic()
+            (DataAccessFacade.get_instance()).write_purchase("Anna", "Eytan's store", 12, self.__today_with_hour,
+                                                             [{"product_name": "Eytan's product",
+                                                               "product_price": 12,
+                                                               "amount": 1}])
+            (DataAccessFacade.get_instance()).write_products_in_basket("Anna", "Eytan's store",
+                                                                       "Eytan's product", 12)
         except IntegrityError:
             pass
         except Exception as e:
@@ -241,9 +250,11 @@ class DataAccessFacadeTests(unittest.TestCase):
         self.assertTrue(result)
         self.assertListEqual((DataAccessFacade.get_instance()).read_products(['amount'])['response'], [{'amount': 20}])
 
-        result = (DataAccessFacade.get_instance()).update_products(old_amount=20, new_amount=12)['response']
+        result = (DataAccessFacade.get_instance()).update_products(old_store_name="Eytan's store",
+                                                                   old_product_name="Eytan's product",
+                                                                   new_amount=11)['response']
         self.assertTrue(result)
-        self.assertListEqual((DataAccessFacade.get_instance()).read_products(['amount'])['response'], [{'amount': 12}])
+        self.assertListEqual((DataAccessFacade.get_instance()).read_products(['amount'])['response'], [{'amount': 11}])
 
         result = (DataAccessFacade.get_instance()).update_products(old_amount=20, new_amount=13)['response']
         self.assertTrue(result)
@@ -419,13 +430,14 @@ class DataAccessFacadeTests(unittest.TestCase):
                                                                                                )
                                ['response']), 0)
 
-        result = (DataAccessFacade.get_instance()).write_store_owner_appointment("Anna", "Eytan's store", "Eytan")['response']
+        result = (DataAccessFacade.get_instance()).write_store_owner_appointment("Anna", "Eytan's store", "Eytan")[
+            'response']
         self.assertFalse(result)
 
     def test_read_store_owner_appointments(self):
         result_dic = (DataAccessFacade.get_instance()).read_store_owner_appointments(["appointee_username",
-                                                                                        "store_name",
-                                                                                        "appointer_username"]) \
+                                                                                      "store_name",
+                                                                                      "appointer_username"]) \
             ['response']
         result_tup = [(soa['appointee_username'].username, soa['store_name'].store_name,
                        soa['appointer_username'].username)
@@ -433,9 +445,9 @@ class DataAccessFacadeTests(unittest.TestCase):
         self.assertListEqual(result_tup, [('Lady Anna', "Eytan's store", 'Eytan')])
 
         result_dic = (DataAccessFacade.get_instance()).read_store_owner_appointments(["appointee_username",
-                                                                                        "store_name",
-                                                                                        "appointer_username"],
-                                                                                       appointee_username="Lady Anna") \
+                                                                                      "store_name",
+                                                                                      "appointer_username"],
+                                                                                     appointee_username="Lady Anna") \
             ['response']
         result_tup = [(soa['appointee_username'].username, soa['store_name'].store_name,
                        soa['appointer_username'].username)
@@ -444,14 +456,14 @@ class DataAccessFacadeTests(unittest.TestCase):
 
     def test_update_store_owner_appointments(self):
         result = (DataAccessFacade.get_instance()).update_store_owner_appointments(old_appointee_username="Lady Anna",
-                                                                                   new_appointee_username="Anna")  \
-        ['response']
+                                                                                   new_appointee_username="Anna") \
+            ['response']
         self.assertTrue(result)
         self.assertEqual(len((DataAccessFacade.get_instance()).read_store_owner_appointments(appointee_username="Anna")
                              ['response']), 1)
 
         result = (DataAccessFacade.get_instance()).update_store_owner_appointments(old_appointee_username="Anna"
-                                                                                     )['response']
+                                                                                   )['response']
         self.assertFalse(result)
 
     def test_delete_store_owner_appointments(self):
@@ -481,11 +493,10 @@ class DataAccessFacadeTests(unittest.TestCase):
         self.assertFalse(result)
 
     def test_read_statistics(self):
-        result = (DataAccessFacade.get_instance()).read_statistics([], date=datetime(datetime.now().year,
-                                                                                     datetime.now().month,
-                                                                                     datetime.now().day))['response']
-        self.assertListEqual([{'date': datetime(2020, 6, 22, 0, 0), 'guests': 0, 'subscribers': 0,
-                               'store_managers': 0, 'owners': 0, 'system_managers': 0}], result)
+        result = (DataAccessFacade.get_instance()).read_statistics([], date=self.__today_without_hour)['response']
+        self.assertListEqual([{'date': datetime(datetime.now().year, datetime.now().month, datetime.now().day, 0, 0),
+                               'guests': 0, 'subscribers': 0, 'store_managers': 0, 'owners': 0, 'system_managers': 0}],
+                             result)
 
         # Nothing to read
         result = (DataAccessFacade.get_instance()).read_statistics([], date=datetime(1212,
@@ -494,24 +505,111 @@ class DataAccessFacadeTests(unittest.TestCase):
         self.assertListEqual([], result)
 
     def test_update_statistics(self):
-        result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today, new_guests=3)[
+        result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today_without_hour, new_guests=3)[
             'response']
         self.assertTrue(result)
         self.assertGreater(len((DataAccessFacade.get_instance()).read_statistics([], guests=3)['response']), 0)
 
-        result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today)['response']
+        result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today_without_hour)['response']
         self.assertFalse(result)
 
     def test_delete_statistics(self):
-        result = (DataAccessFacade.get_instance()).delete_statistics(date=self.__today)['response']
+        result = (DataAccessFacade.get_instance()).delete_statistics(date=self.__today_without_hour)['response']
         self.assertTrue(result)
-        self.assertEqual(len((DataAccessFacade.get_instance()).read_statistics([], date=self.__today)['response']), 0)
+        self.assertEqual(len((DataAccessFacade.get_instance()).read_statistics([], date=self.__today_without_hour)
+                             ['response']), 0)
 
         # Nothing to delete
-        result = (DataAccessFacade.get_instance()).delete_statistics(date=self.__today)['response']
+        result = (DataAccessFacade.get_instance()).delete_statistics(date=self.__today_without_hour)['response']
         self.assertTrue(result)
 
+    # def test_write_discount_policy(self):
+    #     (DataAccessFacade.get_instance()).write_discount_policy("p1", "Eytan's store",
+    #                                                             "Eytan's product", 12, self.__today)
+    #     (DataAccessFacade.get_instance()).write_discount_policy("p2", "Eytan's store",
+    #                                                             "Eytan's product", 12, self.__today)
+    #     result = (DataAccessFacade.get_instance()).write_discount_policy("Eytan's policy", "Eytan's store",
+    #                                                                      "Eytan's product", 12, self.__today,
+    #                                                                      precondition_product="all")['response']
+    #     self.assertTrue(result)
+    #     self.assertGreaterEqual(
+    #         len((DataAccessFacade.get_instance()).read_discount_policies([], valid_until=self.__today)[
+    #                 'response']), 3)
+    #
+    #     result = (DataAccessFacade.get_instance()).write_discount_policy("Eytan's Composite policy", "Eytan's store",
+    #                                                                      "Eytan's product", 12, self.__today,
+    #                                                                      policy1_name="p1", policy2_name="p2",
+    #                                                                      flag=1)['response']
+    #     self.assertTrue(result)
+    #     self.assertGreaterEqual(
+    #         len((DataAccessFacade.get_instance()).read_discount_policies([], valid_until=self.__today)[
+    #                 'response']), 4)
+    #
+    # def test_read_discount_policies(self):
+    #     self.assertTrue(False)
+    #
+    # def test_update_discount_policies(self):
+    #     self.assertTrue(False)
+    #
+    # def test_delete_discount_policies(self):
+    #     self.assertTrue(False)
+    def test_write_purchase(self):
+        result = (DataAccessFacade.get_instance()).write_purchase("Lady Anna", "Eytan's store", 12,
+                                                                  self.__today_with_hour,
+                                                                  [{"product_name": "Eytan's product",
+                                                                    "product_price": 12,
+                                                                    "amount": 1}])
+        self.assertTrue(result['response'])
+        x = (DataAccessFacade.get_instance()).read_purchases(username="Anna")['response']
+        self.assertGreater(len(x), 0)
+
+        result = (DataAccessFacade.get_instance()).write_purchase("Anna", "Eytan's store", 240, self.__today_with_hour,
+                                                                  [{"product_name": "Eytan's product",
+                                                                    "product_price": 12,
+                                                                    "amount": 20}])
+        self.assertFalse(result['response'])
+
+    def test_read_purchases(self):
+        result = (DataAccessFacade.get_instance()).read_purchases([], username="Anna", product_amount=1)['response']
+        self.assertListEqual([{'username': 'Anna', 'store_name': "Eytan's store", 'total_price': 12.0,
+                               'date': self.__today_with_hour, 'products_lst': [{'purchase_id': "Eytan's product",
+                                                                                 'product_purchase_price': 12.0,
+                                                                                 'amount': 1}]}],
+                             result)
+
+        # invalid - nothing to read
+        result = (DataAccessFacade.get_instance()).read_purchases([], username="Eytan", product_amount=1)['response']
+        self.assertListEqual([], result)
+
+    def test_delete_purchases(self):
+        (DataAccessFacade.get_instance()).write_purchase("Lady Anna", "Eytan's store", 12,
+                                                         self.__today_with_hour,
+                                                         [{"product_name": "Eytan's product",
+                                                           "product_price": 12,
+                                                           "amount": 1}])
+        result = (DataAccessFacade.get_instance()).delete_purchases(username="Lady Anna",
+                                                                    product_name="Eytan's product")
+        self.assertTrue(result)
+        self.assertEqual(len((DataAccessFacade.get_instance()).read_purchases([], username="Lady Anna",
+                                                                              product_name="Eytan's product")[
+                                 'response']), 0)
+        self.assertGreaterEqual(len((DataAccessFacade.get_instance()).read_purchases([],
+                                                                                     product_name="Eytan's product")[
+                                        'response']), 1)
+
+    def test_update_purchases(self):
+        result = (DataAccessFacade.get_instance()).update_purchases(old_product_name="Eytan's product",
+                                                                    new_username="Eytan")['response']
+        self.assertTrue(result)
+        self.assertGreater(len((DataAccessFacade.get_instance()).read_purchases([], username="Eytan")[
+                               'response']), 0)
+
+        result = (DataAccessFacade.get_instance()).update_purchases(old_username="Anna")['response']
+        self.assertFalse(result)
+
     def tearDown(self) -> None:
+        (DataAccessFacade.get_instance()).delete_purchases()
+        # (DataAccessFacade.get_instance()).delete_discount_policies()
         (DataAccessFacade.get_instance()).delete_statistics()
         (DataAccessFacade.get_instance()).delete_store_owner_appointments()
         (DataAccessFacade.get_instance()).delete_products_in_baskets()
