@@ -40,7 +40,7 @@ import AppointOwner from './components/OwnerOrManagerRole/AppointOwner'
 import RemoveManager from './components/OwnerOrManagerRole/RemoveManager'
 import EditPermissions from './components/OwnerOrManagerRole/EditPermissions'
 import ManageStorePolicies from './components/OwnerOrManagerRole/ManageStorePolicies'
-import DisplayNotifications from './components/OwnerOrManagerRole/Notifications'
+// import Notifications from './components/OwnerOrManagerRole/NotificationsForm'
 import StorePurchaseHistory from './components/OwnerOrManagerRole/StorePurchaseHistory'
 import AddPurchasePolicyForm from './components/OwnerOrManagerRole/AddPurchasePolicyForm'
 
@@ -195,7 +195,7 @@ class App extends React.Component{
           <Route path="/allhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
           <Route path="/dailyvisitors" exact render={(props) => <DailyVisitorsCut screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
-          <Route path="/notifications" exact render={(props) => <DisplayNotifications screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />
+          {/* <Route path="/notifications" exact render={(props) => <NotificationsForm.DisplayNotifications screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} /> */}
 
           {/* <Route path="/systemmanager" exact render={(props) => <SystemManagerAPI screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} /> */}
           <Route path="/systemhistory" exact render={(props) => <PurchaseHistoryUsersStores screenWidth= {this.state.width} screenHeight= {this.state.height-100} {...props} />} />

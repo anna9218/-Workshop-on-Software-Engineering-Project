@@ -3,6 +3,8 @@ import {useState, useEffect} from 'react';
 import port from '../App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import io from 'socket.io-client';
+import * as Notifications from '../components/OwnerOrManagerRole/NotificationsActions'
+
 // const io = require("socket.io-client");
 // var socketio = require('socket.io-client'); //('http://127.0.0.1:5000'); // TODO- maybe another port?
 
@@ -54,19 +56,19 @@ export const setHandlers = async () => {
     // list of msgs
 
     // const msgs = JSON.parse(data).messages;
-     const msgs = data['messages'];
-     // TODO: eden call to add messages to my msgs list 
-    alert(msgs)
-    // eden: display the notification without button
+     const msg = data['messages'];
+    // alert(msg)
+    Notifications.addNotification(msg, "regular")
     
-    console.log(msgs);
+    console.log(msg);
   //   this.gui.add_notification(msgs); // TODO - tell einat to add this func
   //   <OpenStore msg={msgs} />
   });
   socket.socket.on("agreement", (data) => {
-    const msgs = data['messages'];
-    alert(msgs)
-    // eden: display the notification with button (create a function)
+    const msg = data['messages'];
+    // alert(msg)
+    Notifications.addNotification(msg, "agreement")
+
     // socket.socket.io.emit("subscribe", { username: username, room: storename });
     //  maybe:         socket.emit("subscribe", { username: {username}, room: {storename} });
   });
