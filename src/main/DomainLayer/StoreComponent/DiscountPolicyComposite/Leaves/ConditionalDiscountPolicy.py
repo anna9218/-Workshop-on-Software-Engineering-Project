@@ -102,4 +102,9 @@ class ConditionalDiscountPolicy(DiscountComponent):
 
     @logger
     def __eq__(self, other):
-        pass
+        if other is not type(self):
+            print (f"expected ConditionalDiscountPolicy. recieved {other}")
+            return False
+        else:
+            # TODO
+            return True

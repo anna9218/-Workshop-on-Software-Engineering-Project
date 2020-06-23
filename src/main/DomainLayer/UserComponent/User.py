@@ -8,6 +8,7 @@ from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.Registration import Registration
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
 # from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
+# from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class User:
@@ -175,6 +176,13 @@ class User:
 
     def __eq__(self, other):
         try:
-            return self.get_nickname() == other.get_nickname()
+            from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
+            if type(other) is type(User()):
+                return self.get_nickname() == other.get_nickname()
+            elif type(other) is type (StubUser()):
+                return other.get_nickname() == self.get_nickname()
+            else:
+                print (f"expected User. recieved {type(other)}")
+                return False
         except Exception:
             return False

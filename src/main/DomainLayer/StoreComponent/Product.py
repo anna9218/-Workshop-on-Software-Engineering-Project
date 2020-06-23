@@ -20,19 +20,19 @@ class Product:
     def __repr__(self):
         return repr("Product")
 
-    # @logger
+    @logger
     def get_price(self):
         return self.__price
 
-    # @logger
+    @logger
     def get_name(self):
         return self.__name
 
-    # @logger
+    @logger
     def get_category(self):
         return self.__category
 
-    # @logger
+    @logger
     def set_price(self, new_price):
         self.__price = new_price
 
@@ -43,28 +43,37 @@ class Product:
     @logger
     def __eq__(self, other):
         try:
-            if self.__name == other.get_name() and self.__price == other.get_price() and \
-                    self.__category == other.get_category():
-                return True
+            # print (f"other type = {type(other)}, self type = {type(self)}")
+            if type (other) is type(self):
+                if self.__name == other.get_name() and self.__price == other.get_price() and \
+                        self.__category == other.get_category():
+                    return True
+                # return
+            print (f"expected Product. recieved {other}")
             return False
         except Exception:
             return False
 
+    @logger
     def set_purchase_type(self, purchase_type: int):
         for type in PurchaseType:
             if type.value == purchase_type:
                 self.__purchase_type = type
 
+    @logger
     def set_category(self, category):
         self.__category = category
 
+    @logger
     def set_discount_type(self, discount_type: int):
         for type in DiscountType:
             if type.value == discount_type:
                 self.__discount_type = type
 
+    @logger
     def get_discount_type(self):
         return self.__discount_type
 
+    @logger
     def get_purchase_type(self):
         return self.__purchase_type

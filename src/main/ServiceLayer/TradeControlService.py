@@ -134,6 +134,7 @@ class TradeControlService:
         except Exception as ex:
             print(ex)
             file.close()
+            # TODO - THE BUG
             return ret(False, "An unknown error has occurred. Please check the input file arguments.")
 
         # connecting to external systems.
