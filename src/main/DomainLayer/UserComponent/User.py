@@ -7,6 +7,8 @@ from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.Registration import Registration
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
+
+
 # from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
 
 
@@ -26,7 +28,8 @@ class User:
         if self.is_registered():
             return {'response': False, 'msg': "Guest " + username + " is already registered"}
         if username.strip() == "":
-            return {'response': False, 'msg': "Invalid nickname, has to include at least one character and can't include spaces alone"}
+            return {'response': False,
+                    'msg': "Invalid nickname, has to include at least one character and can't include spaces alone"}
         if password.strip() == "":
             return {'response': False, 'msg': "Invalid nickname or password"}
         self.__registrationState.register(username, password)
@@ -41,7 +44,7 @@ class User:
         if not self.check_password(password):
             return {'response': False, 'msg': "Incorrect password"}
         if self.is_logged_in():
-            return {'response': False, 'msg': "Subscriber " +nickname+ " is already logged in"}
+            return {'response': False, 'msg': "Subscriber " + nickname + " is already logged in"}
         if self.check_nickname(nickname):
             self.__loginState.login()
             if self.__registrationState.get_nickname() == "TradeManager":
@@ -84,20 +87,8 @@ class User:
         return not self.__loginState.is_logged_in()
 
     @logger
-    def get_login(self):
-        return self.__loginState
-
-    @logger
     def is_registered(self):
         return self.__registrationState.is_registered()
-
-    @logger
-    def get_nickname(self):
-        return self.__registrationState.get_nickname()
-
-    @logger
-    def get_purchase_history(self):
-        return self.__purchase_history
 
     @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str,
@@ -117,7 +108,8 @@ class User:
         return self.__shoppingCart.view_shopping_cart()
 
     @logger
-    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]) -> {'response': bool, 'msg': str}:
+    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]) -> {
+        'response': bool, 'msg': str}:
         """
         :param products_details: [{"product_name": str,
                                        "store_name": str}, ...]
@@ -127,7 +119,8 @@ class User:
         return self.__shoppingCart.remove_products(products_details)
 
     @logger
-    def update_quantity_in_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]) -> {'response': bool, 'msg': str}:
+    def update_quantity_in_shopping_cart(self, products_details: [
+        {"product_name": str, "store_name": str, "amount": int}]) -> {'response': bool, 'msg': str}:
         """
         :param flag: action option - "remove"/"update"
         :param products_details: [{"product_name": str,
@@ -139,28 +132,51 @@ class User:
         return self.__shoppingCart.update_quantity(products_details)
 
     @logger
-    def set_registration_state(self, registration):
-        self.__registrationState = registration
-        return True
-
-    # --- Do we need this ?? ---
-
-    @logger
-    def set_shopping_cart(self, shopping_cart):
-        self.__shoppingCart = shopping_cart
-
-    @logger
     def complete_purchase(self, purchase: Purchase):
         # add purchase to purchase history
         self.__purchase_history.append(purchase)
         # delete purchase from shopping cart
         self.__shoppingCart.get_store_basket(purchase.get_store_name()).complete_purchase(purchase.get_products())
+        return True
 
     @logger
     def remove_purchase(self, store_name: str, date: datetime):
         for p in self.__purchase_history:
             if p.get_store_name() == store_name and p.get_date() == date:
                 self.__purchase_history.remove(p)
+        return True
+
+    # --------------------------------------GETTERS & SETTERS--------------------------------------------------------
+
+    @logger
+    def get_nickname(self):
+        return self.__registrationState.get_nickname()
+
+    @logger
+    def get_login(self):
+        return self.__loginState
+
+    @logger
+    def get_purchase_history(self):
+        return self.__purchase_history
+
+    @logger
+    def set_registration_state(self, registration):
+        self.__registrationState = registration
+        return True
+
+    @logger
+    def set_login_state(self, login):
+        self.__loginState = login
+        return True
+
+    @logger
+    def set_shopping_cart(self, shopping_cart):
+        self.__shoppingCart = shopping_cart
+
+    @logger
+    def set_purchase_history(self, purchase_hist):
+        self.__purchase_history = purchase_hist
 
     @logger
     def get_password(self):

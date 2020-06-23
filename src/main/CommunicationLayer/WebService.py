@@ -9,6 +9,7 @@ from dateutil.parser import *
 
 # from src.main.CommunicationLayer import WebSocketService
 from src.main.CommunicationLayer.StorePublisher import StorePublisher
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
@@ -38,7 +39,6 @@ socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
 # 1 - purchase
 # 2 - add+remove manager
 # 3 - else
-
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
 
@@ -267,8 +267,42 @@ def appoint_store_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
         if response:
-            handle_agreement_msg(appointee_nickname, store_name)
+            if response["msg"] == "The request is pending approval":
+                # ----------------appointment agreement----------------------
+                msg = f"New owner appointment at store {store_name} - action required!"
+                notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+            elif response["response"]:
+                if add_subscriber_to_store(store_name, appointee_nickname):
+                    # TODO - we need to take into consideration LOGIN/LOGOUT
+                    print(_users)
+                    join_room(store_name, _users[appointee_nickname])
             return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error")
+
+
+@app.route('/handle_appointment_agreement_response', methods=['POST'])
+def handle_appointment_agreement_response():
+    if request.is_json:
+        request_dict = request.get_json()
+        appointee_nickname = request_dict.get('appointee_nickname')
+        store_name = request_dict.get('store_name')
+        appointment_agreement_response = request_dict.get('appointment_agreement_response')
+        if appointment_agreement_response == 1:
+            appointment_agreement_response = AppointmentStatus.DECLINED
+        if appointment_agreement_response == 2:
+            appointment_agreement_response = AppointmentStatus.APPROVED
+        response = StoreOwnerOrManagerRole.update_agreement_participants(appointee_nickname, store_name,
+                                                                         appointment_agreement_response)
+        if response:
+            # check is the status of the agreement is approved already
+            if response["response"]:
+                status = StoreOwnerOrManagerRole.get_appointment_status(appointee_nickname, store_name)
+                if status == AppointmentStatus.APPROVED:
+                    response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
+                    add_subscriber_to_store(store_name, appointee_nickname)
+                    msg = f"New owner {appointee_nickname} appointed at store {store_name}!"
+                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+            return jsonify(msg=response["msg"])
     return jsonify(msg="Oops, communication error")
 
 
