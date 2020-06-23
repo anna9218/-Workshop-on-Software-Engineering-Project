@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from src.Logger import errorLogger, logger
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
@@ -545,8 +546,7 @@ class TradeControl:
 
     # ----------------------------------
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ANNA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-    @logger
+    # @logger
     def add_products(self, store_name: str,
                      products_details: [{"name": str, "price": int, "category": str, "amount": int,
                                          "purchase_type": int}]) -> {'response': bool, 'msg': str}:
@@ -665,10 +665,36 @@ class TradeControl:
                 self.__curr_user.is_logged_in() and \
                 (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
             result = store.add_owner(self.__curr_user.get_nickname(), appointee)
-            if result:
-                return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
-            return {'response': False, 'msg': "User has no permissions"}
+            return result
+            # if result:
+            #     return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
+            # return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
+
+    # @logger
+    def update_agreement_participants(self, appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
+        """
+        :param appointee_nickname: nickname of the new owner that will be appointed
+        :param store_name: store the owner will be added to
+        :param owner_response: the owners response - declined/approved
+        :return: dict =  {'response': bool, 'msg': str}
+                 response = True on success, else False
+        """
+        store = self.get_store(store_name)
+        result = store.update_agreement_participants(appointee_nickname, self.__curr_user.get_nickname(), owner_response)
+        if result:
+            return {'response': True, 'msg': "Approved the appointment of " + appointee_nickname + " as a new store owner"}
+        return {'response': False, 'msg': "Declined the appointment of " + appointee_nickname + " as a new store owner"}
+
+    @logger
+    def get_appointment_status(self, appointee_nickname: str, store_name: str) -> AppointmentStatus:
+        """
+        :param appointee_nickname: the nickname of the user being appointed as new store owner
+        :param store_name: store the owner should be added to
+        :return: AppointmentStatus - DECLINED = 1,APPROVED = 2, PENDING = 3
+        """
+        store = self.get_store(store_name)
+        return store.get_appointment_status(appointee_nickname)
 
     @logger
      # TODO: eden check permissions with gui!!!!!
@@ -1100,8 +1126,8 @@ class TradeControl:
 
     def get_user_type(self):
         roles = []
-
-        if self.__curr_user.get_nickname() in [user.get_nickname() for user in self.__managers]:
+        system_managers = [user.get_nickname() for user in self.__managers]
+        if self.__curr_user.get_nickname() in system_managers:
             return "SYSTEMMANAGER"
         if self.__curr_user.is_registered():
             roles.append("SUBSCRIBER")

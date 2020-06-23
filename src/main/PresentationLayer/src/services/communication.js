@@ -268,6 +268,19 @@ export async function appointStoreOwner(appointee_nickname, store_name){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
+
+// call anna : handle_appointment_agreement_response(nickname_apointee, store_name, answer: 1= decline, 2 = approve)
+// const promise = theService.sendAgreementAnswer(noti['username'], noti['store'], answer ? 2 : 1)
+export async function sendAgreementAnswer(appointee_nickname, store_name, answer){
+    return axios.post('http://localhost:5000/handle_appointment_agreement_response', {
+        appointee_nickname: appointee_nickname,
+        store_name: store_name,
+        answer: answer,
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+
 export async function removeOwner(store_name, nickname){
     return axios.post('http://localhost:5000/remove_owner', {
         store_name: store_name,

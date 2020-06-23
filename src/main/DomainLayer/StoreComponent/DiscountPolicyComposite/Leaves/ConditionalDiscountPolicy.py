@@ -75,7 +75,17 @@ class ConditionalDiscountPolicy(DiscountComponent):
                                        'min_amount': int or None,
                                        'min_cart_price': str or None} or None = None
                ):
+
+        if percentage != -999:
+            if 0 <= percentage <= 100:
+                self.__percentage = percentage
+            else:
+                return {'response': False, 'msg': "Percentage should be between 0 and 100."}
+
         if discount_precondition is not None:
+            if discount_precondition['product'] is not None:
+                self.__precondition['product'] = discount_precondition['product']
+
             if discount_precondition['min_amount'] is not None:
                 if discount_precondition['min_amount'] >= 0:
                     self.__precondition['min_amount'] = discount_precondition['min_amount']
@@ -83,15 +93,6 @@ class ConditionalDiscountPolicy(DiscountComponent):
             if discount_precondition['min_basket_price'] is not None:
                 if discount_precondition['min_basket_price'] >= 0:
                     self.__precondition['min_amount'] = discount_precondition['min_amount']
-
-            if discount_details['product'] is not None:
-                self.__precondition['product'] = discount_precondition['product']
-
-        if percentage != -999:
-            if 0 <= percentage <= 100:
-                self.__percentage = percentage
-            else:
-                return {'response': False, 'msg': "Percentage should be between 0 and 100."}
 
         if discount_details is not None:
             if discount_details['name'] is not None:

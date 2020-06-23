@@ -35,7 +35,7 @@ class PurchaseProducts extends React.Component{
     this.isPaymentFilled = this.isPaymentFilled.bind(this);
   }
 
-  handleConfirm = ()  => {
+  handleConfirm = async ()  => {
     this.setState({lock_purchase: true})
     var payment_details = {'card_number': this.state.card_number, 'month': this.state.month, 'year': this.state.year, 'holder': this.state.holder, 'ccv': this.state.ccv, 'id': this.state.id}
     var delivery_details = {'name': this.state.name, 'address': this.state.address, 'city': this.state.city, 'country': this.state.country, 'zip': this.state.zip}
@@ -47,13 +47,14 @@ class PurchaseProducts extends React.Component{
           buttons: [
             {
               label: 'Done',
-              onClick: () => {BackOption.BackToHome(this.props)}  
+              onClick: () => {
+                this.setState({lock_purchase: false})
+                BackOption.BackToHome(this.props)}  
             }
           ]
       });
       }
     })
-    this.setState({lock_purchase: false})
 
   }
 
@@ -67,6 +68,8 @@ class PurchaseProducts extends React.Component{
   }
 
   isDeliveryFilled = () =>{
+    if(this.state.lock_purchase)
+      return false;
     if(this.state.name !== "" && this.state.address !== "" && this.state.city !== "" && 
         this.state.country !== "" && this.state.zip !== ""){
       return true;
@@ -135,7 +138,7 @@ class PurchaseProducts extends React.Component{
           !this.state.delivery_details_filled ? 
           <div>
               {/* delivery details: name, address, city, country, zip */}
-              <Form.Label style={{position: "relative", right: "45%"}}>Delivery Details</Form.Label>
+              <h5 style={{marginTop:"2%"}}>Enter Delivery Details:</h5>
 
               <Form.Control id="name" value={this.state.name} required type="text" placeholder="Full Name" 
                   onChange={(event => {this.setState({name: event.target.value})})} />
@@ -152,14 +155,15 @@ class PurchaseProducts extends React.Component{
               <Form.Control id="zip" value={this.state.zip} required type="text" placeholder="Zip" 
                   onChange={(event => {this.setState({zip: event.target.value})})} style={{marginTop: "1%"}} />
 
-              <Button variant="secondary" style={{marginTop: "1%"}} onClick={event => this.setState({delivery_details_filled: true, details_progress: 50})} disabled={!this.isDeliveryFilled()}>
+              <Button variant="dark" style={{marginTop: "1%"}} onClick={event => this.setState({delivery_details_filled: true, details_progress: 50})} disabled={!this.isDeliveryFilled()}>
                 Next
               </Button>
           </div>
           : 
           <div>
               {/* payment details: card number, month, year, holder, ccv, id */}
-              <Form.Label style={{position: "relative", right: "45%"}}>Payment Details</Form.Label>
+              {/* <Form.Label style={{position: "relative", right: "45%"}}>Payment Details</Form.Label> */}
+              <h5 style={{marginTop:"2%"}}>Enter Payment Details:</h5>
 
               <Form.Control id="card_number" value={this.state.card_number} required type="text" placeholder="Credit Card Number" 
                     onChange={(event => {this.setState({card_number: event.target.value})})} />
@@ -179,7 +183,7 @@ class PurchaseProducts extends React.Component{
               <Form.Control id="id" value={this.state.id} required type="text" placeholder="ID" 
                     onChange={(event => {this.setState({id: event.target.value})})} style={{marginTop: "1%"}} />
 
-              <Button variant="secondary" style={{marginTop: "1%"}} onClick={this.handleConfirm} disabled={!this.isPaymentFilled() || this.state.lock_purchase}>
+              <Button variant="dark" style={{marginTop: "1%"}} onClick={this.handleConfirm} disabled={!this.isPaymentFilled() || this.state.lock_purchase}>
                 Confirm Purchase
               </Button>
           </div>

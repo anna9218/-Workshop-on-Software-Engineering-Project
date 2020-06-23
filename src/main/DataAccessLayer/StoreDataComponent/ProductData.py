@@ -27,13 +27,15 @@ class ProductData:
             raise Exception("This class is a singleton!")
         else:
             self.__tbl = Product
+            self.__attr_product_id = "product_id"
             self.__attr_product_name = "product_name"
             self.__attr_store_name = "store_name"
             self.__attr_price = "price"
             self.__attr_category = "category"
             self.__attr_amount = "amount"
             self.__attr_purchase_type = "purchase_type"
-            self.__attributes_as_dictionary = {self.__attr_product_name: self.__tbl.product_name,
+            self.__attributes_as_dictionary = {self.__attr_product_id: self.__tbl.product_id,
+                                               self.__attr_product_name: self.__tbl.product_name,
                                                self.__attr_store_name: self.__tbl.store_name,
                                                self.__attr_price: self.__tbl.price,
                                                self.__attr_category: self.__tbl.category,
@@ -41,8 +43,8 @@ class ProductData:
                                                self.__attr_purchase_type: self.__tbl.purchase_type}
             ProductData.__instance = self
 
-    def read(self, attributes_to_read: [str], product_name: str = "", store_name: str = "", price: float = None,
-             category: str = "", amount: int = None, purchase_type: int = None):
+    def read(self, attributes_to_read: [str], product_id: int = None, product_name: str = "", store_name: str = "",
+             price: float = None, category: str = "", amount: int = None, purchase_type: int = None):
         """
         Read users from db.
         Raise exception if an attribute in attributes_to_read is illegal.
@@ -50,6 +52,7 @@ class ProductData:
         example(if old_username != ""), it will composite the constraint-
                                                where(user.username == username).
 
+        :param product_id:
         :param product_name:
         :param price:
         :param category:
@@ -67,8 +70,11 @@ class ProductData:
                     raise AttributeError("Attribute " + attribute + " doesn't exist in " + str(type(self.__tbl)) + ".")
         else:
             attributes_to_read = list(self.__attributes_as_dictionary.keys())
+            attributes_to_read.remove(self.__attr_product_id)
 
         const_lst = []
+        if not (product_id is None):
+            const_lst.append(Expression(self.__tbl.product_id, OP.EQ, product_id))
         if not (product_name == ""):
             const_lst.append(Expression(self.__tbl.product_name, OP.EQ, product_name))
         if not (store_name == ""):
@@ -87,6 +93,8 @@ class ProductData:
         output_lst = []
         for data_obj in result:
             user_data_as_dictionary = {}
+            if self.__attr_product_id in attributes_to_read:
+                user_data_as_dictionary[self.__attr_product_id] = data_obj.product_id
             if self.__attr_product_name in attributes_to_read:
                 user_data_as_dictionary[self.__attr_product_name] = data_obj.product_name
             if self.__attr_store_name in attributes_to_read:
@@ -124,7 +132,7 @@ class ProductData:
 
         return (DbProxy.get_instance()).write(self.__tbl, attributes_as_dictionary)
 
-    def update(self, old_product_name: str = "", old_store_name: str = "", old_price: float = None,
+    def update(self, old_product_id: int = None, old_product_name: str = "", old_store_name: str = "", old_price: float = None,
                old_category: str = "", old_amount: int = None, old_purchase_type: int = None,
                new_product_name: str = "", new_store_name: str = "", new_price: float = None,
                new_category: str = "", new_amount: int = None, new_purchase_type: int = None):
@@ -140,6 +148,8 @@ class ProductData:
         :return: the number of updated rows.
         """
         const_lst = []
+        if not (old_product_id is None):
+            const_lst.append(Expression(self.__tbl.product_id, OP.EQ, old_product_id))
         if not (old_product_name == ""):
             const_lst.append(Expression(self.__tbl.product_name, OP.EQ, old_product_name))
         if not (old_store_name == ""):
@@ -173,8 +183,8 @@ class ProductData:
 
         return DbProxy.get_instance().update(self.__tbl, attributes_as_dictionary, where_expr)
 
-    def delete(self, product_name: str = "", store_name: str = "", price: float = None, category: str = "",
-               amount: int = None, purchase_type: int = None):
+    def delete(self, product_id: int = None, product_name: str = "", store_name: str = "", price: float = None,
+               category: str = "", amount: int = None, purchase_type: int = None):
         """
         Delete users from the DB.
         <attribute> will composite a constraint of where to delete.
@@ -184,6 +194,8 @@ class ProductData:
         :return: the number of deleted rows.
         """
         const_lst = []
+        if not (product_id is None):
+            const_lst.append(Expression(self.__tbl.product_id, OP.EQ, product_id))
         if not (product_name == ""):
             const_lst.append(Expression(self.__tbl.product_name, OP.EQ, product_name))
         if not (store_name == ""):
