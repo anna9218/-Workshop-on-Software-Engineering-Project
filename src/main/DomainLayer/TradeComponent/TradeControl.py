@@ -1097,7 +1097,7 @@ class TradeControl:
 
     @logger
     def get_curr_username(self):
-        if self.__curr_user is not None and self.__curr_user.is_logged_in():
+        if self.__curr_user is not None and self.__curr_user.is_logged_in(): #TODO - maybe without is_logged_in?
             return self.__curr_user.get_nickname()
         return ""
 

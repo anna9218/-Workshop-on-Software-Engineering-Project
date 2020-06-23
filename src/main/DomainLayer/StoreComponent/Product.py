@@ -18,7 +18,7 @@ class Product:
         # self.__rate = 0 TODO - for search 2.5
 
     def __repr__(self):
-        return repr("Product")
+        return repr(self.__name)
 
     @logger
     def get_price(self):
@@ -49,7 +49,7 @@ class Product:
                         self.__category == other.get_category():
                     return True
                 # return
-            print (f"expected Product. recieved {other}")
+            print (f"expected Product. recieved {other}     self = {self}")
             return False
         except Exception:
             return False

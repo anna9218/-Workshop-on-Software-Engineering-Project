@@ -188,7 +188,10 @@ class User:
         return self.__shoppingCart
 
     def __repr__(self):
+        if self.is_registered:
+            return repr(self.get_nickname)
         return repr("User")
+        # return repr("User")
 
     def __eq__(self, other):
         try:
@@ -198,7 +201,8 @@ class User:
             elif type(other) is type (StubUser()):
                 return other.get_nickname() == self.get_nickname()
             else:
-                print (f"expected User. recieved {type(other)}")
+                print (f"self = {self}, other = {other}")
+                # print (f"expected User. recieved {type(other)}")
                 return False
         except Exception:
             return False

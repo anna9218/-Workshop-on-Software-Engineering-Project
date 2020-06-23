@@ -718,17 +718,17 @@ _users_with_their_own_rooms = [] # list of usernames that subsribed to room with
 @socket.on('connect')
 def connect():
     print(f"connect event. sid --> {request.sid}")
-    owner_username = TradeControlService.get_curr_username()
-    print(f"curr_nickname = {owner_username}")
-    if (owner_username != ""):
-        _users[owner_username] = request.sid
+    username = TradeControlService.get_curr_username()
+    print(f"curr_nickname = {username}")
+    if (username != ""):
+        _users[username] = request.sid
         # print ("in if")
         for store in _stores:
             # print ("in for")
-            if store.is_subscribed_to_store(owner_username):
+            if store.is_subscribed_to_store(username) and not store.is_logged_in(username):
                 # print("before join")
-                join_room(room=store.store_name(), sid=_users[owner_username])
-                print(f"username {owner_username} is added as a subscriber to store {store.store_name()} publisher")
+                join_room(room=store.store_name(), sid=_users[username])
+                print(f"username {username} is added as a subscriber to store {store.store_name()} publisher")
 
     print(f"users list: {_users}")
 
