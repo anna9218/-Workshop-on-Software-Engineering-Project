@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
 from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole, TradeControl
@@ -9,6 +10,11 @@ from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermiss
 
 class StoreOwnerOrManagerTests(unittest.TestCase):
     def setUp(self) -> None:
+        if not ("testing" in rel_path):
+            raise ReferenceError("The Data Base is not the testing data base.\n"
+                                 "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                                 "\t\t\t\t and change rel_path to test_rel_path.\n"
+                                 "\t\t\t\tThanks :D")
         self.__store_owner_or_manager_role: StoreOwnerOrManagerRole = StoreOwnerOrManagerRole()
         self.__trade_control_mock: TradeControl = TradeControl.get_instance()
         self.store_mock = Store("store1")

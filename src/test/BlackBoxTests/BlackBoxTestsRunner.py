@@ -2,6 +2,8 @@
     test suite class - used to organize the tests and run them together
 """
 import unittest
+
+from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
 from src.test.BlackBoxTests.AcceptanceTests import UcTests
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointManagerTest import AppointManagerTest as Test6
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointOwnerTest import AppointOwnerTest as Test2
@@ -63,6 +65,17 @@ class BlackBoxTestsRunner:
     # pass runner the suite and run it
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
+
+    (DataAccessFacade.get_instance()).delete_purchases()
+    # (DataAccessFacade.get_instance()).delete_discount_policies()
+    (DataAccessFacade.get_instance()).delete_statistics()
+    (DataAccessFacade.get_instance()).delete_store_owner_appointments()
+    (DataAccessFacade.get_instance()).delete_products_in_baskets()
+    (DataAccessFacade.get_instance()).delete_products()
+    (DataAccessFacade.get_instance()).delete_store_manager_appointments()
+    (DataAccessFacade.get_instance()).delete_stores()
+    (DataAccessFacade.get_instance()).delete_users()
+
 
 
 if __name__ == '__main__':

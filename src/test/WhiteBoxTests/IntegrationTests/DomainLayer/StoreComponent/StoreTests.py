@@ -360,7 +360,7 @@ class StoreTests(unittest.TestCase):
         user.register("eden", "password")
 
         # All valid
-        self.assertTrue(self.store.add_owner("Eytan", user))
+        self.assertTrue(self.store.add_owner("Eytan", user)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
@@ -368,7 +368,7 @@ class StoreTests(unittest.TestCase):
         guest = User()
 
         # Invalid - user doesn't register
-        self.assertFalse(self.store.add_owner("Eytan", guest))
+        self.assertFalse(self.store.add_owner("Eytan", guest)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
@@ -377,19 +377,20 @@ class StoreTests(unittest.TestCase):
         owner.register("probably eden", "password")
 
         # Invalid - Owner doesn't exist
-        self.assertFalse(self.store.add_owner("Eytan Not an Owner", owner))
+        self.assertFalse(self.store.add_owner("Eytan Not an Owner", owner)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
 
         # Invalid - Already owner
-        self.assertFalse(self.store.add_owner(self.owner.get_nickname(), user))
+        result = self.store.add_owner(self.owner.get_nickname(), user)['response']
+        self.assertFalse(result)
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
 
         # Invalid - Circular appointments
-        self.assertFalse(self.store.add_owner(user.get_nickname(), self.owner))
+        self.assertFalse(self.store.add_owner(user.get_nickname(), self.owner)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
@@ -401,7 +402,7 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(manager in self.store.get_managers())
 
         # All valid - appoint manager as owner
-        self.assertTrue(self.store.add_owner("Eytan", manager))
+        self.assertTrue(self.store.add_owner("Eytan", manager)['response'])
         self.assertEqual(len(self.store.get_owners()), 3)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(manager in self.store.get_owners())

@@ -8,6 +8,8 @@ import unittest
 #     import FacadeDeliveryTests as Uc1
 # from src.test.WhiteBoxTests.UnitTests.TestCases.DomainLayer.PaymentComponent.FacadePaymentTests \
 #     import FacadePaymentTests as Uc2
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
+from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
 from src.test.WhiteBoxTests.UnitTests.TestCases.DomainLayer.StoreComponent.PurchasePolicyComposite.Leaves.\
     BundleDealPolicyTests import BundleDealPolicyTests as Uc3
 from src.test.WhiteBoxTests.UnitTests.TestCases.DomainLayer.StoreComponent.PurchasePolicyComposite.Leaves.\
@@ -62,13 +64,13 @@ from src.test.WhiteBoxTests.IntegrationTests.DomainLayer.UserComponent.ShoppingC
     ShoppingCartTests as Ut10
 from src.test.WhiteBoxTests.IntegrationTests.DomainLayer.UserComponent.ShoppingBasketTests import \
     ShoppingBasketTests as Ut11
-# from src.test.WhiteBoxTests.IntegrationTests.DomainLayer.TradeComponent.TradeControlTestCase import \
-#     TradeControlTestCase as Ut12
-# from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.GuestRoleTests import GuestRoleTest as Ut13
-# from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SystemManagerRoleTests import SystemManagerRoleTests as Ut14
-# from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SubscriberRoleTests import SubscriberRoleTests as Ut15
-# from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.StoreOwnerOrManagerTests import \
-#     StoreOwnerOrManagerTests as Ut16
+from src.test.WhiteBoxTests.IntegrationTests.DomainLayer.TradeComponent.TradeControlTestCase import \
+    TradeControlTestCase as Ut12
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.GuestRoleTests import GuestRoleTest as Ut13
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SystemManagerRoleTests import SystemManagerRoleTests as Ut14
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SubscriberRoleTests import SubscriberRoleTests as Ut15
+from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.StoreOwnerOrManagerTests import \
+    StoreOwnerOrManagerTests as Ut16
 # ---------------------------------- end integration tests imports -----------------------------------------------------
 
 
@@ -115,19 +117,36 @@ class WhiteBoxTestsRunner:
     suite.addTest(loader.loadTestsFromTestCase(Ut9))
     suite.addTest(loader.loadTestsFromTestCase(Ut10))
     suite.addTest(loader.loadTestsFromTestCase(Ut11))
-    # suite.addTest(loader.loadTestsFromTestCase(Ut12))
-    # suite.addTest(loader.loadTestsFromTestCase(Ut13))
-    # suite.addTest(loader.loadTestsFromTestCase(Ut14))
-    # suite.addTest(loader.loadTestsFromTestCase(Ut15))
-    # suite.addTest(loader.loadTestsFromTestCase(Ut16))
+    suite.addTest(loader.loadTestsFromTestCase(Ut12))
+    suite.addTest(loader.loadTestsFromTestCase(Ut13))
+    suite.addTest(loader.loadTestsFromTestCase(Ut14))
+    suite.addTest(loader.loadTestsFromTestCase(Ut15))
+    suite.addTest(loader.loadTestsFromTestCase(Ut16))
 
 # ---------------------------------- add integration tests end ---------------------------------------------------------
+
+    if not ("testing" in rel_path):
+        raise ReferenceError("The Data Base is not the testing data base.\n"
+                             "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                             "\t\t\t\t and change rel_path to test_rel_path.\n"
+                             "\t\t\t\tThanks :D")
 
     # pass runner the suite and run it
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 
-    if __name__ == '__main__':
-        unittest.main()
+    (DataAccessFacade.get_instance()).delete_purchases()
+    # (DataAccessFacade.get_instance()).delete_discount_policies()
+    (DataAccessFacade.get_instance()).delete_statistics()
+    (DataAccessFacade.get_instance()).delete_store_owner_appointments()
+    (DataAccessFacade.get_instance()).delete_products_in_baskets()
+    (DataAccessFacade.get_instance()).delete_products()
+    (DataAccessFacade.get_instance()).delete_store_manager_appointments()
+    (DataAccessFacade.get_instance()).delete_stores()
+    (DataAccessFacade.get_instance()).delete_users()
+
+
+if __name__ == '__main__':
+    unittest.main()
 
 

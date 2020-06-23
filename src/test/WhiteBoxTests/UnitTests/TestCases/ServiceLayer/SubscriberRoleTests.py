@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import Mock
 from unittest.mock import MagicMock
 
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.ServiceLayer.SubscriberRole import SubscriberRole
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
@@ -9,6 +10,11 @@ from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
 class SubscriberRoleTests(unittest.TestCase):
     def setUp(self):
+        if not ("testing" in rel_path):
+            raise ReferenceError("The Data Base is not the testing data base.\n"
+                                 "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                                 "\t\t\t\t and change rel_path to test_rel_path.\n"
+                                 "\t\t\t\tThanks :D")
         self.__subscriber: SubscriberRole = SubscriberRole()
         self.__trade_control_mock: TradeControl = TradeControl.get_instance()
 

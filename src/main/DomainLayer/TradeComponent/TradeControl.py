@@ -9,6 +9,8 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
+from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
+from src.main.ResponseFormat import ret
 import jsonpickle
 
 
@@ -31,10 +33,10 @@ class TradeControl:
         else:
             self.__curr_user = User()
             self.__managers = []
-            self.__stores = []
+            self.__subscribers = self.__pull_subscribers_from_db()
+            self.__stores = self.__pull_stores_from_db()
             # self.__stores.append(Store("einat"))
             # self.__stores.append(Store("Eden"))
-            self.__subscribers = []
             TradeControl.__instance = self
 
     @logger
@@ -59,11 +61,18 @@ class TradeControl:
             temp = User()
             temp.register(nickname, password)
             self.__managers.append(temp)
+            db_result = (DataAccessFacade.get_instance()).update_users(old_username=nickname, new_is_system_manager=True)
+            if not db_result['response']:
+                return db_result
             return {'response': True, 'msg': "User " + nickname + " was registered as system manager successfully"}
         else:
             if len(self.__managers) == 0:
                 self.register_guest(nickname, password)
                 self.__managers.append(self.get_subscriber(nickname))
+                db_result = (DataAccessFacade.get_instance()).update_users(old_username=nickname,
+                                                                           new_is_system_manager=True)
+                if not db_result['response']:
+                    return db_result
                 return {'response': True, 'msg': "User " + nickname + " was registered as system manager successfully"}
             else:
                 return {'response': False, 'msg': "User " + nickname + " is not registered as a subscriber"}
@@ -95,6 +104,9 @@ class TradeControl:
         result = new_suscriber.register(nickname, password)
         if result['response']:
             self.subscribe(new_suscriber)
+            db_result = (DataAccessFacade.get_instance()).write_user(username=nickname,
+                                                                     password=new_suscriber.get_password())
+            return db_result
         return result
 
     @logger
@@ -124,6 +136,9 @@ class TradeControl:
             if s.get_nickname() == nickname:
                 self.__subscribers.remove(s)
                 s.unregistered()
+                db_result = (DataAccessFacade.get_instance()).delete_users(username=nickname)
+                if not db_result['response']:
+                    return db_result
                 return True
         return False
         #         return {'response': True, 'msg': "User " + nickname + " was unsubscribe successfully"}
@@ -1040,6 +1055,14 @@ class TradeControl:
 
     @staticmethod
     @logger
+    def delete_policy(store_name: str, policy_name: str):
+        try:
+            return (TradeControl.get_instance()).get_store(store_name).delete_policy(policy_name)
+        except Exception:
+            return ret(False, "Store doesn't exist.")
+
+    @staticmethod
+    @logger
     def at_least_one(details: {"name": str, "operator": str, "products": [str], "min_amount": int or None,
                                "max_amount": int or None, "dates": [dict] or None, "bundle": bool or None},
                      check_product: bool):
@@ -1150,3 +1173,25 @@ class TradeControl:
 
     def __delete__(self):
         TradeControl.__instance = None
+
+# ---------------------------------------------------------------------------------------
+
+    def __pull_subscribers_from_db(self) -> list:
+        subscribers_from_db = (DataAccessFacade.get_instance()).read_users([])['response']
+        output_lst = []
+        for subscriber in subscribers_from_db:
+            user = User()
+            user.register_from_db(subscriber['username'], subscriber['password'])
+            if subscriber['is_system_manager']:
+                self.get_managers().insert(0, user)
+            output_lst.insert(0, user)
+        return output_lst
+
+    def __pull_stores_from_db(self) -> list:
+        stores_from_db = (DataAccessFacade.get_instance()).read_stores([])['response']
+        output_lst = []
+        for store in stores_from_db:
+            store_obj = Store(store['store_name'])
+            store_obj.get_owners_appointments().append(StoreAppointment(None, self.__curr_user, []))
+            output_lst.insert(0, store_obj)
+        return output_lst

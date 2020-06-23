@@ -837,7 +837,7 @@ class Store:
         if not 0 <= percentage <= 100:
             return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
 
-        if not datetime.today().date() < valid_until.date():
+        if not datetime.date.today() < valid_until.date():
             return Response.ret(False, "The last day of the discount is invalid.")
 
         discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
@@ -904,7 +904,7 @@ class Store:
             return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
 
         if valid_until is not None:
-            if not datetime.today().date() < valid_until.date():
+            if not datetime.date.today() < valid_until.date():
                 return Response.ret(False, "The last day of the discount is invalid.")
 
         discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
@@ -976,7 +976,7 @@ class Store:
         if not 0 <= percentage <= 100:
             return {'response': False, 'msg': "Illegal percentage. Percentage should be  0 <= percentage <= 100."}
 
-        if not datetime.today().date() < valid_until.date():
+        if not datetime.date.today() < valid_until.date():
             return Response.ret(False, "The last day of the discount is invalid.")
 
         discount_policies_names = [discount.get_name() for discount in self.__discount_policies]
