@@ -94,10 +94,12 @@ export async function addToProductsCart(store_name, product_name, product_amount
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function updateShoppingCart(option_flag, product){
-    return axios.post('http://localhost:5000/update_shopping_cart', {
-        option_flag: option_flag,
-        product: product
+export async function updateShoppingCart(action_type, product_name, store_name, amount){
+    return axios.post('http://localhost:5000/update_or_remove_from_shopping_cart', {
+        action_type: action_type,
+        store_name: store_name,
+        amount: amount,
+        product_name: product_name
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -107,9 +109,10 @@ export async function purchaseCart(){
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function confirmPurchase(address, purchase_details){
+export async function confirmPurchase(delivery_details, payment_details, purchase_details){
     return axios.post('http://localhost:5000/confirm_purchase', {
-        address: address,
+        delivery_details: delivery_details,
+        payment_details: payment_details,
         purchases: purchase_details
     })
     .then((response) => (response.data), (error) => {console.log(error)});
@@ -322,7 +325,7 @@ export async function addAndUpdatePurchasePolicy(action_type, store_name, policy
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
-export async function addAndUpdateDiscountPolicy(action_type, store_name, policy_name, product_name, date, percentage, product, min_amount, min_purchase_price){
+export async function addAndUpdateDiscountPolicy(action_type, store_name, policy_name, product_name, date, percentage, new_policy_name ,product, min_amount, min_purchase_price){
     return axios.post('http://localhost:5000/add_and_update_dicount_policy', {
         action_type: action_type,
         store_name: store_name,
@@ -332,7 +335,21 @@ export async function addAndUpdateDiscountPolicy(action_type, store_name, policy
         percentage: percentage,
         product: product,
         min_amount: min_amount,
-        min_purchase_price: min_purchase_price
+        min_purchase_price: min_purchase_price,
+        new_policy_name: new_policy_name
+    })
+    .then((response) => (response.data), (error) => {console.log(error)});
+}
+
+export async function addCompositeDiscountPolicy(store_name, policy1, policy2, operator, percentage, new_policy_name ,date){
+    return axios.post('http://localhost:5000/add_composite_dicount_policy', {
+        store_name: store_name,
+        policy1: policy1,
+        policy2: policy2,
+        operator: operator,
+        percentage: percentage,
+        new_policy_name: new_policy_name,
+        date: date
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }

@@ -39,6 +39,7 @@ export const setHandlers = async () => {
   socket.socket.on("message", (data) => {
     // const {storeName, msg} = data;
      const msgs = data['messages'];
+     // TODO: eden call to add messages to my msgs list 
     alert(msgs)
     // TODO eden: display the notification without button
   });
@@ -60,7 +61,7 @@ export const login = (user_name) => {
 
 export const register_new_store = (username, storename) => {
   console.log("on register store");
-  if (counter.counter == 1)
+  if (counter.counter === 1)
     console.log("call set handlers");
     setHandlers();
   socket.socket.emit("join", { username: username, store:storename });

@@ -105,7 +105,7 @@ class Login extends React.Component{
              <Form >
                  <Form.Group as={Row} style={{marginRight:"1%" , marginLeft: "1%"}}>
                  <div><Button variant="dark" as={Link} to="./register">Register</Button></div>
-                 <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div>
+                 {/* <div style={{marginLeft:"1%"}}> <Button variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(this.props)}>Back</Button></div> */}
                  </Form.Group>
              </Form>
          </div>

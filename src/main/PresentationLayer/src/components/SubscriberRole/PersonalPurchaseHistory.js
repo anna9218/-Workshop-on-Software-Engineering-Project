@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Table, Button, Accordion, Card, Form, Row} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-import * as BackOption from '../Actions/GeneralActions/Back'
 
 
 function PersonalPurchaseHistory(props){
@@ -87,7 +86,6 @@ function PersonalPurchaseHistory(props){
         ))}
       </Accordion>
 
-      <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
       
   </div>
   );

@@ -1,10 +1,11 @@
 from src.Logger import errorLogger, loggerStaticMethod, logger
 from src.main.DomainLayer.DeliveryComponent.DeliverySubject import DeliverySubject
+from src.main.DomainLayer.DeliveryComponent.RealDelivery import RealDelivery
 
 
 class DeliveryProxy(DeliverySubject):
     __instance = None
-    __realSubject = None
+    __realSubject = RealDelivery()
 
     @staticmethod
     def get_instance():
@@ -21,69 +22,68 @@ class DeliveryProxy(DeliverySubject):
             raise Exception("This class is a singleton!")
         else:
             super().__init__()
-            self.__isConnected = False
-            if DeliveryProxy.__realSubject:
-                DeliveryProxy.__instance = self.__realSubject
-            else:
-                DeliveryProxy.__instance = self
-
-    @logger
-    def connect(self):
-        try:
-            if not self.__isConnected:
-                self.__isConnected = True
-                return True
-            else:
-                return False
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
-
-    @logger
-    # need to check address details with system once a system is set
-    def deliver_products(self, address: str, products_ls: []) -> {'response': bool, 'msg': str}:
-        """
-        :param address:
-        :param products_ls: list [{"store_name": str, "basket_price": float,
-                            "products": [{"product_name", "product_price", "amount"}]}]
-        :return: dict = {'response': bool, 'msg': str}:
-                 response = true if successful, otherwise false
-        """
-        try:
-            if not self.__isConnected:
-                return {'response': False, 'msg': "Delivery failed. Delivery system is not connected"}
-            if not self.__check_valid_details(address, products_ls):
-                return {'response': False, 'msg': "Delivery failed. invalid payment details"}
-
-            else:
-                return {'response': True, 'msg': "Delivery was successful"}
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
-
-    @logger
-    def disconnect(self):
-        try:
-            if self.__isConnected:
-                self.__isConnected = False
-                return True
-            else:
-                return False
-        except Exception:
-            errorLogger("System is down!")
-            raise ResourceWarning("System is down!")
+            # self.__isConnected = False
+            # if DeliveryProxy.__realSubject:
+            #     DeliveryProxy.__instance = self.__realSubject
+            # else:
+            DeliveryProxy.__instance = self
 
     @logger
     def is_connected(self) -> bool:
-        return self.__isConnected
-
-    @staticmethod
-    def __check_valid_details(address: str, products: []) -> bool:
-        loggerStaticMethod("__check_valid_details", [products, address])
-        if len(address) == 0 or len(products) == 0:
+        if self.__realSubject is None:
             return False
-        else:
-            return True
+
+        # return self.__isConnected
+        return self.__realSubject.is_connected()
+
+    @logger
+    def deliver_products(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str,
+                                                  'zip': str}) -> {'response': bool, 'msg': str}:
+        """
+        :delivery_details:
+        :return: dict = {'response': bool, 'msg': str}:
+                 response = true if successful, otherwise false
+        """
+        # try:
+        if self.__realSubject is None:
+            return {'response': False, 'msg': "Delivery failed. System is down!"}
+
+        if not self.__realSubject.is_connected():
+            return {'response': False, 'msg': "Delivery failed. Delivery system is not connected"}
+
+        delivered = self.__realSubject.deliver_products(delivery_details)
+
+        if delivered["response"]:
+            return {"response": True, "msg": "Delivery was successful. Transaction ID: " + delivered["msg"], "tid": delivered["msg"]}
+        return delivered
+
+    @logger
+    def cancel_supply(self, transaction_id: str) -> {'response': bool, 'msg': str}:
+        """
+            cancel delivery
+        :param transaction_id:
+        :return:dict = {'response': bool, 'msg': str}:
+                 response = true if successful, otherwise false
+        """
+        if self.__realSubject is None:
+            return {'response': False, 'msg': "Delivery cancellation failed. System is down!"}
+
+        if not self.__realSubject.is_connected():
+            return {'response': False, 'msg': "Delivery cancellation failed. Delivery system is not connected."}
+
+        return self.__realSubject.cancel_supply(transaction_id)
+
+    def cause_connection_error(self):
+        self.__realSubject.cause_connection_error()
+
+    def cause_timeout_error(self):
+        self.__realSubject.cause_timeout_error()
+
+    def set_connection_back(self):
+        self.__realSubject.set_connection_back()
+
+    def set_real(self, real: RealDelivery):
+        self.__realSubject = real
 
     def __delete__(self):
         DeliveryProxy.__instance = None

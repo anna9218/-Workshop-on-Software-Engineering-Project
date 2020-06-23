@@ -9,17 +9,21 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
-        self.__manager = "TradeManager"
-        self.__manager_password = "123456789"
+        self.__manager = "u1"
+        self.__manager_password = "pass"
         self.init_sys()
-        self.login("TradeManager", "123456789")
+        self.login("u1", "pass")
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
                                        [{"name": "product", "price": 10, "category": "general", "amount": 10,
                                          "purchase_type": 0, "discount_type": 0}])
         self.add_products_to_cart("product", self._store_name, 5, 0, 0)
         self.__purchase_ls = self.purchase_products()
-        self.confirm_purchase("my address 12", self.__purchase_ls)
+        self.__payment_details = {'card_number': "123", 'month': "march", 'year': "1991", 'holder': "s",
+                                  'ccv': "111", 'id': "333"}
+        self.__delivery_details = {'name': "nickname", 'address': "address 12", 'city': "ct", 'country': "i",
+                                   'zip': "123"}
+        self.confirm_purchase(self.__delivery_details, self.__payment_details, self.__purchase_ls)
         self.__date = datetime.now()
 
     def test_success(self):
@@ -40,8 +44,6 @@ class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
         self.remove_purchase(self._store_name, self.__date)
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 10}])
-        self.disconnect_payment_sys()
-        self.disconnect_delivery_sys()
         self.remove_products_from_store(self._store_name, ["product"])
         self.remove_store("store")
         self.delete_user(self.__manager)

@@ -8,16 +8,18 @@ import * as BackOption from '../Actions/GeneralActions/Back'
 function StorePurchaseHistory(props){
   useEffect(() => {
     setSelectedStore(props.location.store)
-    fetchPersonalPurchaseHistory(props.location.store);
+    fetchStorePurchaseHistory(props.location.store);
   }, []);
 
 
   const [purchaseHistory, setPurchaseHistory] = useState([]); 
   const [store, setSelectedStore] = useState(""); 
 
-  const fetchPersonalPurchaseHistory = async (store_name) => {
+  const fetchStorePurchaseHistory = async (store_name) => {
     const promise = theService.fetchStorePurchaseHistory(store_name); // goes to register.js and sends to backend
     promise.then((data) => {
+    alert(data["data"])
+
         if(data["data"].length === 0)
             alert("There are no purchases in store "+ store_name + ".");
         else
@@ -81,7 +83,7 @@ function StorePurchaseHistory(props){
         {/* ))} */}
       {/* </Accordion> */}
 
-      <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button>
+      {/* <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button> */}
       
   </div>
   );

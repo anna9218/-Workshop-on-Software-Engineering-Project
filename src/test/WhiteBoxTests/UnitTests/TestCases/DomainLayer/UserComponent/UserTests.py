@@ -9,7 +9,6 @@ from src.test.WhiteBoxTests.UnitTests.Stubs.StubStore import StubStore
 
 class UserTests(unittest.TestCase):
     def setUp(self):
-        # self.user.logoutState = StubLogout()
         self.__valid_name = "anna9218"
         self.__valid_pass = "password"
         self.__invalid_input = ""

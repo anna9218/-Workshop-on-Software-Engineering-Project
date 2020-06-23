@@ -55,13 +55,14 @@ function AddDiscountPolicyForm(props){
       }
       else if(showMinProductPreCondition && (minProductAmount === null || minProductAmount < 0))
         alert("Minimum product amount has to be set and must be bigger than 0.")
-      else if(showMinPurchasePreCondition && (minPurchasePrice === null || minPurchasePrice < 0))
+      else if(showMinPurchasePreCondition && (minPurchasePrice === null || minPurchasePrice < 0)
+              && !(showProductPreCondition && productPreCondition === 'Any product'))
         alert("Minimum purchase price has to be set and must be bigger than 0.")
       else if(date === "")
         alert("You must set expiration date.")
       else{
           
-        const promise = theService.addAndUpdateDiscountPolicy('add', storeName, policyName, selectedProduct, date, percentage, !showProductPreCondition ? null : (productPreCondition === "Any product" ? "all" : productPreCondition), minProductAmount, minPurchasePrice)
+        const promise = theService.addAndUpdateDiscountPolicy('add', storeName, policyName, selectedProduct, date, percentage, null, !showProductPreCondition ? null : (productPreCondition === "Any product" ? "all" : productPreCondition), minProductAmount, minPurchasePrice)
         // const promise = theService.addAndUpdateDiscountPolicy('add', storeName, policyName, selectedProduct, date, percentage,   (productPreCondition === "Any product" ? "all" : productPreCondition), minProductAmount, minPurchasePrice)
 
         // const promise = theService.addAndUpdatePurchasePolicy('add', props.storeName, policyName, selectedProduct, 
@@ -126,7 +127,7 @@ function AddDiscountPolicyForm(props){
 
     
     return (
-        // <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
+        <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
         <div style={{marginTop:"2%" , marginLeft: "20%", marginRight: "20%", border: "1px solid", borderColor: "#CCCCCC"}}>
   
           <Container>
@@ -208,6 +209,7 @@ function AddDiscountPolicyForm(props){
             </Form>
           </Container>
   
+        </div>
         </div>
     );
   }

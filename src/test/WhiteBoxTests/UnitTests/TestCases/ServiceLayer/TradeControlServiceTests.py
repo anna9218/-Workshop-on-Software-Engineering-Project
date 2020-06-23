@@ -1,15 +1,12 @@
-import os
 import unittest
 from unittest.mock import MagicMock
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
-# from Backend.src.main.ServiceLayer.TradeControlService import
 from src.main.ServiceLayer.TradeControlService import TradeControlService
 
 
 class TradeControlServiceTests(unittest.TestCase):
-    # @logger
     def setUp(self):
         self.__trade = TradeControlService()
 
@@ -21,10 +18,6 @@ class TradeControlServiceTests(unittest.TestCase):
         self.__payment_proxy_mock.is_connected = MagicMock(return_value=True)
         self.__payment_proxy_mock.connect = MagicMock(return_value=True)
 
-        # self.__guest_role_mock = GuestRole()
-        # self.__guest_role_mock.register = MagicMock(return_value=False)
-
-    # @logger
     def test_init_system(self):
         # # test pre conditions:
         # res = self.__trade.init_system()  # returns False - payment and delivery already connected
@@ -68,9 +61,6 @@ class TradeControlServiceTests(unittest.TestCase):
                       (TradeControl.get_instance()).get_store("s1").get_managers())
         self.assertIn((TradeControl.get_instance()).get_subscriber("u6"),
                       (TradeControl.get_instance()).get_store("s1").get_managers())
-
-    def tearDown(self):
-        pass
 
     def __repr__(self):
         return repr("TradeControlServiceTests")
