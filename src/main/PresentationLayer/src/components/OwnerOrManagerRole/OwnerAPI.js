@@ -3,7 +3,12 @@ import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-boot
 import {Link} from 'react-router-dom'
 import * as theService from '../../services/communication';
 import SubscriberAPI from '../SubscriberRole/SubscriberAPI';
+import * as Notifications from './NotificationsActions';
+import { AlertList, Alert, AlertContainer } from "react-bs-notifier";
+import { MDBNotification,MDBIcon,  MDBContainer ,MDBBtn, toast} from "mdbreact"
+import { IoMdNotifications} from "react-icons/io";
 
+// window.$store = "1"
 
 class OwnerAPI extends React.Component {
     constructor(props) {
@@ -11,10 +16,15 @@ class OwnerAPI extends React.Component {
 
         this.state = {
             ownedStores: [],
-            selectedStore: ""
+            selectedStore: "",
+            showNotifications: false
         }
         
       this.logoutHandler = this.logoutHandler.bind(this);
+      this.notificationsHandler = this.notificationsHandler.bind(this);
+      this.setSelectedStore = this.setSelectedStore.bind(this);
+
+      
     }
 
     logoutHandler = async () =>{
@@ -24,6 +34,11 @@ class OwnerAPI extends React.Component {
           // TODO: yarin  
             this.props.history.push("/");
         });
+    };
+
+    notificationsHandler = async () =>{
+        // alert(window.$notifications)
+        this.setState({showNotifications: !this.state.showNotifications})
     };
 
     componentDidMount = () => {
@@ -40,6 +55,9 @@ class OwnerAPI extends React.Component {
         });
     }
 
+    setSelectedStore = (store) =>{
+        this.setState({selectedStore:store})
+    }
     render(){
         return(
             <Container style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
@@ -50,14 +68,28 @@ class OwnerAPI extends React.Component {
                             <h1 style={{textAlign: "center"}}>Welcome Dear Owner!</h1>
                         </Col>
                         <Col>
-                        <Link to='/logout'>
-                            <Button variant="dark" id="logout" onClick={this.logoutHandler}>Logout</Button>
-                        </Link>
+                            <div style={{marginLeft:"75%", marginTop:"3%"}}>
+                            <Link>
+                                <IoMdNotifications class="notification-icon-effect" color="black" font-size="40px" onClick={this.notificationsHandler}/>
+                                { window.$notifications.length > 0 ?
+                                    <div id="ex4">
+                                        <span class="p1 fa-stack fa-2x has-badge" data-count={window.$notifications.length}></span>
+                                    </div>
+                                  : null}
+                                </Link>
+                            </div>
+                        </Col>
+                        <Col>
+                            <div style={{marginRight:"50%", marginTop:"3%"}}>
+                                <Link to='/logout'>
+                                    <Button variant="dark" id="logout" onClick={this.logoutHandler}>Logout</Button>
+                                </Link>
+                            </div>   
                         </Col>
                     </Row>
                 </Jumbotron>
                 
-                <Form.Group controlId="stores_ControlSelect2" onChange={ event => {this.setState({selectedStore: event.target.value})}}>
+                <Form.Group controlId="stores_ControlSelect2" onChange={ event => {this.setSelectedStore(event.target.value)}}>
                 <Form.Label>Please choose a store:</Form.Label>
                 <Form.Control as="select">
                     {/* <option value={""} >Select Store</option> */}
@@ -146,10 +178,64 @@ class OwnerAPI extends React.Component {
                                                                                store: this.state.selectedStore, props: this.props}}>
                         Manage Store Policies
                     </Button>
+                   
 
-                    <Button variant="secondary" size="lg" block as={Link} to="/notifications">
-                        Notifications
-                    </Button>
+                    { this.state.showNotifications ? 
+                        
+                         <div>
+                             <MDBContainer style={{width: "auto", position: "fixed", bottom: "11px", right: "11px", zIndex: 9999}}>
+                                { window.$notifications.map(noti => (
+                                    <MDBNotification
+                                        show
+                                        fade
+                                        icon="bell"
+                                        iconClassName="green-text"
+                                        bodyClassName="p-3 font-weight-bold white-text"
+                                        className="notification-body"
+                                        titleClassName="notification-title"
+                                        title="New Message"
+                                        message={ noti['msg_type'] === 'agreement' ? 
+                                                    <div>
+                                                        <div>{noti['msg']}</div>
+                                                        <div style={{marginTop:"2%"}}>
+                                                            <Button variant='dark' onClick={event => Notifications.sendAgreementAnswer(event, noti, true)}>approve</Button>
+                                                            <Button variant='dark' onClick={event => Notifications.sendAgreementAnswer(event, noti, true)} style={{marginLeft:"3%"}}>decline</Button>
+                                                        </div>
+                                                    </div> 
+                                                    : 
+                                                    <div>
+                                                        <div>{noti['msg']} </div>
+                                                        <div style={{marginTop:"2%"}}><Button variant='dark' onClick={event => Notifications.removeNotification(noti['id'])} style={{marginLeft:"3%"}}>ok</Button></div>
+                                                    </div>
+                                                }
+                                       
+                                    />
+                                    ))
+                                }
+                            </MDBContainer>
+
+                            {/* <AlertContainer>
+                                { window.$notifications.map(noti => (
+                                    <div>
+                                        <Alert id="model" type="success"  show="true" onDismiss={true} timeout={3000} 
+                                               headline=
+                                                        { <div> 
+                                                            Message:
+                                                            <button type="button" class="close" closeLable="close" aria-label="Close" data-dismiss="alert">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                          </div> 
+                                                        }>
+                                           
+                                            hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+                                            {noti['msg']}
+                                           
+                                        </Alert>
+                                    </div>
+                                ))}
+                            </AlertContainer> */}
+                         </div>
+                         : null}
 
                 </Row>
             </Container>

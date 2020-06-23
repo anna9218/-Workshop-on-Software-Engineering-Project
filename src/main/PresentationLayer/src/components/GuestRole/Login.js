@@ -38,6 +38,7 @@ class Login extends React.Component{
                 const userType = theService.getUserType();
                 userType.then((data) => {
                   if(data["data"] === "OWNER"){
+                    // yarin
                     // if store owner - redirect to subscriber home page
                     this.props.history.push({pathname: '/owner', props: this.props});
                   }
@@ -45,7 +46,7 @@ class Login extends React.Component{
                     // if store manager - redirect to subscriber home page
                     this.props.history.push({pathname: '/manager', props: this.props});
                   }
-                  else if(data["data"] === "SYS-MANAGER"){
+                  else if(data["data"] === "SYSTEMMANAGER"){
                     this.props.history.push({pathname: '/systemmanager', props: this.props});
                   }
                   else{

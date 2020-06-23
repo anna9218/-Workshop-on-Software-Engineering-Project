@@ -1100,8 +1100,8 @@ class TradeControl:
 
     def get_user_type(self):
         roles = []
-
-        if self.__curr_user.get_nickname() in [user.get_nickname() for user in self.__managers]:
+        system_managers = [user.get_nickname() for user in self.__managers]
+        if self.__curr_user.get_nickname() in system_managers:
             return "SYSTEMMANAGER"
         if self.__curr_user.is_registered():
             roles.append("SUBSCRIBER")
