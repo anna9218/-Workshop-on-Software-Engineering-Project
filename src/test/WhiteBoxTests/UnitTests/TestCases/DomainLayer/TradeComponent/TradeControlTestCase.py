@@ -1,9 +1,11 @@
 import unittest
 
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
+from src.main.DomainLayer.UserComponent.User import User
 from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 from unittest.mock import MagicMock
 
@@ -151,6 +153,34 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(self.tradeControl.appoint_additional_owner("a", "myStore")['response'])
         self.assertTrue(store1.is_owner("appointee"))
         self.assertFalse(store1.is_owner("a"))
+
+    def test_update_agreement_participants(self):
+        self.curr_user = User()
+        self.curr_user.get_nickname = MagicMock(return_value="nickname")
+        self.tradeControl.set_curr_user(self.curr_user)
+
+        self.store_mock = Store("store")
+        self.store_mock.update_agreement_participants = MagicMock(return_value=True)
+        self.tradeControl.get_store = MagicMock(return_value=self.store_mock)
+        res = self.tradeControl.update_agreement_participants("appointee", "store", AppointmentStatus.APPROVED)
+        self.assertTrue(res["response"])
+
+        self.store_mock.update_agreement_participants = MagicMock(return_value=False)
+        self.tradeControl.get_store = MagicMock(return_value=self.store_mock)
+        res = self.tradeControl.update_agreement_participants("appointee", "store", AppointmentStatus.APPROVED)
+        self.assertFalse(res["response"])
+
+    def test_get_appointment_status(self):
+        self.store_mock = Store("store")
+        self.store_mock.get_appointment_status = MagicMock(return_value=AppointmentStatus.APPROVED)
+        self.tradeControl.get_store = MagicMock(return_value=self.store_mock)
+        res = self.tradeControl.get_appointment_status("appointee", "store")
+        self.assertEqual(res, AppointmentStatus.APPROVED)
+
+        self.store_mock.get_appointment_status = MagicMock(return_value=AppointmentStatus.DECLINED)
+        self.tradeControl.get_store = MagicMock(return_value=self.store_mock)
+        res = self.tradeControl.get_appointment_status("appointee", "store")
+        self.assertEqual(res, AppointmentStatus.DECLINED)
 
     def test_remove_owner(self):
         owner1 = StubUser()

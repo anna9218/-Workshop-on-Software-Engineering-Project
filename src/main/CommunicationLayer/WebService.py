@@ -9,6 +9,7 @@ from dateutil.parser import *
 
 # from src.main.CommunicationLayer import WebSocketService
 from src.main.CommunicationLayer.StorePublisher import StorePublisher
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.ServiceLayer.GuestRole import GuestRole
 from src.main.ServiceLayer.StoreOwnerOrManagerRole import StoreOwnerOrManagerRole
@@ -38,7 +39,6 @@ socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
 # 1 - purchase
 # 2 - add+remove manager
 # 3 - else
-
 
 # ------------------------------ GUEST ROLE SERVICES ------------------------------------#
 
@@ -164,11 +164,10 @@ def purchase_products():
     response = GuestRole.purchase_products()
     if response:
         # print(response)
-        purchases = response["purchases"]
         # print(purchases)
         # print(purchases[0])
         # print(purchases[0]["store_name"])
-        handle_purchase_msg(purchases[0]["store_name"])
+
         # print("after handle")
         return jsonify(data=response)
     return jsonify(msg="purchase products failed", data=response["response"], status=400)
@@ -182,6 +181,11 @@ def confirm_purchase():
         payment_details = request_dict.get('payment_details')
         details = request_dict.get("purchases")
         response = GuestRole.confirm_payment(delivery_details, payment_details, details)
+        if response['response']:
+            # purchases = details["purchases"]
+            # map(lambda purchase: handle_purchase_msg(purchase["store_name"]), purchases)
+            for purchase in details["purchases"]:
+                handle_purchase_msg(purchase["store_name"])
         if response:
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="purchase confirmation failed", data=response["response"], status=400)
@@ -222,7 +226,7 @@ def appoint_store_manager():
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         store_name = request_dict.get('store_name')  # str
         permissions = request_dict.get('permissions')  # list of tuples
-        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, numbersToEnum(permissions))
+        response = StoreOwnerOrManagerRole.appoint_store_manager(appointee_nickname, store_name, permissions)
         if response:
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
@@ -263,8 +267,42 @@ def appoint_store_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
         if response:
-            handle_agreement_msg(appointee_nickname, store_name)
+            if response["msg"] == "The request is pending approval":
+                # ----------------appointment agreement----------------------
+                msg = f"New owner appointment at store {store_name} - action required!"
+                notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+            elif response["response"]:
+                if add_subscriber_to_store(store_name, appointee_nickname):
+                    # TODO - we need to take into consideration LOGIN/LOGOUT
+                    print(_users)
+                    join_room(store_name, _users[appointee_nickname])
             return jsonify(msg=response["msg"], data=response["response"])
+    return jsonify(msg="Oops, communication error")
+
+
+@app.route('/handle_appointment_agreement_response', methods=['POST'])
+def handle_appointment_agreement_response():
+    if request.is_json:
+        request_dict = request.get_json()
+        appointee_nickname = request_dict.get('appointee_nickname')
+        store_name = request_dict.get('store_name')
+        appointment_agreement_response = request_dict.get('appointment_agreement_response')
+        if appointment_agreement_response == 1:
+            appointment_agreement_response = AppointmentStatus.DECLINED
+        if appointment_agreement_response == 2:
+            appointment_agreement_response = AppointmentStatus.APPROVED
+        response = StoreOwnerOrManagerRole.update_agreement_participants(appointee_nickname, store_name,
+                                                                         appointment_agreement_response)
+        if response:
+            # check is the status of the agreement is approved already
+            if response["response"]:
+                status = StoreOwnerOrManagerRole.get_appointment_status(appointee_nickname, store_name)
+                if status == AppointmentStatus.APPROVED:
+                    response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
+                    add_subscriber_to_store(store_name, appointee_nickname)
+                    msg = f"New owner {appointee_nickname} appointed at store {store_name}!"
+                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+            return jsonify(msg=response["msg"])
     return jsonify(msg="Oops, communication error")
 
 
@@ -321,7 +359,7 @@ def edit_manager_permissions():
         store_name = request_dict.get('store_name')  # str
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         permissions = request_dict.get('permissions')  # str
-        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, numbersToEnum(permissions))
+        response = StoreOwnerOrManagerRole.edit_manager_permissions(store_name, appointee_nickname, permissions)
         if response:
             return jsonify(data=response, msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
         else:
@@ -717,7 +755,6 @@ def websocket_open_store(data):
         print(f"recieved wrong join msg --> {data}")
 
 
-
 def create_new_publisher(storename, username):
     if get_store(storename) is None:
         if username == "":
@@ -728,7 +765,6 @@ def create_new_publisher(storename, username):
             _stores.append(store)
             # print(f"{storename} has been added by {username}")
             store.subscribe_owner(username)
-
 
 
 def append_user_to_room(storename, username, sid):
@@ -764,17 +800,19 @@ def notify_all(store_name, msg, event):
     #         'messages': [msg]
     #     }, room=store_name)
 
+
 def handle_purchase_msg(store_name):
-    msg = f"a purchase has been done at store {store_name}"
+    msg = f"A purchase has been made at store {store_name}"
     print(f"send msg: {msg}")
-    notify_all(store_name, {'messages':msg, 'store':store_name}, 'message')
+    notify_all(store_name, {'messages': msg, 'store': store_name}, 'message')
     # notify_all(store_name, jsonify(messages=msg, store=store_name))
+
 
 # FOR ANNA
 def handle_agreement_msg(appointe_name, store_name):
-    msg = f"would you like to appoint {appointe_name} to owner at store {store_name}"
+    msg = f"Would you like to appoint {appointe_name} as owner in store {store_name}?"
     print(f"send msg: {msg}")
-    notify_all(store_name, {'messages':msg, 'store':store_name}, "agreement")
+    notify_all(store_name, {'messages': msg, 'store': store_name, 'appointee_nickname': appointe_name}, "agreement")
     # notify_all(store_name, jsonify(messages=msg, store=store_name))
 
 

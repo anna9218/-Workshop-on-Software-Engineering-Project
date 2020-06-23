@@ -1,5 +1,7 @@
 import datetime
 import jsonpickle
+
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.CompositeFlag import CompositeFlag
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy, DiscountComponent
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.Leaves.ConditionalDiscountPolicy import \
@@ -7,6 +9,7 @@ from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.Leaves.Conditio
 from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.Leaves.VisibleDiscountPolicy import \
     VisibleDiscountPolicy
 from src.Logger import logger
+from src.main.DomainLayer.StoreComponent.AppiontmentAgreement import AppointmentAgreement
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
@@ -33,6 +36,7 @@ class Store:
         self.__purchases = []
         # default operator is 'and'
         self.__operator = "and"
+        self.__StoreOwnerAppointmentAgreements: [AppointmentAgreement] = []
 
     @logger
     def add_products(self, user_nickname: str,
@@ -223,26 +227,79 @@ class Store:
                  False else.
         """
 
-        if not appointee.is_registered():
-            return False
-
-        if self.is_owner(appointee.get_nickname()):
-            return False
+        # THESE CONDITIONS ARE ALREADY BEING CHECKED IN TRADE CONTROL
+        # if not appointee.is_registered():
+        #     return False
+        # if self.is_owner(appointee.get_nickname()):
+        #     return False
         # if self.is_owner(appointer_nickname):
         #     return False
 
         managers = self.get_managers()
+        managers_with_owner_permissions = list(filter(
+            lambda user: self.has_permission(user.get_nickname(), ManagerPermission.APPOINT_OWNER), managers))
 
         if self.has_permission(appointer_nickname, ManagerPermission.APPOINT_OWNER):
-            owners_and_managers = self.get_owners() + self.get_managers()
+            owners_and_managers = self.get_owners() + managers_with_owner_permissions
             appointer = list(filter(lambda user: user.get_nickname() == appointer_nickname, owners_and_managers))[0]
-            self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
+
             if appointee in managers:
                 appointment = [manager_appointment for manager_appointment in self.__StoreManagerAppointments
                                if manager_appointment.get_appointee() == appointee]
                 self.__StoreManagerAppointments.remove(appointment[0])
-            return True
+            # ----------------appointment agreement----------------------
+            if len(owners_and_managers) == 1:  # only one owner, and no managers with APPOINT_OWNER permission
+                self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
+                self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, [appointer]))
+                return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
+            else:  # more than one owner - they need the appointment as well
+                if self.check_appointment_exist(appointee.get_nickname()):
+                    self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
+                    return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
+                else:
+                    self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, owners_and_managers))
+                    return {'response': False, 'msg': "The request is pending approval"}
+            # ---------------------------------------------------------
+        return {'response': False, 'msg': "User has no permissions"}
+
+    @logger
+    def check_appointment_exist(self, appointee: str) -> bool:
+        for appointment in self.__StoreOwnerAppointmentAgreements:
+            if appointment.get_appointee().get_nickname() == appointee:
+                return True
         return False
+
+    @logger
+    def update_agreement_participants(self, appointee_nickname: str, owner_nickname: str,
+                                      owner_response: AppointmentStatus) -> bool:
+        """
+        :param appointee_nickname: the nickname of the user being appointed as new store owner
+        :param owner_nickname: the nickname of one of the owners, who participates in the appointment agreement
+        :param owner_response: the owners response - declined/approved
+        :return: True if the response was updated successfully, otherwise false
+        """
+        appointment_agreement = list(filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
+                                       self.__StoreOwnerAppointmentAgreements))
+        return appointment_agreement[0].update_agreement_participants(owner_nickname, owner_response)
+
+    # @logger
+    # def get_appointment_status(self, appointee_nickname: str):
+    #     appointment_agreement = filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
+    #                                    self.__StoreOwnerAppointmentAgreements)
+    #     return appointment_agreement.get_appointment_status()
+
+    @logger
+    def get_appointment_status(self, appointee_nickname: str) -> AppointmentStatus:
+        """
+        :param appointee_nickname: the nickname of the user being appointed as new store owner
+        :return: AppointmentStatus - DECLINED = 1,APPROVED = 2, PENDING = 3
+        """
+        appointment_agreement = list(filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
+                                       self.__StoreOwnerAppointmentAgreements))
+        return appointment_agreement[0].get_appointment_status()
+
+    def get_appointment_agreements(self):
+        return self.__StoreOwnerAppointmentAgreements
 
     @logger
     def is_owner(self, user_nickname: str):

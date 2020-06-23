@@ -5,6 +5,7 @@ import * as theService from '../../services/communication';
 import { confirmAlert } from 'react-confirm-alert'; 
 
 
+
 function AppointStoreManager(props){
     useEffect(() => {
         setSelectedStore(props.location.store)
@@ -66,7 +67,7 @@ function AppointStoreManager(props){
                         <div style={{ marginLeft:"4%"}}>
                                   <Row><Form.Check style = {{position: "sticky"}} checked={permissions.includes(1)} label="Manage Stock" type="checkbox" id={`auction-purchase`} onChange={(event => {addPermissions(1)})} />
                             </Row><Row><Form.Check style = {{position: "sticky"}} checked={permissions.includes(2)} label="Manage Store policies" type="checkbox" id={`auction-purchase`} onChange={(event => {addPermissions(2)})} />
-                            </Row><Row><Form.Check style = {{position: "sticky"}} checked={permissions.includes(3)} label="Appoint Additional Owner" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(3)})}/>
+                            {/* </Row><Row><Form.Check style = {{position: "sticky"}} checked={permissions.includes(3)} label="Appoint Additional Owner" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(3)})}/> */}
                             </Row><Row><Form.Check style = {{position: "sticky"}} checked={permissions.includes(5)} label="Appoint Additional Manager" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(5)})}/>
                             </Row><Row><Form.Check style = {{position: "sticky"}} checked={permissions.includes(6)} label="Edit Manager's Permissions" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(6)})}/>
                             </Row><Row><Form.Check style = {{position: "sticky"}} checked={permissions.includes(7)} label="Remove Store Manager" type="checkbox" id={`lottery-purchase`} onChange={(event => {addPermissions(7)})}/>

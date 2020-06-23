@@ -100,7 +100,7 @@ class StorePublisher:
         """
         counter = 0
         for subscriber in self.__subscribers:
-            if counter is not 0:
+            if counter != 0:
                 (owner_name, last_read_msg) = subscriber
                 if owner_name == nick_name:
                     # print(f"owner {owner_name}, id {last_read_msg}, sub {subscriber}")
