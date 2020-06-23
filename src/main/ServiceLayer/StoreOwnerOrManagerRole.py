@@ -76,6 +76,11 @@ class StoreOwnerOrManagerRole:
     @staticmethod
     @logger
     def get_appointment_status(appointee_nickname: str, store_name: str):
+        """
+        :param appointee_nickname: nickname of the new owner that is being appointed
+        :param store_name: store the owner should be added to
+        :return: AppointmentStatus - DECLINED = 1,APPROVED = 2, PENDING = 3
+        """
         return TradeControl.get_instance().get_appointment_status(appointee_nickname, store_name)
 
     # use case 4.4

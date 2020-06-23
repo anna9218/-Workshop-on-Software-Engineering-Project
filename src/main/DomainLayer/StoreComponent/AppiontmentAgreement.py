@@ -9,9 +9,11 @@ class AppointmentAgreement:
         self.__appointer = appointer
         self.__agreement_status = AppointmentStatus.PENDING
         self.__agreement_participants: [{"participant": User, "status": AppointmentStatus}] = []
+        self.init_agreement_participants(agreement_participants)
 
+    def init_agreement_participants(self, agreement_participants: list):
         for participant in agreement_participants:
-            if participant.get_nickname() == appointer.get_nickname():
+            if participant.get_nickname() == self.__appointer.get_nickname():
                 # set appointer's response as approved
                 self.__agreement_participants.append({"participant": participant, "status": AppointmentStatus.APPROVED})
             else:
@@ -20,6 +22,7 @@ class AppointmentAgreement:
         # if there's only one owner - set the appointments status as approved
         if len(agreement_participants) == 1:
             self.set_appointment_status(AppointmentStatus.APPROVED)
+        return True
 
     def get_appointment_status(self) -> AppointmentStatus:
         return self.__agreement_status
@@ -72,3 +75,15 @@ class AppointmentAgreement:
 
     def __repr__(self):
         return repr("AppointmentAgreement")
+
+    def __iter__(self):
+        self.__i = 0
+        return self
+
+    def __next__(self):
+        while self.__i < len(self.__agreement_participants):
+            x = self.__agreement_participants[self.__i]
+            self.__i += 1
+            return x
+        else:
+            raise StopIteration

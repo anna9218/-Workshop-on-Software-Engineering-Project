@@ -668,7 +668,7 @@ class TradeControl:
             # return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
 
-    @logger
+    # @logger
     def update_agreement_participants(self, appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
@@ -684,7 +684,12 @@ class TradeControl:
         return {'response': False, 'msg': "Declined the appointment of " + appointee_nickname + " as a new store owner"}
 
     @logger
-    def get_appointment_status(self, appointee_nickname: str, store_name: str):
+    def get_appointment_status(self, appointee_nickname: str, store_name: str) -> AppointmentStatus:
+        """
+        :param appointee_nickname: the nickname of the user being appointed as new store owner
+        :param store_name: store the owner should be added to
+        :return: AppointmentStatus - DECLINED = 1,APPROVED = 2, PENDING = 3
+        """
         store = self.get_store(store_name)
         return store.get_appointment_status(appointee_nickname)
 

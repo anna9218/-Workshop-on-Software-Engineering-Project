@@ -1,5 +1,7 @@
 import unittest
 
+from src.main.DomainLayer.StoreComponent.AppiontmentAgreement import AppointmentAgreement
+from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicy import PurchasePolicy
 from src.main.DomainLayer.StoreComponent.Store import Store
@@ -117,6 +119,41 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.add_owner("shani", user))
         self.assertEqual(len(self.store.get_owners()), 2)
 
+    def test_check_appointment_exist(self):
+        self.appointer_mock = User()
+        self.appointee_mock = User()
+        self.participant_owner = User()
+        self.participants = [self.appointer_mock, self.participant_owner]
+        self.appointee_mock.get_nickname = MagicMock(return_value="appointee-nickname")
+        self.store.get_appointment_agreements().append(AppointmentAgreement(self.appointer_mock,
+                                                                                 self.appointee_mock, self.participants))
+        self.assertTrue(self.store.check_appointment_exist("appointee-nickname"))
+        self.assertFalse(self.store.check_appointment_exist("appointee-wrong-nickname"))
+
+    def test_update_agreement_participants(self):
+        self.appointer_mock = User()
+        self.appointee_mock = User()
+        self.participant_owner = User()
+        self.participants = [self.appointer_mock, self.participant_owner]
+        self.appointee_mock.get_nickname = MagicMock(return_value="appointee-nickname")
+        self.appointer_mock.get_nickname = MagicMock(return_value="appointer-nickname")
+        self.participant_owner.get_nickname = MagicMock(return_value="participant-nickname")
+        self.store.get_appointment_agreements().append(AppointmentAgreement(self.appointer_mock,
+                                                                            self.appointee_mock, self.participants))
+        res = self.store.update_agreement_participants("appointee-nickname", "appointer-nickname", AppointmentStatus.APPROVED)
+        self.assertTrue(res)
+
+    def test_get_appointment_status(self):
+        self.appointer_mock = User()
+        self.appointee_mock = User()
+        self.participant_owner = User()
+        self.participants = [self.appointer_mock, self.participant_owner]
+        self.appointee_mock.get_nickname = MagicMock(return_value="appointee-nickname")
+        self.store.get_appointment_agreements().append(AppointmentAgreement(self.appointer_mock,
+                                                                            self.appointee_mock, [self.appointer_mock]))
+        res = self.store.get_appointment_status("appointee-nickname")
+        self.assertEqual(res, AppointmentStatus.APPROVED)
+
     # @logger
     def test_is_owner(self):
         user = User()
@@ -127,41 +164,41 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_is_in_store_inventory(self):
-        self.store.add_product("shani", "Eytan's Product", 100, "Eytan Category", 5,0)
-        self.store.add_product("shani", "not Eytan's Product", 10, "Eytan Category", 2,0)
+        self.store.add_product("shani", "product1", 100, "some category", 5,0)
+        self.store.add_product("shani", "product2", 10, "some category", 2,0)
 
         # All valid one product
-        amount_per_product = [["Eytan's Product", 4]]
+        amount_per_product = [["product1", 4]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertTrue(result)
 
         # All valid two products
-        amount_per_product = [["Eytan's Product", 4], ["not Eytan's Product", 1]]
+        amount_per_product = [["product1", 4], ["product2", 1]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertTrue(result)
 
         # Exactly the same as in stock
-        amount_per_product = [["Eytan's Product", 5], ["not Eytan's Product", 2]]
+        amount_per_product = [["product1", 5], ["product2", 2]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertTrue(result)
 
         # One product not enough in stock
-        amount_per_product = [["Eytan's Product", 6], ["not Eytan's Product", 1]]
+        amount_per_product = [["product1", 6], ["product2", 1]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
         # Two product not enough in stock
-        amount_per_product = [["Eytan's Product", 6], ["not Eytan's Product", 10]]
+        amount_per_product = [["product1", 6], ["product2", 10]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
         # One product doesn't exist
-        amount_per_product = [["Eytan's social life", 5], ["not Eytan's Product", 1]]
+        amount_per_product = [["wrong product1", 5], ["product2", 1]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
         # Two product doesn't exist
-        amount_per_product = [["Eytan's social life", 5], ["Liverpool's primer league title", 1]]
+        amount_per_product = [["wrong product1", 5], ["wrong product2", 1]]
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
@@ -295,4 +332,4 @@ class StoreTests(unittest.TestCase):
         self.store = None
 
     def __repr__(self):
-        return repr ("StoreTests")
+        return repr("StoreTests")

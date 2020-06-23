@@ -279,21 +279,28 @@ class Store:
         :param owner_response: the owners response - declined/approved
         :return: True if the response was updated successfully, otherwise false
         """
-        appointment_agreement = filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
-                                       self.__StoreOwnerAppointmentAgreements)
-        return appointment_agreement.update_agreement_participants(owner_nickname, owner_response)
+        appointment_agreement = list(filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
+                                       self.__StoreOwnerAppointmentAgreements))
+        return appointment_agreement[0].update_agreement_participants(owner_nickname, owner_response)
 
-    @logger
-    def get_appointment_status(self, appointee_nickname: str):
-        appointment_agreement = filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
-                                       self.__StoreOwnerAppointmentAgreements)
-        return appointment_agreement.get_appointment_status()
+    # @logger
+    # def get_appointment_status(self, appointee_nickname: str):
+    #     appointment_agreement = filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
+    #                                    self.__StoreOwnerAppointmentAgreements)
+    #     return appointment_agreement.get_appointment_status()
 
     @logger
     def get_appointment_status(self, appointee_nickname: str) -> AppointmentStatus:
-        appointment_agreement = filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
-                                       self.__StoreOwnerAppointmentAgreements)
-        return appointment_agreement.get_appointment_status()
+        """
+        :param appointee_nickname: the nickname of the user being appointed as new store owner
+        :return: AppointmentStatus - DECLINED = 1,APPROVED = 2, PENDING = 3
+        """
+        appointment_agreement = list(filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
+                                       self.__StoreOwnerAppointmentAgreements))
+        return appointment_agreement[0].get_appointment_status()
+
+    def get_appointment_agreements(self):
+        return self.__StoreOwnerAppointmentAgreements
 
     @logger
     def is_owner(self, user_nickname: str):
