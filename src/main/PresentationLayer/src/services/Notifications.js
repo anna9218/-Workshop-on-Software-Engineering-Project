@@ -58,7 +58,7 @@ export const setHandlers = async () => {
     // const msgs = JSON.parse(data).messages;
      const msg = data['messages'];
     // alert(msg)
-    Notifications.addNotification(msg, "regular")
+    Notifications.addNotification(msg, "regular", "", "")
     
     console.log(msg);
   //   this.gui.add_notification(msgs); // TODO - tell einat to add this func
@@ -67,7 +67,7 @@ export const setHandlers = async () => {
   socket.socket.on("agreement", (data) => {
     const msg = data['messages'];
     // alert(msg)
-    Notifications.addNotification(msg, "agreement")
+    Notifications.addNotification(msg, "agreement", data['username'], data['store'])
 
     // socket.socket.io.emit("subscribe", { username: username, room: storename });
     //  maybe:         socket.emit("subscribe", { username: {username}, room: {storename} });

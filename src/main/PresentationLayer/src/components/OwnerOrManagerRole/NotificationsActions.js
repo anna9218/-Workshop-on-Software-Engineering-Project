@@ -5,16 +5,11 @@ import * as theService from '../../services/communication';
 
 window.$id = 0
 
-window.$notifications = [
-    {'id': 0, 'msg': "sdfdddddddddddddddddddddffffffff", 'msg_type': 'regular'},
-    {'id': 1, 'msg': "sdfdddddddddddddddddddddffffffff", 'msg_type': 'agreement'},
-    {'id': 2, 'msg': "sdfdddddddddddddddddddddffffffff", 'msg_type': 'agreement'},
-    {'id': 3, 'msg': "sdfdddddddddddddddddddddffffffff", 'msg_type': 'agreement'}
-]
+window.$notifications = []
 
-export async function addNotification(notification, msg_type){
+export async function addNotification(notification, msg_type, username, store){
     var ls = window.$notifications
-    window.$notifications = ls.concat([{'id': window.$id, 'msg': notification, 'msg_type': msg_type}])
+    window.$notifications = ls.concat([{'id': window.$id, 'msg': notification, 'msg_type': msg_type, 'username': username , 'store': store}])
     window.$id = window.$id + 1
 }
 
@@ -29,7 +24,11 @@ export  function removeNotification(notification_id){
 
 }
 
-export  function sendAgreementAnswer(event, notification_dict, answer){
+export  function sendAgreementAnswer(event, noti, answer){
 
-    removeNotification(notification_dict['id'])
+    // call anna : handle_appointment_agreement_response(nickname_apointee, store_name, answer: 1= decline, 2 = approve)
+    const promise = theService.sendAgreementAnswer(noti['username'], noti['store'], answer ? 2 : 1)
+    promise.then((data) => {
+        removeNotification(noti['id'])
+    });
 }

@@ -778,7 +778,7 @@ def handle_purchase_msg(store_name):
 def handle_agreement_msg(appointe_name, store_name):
     msg = f"Would you like to appoint {appointe_name} as owner in store {store_name}?"
     print(f"send msg: {msg}")
-    notify_all(store_name, {'messages':msg, 'store':store_name}, "agreement")
+    notify_all(store_name, {'messages': msg, 'store': store_name, 'appointee_nickname': appointe_name}, "agreement")
     # notify_all(store_name, jsonify(messages=msg, store=store_name))
 
 
