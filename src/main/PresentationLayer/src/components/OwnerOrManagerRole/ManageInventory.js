@@ -5,7 +5,6 @@ import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-boot
 import * as theService from '../../services/communication';
 import AddProductsForm from './AddProductsForm'
 import EditProductsForm from './EditProductsForm';
-import * as BackOption from '../Actions/GeneralActions/Back'
 import DeleteProductsForm from './DeleteProductForm';
 
 
@@ -40,7 +39,7 @@ function ManageInventory(props){
 
     return (
         <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-          <h2>Manage Inventory</h2>
+          <h1 style={{marginTop:"2%"}}>Manage Inventory</h1>
 
             <Container> 
             <div style={{marginTop:"3%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
@@ -65,8 +64,6 @@ function ManageInventory(props){
                 { showDeleteForm ? <DeleteProductsForm storeName={selectedStore} history={props.location.props} /> : null }
             </div>
 
-            <Button style={{marginTop: "1%"}}  variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props.location.props)}>Back</Button>
-          
             </Container>
   
         </div>

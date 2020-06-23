@@ -80,14 +80,14 @@ class PurchasePolicyTests(unittest.TestCase):
         # valid update
         """ {"name": str, "products": [str], "min_amount": int or None, "max_amount": int or None,
                                "dates": [dict] or None, "bundle": bool or None} """
-        res = self.policy_composite.update({"name": "policy1", "min_amount": 5})
+        res = self.policy_composite.update({"name": "policy1", "products": ["product1", "product2"], "min_amount": 5})
         self.assertTrue(res["response"])
 
-        res = self.policy_composite.update({"name": "policy1", "max_amount": 15})
+        res = self.policy_composite.update({"name": "policy1", "products": ["product1", "product2"], "max_amount": 15})
         self.assertTrue(res["response"])
 
         # min amount bigger than max
-        res = self.policy_composite.update({"name": "policy1", "min_amount": 10, "max_amount": 5})
+        res = self.policy_composite.update({"name": "policy1", "products": ["product1", "product2"], "min_amount": 10, "max_amount": 5})
         self.assertFalse(res["response"])
 
     def __repr__(self):

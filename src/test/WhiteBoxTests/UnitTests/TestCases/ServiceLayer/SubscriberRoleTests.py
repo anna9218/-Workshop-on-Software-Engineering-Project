@@ -8,12 +8,10 @@ from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 
 
 class SubscriberRoleTests(unittest.TestCase):
-    # @logger
     def setUp(self):
         self.__subscriber: SubscriberRole = SubscriberRole()
         self.__trade_control_mock: TradeControl = TradeControl.get_instance()
 
-    # @logger
     def test_logout(self):
         self.__trade_control_mock.get_instance().logout_subscriber = MagicMock(return_value=True)
         result = self.__subscriber.logout()
@@ -23,7 +21,6 @@ class SubscriberRoleTests(unittest.TestCase):
         result = self.__subscriber.logout()
         self.assertFalse(result)
 
-    # @logger
     def test_open_store(self):
         self.__trade_control_mock.get_instance().open_store = MagicMock(return_value=True)
         store = self.__subscriber.open_store("self.__store_name")
@@ -33,7 +30,6 @@ class SubscriberRoleTests(unittest.TestCase):
         store = self.__subscriber.open_store("self.__store_name")
         self.assertFalse(store)
 
-    # @logger
     def test_view_personal_purchase_history(self):
         purchase: Purchase = Mock()
 
@@ -49,10 +45,8 @@ class SubscriberRoleTests(unittest.TestCase):
         history = self.__subscriber.view_personal_purchase_history()
         self.assertIsNone(history)
 
-    # @logger
     def tearDown(self):
         self.__trade_control_mock.__delete__()
-        pass
 
     def __repr__(self):
         return repr("SubscriberRoleTests")

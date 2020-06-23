@@ -13,7 +13,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         self.__trade_control_mock: TradeControl = TradeControl.get_instance()
         self.store_mock = Store("store1")
 
-    # @logger
     def test_add_products(self):
         TradeControl.get_instance().add_products = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.add_products("Store", {}))
@@ -21,7 +20,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         TradeControl.get_instance().add_products = MagicMock(return_value=False)
         self.assertFalse(self.__store_owner_or_manager_role.add_products("Store", {}))
 
-    # @logger
     def test_remove_products(self):
         TradeControl.get_instance().remove_products = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.remove_products("Store", []))
@@ -29,7 +27,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         TradeControl.get_instance().remove_products = MagicMock(return_value=False)
         self.assertFalse(self.__store_owner_or_manager_role.remove_products("Store", []))
 
-    # @logger
     def test_edit_product(self):
         TradeControl.get_instance().edit_product = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.edit_product("Store", "product_name", "op", "new_value"))
@@ -37,7 +34,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         TradeControl.get_instance().edit_product = MagicMock(return_value=False)
         self.assertFalse(self.__store_owner_or_manager_role.edit_product("Store", "product_name", "op", "new_value"))
 
-    # @logger
     def test_appoint_additional_owner(self):
         TradeControl.get_instance().appoint_additional_owner = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.appoint_additional_owner("New Owner", "Store"))
@@ -61,7 +57,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         TradeControl.get_instance().get_appointment_status = MagicMock(return_value=False)
         self.assertFalse(self.__store_owner_or_manager_role.get_appointment_status("Appointee", "Store"))
 
-    # @logger
     def test_appoint_store_manager(self):
         TradeControl.get_instance().appoint_store_manager = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.appoint_store_manager("New Manager", "Store", [ManagerPermission.WATCH_PURCHASE_HISTORY]))
@@ -69,7 +64,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         TradeControl.get_instance().appoint_store_manager = MagicMock(return_value=False)
         self.assertFalse(self.__store_owner_or_manager_role.appoint_store_manager("New Manager", "Store", []))
 
-    # @logger
     def test_edit_manager_permissions(self):
         TradeControl.get_instance().edit_manager_permissions = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.edit_manager_permissions("Store", "Appointee", [ManagerPermission.WATCH_PURCHASE_HISTORY]))
@@ -77,7 +71,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         TradeControl.get_instance().edit_manager_permissions = MagicMock(return_value=False)
         self.assertFalse(self.__store_owner_or_manager_role.edit_manager_permissions("Store", "Appointee", []))
 
-    # @logger
     def test_remove_manager(self):
         TradeControl.get_instance().remove_manager = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.remove_manager("Store", "Appointee"))
@@ -93,7 +86,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         self.assertEqual(res['response'], ['owner was removed'])
         self.assertEqual(res['msg'], "success")
 
-    # @logger
     def test_display_store_purchases(self):
         TradeControl.get_instance().display_store_purchases = MagicMock(return_value=True)
         self.assertTrue(self.__store_owner_or_manager_role.display_store_purchases("Store"))
@@ -130,11 +122,10 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         # valid update
         self.__trade_control_mock.update_purchase_policy = MagicMock(return_value={'response': True, 'msg': "updated"})
         res = self.__store_owner_or_manager_role.update_purchase_policy(self.store_mock.get_name(), {"name": "policy2",
-                                                                                                     "products": [
+                                                                                                        "products": [
                                                                                                          "product1",
                                                                                                          "product2"],
-                                                                                                     "min_amount": 9})[
-            "response"]
+                                                                                                     "min_amount": 9})["response"]
         self.assertTrue(res)
 
         # invalid update
@@ -156,11 +147,9 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                                                                                    "msg": "policy added"})
 
         res = self.__store_owner_or_manager_role.define_purchase_policy(self.store_mock.get_name(), {"name": "policy2",
-                                                                                                     "products": [
-                                                                                                         "product1",
-                                                                                                         "product2"],
-                                                                                                     "min_amount": 9})[
-            "response"]
+                                                                                    "products": ["product1",
+                                                                                                 "product2"],
+                                                                                    "min_amount": 9})["response"]
         self.assertTrue(res)
 
         # invalid define
@@ -175,7 +164,6 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
             "response"]
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self):
         self.__trade_control_mock.__delete__()
 

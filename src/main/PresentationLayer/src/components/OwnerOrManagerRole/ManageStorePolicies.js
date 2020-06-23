@@ -1,36 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import {BrowserRouter as Router,  Route, Link } from 'react-router-dom'
-// import { browserHistory } from "react-router";
 import {Container, Button, Accordion, Card, Form, Row} from 'react-bootstrap'
 import * as theService from '../../services/communication';
 import AddPurchasePolicyForm from './AddPurchasePolicyForm';
 import EditPurchasePolicyForm from './EditPurchasePolicyForm';
 import AddDiscountPolicyForm from './AddDiscountPolicyForm';
 import EditDiscountPolicyForm from './EditDiscountPolicyForm';
-import DeleteDiscountPolicy from './DeleteDiscountPolicy';
+import DeletePolicy from './DeletePolicy';
+import AddCompositeDiscountPolicyForm from './AddCompositDiscount';
 
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
 function ManageStorePolicies(props) {
   useEffect(() => {
-    // console.log(props.location.state.storeName)
     setStoreName(props.location.store)
-    // console.log(storeName);
-    // fetchPurchasePolicies("purchase", props.location.store);
-    // fetchDiscountPolicies("discount", props.location.store);
-    // setHistory(useHistory());
   }, []);
 
   // const [history, setHistory]= useState('');
   const [storeName, setStoreName] = useState('');
-  const [purchasePolicies, setPurchasePolicies] = useState(["There are no purchase policies."]);
   const [purchaseAction, setPurchaseAction] = useState("");
   const [discountAction, setDiscountAction] = useState("");
-  const [policyName, setPolicyName] = useState("");
-  const [filterCategory, setFilterCategory] = useState("");
-  const [filterMinPrice, setFilterMinPrice] = useState(-1);
-  const [filterMaxPrice, setFilterMaxPrice] = useState(-1);
 
 
   
@@ -44,6 +33,10 @@ function ManageStorePolicies(props) {
 
   const PurchasesCombinationHandler = (event) =>{
     setPurchaseAction("purchasesCombination")
+  };
+
+  const deletePurchasePolicyHandler = (event) =>{
+    setPurchaseAction("deletePurchasePolicy")
   };
 
   const addDiscountHandler = (event) =>{
@@ -61,26 +54,6 @@ function ManageStorePolicies(props) {
   const deleteDiscountPolicyHandler = (event) =>{
     setDiscountAction("deleteDiscountPolicy")
   };
-
-//   const fetchPurchasePolicies = (policy_name, store_name) => {
-//     const promise = theService.getPolicies(policy_name, store_name);
-//     promise.then((data) => {
-
-//       if(data != null){
-//         if (data["data"] != null && data["data"].length > 0){   // if there are stores to display
-//           setPurchasePolicies(data["data"]);
-//           // setPolicyName(0);
-//         //   alert(data["msg"]);      // no products to display
-
-//         }
-//         else{
-//           setPurchasePolicies(["There are no purchase policies."]);
-//         }
-//       }
-//   });
-// };
-
-// const fetchDiscountPolicies = () => {}
 
 
   return (
@@ -104,11 +77,13 @@ function ManageStorePolicies(props) {
             <div style={{marginTop:"2%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
                 <h3 style={{marginTop:"2%"}}>Select action</h3>
                 <Form style={{marginRight:"5%" , marginLeft: "5%", marginBottom:"2%"}}>
-                    <Row><Form.Check onClick={addPurchaseHandler} type="radio" label="Add Purchase Policy" name="formHorizontalRadios" id="Radios1"/>
+                    <Row><Form.Check inline onClick={addPurchaseHandler} type="radio" label="Add Purchase Policy" name="formHorizontalRadios" id="Radios1"/>
                     </Row>
                     <Row><Form.Check inline onClick={editPurchaseHandler} type="radio" label="Edit Purchase Policy" name="formHorizontalRadios"id="Radios2"/>
                     </Row>
                     <Row><Form.Check inline onClick={PurchasesCombinationHandler} type="radio" label="Edit Policies Combinations" name="formHorizontalRadios"id="Radios3"/>
+                    </Row>
+                    <Row><Form.Check inline onClick={deletePurchasePolicyHandler} type="radio" label="Delete Policy" name="formHorizontalRadios"id="Radio4"/>
                     </Row>
                 </Form>
             </div>
@@ -120,6 +95,9 @@ function ManageStorePolicies(props) {
             </div>
             <div style={{marginTop: "5%"}}>
                 { purchaseAction === "purchasesCombination" ? <PurchaseCombinationsForm storeName={storeName} history={props.location.props} /> : null }
+            </div>
+            <div style={{marginTop: "5%"}}>
+                { purchaseAction === "deletePurchasePolicy" ? <DeletePolicy storeName={storeName} policyType='purchase' history={props.location.props} /> : null }
             </div>
 
             {/* <Button style={{marginTop: "1%"}}  variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props.location.props)}>Back</Button> */}
@@ -160,13 +138,12 @@ function ManageStorePolicies(props) {
                 { discountAction === "editDiscountPolicy" ? <EditDiscountPolicyForm storeName={storeName} history={props.location.props} /> : null }
             </div>
             <div style={{marginTop: "5%"}}>
-                { discountAction === "addComplexDiscountPolicy" ? <PurchaseCombinationsForm storeName={storeName} history={props.location.props} /> : null }
+                { discountAction === "addComplexDiscountPolicy" ? <AddCompositeDiscountPolicyForm storeName={storeName} history={props.location.props} /> : null }
             </div>
             <div style={{marginTop: "5%"}}>
-                { discountAction === "deleteDiscountPolicy" ? <DeleteDiscountPolicy storeName={storeName} history={props.location.props} /> : null }
+                { discountAction === "deleteDiscountPolicy" ? <DeletePolicy storeName={storeName} policyType='discount' history={props.location.props} /> : null }
             </div>
 
-            {/* <Button style={{marginTop: "1%"}}  variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(props.location.props)}>Back</Button> */}
           
             </Container>
             </Card.Body>
@@ -178,7 +155,6 @@ function ManageStorePolicies(props) {
   );
 }
 
-// TODO - add back button
 
 
 export default ManageStorePolicies;
@@ -212,6 +188,7 @@ function PurchaseCombinationsForm(props) {
     };
     
     return (
+      
         <div style={{marginTop:"2%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
                 <h4 style={{marginTop:"2%"}}>Update policies combinations:</h4>
                 <Form style={{marginRight:"5%" , marginLeft: "5%", marginBottom:"2%"}}>

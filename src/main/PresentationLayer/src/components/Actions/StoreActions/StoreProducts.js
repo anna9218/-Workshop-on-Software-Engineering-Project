@@ -94,10 +94,10 @@ function StoreProducts(props) {
                           showAddToCart ? 
                           <div>
                               <InputGroup className="mb-3">
-                                <Form.Control id="product-amount" required type="text" placeholder="Product amount" style={{width:"1px"}}
+                                <Form.Control id="product-amount" required as="input" type="number" min={0} max={storeProduct["amount"]} placeholder="Product amount" style={{width:"1px"}}
                                   onChange={(event => {
                                     try{
-                                      let value = parseInt(event.target.value);
+                                      let value = event.target.valueAsNumber;
                                       if(value > 0 && value <= storeProduct["amount"]){
                                         setProductAmount(value);
                                         setAmountValidated(true);

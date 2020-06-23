@@ -87,8 +87,11 @@ class ProxyBridge(Bridge):
     def purchase_products(self) -> dict:
         return self._realbridge.purchase_products()
 
-    def confirm_purchase(self, address: str, purchase_ls: dict):
-        return self._realbridge.confirm_purchase(address, purchase_ls)
+    def confirm_purchase(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+                        payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                          'ccv': str, 'id': str},
+                        purchase_ls: []):
+        return self._realbridge.confirm_purchase(delivery_details, payment_details, purchase_ls)
 
     def remove_purchase(self, store_name: str, purchase_date: datetime):
         self._realbridge.remove_purchase(store_name, purchase_date)
@@ -115,7 +118,7 @@ class ProxyBridge(Bridge):
     # @logger
     def add_products_to_store(self, store_name: str, products_details:
                                             [{"name": str, "price": int, "category": str, "amount": int,
-                                              "purchase_type": int, "discount_type": int}]) -> bool:
+                                              "purchase_type": int}]) -> bool:
         return self._realbridge.add_products_to_store(store_name, products_details)
 
     # @logger
@@ -213,30 +216,38 @@ class ProxyBridge(Bridge):
         return self._realbridge.manager_view_shop_purchase_history(store_name)
 
     # 7
-    # @logger
-    def connect_payment_sys(self):
-        self._realbridge.connect_payment_sys()
+    def commit_payment(self,  payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
+        return self._realbridge.commit_payment(payment_details)
 
-    # @logger
-    def disconnect_payment_sys(self):
-        self._realbridge.disconnect_payment_sys()
+    def cancel_payment_supply(self, transaction_id: str) -> bool:
+        return self._realbridge.cancel_payment_supply(transaction_id)
 
-    # @logger
-    def commit_payment(self, product_ls) -> bool:
-        return self._realbridge.commit_payment(product_ls)
+    def cause_payment_timeout(self):
+        self._realbridge.cause_payment_timeout()
+
+    def cause_payment_con_error(self):
+        self._realbridge.cause_payment_con_error()
+
+    def set_connection_payment_back(self):
+        self._realbridge.set_connection_payment_back()
 
     # 8
-    # @logger
-    def connect_delivery_sys(self):
-        self._realbridge.connect_delivery_sys()
+    def deliver(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str,
+                                                  'zip': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
+        return self._realbridge.deliver(delivery_details)
 
-    # @logger
-    def deliver(self, address: str, products_ls) -> bool:
-        return self._realbridge.deliver(address, products_ls)
+    def cancel_delivery_supply(self, transaction_id: str) -> bool:
+        return self._realbridge.cancel_delivery_supply(transaction_id)
 
-    # @logger
-    def disconnect_delivery_sys(self):
-        self._realbridge.disconnect_delivery_sys()
+    def cause_delivery_timeout(self):
+        self._realbridge.cause_delivery_timeout()
+
+    def cause_delivery_con_error(self):
+        self._realbridge.cause_delivery_con_error()
+
+    def set_connection_delivery_back(self):
+        self._realbridge.set_connection_delivery_back()
 
     def set_user(self, nickname: str):
         return self._realbridge.set_user(nickname)

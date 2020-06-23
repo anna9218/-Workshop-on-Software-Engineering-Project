@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-router-dom'
-import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
+import {Container, Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
+import { confirmAlert } from 'react-confirm-alert';
 // import {connect} from '../../services/Notifications';
 // import theNotifications from '../../services/Notifications';
 // import {register_new_store, connect} from '../../services/Notifications';
@@ -13,7 +14,6 @@ import {useEffect} from '../../services/Notifications';
 import * as theNotifications from '../../services/Notifications';
 
 
-import * as BackOption from '../Actions/GeneralActions/Back'
 // TODO - display a form to enter new store details. send the entered data to server.
 
 class OpenStore extends React.Component {
@@ -67,14 +67,20 @@ class OpenStore extends React.Component {
 
     const promise = theService.openStore(this.state.storeNameInput); // goes to register.js and sends to backend
     promise.then((data) => {
-      console.log(data);
-      alert(data["msg"]);
       if(data["data"]){ // store created
-          // redirect to store owner home page
-          this.props.history.push("./owner")
+          confirmAlert({
+            title: data["msg"],
+            buttons: [
+                {   label: 'ok',
+                    onClick: () => { // reset the form in order to add another product
+                    this.props.history.push("./owner")
+                }},
+              ]
+          });
       }
       else{
-        return;
+        alert(data["msg"]);
+
       }
     });
   };
@@ -82,18 +88,18 @@ class OpenStore extends React.Component {
   render(){
     return (
       <div style={{width: this.props["screenWidth"], height: this.props["screenHeight"]}}>
-        <h1>Open Store</h1>
-        <Container>
-        <Form className='open_store'>
-          <Form.Label>Choose a name for your new store:</Form.Label>
-          <Form.Control id="open-store-text" value={this.state.storeNameInput} type="text" placeholder="Store name" className="search" onChange={this.storeNameInputHandler}/>
-        </Form>
-
-        <Button variant="dark" id="add_product-button" onClick={event => BackOption.BackToHome(this.props)} style={{marginTop: "1%"}}>Back</Button>
-        <Button variant="dark" id="open-store-button" onClick={this.openStoreHandler} style={{marginTop: "1%", marginLeft: "1%"}}>Open!</Button>
-
+        <h1 style={{marginTop:"2%"}}>Open Store</h1>
+        <Container style={{marginTop:"2%"}}>
+          <div style={{marginTop:"0.5%" , marginLeft: "20%", marginRight: "20%", border: "1px solid", borderColor: "#CCCCCC"}}>
+            <Form className='open_store'>
+              <Form.Label style={{marginTop:"2%"}} >Choose a name for your new store:</Form.Label>
+              <div style={{marginTop:"2%", marginRight:"2%", marginLeft:"2%", marginBottom:"2%"}} >
+                <Form.Control id="open-store-text" value={this.state.storeNameInput} type="text" placeholder="Store name" className="search" onChange={this.storeNameInputHandler}/>
+              </div>
+            </Form>
+          </div>
+          <Button variant="dark" id="open-store-button" onClick={this.openStoreHandler} style={{marginTop: "1%", marginLeft: "1%"}}>Open!</Button>
         </Container>
-        
       </div>
     );
   }

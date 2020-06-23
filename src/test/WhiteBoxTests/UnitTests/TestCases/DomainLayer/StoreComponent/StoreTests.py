@@ -71,7 +71,6 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.remove_products("dani", ["Chair"]))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
-    # @logger
     def test_remove_product(self):
         self.assertFalse(self.store.remove_product("Chair"))
         self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
@@ -79,7 +78,6 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(self.store.remove_product("Chair"))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
-    # @logger
     def test_change_price(self):
         self.store.add_product("shani", "Chair", 100, "Furniture", 5, 0)
         self.assertTrue(self.store.change_price("Chair", 13))
@@ -90,7 +88,6 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(self.store.change_price("Chair", -8))
         self.assertEqual(self.store.get_product("NNNN"), None)
 
-    # @logger
     def test_change_name(self):
         self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
         self.assertTrue(self.store.change_name("Chair", "Chair222"))
@@ -103,7 +100,6 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(self.store.get_product("NNNN"), None)
         self.assertEqual(self.store.get_product("blaaa"), None)
 
-    # @logger
     def test_change_amount(self):
         self.store.add_product("shani", "Chair", 100, "Furniture", 5,0)
         self.assertTrue(self.store.change_amount("Chair", 3))
@@ -112,7 +108,6 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(self.store.change_amount("Chair", -8))
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 8)
 
-    # @logger
     def test_add_owner(self):
         user = User()
         user.register("eden", "password")
@@ -162,7 +157,6 @@ class StoreTests(unittest.TestCase):
         self.store.add_owner("shani", user)
         self.assertTrue(self.store.is_owner("eden"))
 
-    # @logger
     def test_is_in_store_inventory(self):
         self.store.add_product("shani", "product1", 100, "some category", 5,0)
         self.store.add_product("shani", "product2", 10, "some category", 2,0)

@@ -333,13 +333,25 @@ class StoreOwnerOrManagerRole:
     @logger
     def delete_policy(store_name: str, policy_name: str):
         """
-        Delete the policy with the name @policy_name, if exist.
+        Delete discount policy with the name @policy_name, if exist.
 
         :param store_name.
         :param policy_name.
         :return: True if successful, else false.
         """
         return (TradeControl.get_instance()).delete_policy(store_name, policy_name)
+
+    @staticmethod
+    @logger
+    def delete_purchase_policy(store_name: str, policy_name: str):
+        """
+        Delete purchase policy with the name @policy_name, if exist.
+
+        :param store_name.
+        :param policy_name.
+        :return: True if successful, else false.
+        """
+        return (TradeControl.get_instance()).delete_purchase_policy(store_name, policy_name)
 
     # ------------------------------------
 

@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button, Form, Row} from 'react-bootstrap'
+import {Button, Form} from 'react-bootstrap'
 import * as theService from '../../services/communication';
-import * as BackOption from '../Actions/GeneralActions/Back'
+import { confirmAlert } from 'react-confirm-alert'; 
 
 function RemoveOwner(props){
     useEffect(() => {
@@ -36,13 +36,39 @@ function RemoveOwner(props){
         else{
             const promise = theService.removeOwner(selectedStore, subscriberNickname);
             promise.then((data) => {
-                alert(data["msg"]);
-                alert(data["data"]);
+                if(data["data"] !== undefined && data["data"].length > 0 ){
+                    confirmAlert({
+                        title: data["msg"],
+                        message: data['data'].reduce((acc, curr) => acc + "\n" + curr, []), 
+                        buttons: [
+                            {   label: 'Remove another owner',
+                                onClick: () => { // reset the form in order to add another product
+                                    // reset feilds
+                                    setSelectedStore(selectedStore);
+                                    setSubscriberNickname("");
+                                    fetchOwnersAppointees();
     
-                // reset feilds
-                setSelectedStore(selectedStore);
-                setSubscriberNickname("");
-                fetchOwnersAppointees();
+                            }},
+                            {
+                                label: 'Back',
+                                onClick: () => {
+                                    props.history.push("./owner")
+                            }}
+                        ]
+                    });
+                }
+                else {
+                    alert(data["msg"]);
+                    setOwners(["No owners were appointed by you..."])
+                }
+
+                // alert(data["msg"]);
+                // alert(data["data"]);
+    
+                // // reset feilds
+                // setSelectedStore(selectedStore);
+                // setSubscriberNickname("");
+                // fetchOwnersAppointees();
             });
         }
         
@@ -50,25 +76,26 @@ function RemoveOwner(props){
 
     return (
         <div style={{width: props["screenWidth"], height: props["screenHeight"]}}>
-          <h2>{selectedStore} - Remove Store Owner</h2>
-          <div style={{marginLeft: "30%", marginRight: "30%" , marginTop: "2%"}}>
-            <Form.Group controlId="owners_appointees" onChange={ event => {setSubscriberNickname(event.target.value)}}>
-            <Form.Label>Please choose a owner to remove:</Form.Label>
-            <Form.Control as="select">
-                {owners.map(nickname => (
-                    <option value={nickname}>{nickname}</option>
-                ))}
-            </Form.Control>
-            </Form.Group>
+            <h2 style={{marginTop: "2%"}}>{selectedStore} - Remove Store Owner</h2>
+            <Form>
+                <div style={{marginLeft: "30%", marginRight: "30%", marginTop: "2%" , border: "1px solid", borderColor: "#CCCCCC"}}>
+                    <Form.Group controlId="owners_appointees" onChange={ event => {setSubscriberNickname(event.target.value)}}>
+                        <Form.Label style={{marginTop: "2%"}}>Please choose a owner to remove:</Form.Label>
+                        <div style={{marginTop: "2%", marginLeft: "3%", marginRight: "3%", marginBottom:"3%"}}>
+                            <Form.Control as="select">
+                                {owners.map(nickname => (
+                                    <option value={nickname}>{nickname}</option>
+                                ))}
+                            </Form.Control>
+                        </div>
 
-            <Form >
-                 <Form.Group as={Row} style={{marginRight:"0%" , marginLeft: "0%"}}>
-                 <div><Button variant="dark"  onClick={removeOwnerHandler}>Commit</Button></div>
-                 {/* <div style={{marginLeft:"1%"}}> <Button style={{marginTop: "1%"}} variant="dark" id="back-btn" onClick={event => BackOption.BackToHome(props)}>Back</Button></div> */}
-                 </Form.Group>
-             </Form>
-            </div>
-           
+                    </Form.Group>
+            
+                </div>
+                <div style={{marginTop:"2%"}}>
+                    <Button variant="dark"  onClick={removeOwnerHandler}>Commit</Button>
+                </div>
+            </Form>
         </div>
     );
 }

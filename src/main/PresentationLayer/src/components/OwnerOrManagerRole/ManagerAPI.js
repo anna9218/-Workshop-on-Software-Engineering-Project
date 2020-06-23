@@ -154,11 +154,11 @@ class ManagerAPI extends React.Component {
                                               </Button>
                                         : null }   
 
-                    { this.hasPermission(4) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointowner", 
+                    {/* { this.hasPermission(3) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointowner", 
                                                                                                         store: this.state.store, props: this.props}}>
                                                   Appoint Additional Owner
                                               </Button>
-                                        : null }  
+                                        : null }   */}
                     { this.hasPermission(5) ? <Button variant="secondary" size="lg" block as={Link} to={{pathname: "/appointmanager", 
                                                                                                         store: this.state.store, props: this.props}}>
                                           Appoint Additional Manager

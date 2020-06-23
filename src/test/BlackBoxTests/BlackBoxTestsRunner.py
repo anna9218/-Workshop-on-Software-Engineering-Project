@@ -24,7 +24,8 @@ from src.test.BlackBoxTests.AcceptanceTests.UcTests.UpdateCartTest import Update
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.ViewPersonalHistoryTest import ViewPersonalHistoryTest as Test19
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.ViewShopHistoryTest import ViewShopHistoryTest as Test20
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.ViewStoreInfoTest import ViewStoreInfoTest as Test21
-from src.test.BlackBoxTests.AcceptanceTests.UcTests.ViewStoresAndUsersPurchaseHistoryTest import ViewStoresAndUsersPurchaseHistoryTest as Test22
+from src.test.BlackBoxTests.AcceptanceTests.UcTests.ViewStoresAndUsersPurchaseHistoryTest import \
+    ViewStoresAndUsersPurchaseHistoryTest as Test22
 
 
 class BlackBoxTestsRunner:
@@ -36,7 +37,7 @@ class BlackBoxTestsRunner:
     # suite.addTests(loader.loadTestsFromModule(UcTests))
 
     # add individual tests to the test suite
-    suite.addTest(loader.loadTestsFromTestCase(Test1))
+    # suite.addTest(loader.loadTestsFromTestCase(Test1))
     suite.addTest(loader.loadTestsFromTestCase(Test2))
     suite.addTest(loader.loadTestsFromTestCase(Test3))
     suite.addTest(loader.loadTestsFromTestCase(Test4))
