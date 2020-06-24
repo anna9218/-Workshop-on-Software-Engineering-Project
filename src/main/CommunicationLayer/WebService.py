@@ -252,8 +252,7 @@ def remove_owner():
         store_name = request_dict.get('store_name')  # str
         response = StoreOwnerOrManagerRole.remove_owner(appointee_nickname, store_name)
         if response:
-            # handle_remove_owner_msg() TODO
-            # remove_subscriber_from_store()
+            handle_remove_owner_msg(appointee_nickname, store_name)
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, communication error--")
 # remove_owner(self, appointee_nickname: str, store_name: str)
@@ -601,8 +600,12 @@ def get_product_details():
 
 @app.route('/logout', methods=['GET'])
 def logout():
+    user_type =TradeControlService.get_user_type()
+    username =TradeControlService.get_curr_username()
     response = SubscriberRole.logout()
     if response:
+        # if user_type == "OWNER":
+        #     websocket_logout(username)
         return jsonify(msg="Logged out successfully!")
     return jsonify(msg="Logout failed")
 
@@ -708,23 +711,24 @@ def get_curr_user_nickname():
 
 _users = {}  # dict of <username>: <its session ID>
 _stores: [StorePublisher] = []  # list of StorePublisher
+_users_with_their_own_rooms = [] # list of usernames that subsribed to room with their own name
 
 
 # @socket.on('')
 @socket.on('connect')
 def connect():
     print(f"connect event. sid --> {request.sid}")
-    owner_username = TradeControlService.get_curr_username()
-    print(f"curr_nickname = {owner_username}")
-    if (owner_username != ""):
-        _users[owner_username] = request.sid
+    username = TradeControlService.get_curr_username()
+    print(f"curr_nickname = {username}")
+    if (username != ""):
+        _users[username] = request.sid
         # print ("in if")
         for store in _stores:
             # print ("in for")
-            if store.is_subscribed_to_store(owner_username):
+            if store.is_subscribed_to_store(username) and not store.is_logged_in(username):
                 # print("before join")
-                join_room(room=store.store_name(), sid=_users[owner_username])
-                print(f"username {owner_username} is added as a subscriber to store {store.store_name()} publisher")
+                join_room(room=store.store_name(), sid=_users[username])
+                print(f"username {username} is added as a subscriber to store {store.store_name()} publisher")
 
     print(f"users list: {_users}")
 
@@ -744,7 +748,8 @@ def websocket_open_store(data):
         print(f"open store u= {username}, s = {storename}")
         # socket.emit('message', {}) - works!
         print(f"stores are {_stores}")
-        if get_store(storename).is_subscribed_to_store(username):
+        store = get_store(storename)
+        if store is not None and store.is_subscribed_to_store(username):
             # print(f"new: open store (store name = {storename}) msg from {username} ")
             append_user_to_room(storename, username, request.sid)
             print (f"append user {username} to new store {storename}")
@@ -768,31 +773,31 @@ def create_new_publisher(storename, username):
 
 
 def append_user_to_room(storename, username, sid):
-    print(f"sid (in append) = {sid}")
     _users[username] = sid
     # _users[username] = flask_request.sid
     print(f"users = {_users}")
     join_room(room=storename, sid=_users[username])
+    print(f"append {username} to {storename} room with sid = {sid}")
     # print(f"{username} has been subscribed to store {storename}")
 
 
 @socket.on('unsubscribe')
 def leave(data):
     # TODO - add check that exists
+    print("socket sent msg 'unsbscribe'")
     leave_room(room=data['store'], sid=_users[data['username']])
     print(f"{data['username']} has been removed as subscriber of store {data['storename']}")
 
 
-# TODO - add a call from remove_owner func
-def unsbscribe(username, storename):
-    leave_room(room=storename, sid=_users[username])
-    # print(f"{username} has been removed as subscriber of store {storename}")
+# def unsbscribe(username, storename):
+#     leave_room(room=storename, sid=_users[username])
+#     # print(f"{username} has been removed as subscriber of store {storename}")
 
 
 def notify_all(store_name, msg, event):
     # socket.send(msgs, json=True, room=storename)
     store = get_store(store_name)
-    store.add_msg(msg)
+    store.add_msg(msg, event)
     print (store)
     print(f"room = {store_name}, msg = {msg}")
     socket.emit(event, msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
@@ -817,11 +822,39 @@ def handle_agreement_msg(appointe_name, store_name):
 
 
 def handle_remove_owner_msg(user_name, store_name):
+    if not remove_subscriber_from_store(store_name, user_name):
+        print ("error in store publisher- remove owner")
+    sid = _users[user_name]
+    if sid:
+        leave_room(room=store_name, sid=user_name)
+        if not TradeControlService.get_user_type() == 'OWNER' and user_name in _users_with_their_own_rooms:
+            leave_room(room=user_name, sid=sid)
+            _users_with_their_own_rooms.remove(user_name)
     msg = f"{user_name} was removed as owner from store {store_name}"
+    print(f"send msg: {msg}")
     notify_all(store_name, {'username':user_name, 'messages':msg, 'store':store_name}, 'message')
     # notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
     # print(f"send msg: {msg}")
 
+@socket.on('login')
+def handle_login(data):
+    username = data['username']
+    user_sid = request.sid
+    _users[username] = user_sid
+    # user_sid = _users(username)
+    join_room(username, user_sid)
+    _users_with_their_own_rooms.append(username)
+    print (f"insert {username} to it's room. sid = {user_sid}")
+    for store in _stores:
+        if store.is_subscribed_to_store(username):
+            store_name = store.store_name()
+            print(f"search for msgs to {username} at store {store_name}")
+            join_room(room=store_name, sid=user_sid)
+            msgs = store.retrieveMsgs(username)
+            print (msgs)
+            for msg, event in msgs:
+                print (f"send msg '{msg}' only to {username}. event type is {event}")
+                socket.emit(event, msg, room=username)
 
 def get_store(store_name) -> StorePublisher:
     for store in _stores:
@@ -854,3 +887,48 @@ def is_subscribed_to_store(store_name, nickname):
         return store.is_subscribed_to_store(nickname)
     # print(f"store {store_name} is none. nickname is {nickname}")
     return False
+
+
+
+
+@socket.on('logout')
+def logout_from_stores(data):
+    if (data):
+        username = data['username']
+        print(f"logout username= {username}")
+        sid = request.sid
+        for store in _stores:
+            if store.is_subscribed_to_store(username):
+                store.logout_subscriber(username)
+                if sid:
+                    print (f"leave room: store name = {store.store_name()} , sid = {sid}")
+                if sid:
+                    storename=store.store_name()
+                    leave_room(room=storename, sid= sid)
+        if username in _users_with_their_own_rooms:
+            leave_room(room=username, sid= sid)
+            _users_with_their_own_rooms.remove(username)
+#     delete_user(username)
+    else:
+        print(f"error with logout message at websocket. recieved: {data}")
+#
+#
+# def delete_user(username):
+#     sid = _users[username]
+#     if sid:
+#         del _users[username]
+
+
+def websocket_logout(username):
+    if username != '':
+        logout_from_stores(username)
+        sid = _users[username]
+        if sid:
+            del _users[username]
+        print (f"user list after logout of {username} = {_users}")
+        # for user in _users:
+        #     (user_name, sid) = user
+        #     if username == user_name:
+        #         del _users[user_name]
+        #         print (f"user list = {_users}")
+

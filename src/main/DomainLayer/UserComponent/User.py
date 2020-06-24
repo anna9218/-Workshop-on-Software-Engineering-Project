@@ -10,6 +10,7 @@ from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, Discou
 
 
 # from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
+# from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class User:
@@ -191,10 +192,23 @@ class User:
         self.__registrationState.register_from_db(username, password)
 
     def __repr__(self):
+        # if self.is_registered:
+        #     return repr(self.get_nickname)
         return repr("User")
+        # return repr("User")
 
     def __eq__(self, other):
         try:
-            return self.get_nickname() == other.get_nickname()
+            # from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
+            if other == 'StoreOwnerOrManager':
+                return False
+            #     return self.get_nickname() == other.get_nickname()
+            # elif type(other) is type (StubUser()):
+            # print(f"self = {self}, other = {other}")
+            return other.get_nickname() == self.get_nickname()
+            # else:s
+
+                # print (f"expected User. recieved {type(other)}")
+                # return False
         except Exception:
             return False

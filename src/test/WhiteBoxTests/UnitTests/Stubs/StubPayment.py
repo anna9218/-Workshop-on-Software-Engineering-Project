@@ -9,3 +9,5 @@ class StubPaymentProxy(PaymentProxy):
     def connect(self):
         self.isConnected = True
 
+    def is_connect(self):
+        self.isConnected = True
