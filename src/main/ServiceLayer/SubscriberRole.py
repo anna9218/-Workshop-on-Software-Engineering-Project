@@ -28,6 +28,7 @@ class SubscriberRole:
     def open_store(curr_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         Opens a new store with the given store name
+        :param curr_nickname:
         :param store_name: String
         :return: dict = {'response': bool, 'msg': str}
                  response = true if the store is created, else false

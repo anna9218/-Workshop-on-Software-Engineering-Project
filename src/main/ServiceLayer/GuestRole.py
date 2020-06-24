@@ -123,6 +123,7 @@ class GuestRole:
                                                                      "amount": int}]) \
             -> {'response': bool, 'msg': str}:
         """
+        :param curr_nickname:
         :param products_stores_quantity_ls: [ {"product_name": str, "amount": int, "store_name": str}, .... ]
         :return: dict = {'response': bool, 'msg': str}
         """
@@ -146,6 +147,7 @@ class GuestRole:
     def update_shopping_cart(curr_nickname: str, flag: str, products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
             -> {'response': bool, 'msg': str}:
         """
+        :param curr_nickname:
         :param flag: action option - "remove"/"update"
         :param products_details: [{"product_name": str,
                                        "store_name": str,
@@ -183,6 +185,7 @@ class GuestRole:
     def purchase_basket(curr_nickname: str, store_name: str):
         """
             single basket purchase by given store name, according to purchase policy and discount policy
+        :param curr_nickname:
         :param store_name:
         :return: None if purchase failed, else dict
 
@@ -203,6 +206,7 @@ class GuestRole:
             -> {'response': bool, 'msg': str}:
         """
             purchase confirmation and addition to user & store purchases
+        :param curr_nickname:
         :param payment_details: dict of payment details
         :param delivery_details: dict of delivery details
         :param purchase_ls: dict

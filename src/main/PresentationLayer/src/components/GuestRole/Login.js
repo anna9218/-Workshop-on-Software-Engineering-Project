@@ -33,6 +33,9 @@ class Login extends React.Component{
             alert(data["msg"]);
           }
           if(data["data"]){ // if logged in
+              // if logged in successfuly - cash username
+              localStorage.setItem('loggedUser',JSON.stringify(this.state.nickname));
+              
               if(is_manager){
                 // if system manager - redirect to system manager home page
                 this.props.history.push({pathname: '/systemmanager', props: this.props});
