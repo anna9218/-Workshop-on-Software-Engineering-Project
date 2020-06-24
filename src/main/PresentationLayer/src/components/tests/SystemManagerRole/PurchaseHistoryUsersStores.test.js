@@ -1,6 +1,6 @@
 import React from 'react';
-import { shallow, mount, render } from '../../enzyme';
-import PurchaseHistoryUsersStores from '../SystemManagerRole/PurchaseHistoryUsersStores'
+import { shallow, mount, render } from '../../../enzyme';
+import PurchaseHistoryUsersStores from '../../SystemManagerRole/PurchaseHistoryUsersStores'
 
 
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { shallow, mount, render } from '../../enzyme';
-import OpenStore from '../SubscriberRole/OpenStore'
+import { shallow, mount, render } from '../../../enzyme';
+import OpenStore from '../../SubscriberRole/OpenStore'
 
 
 

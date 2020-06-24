@@ -1,7 +1,7 @@
 import React from 'react';
-import { shallow, mount, render } from '../../enzyme';
+import { shallow, mount, render } from '../../../enzyme';
 
-import AddProductsForm from '../OwnerOrManagerRole/AddProductsForm'
+import AddProductsForm from '../../OwnerOrManagerRole/AddProductsForm'
 
 
 

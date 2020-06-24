@@ -1,33 +1,39 @@
-import * as theService from '../../services/communication';
+import * as theService from '../../../services/communication';
 import React from 'react';
-import { shallow, mount, render } from '../../enzyme';
+import { shallow, mount, render } from '../../../enzyme';
 import { act } from "react-dom/test-utils";
-import ShoppingCart from '../Actions/ShoppingCartActions/ShoppingCart'
+import ShoppingCart from '../../Actions/ShoppingCartActions/ShoppingCart'
 
 
-jest.mock('../../services/communication', () => ({
+jest.mock('../../../services/communication', () => ({
     displayShoppingCart: jest.fn()
 }));
 // jest.mock(theService.displayShoppingCart);
 
 
-    // it('renders without crashing', () => {
-    //     shallow(<ShoppingCart />);
-    // });
+    it('renders without crashing', () => {
+        shallow(<ShoppingCart />);
+    });
 
 describe('ShoppingCart Test Suite', () => {
 
     // checking if the form elements exist and renders all elements
     it('should render the form', () => {
         const wrapper = shallow(<ShoppingCart />);  // shallow renders a single component each time. In other words, Enzyme won’t consider the child elements for the test.
-
+        expect(wrapper.find('#container').exists()).toBeDefined();
+        expect(wrapper.find('#accordion').exists()).toBeDefined();
+        expect(wrapper.find('#card').exists()).toBeDefined();
+        expect(wrapper.find('#accordion-toggle').exists()).toBeDefined();
+        expect(wrapper.find('#table').exists()).toBeDefined();
+        expect(wrapper.find('#add-to-cart-checkbox').exists()).toBeDefined();
+        expect(wrapper.find('#purchaseBtn').exists()).toBeDefined();
 
     })
 });
 
 
 
-
+//MOCKS
     // it("renders the component correctly", async () => {
     //     const expectedFromBackend = ["first value", "second value"]
     

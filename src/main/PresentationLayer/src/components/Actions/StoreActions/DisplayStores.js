@@ -38,7 +38,7 @@ function DisplayStores(props){
          </div>
          <div style={{marginTop:"1%" , marginLeft: "25%", marginRight: "25%", border: "1px solid", borderColor: "#CCCCCC"}}>
              <Form id="form">
-                <Form.Group  style={{marginTop:"2%"}} onChange={ event => {setSelectedStore(event.target.value)}}>
+                <Form.Group id='form-group' style={{marginTop:"2%"}} onChange={ event => {setSelectedStore(event.target.value)}}>
                     <Form.Label id="form-label">Please choose a store:</Form.Label>
                     <div style={{marginTop:"1%" , marginLeft: "3%", marginRight: "3%"}}>
                       <Form.Control as="select" id="form-select">
