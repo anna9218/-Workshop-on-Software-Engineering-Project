@@ -265,13 +265,17 @@ def appoint_store_owner():
                 #     if appointee_nickname in _users:
                 #         print(_users[appointee_nickname])
                 #         join_room(store_name, _users[appointee_nickname])
+                appointee_msg = {'messages':'Congratulations! you are now one of ' + store_name + ' owners', 'storename': store_name}
                 if appointee_nickname in _users:
                     add_subscriber_to_store(store_name, appointee_nickname, True)
+                    # get_store(store_name).add_personal_msg(appointee_nickname, appintee_msg)
                     _users_with_their_own_rooms.append(appointee_nickname)
                     join_room(store_name, _users[appointee_nickname])
                     join_room(appointee_nickname, _users[appointee_nickname])
+                    socket.emit('message', msg=appointee_msg, room=appointee_nickname)
                 else:
                     add_subscriber_to_store(store_name, appointee_nickname, False)
+                    get_store(store_name).add_personal_msg(appointee_nickname, appointee_msg)
                     # join_room(appointee_nickname, _users[appointee_nickname])
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
@@ -855,10 +859,15 @@ def handle_login(data):
                 for msg, event in msgs:
                     print (f"send msg '{msg}' only to {username}. event type is {event}")
                     socket.emit(event, msg, room=username)
+                appointee_msgs = store.get_personal_msgs(username)
+                for msg in appointee_msgs:
+                    print (f"send msg '{msg}' only to {username}")
+                    socket.emit('message', msg, room=username)
 
 def get_store(store_name) -> StorePublisher:
     for store in _stores:
         if store.store_name() == store_name:
+            print(f"in get store, correct for {store} with {store.store_name()}")
             return store
     return None
 
@@ -908,7 +917,7 @@ def logout_from_stores(data):
         if username in _users_with_their_own_rooms:
             leave_room(room=username, sid= sid)
             _users_with_their_own_rooms.remove(username)
-#     delete_user(username)
+        del _users[username]
     else:
         print(f"error with logout message at websocket. recieved: {data}")
 #
