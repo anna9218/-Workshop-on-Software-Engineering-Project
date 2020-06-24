@@ -23,8 +23,8 @@ class TradeControlService:
     def init_system():
         # Getting the file path
         abs_path = os.path.dirname(os.path.abspath(__file__))
-        rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
-        # rel_path = os.path.join(abs_path, 'init_sys_file_v4.txt')
+        # rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
+        rel_path = os.path.join(abs_path, 'init_sys_file_v4.txt')
         if rel_path.split(".")[1] != "txt":
             print("Wrong format.")
             exit(1)
@@ -139,9 +139,9 @@ class TradeControlService:
             return ret(False, "An unknown error has occurred. Please check the input file arguments.")
 
         # connecting to external systems.
-        if not DeliveryProxy.get_instance().connect():
+        if not DeliveryProxy.get_instance().is_connected():
             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
-        if not PaymentProxy.get_instance().connect():
+        if not PaymentProxy.get_instance().is_connected():
             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
 
         file.close()
@@ -149,9 +149,10 @@ class TradeControlService:
 
     @staticmethod
     def open_store(store_name):
-        SubscriberRole.open_store(store_name)
+        result = SubscriberRole.open_store(store_name)
         from src.main.CommunicationLayer.WebService import create_new_publisher
         create_new_publisher(store_name, TradeControlService.get_curr_username())
+        return result
 
     @staticmethod
     def convert_to_datetime(arg: str):

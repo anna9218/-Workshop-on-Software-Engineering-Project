@@ -49,7 +49,7 @@ class Product:
                         self.__category == other.get_category():
                     return True
                 # return
-            print (f"expected Product. recieved {other}     self = {self}")
+            # print (f"expected Product. recieved {other}     self = {self}")
             return False
         except Exception:
             return False

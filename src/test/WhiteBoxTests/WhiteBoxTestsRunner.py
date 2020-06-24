@@ -127,7 +127,8 @@ class WhiteBoxTestsRunner:
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()
 
 

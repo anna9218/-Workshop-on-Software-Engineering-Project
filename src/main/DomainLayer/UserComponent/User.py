@@ -188,21 +188,23 @@ class User:
         return self.__shoppingCart
 
     def __repr__(self):
-        if self.is_registered:
-            return repr(self.get_nickname)
+        # if self.is_registered:
+        #     return repr(self.get_nickname)
         return repr("User")
         # return repr("User")
 
     def __eq__(self, other):
         try:
-            from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
-            if type(other) is type(User()):
-                return self.get_nickname() == other.get_nickname()
-            elif type(other) is type (StubUser()):
-                return other.get_nickname() == self.get_nickname()
-            else:
-                print (f"self = {self}, other = {other}")
-                # print (f"expected User. recieved {type(other)}")
+            # from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
+            if other == 'StoreOwnerOrManager':
                 return False
+            #     return self.get_nickname() == other.get_nickname()
+            # elif type(other) is type (StubUser()):
+            print(f"self = {self}, other = {other}")
+            return other.get_nickname() == self.get_nickname()
+            # else:s
+
+                # print (f"expected User. recieved {type(other)}")
+                # return False
         except Exception:
             return False

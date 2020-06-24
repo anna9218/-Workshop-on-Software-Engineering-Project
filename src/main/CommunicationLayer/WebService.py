@@ -918,8 +918,9 @@ def logout_from_stores(data):
 #     if sid:
 #         del _users[username]
 
+
 def websocket_logout(username):
-    if username is not '':
+    if username != '':
         logout_from_stores(username)
         sid = _users[username]
         if sid:

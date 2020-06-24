@@ -3,10 +3,8 @@ import {useState, useEffect} from 'react';
 import port from '../App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import io from 'socket.io-client';
-// const io = require("socket.io-client");
-// var socketio = require('socket.io-client'); //('http://127.0.0.1:5000'); // TODO- maybe another port?
+import * as Notifications from '../components/OwnerOrManagerRole/NotificationsActions';
 
-// var socket = {socket: io.connect('http://127.0.0.1:5000', {transports: ["polling"], autoConnect: true, forceNew: true})};
 var socket = {socket: io.connect('http://127.0.0.1:5000', {transports: ["websocket"], autoConnect: true, forceNew: true})};
 var nickname = {nickname:''};
 var storeName = {storeName:''};
@@ -38,15 +36,15 @@ export const connect = async (host, username) => {
 export const setHandlers = async () => {
   socket.socket.on("message", (data) => {
     // const {storeName, msg} = data;
-     const msgs = data['messages'];
+    //  const msgs = data['messages'];
      // TODO: eden call to add messages to my msgs list 
-    alert(msgs)
-    // TODO eden: display the notification without button
+
+    Notifications.addNotification(data['messages'], 'regular', '','')
   });
   socket.socket.on("agreement", (data) => {
-    const msgs = data['messages'];
-    alert(msgs)
-    // TODO eden: display the notification with button (create a function)
+    // const msgs = data['messages'];
+    Notifications.addNotification(data['messages'], 'regular', data['username'],data['store'])
+    
   });
 };
 
