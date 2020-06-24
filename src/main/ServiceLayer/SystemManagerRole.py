@@ -43,3 +43,8 @@ class SystemManagerRole:
 
     def __repr__(self):
         return repr("SystemManagerRole")
+
+    @logger
+    def get_visitors_cut(self, start_date, end_date):
+        TradeControl.get_instance().get_visitors_cut(start_date, end_date)
+

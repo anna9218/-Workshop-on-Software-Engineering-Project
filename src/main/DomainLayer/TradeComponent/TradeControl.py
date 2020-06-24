@@ -5,6 +5,7 @@ from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentSta
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
+from src.main.DomainLayer.TradeComponent.Statistics import Statistics
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.User import User
@@ -35,6 +36,7 @@ class TradeControl:
             self.__managers = []
             self.__subscribers = self.__pull_subscribers_from_db()
             self.__stores = self.__pull_stores_from_db()
+            self.__statistics = [Statistics()]
             # self.__stores.append(Store("einat"))
             # self.__stores.append(Store("Eden"))
             TradeControl.__instance = self
@@ -1147,6 +1149,7 @@ class TradeControl:
         #     return {'response': [], 'msg': "There are no stores"}
         # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
+    @logger
     def get_user_type(self):
         roles = []
         system_managers = [user.get_nickname() for user in self.__managers]
@@ -1176,6 +1179,7 @@ class TradeControl:
 
 # ---------------------------------------------------------------------------------------
 
+    @logger
     def __pull_subscribers_from_db(self) -> list:
         subscribers_from_db = (DataAccessFacade.get_instance()).read_users([])['response']
         output_lst = []
@@ -1186,7 +1190,7 @@ class TradeControl:
                 self.get_managers().insert(0, user)
             output_lst.insert(0, user)
         return output_lst
-
+    @logger
     def __pull_stores_from_db(self) -> list:
         stores_from_db = (DataAccessFacade.get_instance()).read_stores([])['response']
         output_lst = []
@@ -1195,3 +1199,15 @@ class TradeControl:
             store_obj.get_owners_appointments().append(StoreAppointment(None, self.__curr_user, []))
             output_lst.insert(0, store_obj)
         return output_lst
+
+
+    # ----------------------------------------------------------------------------------------------------
+    @logger
+    def get_visitors_cut(self, start_date, end_date):
+        # TODO -                            [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
+        #         #                          {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
+        #         #                          {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3, 'store_owners': 3, 'system_managers': 3},
+        #         #                          {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1, 'store_owners': 3, 'system_managers': 3},
+        #         #                          {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 0, 'system_managers': 3},
+        #         #                          {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5, 'store_owners': 4, 'system_managers': 3}]
+        pass

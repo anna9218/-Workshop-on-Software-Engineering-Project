@@ -661,16 +661,16 @@ def view_any_store_purchase_history():
 def get_visitors_cut():
     if request.is_json:
         request_dict = request.get_json()
-        # start_date = request_dict.get('start_date')
-        # start_date = request_dict.get('start_date')
-        # response = SystemManagerRole.get_visitors_cut(start_date, start_date)
-        response = {'msg': 'succc',
-                    'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
-                                 {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3, 'store_owners': 3, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1, 'store_owners': 3, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 0, 'system_managers': 3},
-                                 {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5, 'store_owners': 4, 'system_managers': 3}]}
+        start_date = request_dict.get('start_date')
+        start_date = request_dict.get('start_date')
+        response = SystemManagerRole.get_visitors_cut(start_date, start_date)
+        # response = {'msg': 'succc',
+        #             'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
+        #                          {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
+        #                          {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3, 'store_owners': 3, 'system_managers': 3},
+        #                          {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1, 'store_owners': 3, 'system_managers': 3},
+        #                          {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 0, 'system_managers': 3},
+        #                          {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5, 'store_owners': 4, 'system_managers': 3}]}
         if response:  # if not None
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
