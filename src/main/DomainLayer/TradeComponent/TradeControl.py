@@ -31,12 +31,14 @@ class TradeControl:
             errorLogger("This class is a singleton!")
             raise Exception("This class is a singleton!")
         else:
+            self.__today = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
             self.__curr_user = User()
             self.__managers = []
             self.__subscribers = self.__pull_subscribers_from_db()
             self.__stores = self.__pull_stores_from_db()
             # self.__stores.append(Store("einat"))
             # self.__stores.append(Store("Eden"))
+            (DataAccessFacade.get_instance()).write_statistic()
             TradeControl.__instance = self
 
     @logger
@@ -61,7 +63,8 @@ class TradeControl:
             temp = User()
             temp.register(nickname, password)
             self.__managers.append(temp)
-            db_result = (DataAccessFacade.get_instance()).update_users(old_username=nickname, new_is_system_manager=True)
+            db_result = (DataAccessFacade.get_instance()).update_users(old_username=nickname,
+                                                                       new_is_system_manager=True)
             if not db_result['response']:
                 return db_result
             return {'response': True, 'msg': "User " + nickname + " was registered as system manager successfully"}
@@ -120,7 +123,44 @@ class TradeControl:
         if self.__curr_user is None or not self.__curr_user.is_registered():
             return {'response': False, 'msg': "Subscriber " + nickname + " is not registered."}
         if self.__curr_user.is_logged_out():
-            return self.__curr_user.login(nickname, password)
+            domain_result = self.__curr_user.login(nickname, password)
+            if domain_result['response']:
+                new_subscribers = (DataAccessFacade.get_instance()).read_statistics(['subscribers'], date=self.__today)[
+                                      'response'][0]['subscribers'] + 1
+                db_result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today,
+                                                                                new_subscribers=new_subscribers)
+                if not db_result['response']:
+                    return db_result
+                if self.__curr_user in self.__managers:
+                    new_system_managers = (DataAccessFacade.get_instance()).read_statistics(['system_managers'],
+                                                                                            date=self.__today)[
+                                              'response'][0]['system_managers'] + 1
+                    db_result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today,
+                                                                                    new_system_managers=
+                                                                                    new_system_managers)
+                    if not db_result['response']:
+                        return db_result
+                if len(self.get_managed_stores()) > 0:
+                    new_store_managers = (DataAccessFacade.get_instance()).read_statistics(['store_managers'],
+                                                                                           date=self.__today)[
+                                             'response'][0]['store_managers'] + 1
+                    db_result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today,
+                                                                                    new_store_managers=
+                                                                                    new_store_managers)
+                    if not db_result['response']:
+                        return db_result
+
+                if len(self.get_owned_stores()) > 0:
+                    new_store_owners = (DataAccessFacade.get_instance()).read_statistics(['store_owners'],
+                                                                                         date=self.__today)[
+                                           'response'][0]['store_owners'] + 1
+                    db_result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today,
+                                                                                    new_store_owners=
+                                                                                    new_store_owners)
+                    if not db_result['response']:
+                        return db_result
+
+                return domain_result
         return {'response': False, 'msg': "Subscriber " + nickname + " already logged in"}
 
     @logger
@@ -154,6 +194,18 @@ class TradeControl:
             store = Store(store_name)
             store.get_owners_appointments().append(StoreAppointment(None, self.__curr_user, []))
             self.__stores.append(store)
+            db_result = (DataAccessFacade.get_instance()).write_store(store_name,
+                                                                      self.get_curr_user().get_nickname())
+            if not db_result['response']:
+                return db_result
+            new_store_owners = (DataAccessFacade.get_instance()).read_statistics(['store_owners'],
+                                                                                 date=self.__today)[
+                                   'response'][0]['store_owners'] + 1
+            db_result = (DataAccessFacade.get_instance()).update_statistics(old_date=self.__today,
+                                                                            new_store_owners=
+                                                                            new_store_owners)
+            if not db_result['response']:
+                return db_result
             return {'response': True, 'msg': "Store " + store_name + " opened successfully"}
         return {'response': False, 'msg': "Error! user doesn't have permission to open a store"}
 
@@ -168,6 +220,9 @@ class TradeControl:
                 return False
 
             self.__stores.remove(store)
+            db_result = (DataAccessFacade.get_instance()).delete_stores(store_name=store_name)
+            if not db_result['response']:
+                return db_result
             return True
         return False
 
@@ -197,14 +252,16 @@ class TradeControl:
                                                               "product_name": product.get_name(),
                                                               "price": product.get_price(),
                                                               "category": product.get_category(),
-                                                              "amount": s.get_inventory().get_amount(product.get_name())}), products))
+                                                              "amount": s.get_inventory().get_amount(
+                                                                  product.get_name())}), products))
         if len(list_of_products) == 0:
             return {'response': list_of_products, 'msg': "Error! There are no results"}
         return {'response': list_of_products, 'msg': "Products was retrieved successfully"}
 
     @logger
     def filter_products_by(self,
-                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str, "amount": (int or None)}],
+                           products_ls: [{"store_name": str, "product_name": str, "price": float, "category": str,
+                                          "amount": (int or None)}],
                            filter_by_option: int, min_price: (float or None) = None,
                            max_price: (float or None) = None, category: (str or None) = None) -> {'response': list,
                                                                                                   'msg': str}:
@@ -312,9 +369,9 @@ class TradeControl:
 
         res = []
         list(map(lambda curr: res.append({"name": curr["product"].get_name(), "price": curr["product"].get_price(),
-               "category": curr["product"].get_category(), "amount": curr["amount"],
-               "discount_type": curr["product"].get_discount_type().name,
-               "purchase_type": curr["product"].get_purchase_type().name}), inventory))
+                                          "category": curr["product"].get_category(), "amount": curr["amount"],
+                                          "discount_type": curr["product"].get_discount_type().name,
+                                          "purchase_type": curr["product"].get_purchase_type().name}), inventory))
 
         return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
@@ -572,12 +629,30 @@ class TradeControl:
                 response = True if products were added, False otherwise
         """
         store: Store = self.get_store(store_name)
-        if store and \
+        if (store and
                 (store.is_owner(self.__curr_user.get_nickname()) or
-                 store.is_manager(self.__curr_user.get_nickname())) and \
-                self.__curr_user.is_registered() and \
-                self.__curr_user.is_logged_in():
-            return store.add_products(self.__curr_user.get_nickname(), products_details)
+                 store.is_manager(self.__curr_user.get_nickname())) and
+                self.__curr_user.is_registered() and
+                self.__curr_user.is_logged_in()):
+            domain_result = store.add_products(self.__curr_user.get_nickname(), products_details)
+            if domain_result['response']:
+                for product_as_dict in products_details:
+                    amount = self.get_store(store_name).get_inventory().get_amount(product_as_dict['name'])
+                    db_write_result = (DataAccessFacade.get_instance()).write_product(
+                        product_name=product_as_dict['name'],
+                        store_name=store_name,
+                        price=product_as_dict['price'],
+                        category=product_as_dict['category'],
+                        amount=product_as_dict['amount'],
+                        purchase_type=
+                        product_as_dict['purchase_type'])
+                    if not db_write_result['response']:
+                        db_update_result = (DataAccessFacade.get_instance()).update_products(
+                            old_product_name=product_as_dict['name'], old_store_name=store_name,
+                            new_amount=amount)
+                        if not db_update_result['response']:
+                            return db_update_result
+                return domain_result
         return {'response': False, 'msg': "User has no permissions to add products to the store"}
 
     @logger
@@ -592,12 +667,19 @@ class TradeControl:
             if store is not None and not store.get_product(product_name):
                 return False
 
-        if store is not None and \
-                self.__curr_user.is_registered() and \
-                self.__curr_user.is_logged_in() and \
+        if (store is not None and
+                self.__curr_user.is_registered() and
+                self.__curr_user.is_logged_in() and
                 (store.is_owner(self.__curr_user.get_nickname()) or
-                 store.is_manager(self.__curr_user.get_nickname())):
-            return store.remove_products(self.__curr_user.get_nickname(), products_names)
+                 store.is_manager(self.__curr_user.get_nickname()))):
+            domain_result = store.remove_products(self.__curr_user.get_nickname(), products_names)
+            if domain_result:
+                for product_name in products_names:
+                    db_result = (DataAccessFacade.get_instance()).delete_products(product_name=product_name,
+                                                                                  store_name=store_name)
+                    if not db_result['response']:
+                        return db_result['response']
+                return domain_result
         return False
 
     @logger
@@ -608,15 +690,15 @@ class TradeControl:
         :param op: edit options - name, price, amount
         :param new_value: new value to set to
         :return: dict =  {'response': bool, 'msg': str}
-                 response = True if all products were removed, else return False
         """
         store: Store = self.get_store(store_name)
-        if store is not None and \
-                self.__curr_user.is_registered() and \
-                self.__curr_user.is_logged_in():
+        if (store is not None and
+                self.__curr_user.is_registered() and
+                self.__curr_user.is_logged_in()):
             # (store.is_owner(self.__curr_user.get_nickname()) or
             #  store.is_manager(self.__curr_user.get_nickname())) and \
             # store.product_in_inventory(product_name):
+
             # Check if the new name is already exist in the sore. if does, return false.
             if op.lower() == "name":
                 if (store.get_name(), new_value) in [(e['store_name'], e['product_name']) for e in
@@ -624,6 +706,24 @@ class TradeControl:
                     return {'response': False, 'msg': "check this condition"}
             result = store.edit_product(self.__curr_user.get_nickname(), product_name, op, new_value)
             if result:
+                if op.lower() == "name":
+                    db_result = (DataAccessFacade.get_instance()).update_products(old_store_name=store_name,
+                                                                                  old_product_name=product_name,
+                                                                                  new_product_name=new_value)
+                    if not db_result['response']:
+                        return db_result
+                elif op.lower() == "price":
+                    db_result = (DataAccessFacade.get_instance()).update_products(old_store_name=store_name,
+                                                                                  old_product_name=product_name,
+                                                                                  new_price=new_value)
+                    if not db_result['response']:
+                        return db_result
+                elif op.lower() == "amount":
+                    db_result = (DataAccessFacade.get_instance()).update_products(old_store_name=store_name,
+                                                                                  old_product_name=product_name,
+                                                                                  new_amount=new_value)
+                    if not db_result['response']:
+                        return db_result
                 return {'response': True, 'msg': "Product was edited successfully"}
             return {'response': False, 'msg': "Edit product failed."}
         return {'response': False, 'msg': "Edit product failed."}
@@ -687,7 +787,8 @@ class TradeControl:
         return {'response': False, 'msg': "User has no permissions"}
 
     # @logger
-    def update_agreement_participants(self, appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
+    def update_agreement_participants(self, appointee_nickname: str, store_name: str,
+                                      owner_response: AppointmentStatus):
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -696,9 +797,11 @@ class TradeControl:
                  response = True on success, else False
         """
         store = self.get_store(store_name)
-        result = store.update_agreement_participants(appointee_nickname, self.__curr_user.get_nickname(), owner_response)
+        result = store.update_agreement_participants(appointee_nickname, self.__curr_user.get_nickname(),
+                                                     owner_response)
         if result:
-            return {'response': True, 'msg': "Approved the appointment of " + appointee_nickname + " as a new store owner"}
+            return {'response': True,
+                    'msg': "Approved the appointment of " + appointee_nickname + " as a new store owner"}
         return {'response': False, 'msg': "Declined the appointment of " + appointee_nickname + " as a new store owner"}
 
     @logger
@@ -712,7 +815,7 @@ class TradeControl:
         return store.get_appointment_status(appointee_nickname)
 
     @logger
-     # TODO: eden check permissions with gui!!!!!
+    # TODO: eden check permissions with gui!!!!!
     def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: [int or enumerate]) -> \
             {'response': bool, 'msg': str}:
         """
@@ -793,10 +896,10 @@ class TradeControl:
         """
         store: Store = self.get_store(store_name)
         if store is not None and \
-            self.__curr_user.is_registered() and \
-            self.__curr_user.is_logged_in() and \
-            (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
-                self.__curr_user.get_nickname())):
+                self.__curr_user.is_registered() and \
+                self.__curr_user.is_logged_in() and \
+                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
+                    self.__curr_user.get_nickname())):
             return store.get_appointees(self.__curr_user.get_nickname(), managers_or_owners)
         return []
 
@@ -837,10 +940,10 @@ class TradeControl:
             lst = []
             purchases = store.get_purchases(self.__curr_user.get_nickname())
             list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
-                                                 "nickname": purchase.get_nickname(),
-                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                 "total_price": purchase.get_total_price(),
-                                                 "products": purchase.get_products()}), purchases))
+                                                  "nickname": purchase.get_nickname(),
+                                                  "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                  "total_price": purchase.get_total_price(),
+                                                  "products": purchase.get_products()}), purchases))
             # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
             #          ))
             if len(lst) == 0:
@@ -865,7 +968,7 @@ class TradeControl:
             return {'response': store.get_purchase_policies(), 'msg': "Great Success! Purchase policies retrieved"}
         elif policy_type == "discount":
             return {'response': store.get_discount_policies_as_dictionary_lst(), 'msg':
-                    "Great Success! Purchase policies retrieved"}
+                "Great Success! Purchase policies retrieved"}
         return {'response': None, 'msg': "Not a valid choice of purchase type"}
 
     @logger
@@ -1120,7 +1223,7 @@ class TradeControl:
 
     @logger
     def get_curr_username(self):
-        if self.__curr_user is not None and self.__curr_user.is_logged_in(): #TODO - maybe without is_logged_in?
+        if self.__curr_user is not None and self.__curr_user.is_logged_in():  # TODO - maybe without is_logged_in?
             return self.__curr_user.get_nickname()
         return ""
 
@@ -1174,7 +1277,7 @@ class TradeControl:
     def __delete__(self):
         TradeControl.__instance = None
 
-# ---------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------
 
     def __pull_subscribers_from_db(self) -> list:
         subscribers_from_db = (DataAccessFacade.get_instance()).read_users([])['response']
@@ -1192,6 +1295,15 @@ class TradeControl:
         output_lst = []
         for store in stores_from_db:
             store_obj = Store(store['store_name'])
-            store_obj.get_owners_appointments().append(StoreAppointment(None, self.__curr_user, []))
+            store_obj.get_owners_appointments().append(StoreAppointment(None,
+                                                                        self.get_subscriber(store['founder_username']),
+                                                                        []))
+            products_from_db = (DataAccessFacade.get_instance()).read_products([], store_name=store['store_name'])[
+                'response']
+            for product in products_from_db:
+                # print(product)
+                store_obj.add_product(store['founder_username'], product['product_name'],
+                                      product['price'], product['category'], product['amount'],
+                                      product['purchase_type'])
             output_lst.insert(0, store_obj)
         return output_lst
