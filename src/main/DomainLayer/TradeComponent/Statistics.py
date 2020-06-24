@@ -14,7 +14,8 @@ class Statistics:
         self.__store_managers_amount = 0
         self.__store_owners_amount = 0
         self.__system_managers_amount = 0
-        self.__DB_handler = DataAccessFacade()
+        self.__DB_handler = DataAccessFacade.get_instance()
+        self.save_date_statistics_on_DB()
 
     def date (self):
         return self.__date
@@ -36,23 +37,25 @@ class Statistics:
 
 
     def inc_guests_counter(self):
-        if self.correct_date('guest'):
-            self.__guests_amount += 1
+        # if self.correct_date('guest'):
+        self.__guests_amount += 1
+        self.__DB_handler.update_statistics(old_date=self.__date, new_guests=self.__guests_amount)
 
     def inc_subscribers_counter(self):
         self.__subscribers_amount += 1
+        self.__DB_handler.update_statistics(old_date=self.__date, new_subscribers=self.__subscribers_amount)
 
     def inc_store_managers_counter(self):
         self.__store_managers_amount += 1
+        self.__DB_handler.update_statistics(old_date=self.__date, new_store_managers=self.__store_managers_amount)
 
     def inc_store_owners_counter(self):
         self.__store_owners_amount += 1
-
-    def inc_store_managers_counter(self):
-        self.__store_managers_amount += 1
+        self.__DB_handler.update_statistics(old_date=self.__date, new_store_owners=self.__store_owners_amount)
 
     def inc_system_managers_counter(self):
         self.__system_managers_amount += 1
+        self.__DB_handler.update_statistics(old_date=self.__date, new_system_managers=self.__system_managers_amount)
 
     def save_date_statistics_on_DB(self):
         return self.__DB_handler.write_statistic(self.__date, self.__guests_amount, self.__subscribers_amount,
@@ -69,21 +72,12 @@ class Statistics:
             print("error in saving statistics to DB")
         return False
 
-    def reset_daily_statistics(self, counter_kind):
-        self.__date = datetime.datetime.today()
-        self.__guests_amount = 0
-        self.__subscribers_amount = 0
-        self.__store_managers_amount = 0
-        self.__store_owners_amount = 0
-        self.__system_managers_amount = 0
-        if counter_kind == 'guest':
-            self.inc_guests_counter()
-        elif counter_kind == 'subscriber':
-            self.inc_subscribers_counter()
-        elif counter_kind == 'store_manager':
-            self.inc_store_managers_counter()
-        elif counter_kind == 'store_owner':
-            self.__store_owners_amount()
-        elif counter_kind == 'system_manager':
-            self.inc_system_managers_counter()
+    # def reset_daily_statistics(self, counter_kind):
+    #     self.__date = datetime.datetime.today()
+    #     self.__guests_amount = 0
+    #     self.__subscribers_amount = 0
+    #     self.__store_managers_amount = 0
+    #     self.__store_owners_amount = 0
+    #     self.__system_managers_amount = 0
+
 

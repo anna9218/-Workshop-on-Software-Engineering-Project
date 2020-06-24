@@ -27,32 +27,32 @@ class StorePublisher:
         print (f"at storePublisher {self.__name}, msgs= {self.__msgs}. last add_msg call with msg {msg}")
         # self.notifyAll()
 
-    def notifyAll(self):
-        """
-        check for each subscriber if there is a new msg- and send it if there is at least 1
-        :return:
-        """
-        for (name, last_msg_id, is_logged_in) in self.__subscribers:
-            amount_of_msgs = len(self.__msgs)  # maybe len-1
-            if is_logged_in and last_msg_id < amount_of_msgs:
-                self.notify(name)
-
-    def notify(self, user_name):
-        """
-        if there is a new msg to send to the subscriber with user_name - send it
-        :param user_name: of owner
-        :return:
-        """
-        lastMsgID = self.get_last_read_msg_id(user_name)
-        if lastMsgID > -1:
-            # for (msg_id, msg) in self.__msgs:
-            #     if msg_id > lastMsgID:
-            #         send_msg(user_name, msg)
-            unread_msgs = []
-            for msg_id, msg, event in self.__msgs:
-                if msg_id > lastMsgID:
-                    unread_msgs += msg
-                    self.inc_last_unread_msg(user_name)
+    # def notifyAll(self):
+    #     """
+    #     check for each subscriber if there is a new msg- and send it if there is at least 1
+    #     :return:
+    #     """
+    #     for (name, last_msg_id, is_logged_in) in self.__subscribers:
+    #         amount_of_msgs = len(self.__msgs)  # maybe len-1
+    #         if is_logged_in and last_msg_id < amount_of_msgs:
+    #             self.notify(name)
+    #
+    # def notify(self, user_name):
+    #     """
+    #     if there is a new msg to send to the subscriber with user_name - send it
+    #     :param user_name: of owner
+    #     :return:
+    #     """
+    #     lastMsgID = self.get_last_read_msg_id(user_name)
+    #     if lastMsgID > -1:
+    #         # for (msg_id, msg) in self.__msgs:
+    #         #     if msg_id > lastMsgID:
+    #         #         send_msg(user_name, msg)
+    #         unread_msgs = []
+    #         for msg_id, msg, event in self.__msgs:
+    #             if msg_id > lastMsgID:
+    #                 unread_msgs += msg
+    #                 self.inc_last_unread_msg(user_name)
 
     def retrieveMsgs(self, user_name):
         """

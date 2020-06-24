@@ -662,8 +662,8 @@ def get_visitors_cut():
     if request.is_json:
         request_dict = request.get_json()
         start_date = request_dict.get('start_date')
-        start_date = request_dict.get('start_date')
-        response = SystemManagerRole.get_visitors_cut(start_date, start_date)
+        end_date = request_dict.get('end_date')
+        response = SystemManagerRole.get_visitors_cut(start_date, end_date)
         # response = {'msg': 'succc',
         #             'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
         #                          {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
@@ -712,7 +712,7 @@ def get_curr_user_nickname():
 _users = {}  # dict of <username>: <its session ID>
 _stores: [StorePublisher] = []  # list of StorePublisher
 _users_with_their_own_rooms = [] # list of usernames that subsribed to room with their own name
-
+_system_managers = [] # list <system_manager_nickname, sid, is_in_daily_cuts_window>
 
 # @socket.on('')
 @socket.on('connect')
@@ -729,6 +729,8 @@ def connect():
                 # print("before join")
                 join_room(room=store.store_name(), sid=_users[username])
                 print(f"username {username} is added as a subscriber to store {store.store_name()} publisher")
+    else:
+        TradeControlService.inc_todays_guests_counter()
 
     print(f"users list: {_users}")
 
@@ -888,9 +890,6 @@ def is_subscribed_to_store(store_name, nickname):
     # print(f"store {store_name} is none. nickname is {nickname}")
     return False
 
-
-
-
 @socket.on('logout')
 def logout_from_stores(data):
     if (data):
@@ -932,3 +931,14 @@ def websocket_logout(username):
         #         del _users[user_name]
         #         print (f"user list = {_users}")
 
+# TODO - add call
+def send_daily_cut_update(statistics_update):
+    for sys_man in _system_managers:
+        (nickname, sid, is_in_daily_cuts_window) = sys_man
+        if is_in_daily_cuts_window and sid is not None:
+            if not nickname in _users_with_their_own_rooms:
+                _users_with_their_own_rooms.append(nickname)
+                join_room(nickname, _users[nickname])
+            socket.emit('daily_cut', statistics_update, room=nickname)
+
+    pass

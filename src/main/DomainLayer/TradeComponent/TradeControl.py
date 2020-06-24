@@ -124,15 +124,19 @@ class TradeControl:
         if self.__curr_user.is_logged_out():
             answer = self.__curr_user.login(nickname, password)
             if answer:
-                # update statistics - TODO maybe move to communication layer
+                # update statistics
                 if self.get_user_type() == 'OWNER':
-                    self.__statistics.inc_store_owners_counter()
+                    if not self.__statistics[0].inc_store_owners_counter():
+                        self.reset_statistics('owner')
                 if self.get_user_type() == 'SYSTEMMANAGER':
-                    self.__statistics.inc_system_managers_counter()
+                    if not self.__statistics[0].inc_system_managers_counter():
+                        self.reset_statistics('system_manager')
                 if self.get_user_type() == 'SUBSCRIBER':
-                    self.__statistics.inc_subscribers_counter()
+                    if not self.__statistics[0].inc_subscribers_counter():
+                        self.reset_statistics('subscriber')
                 if self.get_user_type() == 'MANAGER':
-                    self.__statistics.inc_store_managers_counter()
+                    if not self.__statistics[0].inc_store_managers_counter():
+                        self.reset_statistics('store_manager')
             return answer
         return {'response': False, 'msg': "Subscriber " + nickname + " already logged in"}
 
@@ -167,6 +171,7 @@ class TradeControl:
             store = Store(store_name)
             store.get_owners_appointments().append(StoreAppointment(None, self.__curr_user, []))
             self.__stores.append(store)
+            self.__statistics[0].inc_store_owners_counter()
             return {'response': True, 'msg': "Store " + store_name + " opened successfully"}
         return {'response': False, 'msg': "Error! user doesn't have permission to open a store"}
 
@@ -1212,13 +1217,36 @@ class TradeControl:
         return output_lst
 
 
-    # ----------------------------------------------------------------------------------------------------
+    # ------------------------------------------- UC 6.5 ---------------------------------------------------------
+
     @logger
     def get_visitors_cut(self, start_date, end_date):
-        # TODO -                            [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},
-        #         #                          {'date': datetime(2020, 6, 16), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 10, 'system_managers': 3},
-        #         #                          {'date': datetime(2020, 6, 17), 'guests': 3, 'subscribers': 6, 'store_managers': 3, 'store_owners': 3, 'system_managers': 3},
-        #         #                          {'date': datetime(2020, 6, 18), 'guests': 3, 'subscribers': 3, 'store_managers': 1, 'store_owners': 3, 'system_managers': 3},
-        #         #                          {'date': datetime(2020, 6, 19), 'guests': 3, 'subscribers': 3, 'store_managers': 3, 'store_owners': 0, 'system_managers': 3},
-        #         #                          {'date': datetime(2020, 6, 20), 'guests': 7, 'subscribers': 6, 'store_managers': 5, 'store_owners': 4, 'system_managers': 3}]
-        pass
+        visitors_cut = []
+        for s in self.__statistics:
+            if s.in_range(start_date, end_date):
+                visitors_cut.append({'date':s.date(), 'guests': s.guests_amount(), 'subscribers': s.subscribers_amount(),
+                                     'store_managers': s.store_managers_amount(), 'store_owners': s.store_owners_amount(),
+                                     'system_managers': s.system_managers_amount()})
+        return visitors_cut
+
+    @logger
+    def inc_todays_guests_counter(self):
+        self.__statistics[0].inc_guests_counter()
+
+    @logger
+    def reset_statistics(self, counter_type):
+        today_statistics = Statistics()
+        if counter_type == 'guest':
+            today_statistics.inc_guests_counter()
+        elif counter_type == 'subscriber':
+            today_statistics.inc_subscribers_counter()
+        elif counter_type == 'store_manager':
+            today_statistics.inc_store_managers_counter()
+        elif counter_type == 'store_owner':
+            today_statistics.__store_owners_amount()
+        elif counter_type == 'system_manager':
+            today_statistics.inc_system_managers_counter()
+        else:
+            print("problem at TradeControl.reset_statistics") # TODO- delete
+        self.__statistics.append(today_statistics)
+        print(f"statistics: {self.__statistics}. todays = {today_statistics}")
