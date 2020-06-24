@@ -43,7 +43,10 @@ class Product:
     @logger
     def __eq__(self, other):
         try:
-            # print (f"other type = {type(other)}, self type = {type(self)}")
+            # print (f"other type = {other}, self type = {self}")
+            if other == 'StoreOwnerOrManager':
+                return False
+
             if type (other) is type(self):
                 if self.__name == other.get_name() and self.__price == other.get_price() and \
                         self.__category == other.get_category():

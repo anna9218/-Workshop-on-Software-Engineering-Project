@@ -204,7 +204,7 @@ class User:
                 return False
             #     return self.get_nickname() == other.get_nickname()
             # elif type(other) is type (StubUser()):
-            print(f"self = {self}, other = {other}")
+            # print(f"self = {self}, other = {other}")
             return other.get_nickname() == self.get_nickname()
             # else:s
 
