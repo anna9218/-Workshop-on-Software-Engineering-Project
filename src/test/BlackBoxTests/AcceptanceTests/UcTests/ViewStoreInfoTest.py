@@ -1,21 +1,19 @@
 """
     test class for use case 2.4 - view stores' info and products
 """
-from src.Logger import logger
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class ViewStoreInfoTest(ProjectTest):
-    # @logger
+class ViewStoreInfoTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
         self.register_user(self._username, self._password)
         self.login(self._username, self._password)
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
-                                   [{"name": "product", "price": 10, "category": "general", "amount": 5}])
+                                   [{"name": "product", "price": 10, "category": "general", "amount": 5,
+                                     "purchase_type": 0, "discount_type": 0}])
 
-    # @logger
     def test_success(self):
         # existing stores in the system
         res = self.view_stores()
@@ -25,7 +23,6 @@ class ViewStoreInfoTest(ProjectTest):
         res = self.display_stores_or_products_info(self._store_name, False, True)
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # no products exist in the store
         self.remove_products_from_store(self._store_name, ["product"])
@@ -36,11 +33,10 @@ class ViewStoreInfoTest(ProjectTest):
         res = self.display_stores_or_products_info(self._store_name, True, False)
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
-        self.delete_user(self._username)
         self.remove_products_from_store(self._store_name, ["product"])
         self.remove_store(self._store_name)
+        self.delete_user(self._username)
 
     def __repr__(self):
         return repr("ViewStoreInfoTest")

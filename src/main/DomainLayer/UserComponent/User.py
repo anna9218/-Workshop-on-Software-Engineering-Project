@@ -1,13 +1,16 @@
 from datetime import datetime
+import hashlib, binascii, os
 
-from src.Logger import logger, secureLogger
+from src.Logger import secureLogger, logger
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.UserComponent.Login import Login
 from src.main.DomainLayer.UserComponent.Registration import Registration
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart, DiscountType, PurchaseType
-from src.main.DomainLayer.UserComponent.UserType import UserType
-# from src.main.DomainLayer.StoreComponent.Purchase import Purchase
+
+
+# from Backend.src.main.DomainLayer.StoreComponent.Purchase import Purchase
+# from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
 
 
 class User:
@@ -19,28 +22,38 @@ class User:
         self.__shoppingCart = ShoppingCart()
         self.__purchase_history = []
 
-    # @secureLogger
-    def register(self, username: str, password: str):
+    @secureLogger
+    def register(self, username: str, password: str) -> dict:
         # if self.__registrationState.get_nickname() is not None:
         #     return False
         if self.is_registered():
-            return False
-        if username.strip() == "" or password.strip() == "":
-            return False
+            return {'response': False, 'msg': "Guest " + username + " is already registered"}
+        if username.strip() == "":
+            return {'response': False,
+                    'msg': "Invalid nickname, has to include at least one character and can't include spaces alone"}
+        if password.strip() == "":
+            return {'response': False, 'msg': "Invalid nickname or password"}
         self.__registrationState.register(username, password)
-        return True
+        return {'response': True, 'msg': "Guest registered successfully"}
 
+    @logger
     def unregistered(self):
         self.__registrationState.unregistered()
 
-    # @secureLogger
+    @secureLogger
     def login(self, nickname: str, password: str):
-        if self.check_nickname(nickname) and self.check_password(password) and not self.is_logged_in():
+        if not self.check_password(password):
+            return {'response': False, 'msg': "Incorrect password"}
+        if self.is_logged_in():
+            return {'response': False, 'msg': "Subscriber " + nickname + " is already logged in"}
+        if self.check_nickname(nickname):
             self.__loginState.login()
-            return True
-        return False
+            if self.__registrationState.get_nickname() == "TradeManager":
+                return {'response': True, 'msg': "SYS_MANAGER"}
+            return {'response': True, 'msg': "Subscriber logged in successfully"}
+        return {'response': False, 'msg': "Incorrect nickname"}
 
-    # @logger
+    @logger
     def logout(self):
         if not self.is_logged_in():
             return False
@@ -50,121 +63,152 @@ class User:
         return True
 
     # @secureLogger
-    def check_password(self, password):
-        return self.__registrationState.get_password() == password
+    # def check_password(self, password):
+    #     return self.__registrationState.get_password() == password
 
-    # @logger
+    @secureLogger
+    def check_password(self, provided_password):
+        saved_password = self.__registrationState.get_password()
+        salt = saved_password[:64]
+        saved_password = saved_password[64:]
+        pass_hash = hashlib.pbkdf2_hmac('sha512', provided_password.encode('utf-8'), salt.encode('ascii'), 100000)
+        pass_hash = binascii.hexlify(pass_hash).decode('ascii')
+        return pass_hash == saved_password
+
+    @logger
     def check_nickname(self, nickname):
         return self.__registrationState.get_nickname() == nickname
 
-    # @logger
+    @logger
     def is_logged_in(self):
         return self.__loginState.is_logged_in()
 
-    # @logger
+    @logger
     def is_logged_out(self):
         return not self.__loginState.is_logged_in()
 
-    # @logger
-    def get_login(self):
-        return self.__loginState
-
-    # @logger
+    @logger
     def is_registered(self):
         return self.__registrationState.is_registered()
 
-    # @logger
-    def get_nickname(self):
-        return self.__registrationState.get_nickname()
-
-    # @logger
-    def get_purchase_history(self):
-        return self.__purchase_history
-
-    # @logger
+    @logger
     def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str,
                                                                      "product": Product,
-                                                                     "amount": int, "discount_type": DiscountType,
-                                                                     "purchase_type": PurchaseType}]):
+                                                                     "amount": int}]):
         return self.__shoppingCart.add_products(products_stores_quantity_ls)
 
-    # @logger
-    def view_shopping_cart(self):
+    @logger
+    def view_shopping_cart(self) -> {'response': list, 'msg': str}:
         """
-        :return: list: [{"store_name": str,
-                         "basket": [{"product_name": str
-                                     "amount": int}, ...]
-                        }, ...]
+        :return: dict: {'response': [{"store_name": str,
+                                     "basket": [{"product_name": str
+                                                 "amount": int}, ...]
+                                    }, ...],
+                        'msg': str}
         """
         return self.__shoppingCart.view_shopping_cart()
 
-    # @logger
-    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]):
+    @logger
+    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]) -> {
+        'response': bool, 'msg': str}:
         """
         :param products_details: [{"product_name": str,
                                        "store_name": str}, ...]
-        :return: True on success, False when one of the products doesn't exist in the shopping cart
+        :return: dict = {'response': bool, 'msg': str}
+                 True on success, False when one of the products doesn't exist in the shopping cart
         """
         return self.__shoppingCart.remove_products(products_details)
 
-    # @logger
-    def update_quantity_in_shopping_cart(self, products_details: [{"product_name": str, "store_name": str, "amount": int}]):
+    @logger
+    def update_quantity_in_shopping_cart(self, products_details: [
+        {"product_name": str, "store_name": str, "amount": int}]) -> {'response': bool, 'msg': str}:
         """
         :param flag: action option - "remove"/"update"
         :param products_details: [{"product_name": str,
                                        "store_name": str,
                                        "amount": int}, ...]
-        :return: True on success, False when one of the products doesn't exist in the shopping cart
+        :return: dict = {'response': bool, 'msg': str}
+                 True on success, False when one of the products doesn't exist in the shopping cart
         """
         return self.__shoppingCart.update_quantity(products_details)
 
-    # def get_appointment (self):
-    #     return self.__appointment
-
-    # @logger
-    def get_user_type(self):
-        if self.is_logged_in():
-            return UserType.Subscriber
-        else:
-            return UserType.Guest
-
-    # @logger
-    def set_registration_state(self, registration):
-        self.__registrationState = registration
-        return True
-
-    # --- Do we need this ?? ---
-
-    # @logger
-    def set_shopping_cart(self, shopping_cart):
-        self.__shoppingCart = shopping_cart
-    #
-    # @logger
-    # def set_login_state(self, login_state):
-    #     self.__loginState = login_state
-
-    # @logger
+    @logger
     def complete_purchase(self, purchase: Purchase):
         # add purchase to purchase history
         self.__purchase_history.append(purchase)
         # delete purchase from shopping cart
         self.__shoppingCart.get_store_basket(purchase.get_store_name()).complete_purchase(purchase.get_products())
+        return True
 
-    # @logger
+    @logger
     def remove_purchase(self, store_name: str, date: datetime):
         for p in self.__purchase_history:
             if p.get_store_name() == store_name and p.get_date() == date:
                 self.__purchase_history.remove(p)
+        return True
 
-    # @logger
+    # --------------------------------------GETTERS & SETTERS--------------------------------------------------------
+
+    @logger
+    def get_nickname(self):
+        return self.__registrationState.get_nickname()
+
+    @logger
+    def get_login(self):
+        return self.__loginState
+
+    @logger
+    def get_purchase_history(self):
+        return self.__purchase_history
+
+    @logger
+    def set_registration_state(self, registration):
+        self.__registrationState = registration
+        return True
+
+    @logger
+    def set_login_state(self, login):
+        self.__loginState = login
+        return True
+
+    @logger
+    def set_shopping_cart(self, shopping_cart):
+        self.__shoppingCart = shopping_cart
+
+    @logger
+    def set_purchase_history(self, purchase_hist):
+        self.__purchase_history = purchase_hist
+
+    @logger
+    def get_password(self):
+        return self.__registrationState.get_password()
+
+    @logger
     def get_shopping_cart(self) -> ShoppingCart:
         return self.__shoppingCart
 
+    @logger
+    def register_from_db(self, username, password):
+        self.__registrationState.register_from_db(username, password)
+
     def __repr__(self):
+        # if self.is_registered:
+        #     return repr(self.get_nickname)
         return repr("User")
+        # return repr("User")
 
     def __eq__(self, other):
         try:
-            return self.get_nickname() == other.get_nickname()
+            # from src.test.WhiteBoxTests.UnitTests.Stubs.StubUser import StubUser
+            if other == 'StoreOwnerOrManager':
+                return False
+            #     return self.get_nickname() == other.get_nickname()
+            # elif type(other) is type (StubUser()):
+            # print(f"self = {self}, other = {other}")
+            return other.get_nickname() == self.get_nickname()
+            # else:s
+
+                # print (f"expected User. recieved {type(other)}")
+                # return False
         except Exception:
             return False

@@ -1,0 +1,16 @@
+register//u1//pass
+register//u2//pass
+register//u3//pass
+register//u4//pass
+register//u5//pass
+register//u6//pass
+add_system_manager//u1//pass
+login//u2//pass
+open_store//s1
+add_products//s1//[{"name": "diapers", "price": 30, "category": "pooping", "amount": 20, "purchase_type": 0}]
+appoint_store_manager//u3//s1//[5, 6, 1]
+logout
+login//u3//pass
+appoint_store_manager//u5//s1//[5, 6, 1]
+appoint_store_manager//u6//s1//[5, 6, 1]
+logout

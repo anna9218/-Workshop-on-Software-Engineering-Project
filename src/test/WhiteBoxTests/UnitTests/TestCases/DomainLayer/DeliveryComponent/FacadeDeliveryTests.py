@@ -1,53 +1,65 @@
 import unittest
-
-from src.Logger import logger
+from unittest.mock import MagicMock
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
+from src.main.DomainLayer.DeliveryComponent.RealDelivery import RealDelivery
 
 
 class FacadeDeliveryTests(unittest.TestCase):
-    # @logger
     def setUp(self) -> None:
-        self.__delivery_sys = DeliveryProxy.get_instance()
-        self.__delivery_sys.connect()
+        self.__delivery_sys : DeliveryProxy = DeliveryProxy.get_instance()
+        self.__real_delivery_mock = RealDelivery()
+        self.__delivery_sys.set_real(self.__real_delivery_mock)
         self.__valid_username = "username"
-        self.__valid_address = "my awesome address 04/20"
-        self.__wrong_input = ""
+        self.__delivery_details = {'name': "nickname", 'address': "address 12", 'city': "ct", 'country': "i",
+                                   'zip': "123"}
 
-    # @logger
-    def test_connection(self):
+    def test_is_connected(self):
         # test that system is connected fine
-        self.assertEqual(True, self.__delivery_sys.is_connected())
-        # test that the system disconnect fine
-        self.__delivery_sys.disconnect()
-        self.assertEqual(False, self.__delivery_sys.is_connected())
+        self.__real_delivery_mock.is_connected = MagicMock(return_value=True)
+        self.assertTrue(self.__delivery_sys.is_connected())
+        # test connection error
+        self.__real_delivery_mock.is_connected = MagicMock(return_value=False)
+        res = self.__real_delivery_mock.is_connected()
+        self.assertFalse(self.__delivery_sys.is_connected())
 
-    # @logger
-    def test_wrong_input(self):
-        # valid user + invalid address
-        res = self.__delivery_sys.deliver_products(self.__valid_username, self.__wrong_input)
-        self.assertEqual(False, res)
-        # invalid user + valid address
-        res = self.__delivery_sys.deliver_products(self.__wrong_input, self.__valid_address)
-        self.assertEqual(False, res)
-        # invalid user + invalid address
-        res = self.__delivery_sys.deliver_products(self.__wrong_input, self.__wrong_input)
-        self.assertEqual(False, res)
-        # system disconnect + valid input
-        self.__delivery_sys.disconnect()
-        res = self.__delivery_sys.deliver_products(self.__valid_username, self.__valid_address)
-        self.assertEqual(False, res)
-        return
+    def test_deliver(self):
+        # test valid delivery
+        self.__real_delivery_mock.deliver_products = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.assertTrue(self.__delivery_sys.deliver_products(self.__delivery_details)["response"])
+        # test connection error
+        self.__real_delivery_mock.is_connected = MagicMock(return_value=False)
+        self.assertFalse(self.__delivery_sys.deliver_products(self.__delivery_details)["response"])
+        # test invalid delivery details
+        self.__real_delivery_mock.deliver_products = MagicMock(return_value={"response": False, "msg": "ok"})
+        self.assertFalse(self.__delivery_sys.deliver_products({'name': "nickname", 'address': "address 12",
+                                                               'city': "ct", 'country': "i"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'name': "nickname", 'address': "address 12",
+                                                               'city': "ct", 'zip': "123"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'name': "nickname", 'address': "address 12",
+                                                               'country': "i", 'zip': "123"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'name': "nickname", 'city': "ct", 'country': "i",
+                                                               'zip': "123"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'address': "address 12", 'city': "ct", 'country': "i",
+                                                               'zip': "123"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'name': "nickname", 'address': "address 12",
+                                                               'city': "ct"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'name': "nickname",
+                                                               'address': "address 12"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'name': "nickname"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'city': "ct", 'country': "i", 'zip': "123"})["response"])
+        self.assertFalse(self.__delivery_sys.deliver_products({'country': "i", 'zip': "123"})["response"])
 
-    # @logger
-    def test_correct_input(self):
-        # valid user + valid address
-        res = self.__delivery_sys.deliver_products(self.__valid_username, self.__valid_address)
-        self.assertEqual(True, res)
-        return
-
-    # @logger
-    def tearDown(self) -> None:
-        self.__delivery_sys.disconnect()
+    def test_cancel_delivery(self):
+        # test valid delivery cancellation
+        self.__real_delivery_mock.cancel_supply = MagicMock(return_value={"response": True, "msg": "ok"})
+        res = self.__delivery_sys.cancel_supply("2020")
+        self.assertTrue(res["response"])
+        # test connection error
+        self.__real_delivery_mock.is_connected = MagicMock(return_value=False)
+        self.assertFalse(self.__delivery_sys.cancel_supply("2020")["response"])
+        # test invalid delivery cancellation
+        self.__real_delivery_mock.cancel_supply = MagicMock(return_value={"response": False, "msg": "ok"})
+        self.assertFalse(self.__delivery_sys.cancel_supply("1")["response"])
 
     if __name__ == '__main__':
         unittest.main()

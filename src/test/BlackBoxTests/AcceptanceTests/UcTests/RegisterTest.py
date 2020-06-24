@@ -1,35 +1,30 @@
 """
     test class for use case 2.2 - registration
 """
-from src.Logger import logger
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class RegisterTest(ProjectTest):
-    # @logger
+class RegisterTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
 
-    # @logger
     def test_success(self):
         # valid input details
         res = self.register_user(self._username, self._password)
-        self.assertTrue(res)
+        self.assertTrue(res['response'])
 
-    # @logger
     def test_fail(self):
         # valid username + invalid password
         res = self.register_user(self._username, "")
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # invalid username + valid password
         res = self.register_user("", self._password)
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
         # username already registered in the system
         self.register_user(self._username, self._password)
         res = self.register_user(self._username, "somePassword")
-        self.assertFalse(res)
+        self.assertFalse(res['response'])
 
-    # @logger
     def tearDown(self) -> None:
         self.delete_user(self._username)
 

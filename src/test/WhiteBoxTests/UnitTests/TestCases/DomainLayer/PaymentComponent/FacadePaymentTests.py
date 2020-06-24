@@ -1,69 +1,66 @@
 import unittest
-
-from src.Logger import logger
+from unittest.mock import MagicMock
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
-from datetime import datetime as date_time
+from src.main.DomainLayer.PaymentComponent.RealPayment import RealPayment
 
 
 class FacadePaymentTests(unittest.TestCase):
 
-    # @logger
     def setUp(self) -> None:
-        self.__payment_sys = PaymentProxy.get_instance()
-        self.__payment_sys.connect()
-        self.__valid_username = "username"
-        self.__valid_date = date_time(2021, 12, 21)
-        self.__valid_credit = "123456789"
-        self.__wrong_input = ""
-        self.__passed_date = date_time(2012, 12, 21)
+        self.__payment_sys: PaymentProxy = PaymentProxy.get_instance()
+        self.__real_payment_mock = RealPayment()
+        self.__payment_sys.set_real(self.__real_payment_mock)
+        self.__payment_details = {'card_number': "123", 'month': "march", 'year': "1991", 'holder': "s",
+                                  'ccv': "111", 'id': "333"}
 
-    # @logger
-    def test_connection(self):
+    def test_is_connected(self):
         # test that system is connected fine
-        self.assertEqual(True, self.__payment_sys.is_connected())
+        self.__real_payment_mock.is_connected = MagicMock(return_value=True)
+        self.assertTrue(self.__payment_sys.is_connected())
+        # test connection error
+        self.__real_payment_mock.is_connected = MagicMock(return_value=False)
+        self.assertFalse(self.__payment_sys.is_connected())
 
-        # test that the system disconnect fine
-        self.__payment_sys.disconnect()
-        self.assertEqual(False, self.__payment_sys.is_connected())
+    def test_commit_payment(self):
+        # test valid payment
+        self.__real_payment_mock.commit_payment = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.assertTrue(self.__payment_sys.commit_payment(self.__payment_details)["response"])
+        # test connection error
+        self.__real_payment_mock.is_connected = MagicMock(return_value=False)
+        self.assertFalse(self.__payment_sys.commit_payment(self.__payment_details)["response"])
+        # test invalid payment details
+        self.__real_payment_mock.commit_payment = MagicMock(return_value={"response": False, "msg": "ok"})
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'month': "march", 'year': "1991",
+                                                            'holder': "s", 'ccv': "111"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'month': "march", 'year': "1991",
+                                                            'holder': "s", 'id': "333"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'month': "march", 'year': "1991",
+                                                            'ccv': "111", 'id': "333"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'month': "march",
+                                                            'holder': "s", 'ccv': "111", 'id': "333"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'year': "1991",
+                                                            'holder': "s", 'ccv': "111", 'id': "333"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'month': "march", 'year': "1991",
+                                                            'holder': "s", 'ccv': "111", 'id': "333"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'month': "march", 'year': "1991",
+                                                            'holder': "s"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'month': "march",
+                                                            'year': "1991", })["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123", 'month': "march"})["response"])
+        self.assertFalse(self.__payment_sys.commit_payment({'card_number': "123"})["response"])
 
-    # @logger
-    # TODO: complete this test
-    def test_wrong_input(self):
-        pass
-        # # valid user, amount, credit + invalid date
-        # #  [{"store_name": str, "basket_price": float, "products": [{"product_name", "product_price", "amount"}]}]
-        # res = self.__payment_sys.commit_payment(self.__valid_username, 10, self.__valid_credit, self.__wrong_input)
-        # self.assertEqual(False, res)
-        # # valid user, amount, credit + invalid date
-        # res = self.__payment_sys.commit_payment(self.__valid_username, 10, self.__valid_credit, self.__passed_date)
-        # self.assertEqual(False, res)
-        # # valid user, amount, date + invalid credit
-        # res = self.__payment_sys.commit_payment(self.__valid_username, 10, self.__wrong_input, self.__valid_date)
-        # self.assertEqual(False, res)
-        # # valid user, credit, date + invalid amount
-        # res = self.__payment_sys.commit_payment(self.__valid_username, -10, self.__valid_credit, self.__valid_date)
-        # self.assertEqual(False, res)
-        # # valid amount, credit, date + invalid user
-        # res = self.__payment_sys.commit_payment(self.__wrong_input, 10, self.__valid_credit, self.__valid_date)
-        # self.assertEqual(False, res)
-        # # all data invalid
-        # res = self.__payment_sys.commit_payment(self.__wrong_input, -10, self.__wrong_input, self.__wrong_input)
-        # self.assertEqual(False, res)
-        # # all data is valid + system is disconnected
-        # self.__payment_sys.disconnect()
-        # res = self.__payment_sys.commit_payment(self.__valid_username, 10, self.__valid_credit, self.__valid_date)
-        # self.assertEqual(False, res)
-
-    # @logger
-    def test_correct_input(self):
-        pass
-        # # all valid input
-        # res = self.__payment_sys.commit_payment(self.__valid_username, 10, self.__valid_credit, self.__valid_date)
-        # self.assertEqual(True, res)
-
-    # @logger
-    def tearDown(self) -> None:
-        self.__payment_sys.disconnect()
+    def test_cancel_supply(self):
+        # test valid payment cancellation
+        self.__real_payment_mock.cancel_pay = MagicMock(return_value={"response": True, "msg": "ok"})
+        self.assertTrue(self.__payment_sys.cancel_pay("2020")["response"])
+        # test connection error
+        self.__real_payment_mock.is_connected = MagicMock(return_value=False)
+        self.assertFalse(self.__payment_sys.cancel_pay("2020")["response"])
+        # test invalid transaction number
+        self.__real_payment_mock.cancel_pay = MagicMock(return_value={"response": False, "msg": "ok"})
+        self.assertFalse(self.__payment_sys.cancel_pay("-1")["response"])
+        self.assertFalse(self.__payment_sys.cancel_pay("")["response"])
+        self.assertFalse(self.__payment_sys.cancel_pay("90")["response"])
 
     if __name__ == '__main__':
         unittest.main()

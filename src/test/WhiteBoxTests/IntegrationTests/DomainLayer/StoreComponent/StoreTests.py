@@ -1,11 +1,17 @@
 import unittest
+from datetime import datetime
 
-from src.Logger import logger
+import jsonpickle
+
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.CompositeFlag import CompositeFlag
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.DiscountPolicy import DiscountPolicy
+from src.main.DomainLayer.StoreComponent.DiscountPolicyComposite.Leaves.ConditionalDiscountPolicy import \
+    ConditionalDiscountPolicy
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
-from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
+from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointment
 from src.main.DomainLayer.UserComponent.User import User
 
 
@@ -15,11 +21,22 @@ class StoreTests(unittest.TestCase):
         self.store: Store = Store("myStore")
         self.owner = User()
         self.owner.register("Eytan", "password")
-        self.store.get_owners().append(self.owner)
+        self.store.get_owners_appointments().append(StoreAppointment(None, self.owner, []))
         self.manager = User()
         self.manager.register("Not Eytan", "Yes Password")
-        self.store.get_store_manager_appointments().append(StoreManagerAppointment(self.owner, self.manager,
-                                                                                   [ManagerPermission.EDIT_INV]))
+        self.store.get_store_manager_appointments().append(StoreAppointment(self.owner, self.manager,
+                                                                            [ManagerPermission.EDIT_INV]))
+
+        dis_details = {'name': "p1", 'product': "Eytan"}
+        later_date = datetime(2021, 8, 21)
+        pre_con__details = {'product': "Eytan", 'min_amount': 2, 'min_basket_price': None}
+        leaf_pol1 = ConditionalDiscountPolicy(2.5, later_date, dis_details, pre_con__details)
+        dis_details = {'name': "p2", 'product': "Eytan"}
+        pre_con__details = {'product': "all", 'min_amount': None, 'min_basket_price': 1}
+        leaf_pol2 = ConditionalDiscountPolicy(5, later_date, dis_details, pre_con__details)
+        self.__policy = DiscountPolicy(jsonpickle.encode(leaf_pol1), jsonpickle.encode(leaf_pol2),
+                                       CompositeFlag.XOR, 10, "Comp_Pol", later_date)
+        self.store.get_discount_policies().insert(0, self.__policy)
 
         # self.__product1 = {"name": "Chair", "price": 100, "category": "Furniture", "amount": 10}
         # self.__product2 = {"name": "TV", "price": 10, "category": "Electric", "amount": 1}
@@ -27,9 +44,12 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_get_products_by(self):
-        self.store.add_products("Eytan", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 10},
-                                          {"name": "TV", "price": 10, "category": "Electric", "amount": 1},
-                                          {"name": "Sofa", "price": 1, "category": "Furniture", "amount": 2}])
+        self.store.add_products("Eytan", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 10,
+                                           "purchase_type": 0},
+                                          {"name": "TV", "price": 10, "category": "Electric", "amount": 1,
+                                           "purchase_type": 0},
+                                          {"name": "Sofa", "price": 1, "category": "Furniture", "amount": 2,
+                                           "purchase_type": 0}])
         product1: Product = Product("Chair", 100, "Furniture")
         product2: Product = Product("TV", 10, "Electric")
         product3: Product = Product("Sofa", 1, "Furniture")
@@ -74,15 +94,18 @@ class StoreTests(unittest.TestCase):
 
         # All Valid - New Products
         self.assertTrue(
-            self.store.add_products("Eytan", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5},
-                                              {"name": "Sofa", "price": 1, "category": "Furniture", "amount": 3}]))
+            self.store.add_products("Eytan", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5,
+                                               "purchase_type": 0},
+                                              {"name": "Sofa", "price": 1, "category": "Furniture", "amount": 3,
+                                               "purchase_type": 0}]))
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
         self.assertTrue(product3 in self.store.get_products_by(2, ""))
 
         # All valid - Existing products
         self.assertTrue(
-            self.store.add_products("Eytan", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 6}]))
+            self.store.add_products("Eytan", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 6,
+                                               "purchase_type": 0}]))
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
         self.assertTrue(product3 in self.store.get_products_by(2, ""))
@@ -90,7 +113,8 @@ class StoreTests(unittest.TestCase):
         # Invalid Product - negative price
         self.assertFalse(
             self.store.add_products("Eytan",
-                                    [{"name": "Eytan's Toy", "price": -99, "category": "Furniture", "amount": 5}]))
+                                    [{"name": "Eytan's Toy", "price": -99, "category": "Furniture", "amount": 5,
+                                      "purchase_type": 0}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("Eytan's Toy" in products_names)
@@ -100,7 +124,8 @@ class StoreTests(unittest.TestCase):
         # Invalid amount - negative amount
         self.assertFalse(
             self.store.add_products("Eytan",
-                                    [{"name": "Eytan's Toy", "price": 1, "category": "Furniture", "amount": -5}]))
+                                    [{"name": "Eytan's Toy", "price": 1, "category": "Furniture", "amount": -5,
+                                      "purchase_type": 0}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("Eytan's Toy" in products_names)
@@ -109,7 +134,8 @@ class StoreTests(unittest.TestCase):
 
         # Invalid Product - invalid name
         self.assertFalse(
-            self.store.add_products("Eytan", [{"name": "", "price": 100, "category": "Furniture", "amount": 5}]))
+            self.store.add_products("Eytan", [{"name": "", "price": 100, "category": "Furniture", "amount": 5,
+                                               "purchase_type": 0}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("" in products_names)
@@ -118,7 +144,8 @@ class StoreTests(unittest.TestCase):
 
         # Invalid Product - invalid category
         self.assertFalse(
-            self.store.add_products("Eytan", [{"name": "Eytan's Toy", "price": 100, "category": "", "amount": 5}]))
+            self.store.add_products("Eytan", [{"name": "Eytan's Toy", "price": 100, "category": "", "amount": 5,
+                                               "purchase_type": 0}])['response'])
         self.assertEqual(len(self.store.get_products_by(2, "")), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("Eytan's Toy" in products_names)
@@ -133,20 +160,20 @@ class StoreTests(unittest.TestCase):
         # All valid
 
         # First Addition
-        self.assertTrue(self.store.add_product("Eytan", "Chair", 100, "Furniture", 5))
+        self.assertTrue(self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0))
         self.assertEqual(self.store.get_inventory().len(), 1)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 5)
 
         # Second Addition
-        self.assertTrue(self.store.add_product("Eytan", "Sofa", 1, "Furniture", 0))
+        self.assertTrue(self.store.add_product("Eytan", "Sofa", 1, "Furniture", 0, 0))
         self.assertEqual(self.store.get_inventory().len(), 2)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
         self.assertTrue(product3 in self.store.get_products_by(2, ""))
         self.assertEqual(self.store.get_inventory().get_amount("Sofa"), 0)
 
         # Adding existing product
-        self.assertTrue(self.store.add_product("Eytan", "Chair", 100, "Furniture", 5))
+        self.assertTrue(self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0))
         self.assertEqual(self.store.get_inventory().len(), 2)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
         self.assertTrue(product3 in self.store.get_products_by(2, ""))
@@ -155,21 +182,21 @@ class StoreTests(unittest.TestCase):
         # Invalid
 
         # Negative amount
-        self.assertFalse(self.store.add_product("Eytan", "Chair", 100, "Furniture", -5))
+        self.assertFalse(self.store.add_product("Eytan", "Chair", 100, "Furniture", -5, 0))
         self.assertEqual(self.store.get_inventory().len(), 2)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
         self.assertTrue(product3 in self.store.get_products_by(2, ""))
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 10)
 
         # Negative price
-        self.assertFalse(self.store.add_product("Eytan", "Chair", -100, "Furniture", 5))
+        self.assertFalse(self.store.add_product("Eytan", "Chair", -100, "Furniture", 5, 0))
         self.assertEqual(self.store.get_inventory().len(), 2)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
         self.assertTrue(product3 in self.store.get_products_by(2, ""))
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 10)
 
         # Empty name
-        self.assertFalse(self.store.add_product("Eytan", "", 100, "Furniture", 5))
+        self.assertFalse(self.store.add_product("Eytan", "", 100, "Furniture", 5, 0))
         self.assertEqual(self.store.get_inventory().len(), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("" in products_names)
@@ -178,7 +205,7 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(self.store.get_inventory().get_amount("Chair"), 10)
 
         # Empty category
-        self.assertFalse(self.store.add_product("Eytan", "Eytan's Toy", 100, "", 5))
+        self.assertFalse(self.store.add_product("Eytan", "Eytan's Toy", 100, "", 5, 0))
         self.assertEqual(self.store.get_inventory().len(), 2)
         products_names = [product.get_name() for product in self.store.get_products_by(2, "")]
         self.assertFalse("Eytan's Toy" in products_names)
@@ -190,24 +217,24 @@ class StoreTests(unittest.TestCase):
         product1: Product = Product("Chair", 100, "Furniture")
         product3: Product = Product("Sofa", 1, "Furniture")
 
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
 
         # All Valid - one product
         self.assertTrue(self.store.remove_products("Eytan", ["Chair"]))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
-        self.store.add_product("Eytan", "Sofa", 1, "Furniture", 3)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5,0)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
+        self.store.add_product("Eytan", "Sofa", 1, "Furniture", 3, 0)
 
         # All valid - two products
         self.assertEqual(self.store.get_inventory().len(), 2)
         self.assertTrue(self.store.remove_products("Eytan", ["Chair", "Sofa"]))
         self.assertEqual(self.store.get_inventory().len(), 0)
 
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
-        self.store.add_product("Eytan", "Sofa", 1, "Furniture", 3)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
+        self.store.add_product("Eytan", "Sofa", 1, "Furniture", 3, 0)
 
         # All valid - not all inventory removed
         self.assertTrue(self.store.remove_products("Eytan", ["Chair"]))
@@ -227,11 +254,11 @@ class StoreTests(unittest.TestCase):
         bad_manager = User()
         bad_manager.register("Half Eytan, half not Eytan", "Definitely Password")
         self.store.get_store_manager_appointments().append(
-            StoreManagerAppointment(self.owner, bad_manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
+            StoreAppointment(self.owner, bad_manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
 
         # Invalid - Manager permissions
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
         self.assertFalse(self.store.remove_products(bad_manager.get_nickname(), ["Chair"]))
         self.assertEqual(self.store.get_inventory().len(), 1)
         self.assertTrue(product1 in self.store.get_products_by(2, ""))
@@ -244,8 +271,8 @@ class StoreTests(unittest.TestCase):
         # All valid - Empty inventory
         self.assertFalse(self.store.remove_product("Chair"))
 
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
-        self.store.add_product("Eytan", "Not Chair", 1, "Furniture", 3)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
+        self.store.add_product("Eytan", "Not Chair", 1, "Furniture", 3, 0)
 
         # All valid
         self.assertTrue(self.store.remove_product("Chair"))
@@ -257,7 +284,7 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_change_price(self):
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
 
         # All valid - first change
         self.assertTrue(self.store.change_price("Chair", 13))
@@ -281,7 +308,7 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_change_name(self):
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
 
         # All valid - first change
         self.assertTrue(self.store.change_name("Chair", "Chair222"))
@@ -305,7 +332,7 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_change_amount(self):
-        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5)
+        self.store.add_product("Eytan", "Chair", 100, "Furniture", 5, 0)
 
         # All valid - first change
         self.assertTrue(self.store.change_amount("Chair", 13))
@@ -333,7 +360,7 @@ class StoreTests(unittest.TestCase):
         user.register("eden", "password")
 
         # All valid
-        self.assertTrue(self.store.add_owner("Eytan", user))
+        self.assertTrue(self.store.add_owner("Eytan", user)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
@@ -341,7 +368,7 @@ class StoreTests(unittest.TestCase):
         guest = User()
 
         # Invalid - user doesn't register
-        self.assertFalse(self.store.add_owner("Eytan", guest))
+        self.assertFalse(self.store.add_owner("Eytan", guest)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
@@ -350,19 +377,20 @@ class StoreTests(unittest.TestCase):
         owner.register("probably eden", "password")
 
         # Invalid - Owner doesn't exist
-        self.assertFalse(self.store.add_owner("Eytan Not an Owner", owner))
+        self.assertFalse(self.store.add_owner("Eytan Not an Owner", owner)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
 
         # Invalid - Already owner
-        self.assertFalse(self.store.add_owner(self.owner.get_nickname(), user))
+        result = self.store.add_owner(self.owner.get_nickname(), user)['response']
+        self.assertFalse(result)
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
 
         # Invalid - Circular appointments
-        self.assertFalse(self.store.add_owner(user.get_nickname(), self.owner))
+        self.assertFalse(self.store.add_owner(user.get_nickname(), self.owner)['response'])
         self.assertEqual(len(self.store.get_owners()), 2)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(self.owner in self.store.get_owners())
@@ -370,11 +398,11 @@ class StoreTests(unittest.TestCase):
         manager = User()
         manager.register("Half Eytan, half not Eytan", "Definitely Password")
         self.store.get_store_manager_appointments().append(
-            StoreManagerAppointment(self.owner, manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
+            StoreAppointment(self.owner, manager, [ManagerPermission.WATCH_PURCHASE_HISTORY]))
         self.assertTrue(manager in self.store.get_managers())
 
         # All valid - appoint manager as owner
-        self.assertTrue(self.store.add_owner("Eytan", manager))
+        self.assertTrue(self.store.add_owner("Eytan", manager)['response'])
         self.assertEqual(len(self.store.get_owners()), 3)
         self.assertTrue(user in self.store.get_owners())
         self.assertTrue(manager in self.store.get_owners())
@@ -511,7 +539,7 @@ class StoreTests(unittest.TestCase):
     def test_edit_product(self):
         product1_args = ("Chair", 100, "Furniture")
         product1: Product = Product(*product1_args)
-        self.store.add_product("Eytan", *product1_args, 10)
+        self.store.add_product("Eytan", *product1_args, 10, 0)
 
         # OP name
 
@@ -791,8 +819,8 @@ class StoreTests(unittest.TestCase):
 
     # @logger
     def test_is_in_store_inventory(self):
-        self.store.add_product("Eytan", "Eytan's Product", 100, "Eytan Category", 5)
-        self.store.add_product("Eytan", "not Eytan's Product", 10, "Eytan Category", 2)
+        self.store.add_product("Eytan", "Eytan's Product", 100, "Eytan Category", 5, 0)
+        self.store.add_product("Eytan", "not Eytan's Product", 10, "Eytan Category", 2, 0)
 
         # All valid one product
         amount_per_product = [["Eytan's Product", 4]]
@@ -829,8 +857,152 @@ class StoreTests(unittest.TestCase):
         result = self.store.is_in_store_inventory(amount_per_product)
         self.assertFalse(result)
 
+    def test_purchase_policy_exists(self):
+        self.store.define_purchase_policy({"name": "policy1", "products": ["product1"], "min_amount": 8})
+        # policy exists
+        res = self.store.purchase_policy_exists({"name": "policy1", "products": ["product1"], "min_amount": 8})
+        self.assertTrue(res)
+
+        # policy doesn't exist
+        res = self.store.purchase_policy_exists({"name": "policy2", "products": ["product1", "product2"], "min_amount": 8})
+        self.assertFalse(res)
+
+        res = self.store.purchase_policy_exists({"products": ["product1", "product2"], "min_amount": 8})
+        self.assertFalse(res)
+
+        res = self.store.purchase_policy_exists({"name": "policy2", "products": ["product1"], "min_amount": 10})
+        self.assertFalse(res)
+
+    def test_add_purchase_policy(self):
+        # valid details
+        res = self.store.define_purchase_policy({"name": "policy1",
+                                                 "products": ["product1"], "min_amount": 8})["response"]
+        self.assertTrue(res)
+
+        # invalid details
+        res = self.store.define_purchase_policy({"name": "policy2",
+                                                 "products": ["product1"]})["response"]
+        self.assertFalse(res)
+
+        res = self.store.define_purchase_policy({"products": ["product1"], "min_amount": 8})["response"]
+        self.assertFalse(res)
+
+    def test_update_purchase_policy(self):
+        self.store.define_purchase_policy({"name": "policy1",
+                                           "products": ["product1"], "min_amount": 8})
+        # valid update
+        res = self.store.update_purchase_policy({"name": "policy1",
+                                           "products": ["product1"], "min_amount": 4})["response"]
+        self.assertTrue(res)
+
+        # invalid update
+        res = self.store.update_purchase_policy({"name": "policy2",
+                                                 "products": ["product1"], "min_amount": 4})["response"]
+        self.assertFalse(res)
+
+    def test_get_purchase_policies(self):
+        # no policies exist
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) == 0)
+
+        # policies exist
+        self.store.define_purchase_policy({"name": "policy1",
+                                           "products": ["product1"], "min_amount": 8})
+        res = self.store.get_purchase_policies()
+        self.assertTrue(len(res) > 0)
+
+    def test_remove_owner(self):
+        store: Store = Store("store1")
+        store.get_owners_appointments().append(StoreAppointment(None, self.owner, []))
+        owner1 = User()
+        owner1.register("owner1", "password")
+        store.add_owner(self.owner.get_nickname(), owner1)
+
+        owner2 = User()
+        owner2.register("owner2", "password")
+        store.add_owner("owner1", owner2)
+
+        owner3 = User()
+        owner3.register("owner3", "password")
+        store.add_owner("owner2", owner3)
+
+        manager1 = User()
+        manager1.register("manager1", "password")
+        store.add_manager(owner3, manager1, [])
+
+        manager2 = User()
+        manager2.register("manager2", "password")
+        store.add_manager(self.owner, manager2, [])
+
+        # failed owner2 didn't appoint owner 2 as owner
+        res = store.remove_owner("owner2", "owner1")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # failed
+        res = store.remove_owner("owner", "owner1")
+        self.assertEqual(res['response'], [])
+        self.assertEqual(res['msg'], "Error! remove store owner failed.")
+
+        # success
+        res = store.remove_owner(self.owner.get_nickname(), "owner1")
+
+        self.assertEqual(res['response'], ['owner1 removed as owner', 'owner2 removed as owner', 'owner3 removed as owner', 'manager1 removed as manager'])
+        self.assertEqual(res['msg'], "Store owner owner1 and his appointees were removed successfully.")
+        self.assertFalse(store.is_owner('owner1'))
+        self.assertFalse(store.is_owner('owner2'))
+        self.assertFalse(store.is_owner('owner3'))
+        self.assertFalse(store.is_manager('manager1'))
+        self.assertTrue(store.is_manager('manager2'))
+
+    def test_remove_owner_appointees(self):
+        store: Store = Store("store")
+        store.get_owners_appointments().append(StoreAppointment(None, self.owner, []))
+        owner1 = User()
+        owner1.register("owner1", "password")
+        store.add_owner(self.owner.get_nickname(), owner1)
+
+        owner2 = User()
+        owner2.register("owner2", "password")
+        store.add_owner("owner1", owner2)
+
+        owner3 = User()
+        owner3.register("owner3", "password")
+        store.add_owner("owner2", owner3)
+
+        manager1 = User()
+        manager1.register("manager1", "password")
+        store.add_manager(owner3, manager1, [])
+
+        manager2 = User()
+        manager2.register("manager2", "password")
+        store.add_manager(self.owner, manager2, [])
+
+        res = store.remove_owner_appointees("owner1")
+
+        self.assertEqual(res, ['owner2 removed as owner', 'owner3 removed as owner', 'manager1 removed as manager'])
+        self.assertTrue(store.is_owner('owner1'))
+        self.assertFalse(store.is_owner('owner2'))
+        self.assertFalse(store.is_owner('owner3'))
+        self.assertFalse(store.is_manager('manager1'))
+        self.assertTrue(store.is_manager('manager2'))
+
+    def test_purchase_immediate(self):
+        # purchase_immediate(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
+        # ret format{'amount': 2, 'product_name': 'Eytan', 'product_price': 10} != 9
+        result = self.store.purchase_immediate("Eytan", 10, 2, 0, ["Eytan"])
+        self.assertEqual(9, result['product_price'])
+
+        result = self.store.purchase_immediate("Eytan", 10, 2, 3, ["Eytan"])
+        self.assertEqual(10, result['product_price'])
+
+        result = self.store.purchase_immediate("Eytan2", 10, 2, 3, ["Eytan"])
+        self.assertEqual(10, result['product_price'])
+
+
     # # @logger
     def tearDown(self) -> None:
+        self.store.reset_policies()
         self.store = None
 
     def __repr__(self):

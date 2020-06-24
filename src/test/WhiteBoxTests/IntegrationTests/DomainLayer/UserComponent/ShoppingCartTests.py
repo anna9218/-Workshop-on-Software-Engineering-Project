@@ -1,19 +1,14 @@
 import unittest
 
-from src.Logger import logger
-from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Store import Store
-from src.main.DomainLayer.StoreComponent.StoreManagerAppointment import StoreManagerAppointment
 from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.main.DomainLayer.UserComponent.ShoppingCart import ShoppingCart
-from src.main.DomainLayer.UserComponent.User import User
 
 
 class ShoppingCartTests(unittest.TestCase):
-    # @logger
     def setUp(self):
         self.__shopping_cart = ShoppingCart()
         self.__product = Product("Eytan's product", 12, "Eytan's category")
@@ -21,56 +16,86 @@ class ShoppingCartTests(unittest.TestCase):
         self.__product_as_dictionary = {"product": self.__product, "amount": 4, "store_name": self.__store.get_name(),
                                         "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
         self.__product_to_add = (self.__product_as_dictionary['product'],
-                                 self.__product_as_dictionary['amount'],
-                                 self.__product_as_dictionary['discount_type'],
-                                 self.__product_as_dictionary['purchase_type'])
+                                 self.__product_as_dictionary['amount'])
 
-    # @logger
     def test_add_products(self):
         basket = ShoppingBasket()
         basket.add_product(*self.__product_to_add)
         expected = {"store_name": self.__store.get_name(), "basket": basket}
 
         # All valid
-        self.assertTrue(self.__shopping_cart.add_products([self.__product_as_dictionary]))
-        self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
-        self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
+        self.assertTrue(self.__shopping_cart.add_products([self.__product_as_dictionary])['response'])
+        res = self.__shopping_cart.get_shopping_baskets()
+        self.assertEqual(len(res), 1)
+        res = res[0]
+        self.assertTrue(res['store_name'] == self.__store.get_name() and
+                        res['basket'].get_products()[0]['product'].get_name() == self.__product.get_name())
+        # self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
 
         # Valid - empty basket
-        self.assertTrue(self.__shopping_cart.add_products([]))
-        self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
-        self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
+        self.assertTrue(self.__shopping_cart.add_products([])['response'])
+        res = self.__shopping_cart.get_shopping_baskets()
+        # [{'store_name', 'basket': ShoppingBasket}]
+        # ShoppingBasket.get_products = [{'product', 'amount'}]
+        self.assertEqual(len(res), 1)
+        res = res[0]
+        self.assertTrue(res['store_name'] == self.__store.get_name() and
+                        res['basket'].get_products()[0]['product'].get_name() == self.__product.get_name())
+        # self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
 
         # invalid - basket = None
-        self.assertFalse(self.__shopping_cart.add_products([self.__product_as_dictionary, None]))
-        self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
-        self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
+        self.assertFalse(self.__shopping_cart.add_products([self.__product_as_dictionary, None])['response'])
+        res = self.__shopping_cart.get_shopping_baskets()
+        # [{'store_name', 'basket': ShoppingBasket}]
+        # ShoppingBasket.get_products = [{'product', 'amount'}]
+        self.assertEqual(len(res), 1)
+        res = res[0]
+        self.assertTrue(res['store_name'] == self.__store.get_name() and
+                        res['basket'].get_products()[0]['product'].get_name() == self.__product.get_name())
+        # self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
 
         bad_basket = {"product": None, "amount": 4, "store_name": self.__store.get_name(),
                       "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         # invalid - product = None
-        self.assertFalse(self.__shopping_cart.add_products([bad_basket]))
-        self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
-        self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
+        self.assertFalse(self.__shopping_cart.add_products([bad_basket])['response'])
+        res = self.__shopping_cart.get_shopping_baskets()
+        # [{'store_name', 'basket': ShoppingBasket}]
+        # ShoppingBasket.get_products = [{'product', 'amount'}]
+        self.assertEqual(len(res), 1)
+        res = res[0]
+        self.assertTrue(res['store_name'] == self.__store.get_name() and
+                        res['basket'].get_products()[0]['product'].get_name() == self.__product.get_name())
+        # self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
 
         bad_basket = {"product": self.__product, "amount": -4, "store_name": self.__store.get_name(),
                       "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         # invalid - negative amount
-        self.assertFalse(self.__shopping_cart.add_products([bad_basket]))
-        self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
-        self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
+        self.assertFalse(self.__shopping_cart.add_products([bad_basket])['response'])
+        res = self.__shopping_cart.get_shopping_baskets()
+        # [{'store_name', 'basket': ShoppingBasket}]
+        # ShoppingBasket.get_products = [{'product', 'amount'}]
+        self.assertEqual(len(res), 1)
+        res = res[0]
+        self.assertTrue(res['store_name'] == self.__store.get_name() and
+                        res['basket'].get_products()[0]['product'].get_name() == self.__product.get_name())
+        # self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
 
         bad_basket = {"product": self.__product, "amount": 0, "store_name": self.__store.get_name(),
                       "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         # invalid - Edge case - amount = 0
-        self.assertFalse(self.__shopping_cart.add_products([bad_basket]))
-        self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
-        self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
+        self.assertFalse(self.__shopping_cart.add_products([bad_basket])['response'])
+        res = self.__shopping_cart.get_shopping_baskets()
+        # [{'store_name', 'basket': ShoppingBasket}]
+        # ShoppingBasket.get_products = [{'product', 'amount'}]
+        self.assertEqual(len(res), 1)
+        res = res[0]
+        self.assertTrue(res['store_name'] == self.__store.get_name() and
+                        res['basket'].get_products()[0]['product'].get_name() == self.__product.get_name())
+        # self.assertIn(expected, self.__shopping_cart.get_shopping_baskets())
 
-    # @logger
     def test_remove_products(self):
         product1: Product = Product("not Eytan's product", 9, "Eytan's category")
         store1: Store = Store("Not my store")
@@ -106,7 +131,7 @@ class ShoppingCartTests(unittest.TestCase):
 
         # Invalid - product isn't in the store
         self.assertFalse(self.__shopping_cart.remove_products([{"product_name": product2.get_name(),
-                                                                "store_name": self.__store.get_name()}]))
+                                                                "store_name": self.__store.get_name()}])['response'])
         self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 2)
         stores = [store_and_basket['store_name'] for store_and_basket in self.__shopping_cart.get_shopping_baskets()]
         self.assertTrue(self.__store.get_name() in stores)
@@ -124,7 +149,7 @@ class ShoppingCartTests(unittest.TestCase):
 
         # All valid - make the basket empty
         self.assertTrue(self.__shopping_cart.remove_products([{"product_name": product1.get_name(),
-                                                               "store_name": self.__store.get_name()}]))
+                                                               "store_name": self.__store.get_name()}])['response'])
         self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
         stores = [store_and_basket['store_name'] for store_and_basket in self.__shopping_cart.get_shopping_baskets()]
         self.assertFalse(self.__store.get_name() in stores)
@@ -136,7 +161,7 @@ class ShoppingCartTests(unittest.TestCase):
 
         # Invalid - product doesn't exist
         self.assertFalse(self.__shopping_cart.remove_products([{"product_name": "product1.get_name()",
-                                                                "store_name": store1.get_name()}]))
+                                                                "store_name": store1.get_name()}])['response'])
         self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
         stores = [store_and_basket['store_name'] for store_and_basket in self.__shopping_cart.get_shopping_baskets()]
         self.assertTrue(store1.get_name() in stores)
@@ -147,7 +172,7 @@ class ShoppingCartTests(unittest.TestCase):
 
         # Invalid - store doesn't exist
         self.assertFalse(self.__shopping_cart.remove_products([{"product_name": product1.get_name(),
-                                                                "store_name": "store1.get_name()"}]))
+                                                                "store_name": "store1.get_name()"}])['response'])
         self.assertEqual(len(self.__shopping_cart.get_shopping_baskets()), 1)
         stores = [store_and_basket['store_name'] for store_and_basket in self.__shopping_cart.get_shopping_baskets()]
         self.assertTrue(store1.get_name() in stores)
@@ -156,7 +181,6 @@ class ShoppingCartTests(unittest.TestCase):
         self.assertTrue(product1 in products)
         self.assertTrue(product2 in products)
 
-    # @logger
     def test_update_quantity(self):
         # def update_quantity(products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         product1: Product = Product("not Eytan's product", 9, "Eytan's category")
@@ -172,58 +196,36 @@ class ShoppingCartTests(unittest.TestCase):
                                            product_as_dictionary_var1,
                                            product_as_dictionary_var2,
                                            product_as_dictionary_var3])
-
         # All Valid - product only in one store
         self.assertTrue(self.__shopping_cart.update_quantity([{"product_name": self.__product.get_name(),
                                                                "store_name": self.__store.get_name(),
-                                                               "amount": 123}]))
-        product_as_dictionary_lst_self_store = \
-            self.__shopping_cart.get_store_basket(self.__store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == self.__product.get_name()]
-        self.assertEqual(123, product_amount_as_lst_self_store[0])
+                                                               "amount": 123}])['response'])
+        self.assertEqual(123, self.__shopping_cart.get_store_basket(self.__store.get_name()).get_product_amount(
+            self.__product.get_name()))
 
         # All Valid - product in two stores, but change only in one
         self.assertTrue(self.__shopping_cart.update_quantity([{"product_name": product1.get_name(),
                                                                "store_name": self.__store.get_name(),
-                                                               "amount": 234}]))
-        product_as_dictionary_lst_self_store = \
-            self.__shopping_cart.get_store_basket(self.__store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == product1.get_name()]
-        product_as_dictionary_lst_store1 = \
-            self.__shopping_cart.get_store_basket(store1.get_name()).get_products()
-        product_amount_as_lst_store1 = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_store1
-             if product_as_dictionary['product'].get_name() == product1.get_name()]
-        self.assertEqual(234, product_amount_as_lst_self_store[0])
-        self.assertEqual(12, product_amount_as_lst_store1[0])
+                                                               "amount": 234}])['response'])
+        self.assertEqual(234,  self.__shopping_cart.get_store_basket(self.__store.get_name()).get_product_amount(
+            product1.get_name()))
+        self.assertEqual(12,  self.__shopping_cart.get_store_basket(store1.get_name()).get_product_amount(
+            product1.get_name()))
 
         # Invalid - product not in store
         self.assertFalse(self.__shopping_cart.update_quantity([{"product_name": product2.get_name(),
                                                                 "store_name": self.__store.get_name(),
-                                                                "amount": 234}]))
-        product_as_dictionary_lst_store1 = \
-            self.__shopping_cart.get_store_basket(store1.get_name()).get_products()
-        product_amount_as_lst_store1 = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_store1
-             if product_as_dictionary['product'].get_name() == product2.get_name()]
-        self.assertNotEqual(234, product_amount_as_lst_store1[0])
+                                                                "amount": 234}])['response'])
+        self.assertNotEqual(234, self.__shopping_cart.get_store_basket(store1.get_name()).get_product_amount(
+            product2.get_name()))
 
         # Invalid - negative amount
         self.assertFalse(self.__shopping_cart.update_quantity([{"product_name": self.__product.get_name(),
                                                                 "store_name": self.__store.get_name(),
-                                                                "amount": -999}]))
-        product_as_dictionary_lst_self_store = \
-            self.__shopping_cart.get_store_basket(self.__store.get_name()).get_products()
-        product_amount_as_lst_self_store = \
-            [product_as_dictionary['amount'] for product_as_dictionary in product_as_dictionary_lst_self_store
-             if product_as_dictionary['product'].get_name() == self.__product.get_name()]
-        self.assertNotEqual(-999, product_amount_as_lst_self_store[0])
+                                                                "amount": -999}])['response'])
+        self.assertNotEqual(-999, self.__shopping_cart.get_store_basket(self.__store.get_name()).get_product_amount(
+            self.__product.get_name()))
 
-    # @logger
     def test_remove_store_basket(self):
         expected_basket = ShoppingBasket()
         expected_basket.add_product(*self.__product_to_add)
@@ -237,7 +239,6 @@ class ShoppingCartTests(unittest.TestCase):
         # Invalid - store doesn't exist
         self.assertFalse(self.__shopping_cart.remove_store_basket("self.__store.get_name()"))
 
-    # @logger
     def test_get_store_basket(self):
         expected_basket = ShoppingBasket()
         expected_basket.add_product(*self.__product_to_add)
@@ -245,7 +246,9 @@ class ShoppingCartTests(unittest.TestCase):
         self.__shopping_cart.add_products([self.__product_as_dictionary])
 
         # All valid - store exist
-        self.assertEqual(expected_basket, self.__shopping_cart.get_store_basket(self.__store.get_name()))
+        res = self.__shopping_cart.get_store_basket(self.__store.get_name()).get_products()[0]['product'].get_name()
+        self.assertEqual(self.__product.get_name(), res)
+        # self.assertEqual(expected_basket, self.__shopping_cart.get_store_basket(self.__store.get_name()))
 
         # Invalid - store doesn't exist
         self.assertIsNone(self.__shopping_cart.get_store_basket("self.__store.get_name()"))

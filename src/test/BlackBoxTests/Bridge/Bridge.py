@@ -8,8 +8,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from src.Logger import logger
-
 
 class Bridge(ABC):
 
@@ -19,22 +17,6 @@ class Bridge(ABC):
     @abstractmethod
     # init system functions
     def init_sys(self) -> bool:
-        pass
-
-    @abstractmethod
-    def is_payment_connected(self) -> bool:
-        pass
-
-    @abstractmethod
-    def is_delivery_connected(self) -> bool:
-        pass
-
-    @abstractmethod
-    def cause_connection_err_payment(self):
-        pass
-
-    @abstractmethod
-    def cause_connection_err_delivery(self):
         pass
 
     # Register tests bridged functions
@@ -95,7 +77,10 @@ class Bridge(ABC):
         pass
 
     @abstractmethod
-    def confirm_purchase(self, address: str, purchase_ls: dict) -> bool:
+    def confirm_purchase(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+                        payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                          'ccv': str, 'id': str},
+                        purchase_ls: []) -> bool:
         pass
 
     @abstractmethod
@@ -124,7 +109,8 @@ class Bridge(ABC):
     # manage stock functions
     @abstractmethod
     def add_products_to_store(self, store_name: str, products_details:
-                                            [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+                                            [{"name": str, "price": int, "category": str, "amount": int,
+                                              "purchase_type": int}]) -> bool:
         pass
 
     @abstractmethod
@@ -133,6 +119,60 @@ class Bridge(ABC):
 
     @abstractmethod
     def remove_products_from_store(self, store_name: str, products_names: list):
+        pass
+
+    # 4.2 add and update purchase and discount policies
+    def set_purchase_operator(self, store_name: str, operator: str):
+        pass
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        pass
+
+    # 4.4
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        pass
+
+    def get_store(self, store_name):
+        pass
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        pass
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        pass
+
+    @abstractmethod
+    def update_discount_policy(self, store_name: str, policy_name: str,
+                               percentage: float = -999,
+                               valid_until: datetime = None,
+                               discount_details: {'name': str,
+                                                  'product': str} = None,
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None):
+        pass
+
+    @abstractmethod
+    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float, name: str, valid_until: datetime) -> {}:
+        pass
+
+    @abstractmethod
+    def define_discount_policy(self, store_name: str,
+                               percentage: float,
+                               valid_until: datetime,
+                               discount_details: {'name': str,
+                                                  'product': str},
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None
+                               ):
         pass
 
     # add store owner functions
@@ -173,28 +213,54 @@ class Bridge(ABC):
 
     # Payment System tests bridged functions
     @abstractmethod
-    def connect_payment_sys(self):
+    def is_payment_connected(self) -> bool:
         pass
 
     @abstractmethod
-    def commit_payment(self, product_ls) -> bool:
+    def commit_payment(self, payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
         pass
 
     @abstractmethod
-    def disconnect_payment_sys(self):
+    def cancel_payment_supply(self, transaction_id: str) -> bool:
+        pass
+
+    @abstractmethod
+    def cause_payment_timeout(self):
+        pass
+
+    @abstractmethod
+    def cause_payment_con_error(self):
+        pass
+
+    @abstractmethod
+    def set_connection_payment_back(self):
         pass
 
     # delivery System tests bridged functions
     @abstractmethod
-    def connect_delivery_sys(self):
+    def deliver(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str,
+                                                  'zip': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
         pass
 
     @abstractmethod
-    def deliver(self, address: str, products_ls) -> bool:
+    def cancel_delivery_supply(self, transaction_id: str) -> bool:
         pass
 
     @abstractmethod
-    def disconnect_delivery_sys(self):
+    def is_delivery_connected(self) -> bool:
+        pass
+
+    @abstractmethod
+    def cause_delivery_timeout(self):
+        pass
+
+    @abstractmethod
+    def cause_delivery_con_error(self):
+        pass
+
+    @abstractmethod
+    def set_connection_delivery_back(self):
         pass
 
     @abstractmethod

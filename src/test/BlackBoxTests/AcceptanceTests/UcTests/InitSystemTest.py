@@ -1,17 +1,15 @@
 """
     test class for use case 1.1 - initialization
 """
-from src.Logger import logger, errorLogger
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.Logger import errorLogger
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class InitSystemTest(ProjectTest):
+class InitSystemTest(ProjectAT):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
 
-    # @logger
     def test_success(self):
         try:
             res = self.init_sys()
@@ -20,7 +18,6 @@ class InitSystemTest(ProjectTest):
             errorLogger("System down warning")
             self.assertTrue(True, "System down warning")
 
-    # @logger
     def test_fail(self):
         self.test_communication_error_payment()
         self.test_communication_error_delivery()

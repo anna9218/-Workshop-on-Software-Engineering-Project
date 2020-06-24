@@ -1,11 +1,10 @@
 """
     test class for use case 4.6 - edit managers' permissions
 """
-from src.Logger import logger
-from src.test.BlackBoxTests.AcceptanceTests.ProjectTest import ProjectTest
+from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 
-class EditManagerPermissionsTest(ProjectTest):
+class EditManagerPermissionsTest(ProjectAT):
 
     # @logger
     def setUp(self) -> None:
@@ -38,10 +37,10 @@ class EditManagerPermissionsTest(ProjectTest):
 
     # @logger
     def tearDown(self) -> None:
+        self.remove_store(self._store_name)
         self.delete_user(self._username)
         self.delete_manager(self.__appointee_name, self._store_name)
         self.delete_user(self.__appointee_name)
-        self.remove_store(self._store_name)
 
     def __repr__(self):
         return repr("EditManagerPermissionsTest")

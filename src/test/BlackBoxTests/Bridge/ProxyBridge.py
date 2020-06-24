@@ -5,7 +5,6 @@
 """
 from datetime import datetime
 
-from src.Logger import logger
 from src.test.BlackBoxTests.Bridge.Bridge import Bridge
 from src.test.BlackBoxTests.Bridge.RealBridge import RealBridge
 
@@ -88,8 +87,11 @@ class ProxyBridge(Bridge):
     def purchase_products(self) -> dict:
         return self._realbridge.purchase_products()
 
-    def confirm_purchase(self, address: str, purchase_ls: dict):
-        return self._realbridge.confirm_purchase(address, purchase_ls)
+    def confirm_purchase(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+                        payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                          'ccv': str, 'id': str},
+                        purchase_ls: []):
+        return self._realbridge.confirm_purchase(delivery_details, payment_details, purchase_ls)
 
     def remove_purchase(self, store_name: str, purchase_date: datetime):
         self._realbridge.remove_purchase(store_name, purchase_date)
@@ -115,7 +117,8 @@ class ProxyBridge(Bridge):
     # 4.1
     # @logger
     def add_products_to_store(self, store_name: str, products_details:
-                                            [{"name": str, "price": int, "category": str, "amount": int}]) -> bool:
+                                            [{"name": str, "price": int, "category": str, "amount": int,
+                                              "purchase_type": int}]) -> bool:
         return self._realbridge.add_products_to_store(store_name, products_details)
 
     # @logger
@@ -126,10 +129,64 @@ class ProxyBridge(Bridge):
     def remove_products_from_store(self, store_name: str, products_names: list):
         return self._realbridge.remove_products_from_store(store_name, products_names)
 
+    # 4.2
+    def set_purchase_operator(self, store_name: str, operator: str):
+        self._realbridge.set_purchase_operator(store_name, operator)
+
+    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+        return self._realbridge.define_and_update_policies(policy_type, store_name)
+
+    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self._realbridge.update_purchase_policy(store_name, details)
+
+    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+                                                                "min_amount": int or None,
+                                                                "max_amount": int or None,
+                                                                "dates": [dict] or None, "bundle": bool or None}):
+        return self._realbridge.define_purchase_policy(store_name, details)
+
+    def update_discount_policy(self, store_name: str, policy_name: str,
+                               percentage: float = -999,
+                               valid_until: datetime = None,
+                               discount_details: {'name': str,
+                                                  'product': str} = None,
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None):
+        return self._realbridge.update_discount_policy(store_name, policy_name, percentage, valid_until,
+                                                       discount_details, discount_precondition)
+
+    def define_discount_policy(self, store_name: str,
+                               percentage: float,
+                               valid_until: datetime,
+                               discount_details: {'name': str,
+                                                  'product': str},
+                               discount_precondition: {'product': str,
+                                                       'min_amount': int or None,
+                                                       'min_basket_price': str or None} or None = None
+                               ):
+        return self._realbridge.define_discount_policy(store_name, percentage, valid_until, discount_details,
+                                                       discount_precondition)
+
+    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+                                percentage: float, name: str, valid_until: datetime) -> {}:
+        return self._realbridge.define_composite_policy(store_name, policy1_name, policy2_name, flag, percentage, name,
+                                                        valid_until)
+
     # 4.3
     # @logger
     def appoint_additional_owner(self, nickname, store_name):
         return self._realbridge.appoint_additional_owner(nickname, store_name)
+
+    # 4.4 remove store owner functions
+    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        return self._realbridge.remove_owner(appointee_nickname, store_name)
+
+    def get_store(self, store_name):
+        return self._realbridge.get_store(store_name)
 
     # 4.5
     # @logger
@@ -159,30 +216,38 @@ class ProxyBridge(Bridge):
         return self._realbridge.manager_view_shop_purchase_history(store_name)
 
     # 7
-    # @logger
-    def connect_payment_sys(self):
-        self._realbridge.connect_payment_sys()
+    def commit_payment(self,  payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
+                                               'ccv': str, 'id': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
+        return self._realbridge.commit_payment(payment_details)
 
-    # @logger
-    def disconnect_payment_sys(self):
-        self._realbridge.disconnect_payment_sys()
+    def cancel_payment_supply(self, transaction_id: str) -> bool:
+        return self._realbridge.cancel_payment_supply(transaction_id)
 
-    # @logger
-    def commit_payment(self, product_ls) -> bool:
-        return self._realbridge.commit_payment(product_ls)
+    def cause_payment_timeout(self):
+        self._realbridge.cause_payment_timeout()
+
+    def cause_payment_con_error(self):
+        self._realbridge.cause_payment_con_error()
+
+    def set_connection_payment_back(self):
+        self._realbridge.set_connection_payment_back()
 
     # 8
-    # @logger
-    def connect_delivery_sys(self):
-        self._realbridge.connect_delivery_sys()
+    def deliver(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str,
+                                                  'zip': str}) -> {'response': bool, 'msg': str, "tid": str or None}:
+        return self._realbridge.deliver(delivery_details)
 
-    # @logger
-    def deliver(self, address: str, products_ls) -> bool:
-        return self._realbridge.deliver(address, products_ls)
+    def cancel_delivery_supply(self, transaction_id: str) -> bool:
+        return self._realbridge.cancel_delivery_supply(transaction_id)
 
-    # @logger
-    def disconnect_delivery_sys(self):
-        self._realbridge.disconnect_delivery_sys()
+    def cause_delivery_timeout(self):
+        self._realbridge.cause_delivery_timeout()
+
+    def cause_delivery_con_error(self):
+        self._realbridge.cause_delivery_con_error()
+
+    def set_connection_delivery_back(self):
+        self._realbridge.set_connection_delivery_back()
 
     def set_user(self, nickname: str):
         return self._realbridge.set_user(nickname)
