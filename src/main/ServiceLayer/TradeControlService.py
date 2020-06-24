@@ -184,8 +184,8 @@ class TradeControlService:
         TradeControl.get_instance().unsubscribe(nickname)
 
     @staticmethod
-    def remove_manager(store_name: str, appointee_nickname: str):
-        TradeControl.get_instance().remove_manager(store_name, appointee_nickname)
+    def remove_manager(curr_nickname: str, store_name: str, appointee_nickname: str):
+        TradeControl.get_instance().remove_manager(curr_nickname, store_name, appointee_nickname)
 
     @staticmethod
     def remove_store(store_name: str):
@@ -245,8 +245,8 @@ class TradeControlService:
         TradeControl.get_instance().register_test_user(nickname, password)
 
     @staticmethod
-    def remove_purchase(store_name: str, purchase_date: datetime):
-        TradeControl.get_instance().remove_purchase(store_name, purchase_date)
+    def remove_purchase(curr_nickname: str, store_name: str, purchase_date: datetime):
+        TradeControl.get_instance().remove_purchase(curr_nickname, store_name, purchase_date)
 
     @staticmethod
     def set_user(nickname: str):

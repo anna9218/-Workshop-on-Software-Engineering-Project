@@ -868,10 +868,10 @@ class TradeControl:
             lst = []
             purchases = store.get_purchases(self.__curr_user.get_nickname())
             list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
-                                                 "nickname": purchase.get_nickname(),
-                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                 "total_price": purchase.get_total_price(),
-                                                 "products": purchase.get_products()}), purchases))
+                                                  "nickname": purchase.get_nickname(),
+                                                  "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                  "total_price": purchase.get_total_price(),
+                                                  "products": purchase.get_products()}), purchases))
             # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
             #          ))
             if len(lst) == 0:

@@ -51,8 +51,8 @@ class RealBridge(Bridge):
     def delete_user(self, nickname: str):
         self.__trade_control_srv.remove_user(nickname)
 
-    def delete_manager(self, store_name: str, appointee_nickname: str):
-        return self.__trade_control_srv.remove_manager(store_name, appointee_nickname)
+    def delete_manager(self, curr_nickname: str, store_name: str, appointee_nickname: str):
+        return self.__trade_control_srv.remove_manager(curr_nickname, store_name, appointee_nickname)
 
     # uc 2.3
     def login(self, nickname: str, password: str) -> bool:
@@ -109,8 +109,8 @@ class RealBridge(Bridge):
                          purchase_ls: []):
         return self.__guest_role.confirm_payment(curr_nickname, delivery_details, payment_details, purchase_ls)
 
-    def remove_purchase(self, store_name: str, purchase_date: datetime):
-        self.__trade_control_srv.remove_purchase(store_name, purchase_date)
+    def remove_purchase(self, curr_nickname: str, store_name: str, purchase_date: datetime):
+        self.__trade_control_srv.remove_purchase(curr_nickname, store_name, purchase_date)
 
     # uc 3.1
     def logout(self, curr_nickname) -> bool:
