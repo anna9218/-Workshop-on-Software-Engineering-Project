@@ -267,9 +267,12 @@ def appoint_store_owner():
                 #         join_room(store_name, _users[appointee_nickname])
                 if appointee_nickname in _users:
                     add_subscriber_to_store(store_name, appointee_nickname, True)
+                    _users_with_their_own_rooms.append(appointee_nickname)
                     join_room(store_name, _users[appointee_nickname])
+                    join_room(appointee_nickname, _users[appointee_nickname])
                 else:
                     add_subscriber_to_store(store_name, appointee_nickname, False)
+                    # join_room(appointee_nickname, _users[appointee_nickname])
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
 
