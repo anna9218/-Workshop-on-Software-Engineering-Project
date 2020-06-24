@@ -92,8 +92,8 @@ class ProjectAT(ABC, unittest.TestCase):
         return self.__bridge.logout()
 
     # 3.2 open store functions
-    def open_store(self, store_name: str) -> bool:
-        return self.__bridge.open_store(store_name)
+    def open_store(self, curr_nickname, store_name: str) -> bool:
+        return self.__bridge.open_store(curr_nickname, store_name)
 
     def remove_store(self, store_name: str):
         self.__bridge.delete_store(store_name)
@@ -172,7 +172,7 @@ class ProjectAT(ABC, unittest.TestCase):
 
     # 4.5 appoint store manager functions
     def appoint_additional_manager(self, nickname: str, store_name: str, permissions: [int]) -> bool:
-        return self.__bridge.appoint_additional_manager(nickname, store_name, permissions)
+        return self.__bridge.appoint_additional_manager(self._username, nickname, store_name, permissions)
 
     # 4.6 edit manager permissions
     def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:

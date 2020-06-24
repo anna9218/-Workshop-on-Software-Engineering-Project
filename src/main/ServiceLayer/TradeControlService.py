@@ -257,8 +257,8 @@ class TradeControlService:
         return TradeControl.get_instance().get_store(store_name)
 
     @staticmethod
-    def get_user_type():
-        return TradeControl.get_instance().get_user_type()
+    def get_user_type(curr_nickname: str):
+        return TradeControl.get_instance().get_user_type(curr_nickname)
 
     @staticmethod
     def get_product_details(store_name, product_name):

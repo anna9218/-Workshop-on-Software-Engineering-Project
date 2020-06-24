@@ -1,3 +1,5 @@
+from wrapt import synchronized
+
 from src.Logger import loggerStaticMethod, logger
 from src.main.DomainLayer.SecurityComponent.Security import Security
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
@@ -13,6 +15,7 @@ class GuestRole:
         pass
 
     @staticmethod
+    @synchronized
     # use case 2.2 - fixed
     def register(nickname, password) -> {'response': bool, 'msg': str}:
         """
@@ -26,6 +29,7 @@ class GuestRole:
         return {'response': False, 'msg': "Invalid password, password has to include at least 1 character"}
 
     @staticmethod
+    # @synchronized
     # use case 2.3 - fixed
     def login(nickname, password) -> {'response': bool, 'msg': str}:
         return TradeControl.get_instance().login_subscriber(nickname, password)
@@ -112,21 +116,22 @@ class GuestRole:
                                                               category=category)
 
     @staticmethod
+    @synchronized
     @logger
     # use case 2.6
-    def save_products_to_basket(products_stores_quantity_ls: [{"product_name": str, "store_name": str,
+    def save_products_to_basket(curr_nickname: str, products_stores_quantity_ls: [{"product_name": str, "store_name": str,
                                                                      "amount": int}]) \
             -> {'response': bool, 'msg': str}:
         """
         :param products_stores_quantity_ls: [ {"product_name": str, "amount": int, "store_name": str}, .... ]
         :return: dict = {'response': bool, 'msg': str}
         """
-        return TradeControl.get_instance().save_products_to_basket(products_stores_quantity_ls)
+        return TradeControl.get_instance().save_products_to_basket(curr_nickname, products_stores_quantity_ls)
 
     @staticmethod
     @logger
     # use case 2.7
-    def view_shopping_cart() -> {'response': list, 'msg': str}:
+    def view_shopping_cart(curr_nickname: str) -> {'response': list, 'msg': str}:
         """
         :return: dict: {'response': [{"store_name": str,
                                      "basket": [{"product_name": str
@@ -134,11 +139,11 @@ class GuestRole:
                                     }, ...],
                         'msg': str}
         """
-        return TradeControl.get_instance().view_shopping_cart()
+        return TradeControl.get_instance().view_shopping_cart(curr_nickname)
 
     @staticmethod
     @logger
-    def update_shopping_cart(flag: str, products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
+    def update_shopping_cart(curr_nickname: str, flag: str, products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
             -> {'response': bool, 'msg': str}:
         """
         :param flag: action option - "remove"/"update"
@@ -151,17 +156,18 @@ class GuestRole:
         if flag == "remove":
             lst = [{'product_name': element['product_name'], 'store_name': element['store_name']} for element in
                    products_details]
-            return TradeControl.get_instance().remove_from_shopping_cart(lst)
+            return TradeControl.get_instance().remove_from_shopping_cart(curr_nickname, lst)
         elif flag == "update":
-            return TradeControl.get_instance().update_quantity_in_shopping_cart(products_details)
+            return TradeControl.get_instance().update_quantity_in_shopping_cart(curr_nickname, products_details)
         else:
             return {'response': False, 'msg': "Error! " + flag + " is invalid action on shopping cart"}
 
     # ---------------------------------------------------- U.C 2.8-----------------------------------------------------
 
     @staticmethod
+    # @synchronized
     @logger
-    def purchase_products():
+    def purchase_products(curr_nickname: str):
         """
             purchase all products in the guest shopping cart, according to purchase policy and discount policy
         :return: dict = {'response': dict, 'msg': str}
@@ -171,10 +177,10 @@ class GuestRole:
                                               }]
             }
         """
-        return TradeControl.get_instance().purchase_products()
+        return TradeControl.get_instance().purchase_products(curr_nickname)
 
     @staticmethod
-    def purchase_basket(store_name: str):
+    def purchase_basket(curr_nickname: str, store_name: str):
         """
             single basket purchase by given store name, according to purchase policy and discount policy
         :param store_name:
@@ -185,11 +191,12 @@ class GuestRole:
                                               }]
             }
         """
-        return TradeControl.get_instance().purchase_basket(store_name)
+        return TradeControl.get_instance().purchase_basket(curr_nickname, store_name)
 
     @staticmethod
+    @synchronized
     @logger
-    def confirm_payment(delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+    def confirm_payment(curr_nickname: str, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
                         payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
                                           'ccv': str, 'id': str},
                         purchase_ls: []) \
@@ -211,7 +218,11 @@ class GuestRole:
                 PaymentProxy.get_instance().cancel_pay(pay_success['tid'])
                 return {'response': False, 'msg': deliver_success['msg'] + " Payment was canceled."}
             else:
-                return TradeControl.get_instance().accept_purchases(purchase_ls)
+                can_purchase = TradeControl.get_instance().accept_purchases(curr_nickname, purchase_ls)
+                if not can_purchase['response']:
+                    PaymentProxy.get_instance().cancel_pay(pay_success['tid'])
+                    DeliveryProxy.get_instance().cancel_supply(deliver_success['tid'])
+                return can_purchase
         return pay_success
     # ------------------------------------------------- END OF U.C 2.8 ----------------------------------------------
 

@@ -40,7 +40,8 @@ class Product:
     def set_name(self, new_name):
         self.__name = new_name
 
-    @logger
+    # TODO: fix bug in here (return the logger)
+    # @logger
     def __eq__(self, other):
         try:
             # print (f"other type = {other}, self type = {self}")
@@ -58,10 +59,12 @@ class Product:
             return False
 
     @logger
-    def set_purchase_type(self, purchase_type: int):
-        for type in PurchaseType:
-            if type.value == purchase_type:
-                self.__purchase_type = type
+    def set_purchase_type(self, purchase_type: int or enumerate):
+        for type_tmp in PurchaseType:
+            if type_tmp.value == purchase_type:
+                self.__purchase_type = type_tmp
+        # type1 = PurchaseType(purchase_type)
+        # self.__purchase_type = type1
 
     @logger
     def set_category(self, category):
@@ -69,9 +72,9 @@ class Product:
 
     @logger
     def set_discount_type(self, discount_type: int):
-        for type in DiscountType:
-            if type.value == discount_type:
-                self.__discount_type = type
+        for type_tmp in DiscountType:
+            if type_tmp.value == discount_type:
+                self.__discount_type = type_tmp
 
     @logger
     def get_discount_type(self):

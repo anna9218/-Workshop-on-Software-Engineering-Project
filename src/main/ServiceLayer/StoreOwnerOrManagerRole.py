@@ -13,7 +13,7 @@ class StoreOwnerOrManagerRole:
     # @logger
     # use case 4.1.1
     @staticmethod
-    def add_products(store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
+    def add_products(curr_nickname: str, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
         float, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
@@ -22,23 +22,23 @@ class StoreOwnerOrManagerRole:
         :return: dict = {'response': bool, 'msg': str}
                     response = True if products were added, False otherwise
         """
-        return TradeControl.get_instance().add_products(store_name, products_details)
+        return TradeControl.get_instance().add_products(curr_nickname, store_name, products_details)
 
     @staticmethod
     @logger
     # use 4.1.2
-    def remove_products(store_name: str, products_names: list) -> bool:
+    def remove_products(curr_nickname: str, store_name: str, products_names: list) -> bool:
         """
         :param store_name: store's name
         :param products_names: list of products name to remove
         :return: True if all products were removed, else return False
         """
-        return TradeControl.get_instance().remove_products(store_name, products_names)
+        return TradeControl.get_instance().remove_products(curr_nickname, store_name, products_names)
 
     @staticmethod
     @logger
     # use 4.1.3
-    def edit_product(store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool, 'msg': str}:
+    def edit_product(curr_nickname: str, store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param product_name: product's name to edit
@@ -47,23 +47,23 @@ class StoreOwnerOrManagerRole:
         :return: dict =  {'response': bool, 'msg': str}
                  response = True if all products were removed, else return False
         """
-        return TradeControl.get_instance().edit_product(store_name, product_name, op, new_value)
+        return TradeControl.get_instance().edit_product(curr_nickname, store_name, product_name, op, new_value)
 
     # use case 4.3
     @staticmethod
     @logger
-    def appoint_additional_owner(appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+    def appoint_additional_owner(curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
         :return: dict =  {'response': bool, 'msg': str}
                  response = True on success, else False
         """
-        return TradeControl.get_instance().appoint_additional_owner(appointee_nickname, store_name)
+        return TradeControl.get_instance().appoint_additional_owner(curr_nickname, appointee_nickname, store_name)
 
     @staticmethod
     @logger
-    def update_agreement_participants(appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
+    def update_agreement_participants(curr_nickname: str, appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -71,7 +71,7 @@ class StoreOwnerOrManagerRole:
         :return: dict =  {'response': bool, 'msg': str}
                  response = True on success, else False
         """
-        return TradeControl.get_instance().update_agreement_participants(appointee_nickname, store_name, owner_response)
+        return TradeControl.get_instance().update_agreement_participants(curr_nickname, appointee_nickname, store_name, owner_response)
 
     @staticmethod
     @logger
@@ -86,7 +86,7 @@ class StoreOwnerOrManagerRole:
     # use case 4.4
     @staticmethod
     @logger
-    def remove_owner(appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+    def remove_owner(curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
         """
         the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
         and owners appointee_nickname appointed.
@@ -96,12 +96,12 @@ class StoreOwnerOrManagerRole:
                  response = nicknames list of all the removed appointees -> the appointee_nickname of the owner we want
                             to remove and all the appointees he appointed, we had to remove as well.
         """
-        return TradeControl.get_instance().remove_owner(appointee_nickname, store_name)
+        return TradeControl.get_instance().remove_owner(curr_nickname, appointee_nickname, store_name)
 
     # use case 4.5
     @staticmethod
     @logger
-    def appoint_store_manager(appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
+    def appoint_store_manager(curr_nickname: str, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: new manager's nickname
         :param store_name: store's name
@@ -109,19 +109,19 @@ class StoreOwnerOrManagerRole:
         :return: dict = {'response': bool, 'msg': str}
                  response = True on success, else False
         """
-        return TradeControl.get_instance().appoint_store_manager(appointee_nickname, store_name, permissions)
+        return TradeControl.get_instance().appoint_store_manager(curr_nickname, appointee_nickname, store_name, permissions)
 
     # use case 4.6
     @staticmethod
     @logger
-    def edit_manager_permissions(store_name: str, appointee_nickname: str, permissions: list) -> bool:
+    def edit_manager_permissions(curr_nickname: str, store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's permissions will be edited
         :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
         :return: True on success, else False
         """
-        return TradeControl.get_instance().edit_manager_permissions(store_name, appointee_nickname, permissions)
+        return TradeControl.get_instance().edit_manager_permissions(curr_nickname, store_name, appointee_nickname, permissions)
 
     @staticmethod
     @logger
@@ -130,35 +130,35 @@ class StoreOwnerOrManagerRole:
 
     # @logger
     @staticmethod
-    def get_appointees(store_name, managers_or_owners: str) -> list:
+    def get_appointees(curr_nickname: str, store_name, managers_or_owners: str) -> list:
         """
         returns for the current manager/owner all the managers he appointed
         :param store_name: name of the store
         :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
         :return: list of the managers nicknames
         """
-        return TradeControl.get_instance().get_appointees(store_name, managers_or_owners)
+        return TradeControl.get_instance().get_appointees(curr_nickname, store_name, managers_or_owners)
 
     # use case 4.7
     @staticmethod
-    def remove_manager(store_name: str, appointee_nickname: str) -> bool:
+    def remove_manager(curr_nickname: str, store_name: str, appointee_nickname: str) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's will be removed
         :return: True on success, else False
         """
-        return TradeControl.get_instance().remove_manager(store_name, appointee_nickname)
+        return TradeControl.get_instance().remove_manager(curr_nickname, store_name, appointee_nickname)
 
     # use case 4.10 - View store’s purchase history
     @staticmethod
     @logger
-    def display_store_purchases(store_name: str) -> {'response': list, 'msg': str}:
+    def display_store_purchases(curr_nickname: str, store_name: str) -> {'response': list, 'msg': str}:
         """
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
                  response = purchases list
         """
-        return TradeControl.get_instance().display_store_purchases(store_name)
+        return TradeControl.get_instance().display_store_purchases(curr_nickname, store_name)
 
     @logger
     def close_store(self, store_name: str) -> bool:
@@ -187,19 +187,19 @@ class StoreOwnerOrManagerRole:
     # uc 4.2
     @staticmethod
     @logger
-    def get_policies(policy_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
+    def get_policies(curr_nickname: str, policy_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
         """
             according to the given type, displays a list of policies for the store
         :param purchase_type: can be "purchase" or "discount"
         :param store_name:
         :return: list of policies or empty list, returns None if user is not owner of the store or store doesn't exist
         """
-        return TradeControl.get_instance().get_policies(policy_type, store_name)
+        return TradeControl.get_instance().get_policies(curr_nickname, policy_type, store_name)
 
     # uc 4.2.1
     @staticmethod
     @logger
-    def update_purchase_policy(store_name: str, details: {"name": str, "products": [str] or None,
+    def update_purchase_policy(curr_nickname: str, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None, "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
@@ -215,12 +215,12 @@ class StoreOwnerOrManagerRole:
            i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
         :return: true if successful, otherwise false with details for failure
         """
-        return TradeControl.get_instance().update_purchase_policy(store_name, details)
+        return TradeControl.get_instance().update_purchase_policy(curr_nickname, store_name, details)
 
     # uc 4.2.2
     @staticmethod
     @logger
-    def define_purchase_policy(store_name: str, details: {"name": str, "products": [str],
+    def define_purchase_policy(curr_nickname: str, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
                                                                 "dates": [datetime] or None, "bundle": bool or None})\
             -> {'response': bool, 'msg': str}:
@@ -236,12 +236,12 @@ class StoreOwnerOrManagerRole:
            i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
         :return: true if successful, otherwise false with details for failure
         """
-        return TradeControl.get_instance().define_purchase_policy(store_name, details)
+        return TradeControl.get_instance().define_purchase_policy(curr_nickname, store_name, details)
 
     # uc 4.2.3
     @staticmethod
     @logger
-    def update_discount_policy(store_name: str, policy_name: str,
+    def update_discount_policy(curr_nickname: str, store_name: str, policy_name: str,
                                percentage: float = -999,
                                valid_until: datetime = None,
                                discount_details: {'name': str,
@@ -265,13 +265,13 @@ class StoreOwnerOrManagerRole:
                 DOES NOT AVAILABLE FOR COMPOSITE AND VISIBLE POLICIES.
         :return: true if successful, else false.
         """
-        return TradeControl.get_instance().update_discount_policy(store_name, policy_name, percentage, valid_until,
+        return TradeControl.get_instance().update_discount_policy(curr_nickname, store_name, policy_name, percentage, valid_until,
                                                                   discount_details, discount_precondition)
 
     # uc 4.2.4
     @staticmethod
     @logger
-    def define_discount_policy(store_name: str,
+    def define_discount_policy(curr_nickname: str, store_name: str,
                                percentage: float,
                                valid_until: datetime,
                                discount_details: {'name': str,
@@ -293,12 +293,12 @@ class StoreOwnerOrManagerRole:
                         have a constraint either on the entire basket, or a specific product.
         :return: True if successful, else false.
         """
-        return TradeControl.get_instance().define_discount_policy(store_name, percentage, valid_until, discount_details,
+        return TradeControl.get_instance().define_discount_policy(curr_nickname, store_name, percentage, valid_until, discount_details,
                                                                   discount_precondition)
 
     @staticmethod
     @logger
-    def define_composite_policy(store_name: str, policy1_name: str, policy2_name: str, flag: str,
+    def define_composite_policy(curr_nickname: str, store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str, valid_until: datetime) -> {}:
         """
         Define a policy that composite from exactly 2 policies.
@@ -314,7 +314,7 @@ class StoreOwnerOrManagerRole:
         :param name: the policy name.
         :return: True if successful, else false.
         """
-        return (TradeControl.get_instance()).define_composite_policy(store_name, policy1_name, policy2_name, flag,
+        return (TradeControl.get_instance()).define_composite_policy(curr_nickname, store_name, policy1_name, policy2_name, flag,
                                                                      percentage, name, valid_until)
 
     @staticmethod
@@ -358,12 +358,12 @@ class StoreOwnerOrManagerRole:
     # -------------------------------------------------------------
     @staticmethod
     # for managing inventory - uc 4.1
-    def get_owned_stores():
-        return TradeControl.get_instance().get_owned_stores()
+    def get_owned_stores(curr_nickname: str):
+        return TradeControl.get_instance().get_owned_stores(curr_nickname)
 
     @staticmethod
-    def get_managed_stores():
-        return TradeControl.get_instance().get_managed_stores()
+    def get_managed_stores(curr_nickname: str):
+        return TradeControl.get_instance().get_managed_stores(curr_nickname)
     # -------------------------------------------------------------
 
     def __repr__(self):
