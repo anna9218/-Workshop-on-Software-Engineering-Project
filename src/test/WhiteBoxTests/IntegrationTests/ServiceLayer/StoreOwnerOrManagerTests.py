@@ -3,6 +3,8 @@ from datetime import datetime
 
 import jsonpickle
 
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
+from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
 from src.main.DomainLayer.StoreComponent.Store import Store
@@ -14,6 +16,11 @@ from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermiss
 
 class StoreOwnerOrManagerTests(unittest.TestCase):
     def setUp(self) -> None:
+        if not ("testing" in rel_path):
+            raise ReferenceError("The Data Base is not the testing data base.\n"
+                                 "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                                 "\t\t\t\t and change rel_path to test_rel_path.\n"
+                                 "\t\t\t\tThanks :D")
         self.__store_owner_or_manager_role: StoreOwnerOrManagerRole = StoreOwnerOrManagerRole()
         (TradeControl.get_instance()).register_guest("eytan", "eytan as password")
         (TradeControl.get_instance()).login_subscriber("eytan", "eytan as password")
@@ -1741,6 +1748,15 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
     def tearDown(self):
         # TradeControl.get_instance().reset_purchase_policies(self.__store.get_name())
+        (DataAccessFacade.get_instance()).delete_purchases()
+        # (DataAccessFacade.get_instance()).delete_discount_policies()
+        (DataAccessFacade.get_instance()).delete_statistics()
+        (DataAccessFacade.get_instance()).delete_store_owner_appointments()
+        (DataAccessFacade.get_instance()).delete_products_in_baskets()
+        (DataAccessFacade.get_instance()).delete_products()
+        (DataAccessFacade.get_instance()).delete_store_manager_appointments()
+        (DataAccessFacade.get_instance()).delete_stores()
+        (DataAccessFacade.get_instance()).delete_users()
         (TradeControl.get_instance()).__delete__()
 
     def __repr__(self):

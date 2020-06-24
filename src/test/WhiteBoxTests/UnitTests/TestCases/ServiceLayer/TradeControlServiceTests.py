@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
+
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.DeliveryComponent.DeliveryProxy import DeliveryProxy
 from src.main.DomainLayer.PaymentComponent.PaymentProxy import PaymentProxy
@@ -8,6 +10,11 @@ from src.main.ServiceLayer.TradeControlService import TradeControlService
 
 class TradeControlServiceTests(unittest.TestCase):
     def setUp(self):
+        if not ("testing" in rel_path):
+            raise ReferenceError("The Data Base is not the testing data base.\n"
+                                 "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                                 "\t\t\t\t and change rel_path to test_rel_path.\n"
+                                 "\t\t\t\tThanks :D")
         self.__trade = TradeControlService()
 
         self.__delivery_proxy_mock = DeliveryProxy.get_instance()

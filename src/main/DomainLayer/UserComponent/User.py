@@ -187,6 +187,10 @@ class User:
     def get_shopping_cart(self) -> ShoppingCart:
         return self.__shoppingCart
 
+    @logger
+    def register_from_db(self, username, password):
+        self.__registrationState.register_from_db(username, password)
+
     def __repr__(self):
         # if self.is_registered:
         #     return repr(self.get_nickname)

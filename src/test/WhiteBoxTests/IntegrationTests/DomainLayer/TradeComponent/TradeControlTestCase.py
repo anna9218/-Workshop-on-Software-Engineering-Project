@@ -1,5 +1,6 @@
 import unittest
 
+from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
 from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Product import Product
 from src.main.DomainLayer.StoreComponent.Store import Store
@@ -9,14 +10,23 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.main.DomainLayer.UserComponent.User import User
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
 
 
 class TradeControlTestCase(unittest.TestCase):
     def setUp(self):
+        if not ("testing" in rel_path):
+            raise ReferenceError("The Data Base is not the testing data base.\n"
+                                 "\t\t\t\tPlease go to src.main.DataAccessLayer.ConnectionProxy.RealDb.rel_path\n"
+                                 "\t\t\t\t and change rel_path to test_rel_path.\n"
+                                 "\t\t\t\tThanks :D")
         self.__user = User()
         self.__user_nickname = "Eytan"
         self.__user_password = "Eytan's password"
         self.__user.register(self.__user_nickname, self.__user_password)
+        (DataAccessFacade.get_instance()).write_user("Mr. Eytan", self.__user_password)
+        (DataAccessFacade.get_instance()).write_store("Eytan's store", "Mr. Eytan")
+        (DataAccessFacade.get_instance()).write_store("Eytan's store", self.__user_nickname)
 
     def test_add_system_manager(self):
         # All valid - first manager
@@ -132,10 +142,10 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertIn(user, (TradeControl.get_instance()).get_subscribers())
 
     def test_unsubscribe(self):
+        (TradeControl.get_instance()).register_guest("Valid", "Valid")
         user = User()
         user.register("Valid", "Valid")
-        (TradeControl.get_instance()).subscribe(user)
-
+        (TradeControl.get_instance()).register_guest("db_check_Valid", "Valid")
         # All valid
         self.assertTrue((TradeControl.get_instance()).unsubscribe(user.get_nickname()))
         self.assertNotIn(user, (TradeControl.get_instance()).get_subscribers())
@@ -2162,6 +2172,15 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(store.is_owner("owner3"))
 
     def tearDown(self):
+        (DataAccessFacade.get_instance()).delete_purchases()
+        # (DataAccessFacade.get_instance()).delete_discount_policies()
+        (DataAccessFacade.get_instance()).delete_statistics()
+        (DataAccessFacade.get_instance()).delete_store_owner_appointments()
+        (DataAccessFacade.get_instance()).delete_products_in_baskets()
+        (DataAccessFacade.get_instance()).delete_products()
+        (DataAccessFacade.get_instance()).delete_store_manager_appointments()
+        (DataAccessFacade.get_instance()).delete_stores()
+        (DataAccessFacade.get_instance()).delete_users()
         TradeControl.get_instance().__delete__()
 
     def __repr__(self):
