@@ -10,7 +10,6 @@ from src.main.CommunicationLayer import WebService
 def run_server():
     # WebService.app.run()
     WebService.socket.run(WebService.app)
-    # wsgi.server(eventlet.listen(('', 5000)), WebService.app)
 
 def run_client():
     # Setting the option for https

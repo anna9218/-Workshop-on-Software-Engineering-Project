@@ -80,6 +80,17 @@ class UserTests(unittest.TestCase):
         self.assertFalse(self.__user.is_logged_in())
         self.assertTrue(self.__user.is_logged_out())
 
+        # All Valid - second and third try
+        self.assertTrue(self.__user.login(self.__valid_name, self.__valid_password)['response'])
+        self.assertTrue(self.__user.is_logged_in())
+        self.assertFalse(self.__user.is_logged_out())
+        self.__user.logout()
+
+        self.assertTrue(self.__user.login(self.__valid_name, self.__valid_password)['response'])
+        self.assertTrue(self.__user.is_logged_in())
+        self.assertFalse(self.__user.is_logged_out())
+        self.__user.logout()
+
         registered = User()
         registered.register("Eytan", "Eytan's password")
 
@@ -94,6 +105,20 @@ class UserTests(unittest.TestCase):
         self.assertFalse(self.__user.login(self.__valid_name, self.__valid_password)['response'])
         self.assertTrue(self.__user.is_logged_in())
         self.assertFalse(self.__user.is_logged_out())
+
+        self.__user.logout()
+
+        # Register and login other users and than try to login again
+        self.assertTrue(registered.login("Eytan", "Eytan's password")['response'])
+        registered.logout()
+
+        other_user = User()
+        other_user.register("yarin", "100")
+        self.assertTrue(other_user.login("yarin", "100")['response'])
+        other_user.logout()
+        self.assertTrue(self.__user.login(self.__valid_name, self.__valid_password)['response'])
+
+
 
     def test_logout(self):
         self.__user.login(self.__valid_name, self.__valid_password)

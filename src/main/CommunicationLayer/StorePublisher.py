@@ -12,28 +12,29 @@ class StorePublisher:
         self.__name = store_name
         # list of all owners ( lastReadMsg: int, nickname: string, ws:websocket)
         # lastReadMsg = last msg id (from msgs) the owner have read
-        self.__subscribers = [(owner_nickname, 0)]
-        # list of all notifications (id: int, msg: string)
+        self.__subscribers = [(owner_nickname, 0, True)]
+        # list of all notifications (id: int, msg: string, is_logged_in: bool)
         self.__msgs = []
         # print(f"store name- {self.__name}, it's subscriber - {self.__subscribers}")
 
-    def add_msg(self, msg):  # the setStatus function
+    def add_msg(self, msg, event):  # the setStatus function
         """
 
         :param msg:
         :return:
         """
-        self.__msgs.append((len(self.__msgs), msg))  # maybe len-1
-        self.notifyAll()
+        self.__msgs.append((len(self.__msgs), msg, event))
+        print (f"at storePublisher {self.__name}, msgs= {self.__msgs}. last add_msg call with msg {msg}")
+        # self.notifyAll()
 
     def notifyAll(self):
         """
         check for each subscriber if there is a new msg- and send it if there is at least 1
         :return:
         """
-        for (name, last_msg_id) in self.__subscribers:
+        for (name, last_msg_id, is_logged_in) in self.__subscribers:
             amount_of_msgs = len(self.__msgs)  # maybe len-1
-            if last_msg_id < amount_of_msgs:
+            if is_logged_in and last_msg_id < amount_of_msgs:
                 self.notify(name)
 
     def notify(self, user_name):
@@ -48,11 +49,34 @@ class StorePublisher:
             #     if msg_id > lastMsgID:
             #         send_msg(user_name, msg)
             unread_msgs = []
-            for msg_id, msg in self.__msgs:
+            for msg_id, msg, event in self.__msgs:
                 if msg_id > lastMsgID:
                     unread_msgs += msg
                     self.inc_last_unread_msg(user_name)
 
+    def retrieveMsgs(self, user_name):
+        """
+        if there is a new msg to send to the subscriber with user_name - send it
+        :param user_name: of owner
+        :return:
+        """
+        self.login_subscriber(user_name)
+        lastMsgID = self.get_last_read_msg_id(user_name)
+        print(f"last read msg id of subscriber {user_name} is {lastMsgID}")
+        if lastMsgID > -1 or (lastMsgID == 0 and self.amount_of_msgs() == 1):
+            # for (msg_id, msg) in self.__msgs:
+            #     if msg_id > lastMsgID:
+            #         send_msg(user_name, msg)
+            unread_msgs = []
+            for msg_id, msg, event in self.__msgs:
+                if msg_id > lastMsgID or msg_id == 0:
+                    unread_msgs.append((msg, event))
+                    # unread_msgs += (msg, event)
+                    self.inc_last_unread_msg(user_name)
+                # elif msg_id == 0:
+                #     unread_msgs.append((msg, event))
+            print(f"unread msgs at store {self.__name} are {unread_msgs}")
+            return unread_msgs
 
     def get_last_read_msg_id(self, user_name):
         """
@@ -60,7 +84,7 @@ class StorePublisher:
         :param user_name: subscriber nickname
         :return: msg id on queue. unique values: -1 if no msgs since the user subscribed, -2 as false
         """
-        for (name, msg_id) in self.__subscribers:
+        for (name, msg_id, is_logged_in) in self.__subscribers:
             if name == user_name:
                 return msg_id
         return -2
@@ -87,7 +111,7 @@ class StorePublisher:
         """
         if (self.is_subscribed_to_store(nick_name)):
             return False
-        self.__subscribers.append((nick_name, len(self.__msgs)))
+        self.__subscribers.append((nick_name, len(self.__msgs), True))
         # print(f"subscribers: {self.__subscribers}")
         return True
         # return some validation?
@@ -101,7 +125,7 @@ class StorePublisher:
         counter = 0
         for subscriber in self.__subscribers:
             if counter != 0:
-                (owner_name, last_read_msg) = subscriber
+                (owner_name, last_read_msg, is_logged_in) = subscriber
                 if owner_name == nick_name:
                     # print(f"owner {owner_name}, id {last_read_msg}, sub {subscriber}")
                     self.__subscribers.remove(subscriber)
@@ -113,6 +137,13 @@ class StorePublisher:
                 counter = counter+1
         return -1
         # return some validation?
+
+    def logout_subscriber(self, username):
+        for subscriber in self.__subscribers:
+            (owner_name, last_read_msg, is_logged_in) = subscriber
+            if owner_name == username:
+                self.__subscribers.remove(subscriber)
+                self.__subscribers.append((owner_name, last_read_msg, False))
 
     def store_name(self):
         return self.__name
@@ -131,7 +162,7 @@ class StorePublisher:
             # print ("is sub error")
             return False
         # print("is subscribe subscribers: " + str(self.__subscribers))
-        for (owner_name, last_read_msg) in self.__subscribers: # [(owner_nickname, 0)]
+        for (owner_name, last_read_msg, is_logged_in) in self.__subscribers:
             if owner_name == nickname:
                 return True
             # print(f"nickname = {owner_name}, last id = {last_read_msg}")
@@ -139,9 +170,26 @@ class StorePublisher:
         return False
 
     def inc_last_unread_msg(self, user_name):
-        for username, lastUnreadMsg in self.__subscribers:
+        for username, lastUnreadMsg, is_logged_in in self.__subscribers:
             if user_name == username:
                 lastUnreadMsg += 1
 
     def __repr__(self):
         return repr(f"{self.__name} Publisher Details --> Subscribers: {self.__subscribers}, Msgs: {self.__msgs}")
+
+    def login_subscriber(self, user_name):
+        for subscriber in self.__subscribers:
+            (username, msg_id, is_logged_in) = subscriber
+            if user_name == username:
+                self.__subscribers.remove(subscriber)
+                self.__subscribers.append((username, msg_id, True))
+                print (f"connect {user_name} to msgs from store {self.__name}")
+                return True
+        return False
+
+    def is_logged_in(self, user_name):
+        for subscriber in self.__subscribers:
+            (username, msg_id, is_logged_in) = subscriber
+            if user_name == username and is_logged_in:
+                return True
+        return False

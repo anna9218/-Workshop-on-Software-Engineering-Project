@@ -11,6 +11,9 @@ class StubDeliveryProxy(DeliveryProxy):
     def connect(self):
         self.isConnected = True
 
+    def is_connect(self):
+        self.isConnected = True
+
     @staticmethod
     def get_instance():
 

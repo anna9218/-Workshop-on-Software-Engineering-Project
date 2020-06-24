@@ -275,7 +275,7 @@ export async function sendAgreementAnswer(appointee_nickname, store_name, answer
     return axios.post('http://localhost:5000/handle_appointment_agreement_response', {
         appointee_nickname: appointee_nickname,
         store_name: store_name,
-        answer: answer,
+        appointment_agreement_response: answer,
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }

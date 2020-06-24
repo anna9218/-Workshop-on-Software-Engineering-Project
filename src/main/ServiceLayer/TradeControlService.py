@@ -23,8 +23,8 @@ class TradeControlService:
     def init_system():
         # Getting the file path
         abs_path = os.path.dirname(os.path.abspath(__file__))
-        rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
-        # rel_path = os.path.join(abs_path, 'init_sys_file_v4.txt')
+        # rel_path = os.path.join(abs_path, 'init_sys_file_v3.txt')
+        rel_path = os.path.join(abs_path, 'init_sys_file_v4.txt')
         if rel_path.split(".")[1] != "txt":
             print("Wrong format.")
             exit(1)
@@ -37,7 +37,8 @@ class TradeControlService:
                                "logout": SubscriberRole.logout,
                                "display_stores": GuestRole.display_stores,
                                "add_system_manager": SystemManagerRole.add_system_manager,
-                               "open_store": SubscriberRole.open_store,
+                               "open_store": TradeControlService.open_store,
+                               # "open_store": SubscriberRole.open_store,
                                "add_products": StoreOwnerOrManagerRole.add_products,
                                "appoint_store_manager": StoreOwnerOrManagerRole.appoint_store_manager,
                                 # Todo: test the below funcs.
@@ -134,16 +135,24 @@ class TradeControlService:
         except Exception as ex:
             # print(ex)
             file.close()
+            # TODO - THE BUG
             return ret(False, "An unknown error has occurred. Please check the input file arguments.")
 
         # connecting to external systems.
-        if not DeliveryProxy.get_instance().connect():
+        if not DeliveryProxy.get_instance().is_connected():
             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
-        if not PaymentProxy.get_instance().connect():
+        if not PaymentProxy.get_instance().is_connected():
             return {'response': False, 'msg': "Init system failed! connection to delivery system failed"}
 
         file.close()
         return ret(True, "Init Done. Welcome to the new Amazon!")
+
+    @staticmethod
+    def open_store(store_name):
+        result = SubscriberRole.open_store(store_name)
+        from src.main.CommunicationLayer.WebService import create_new_publisher
+        create_new_publisher(store_name, TradeControlService.get_curr_username())
+        return result
 
     @staticmethod
     def convert_to_datetime(arg: str):

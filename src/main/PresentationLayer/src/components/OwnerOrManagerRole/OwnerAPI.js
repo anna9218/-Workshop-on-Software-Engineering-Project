@@ -7,6 +7,7 @@ import * as Notifications from './NotificationsActions';
 import { AlertList, Alert, AlertContainer } from "react-bs-notifier";
 import { MDBNotification,MDBIcon,  MDBContainer ,MDBBtn, toast} from "mdbreact"
 import { IoMdNotifications} from "react-icons/io";
+import * as theWebsocket from '../../services/Notifications';
 
 // window.$store = "1"
 
@@ -24,14 +25,14 @@ class OwnerAPI extends React.Component {
       this.notificationsHandler = this.notificationsHandler.bind(this);
       this.setSelectedStore = this.setSelectedStore.bind(this);
 
-      
+
     }
 
     logoutHandler = async () =>{
         const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
-          // TODO: yarin  
+          theWebsocket.logout()
             this.props.history.push("/");
         });
     };
@@ -84,7 +85,7 @@ class OwnerAPI extends React.Component {
                                 <Link to='/logout'>
                                     <Button variant="dark" id="logout" onClick={this.logoutHandler}>Logout</Button>
                                 </Link>
-                            </div>   
+                            </div>
                         </Col>
                     </Row>
                 </Jumbotron>
@@ -178,10 +179,10 @@ class OwnerAPI extends React.Component {
                                                                                store: this.state.selectedStore, props: this.props}}>
                         Manage Store Policies
                     </Button>
-                   
 
-                    { this.state.showNotifications ? 
-                        
+
+                    { this.state.showNotifications ?
+
                          <div>
                              <MDBContainer style={{width: "auto", position: "fixed", bottom: "11px", right: "11px", zIndex: 9999}}>
                                 { window.$notifications.map(noti => (
@@ -194,21 +195,21 @@ class OwnerAPI extends React.Component {
                                         className="notification-body"
                                         titleClassName="notification-title"
                                         title="New Message"
-                                        message={ noti['msg_type'] === 'agreement' ? 
+                                        message={ noti['msg_type'] === 'agreement' ?
                                                     <div>
                                                         <div>{noti['msg']}</div>
                                                         <div style={{marginTop:"2%"}}>
                                                             <Button variant='dark' onClick={event => Notifications.sendAgreementAnswer(event, noti, true)}>approve</Button>
                                                             <Button variant='dark' onClick={event => Notifications.sendAgreementAnswer(event, noti, true)} style={{marginLeft:"3%"}}>decline</Button>
                                                         </div>
-                                                    </div> 
-                                                    : 
+                                                    </div>
+                                                    :
                                                     <div>
                                                         <div>{noti['msg']} </div>
                                                         <div style={{marginTop:"2%"}}><Button variant='dark' onClick={event => Notifications.removeNotification(noti['id'])} style={{marginLeft:"3%"}}>ok</Button></div>
                                                     </div>
                                                 }
-                                       
+
                                     />
                                     ))
                                 }
@@ -217,19 +218,19 @@ class OwnerAPI extends React.Component {
                             {/* <AlertContainer>
                                 { window.$notifications.map(noti => (
                                     <div>
-                                        <Alert id="model" type="success"  show="true" onDismiss={true} timeout={3000} 
+                                        <Alert id="model" type="success"  show="true" onDismiss={true} timeout={3000}
                                                headline=
-                                                        { <div> 
+                                                        { <div>
                                                             Message:
                                                             <button type="button" class="close" closeLable="close" aria-label="Close" data-dismiss="alert">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
-                                                          </div> 
+                                                          </div>
                                                         }>
-                                           
+
                                             hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
                                             {noti['msg']}
-                                           
+
                                         </Alert>
                                     </div>
                                 ))}
