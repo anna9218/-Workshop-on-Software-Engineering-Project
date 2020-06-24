@@ -36,7 +36,7 @@ class TradeControl:
             self.__managers = []
             self.__subscribers = self.__pull_subscribers_from_db()
             self.__stores = self.__pull_stores_from_db()
-            self.__statistics = [Statistics()]
+            self.__statistics : Statistics = [Statistics()]
             # self.__stores.append(Store("einat"))
             # self.__stores.append(Store("Eden"))
             TradeControl.__instance = self
@@ -122,7 +122,18 @@ class TradeControl:
         if self.__curr_user is None or not self.__curr_user.is_registered():
             return {'response': False, 'msg': "Subscriber " + nickname + " is not registered."}
         if self.__curr_user.is_logged_out():
-            return self.__curr_user.login(nickname, password)
+            answer = self.__curr_user.login(nickname, password)
+            if answer:
+                # update statistics - TODO maybe move to communication layer
+                if self.get_user_type() == 'OWNER':
+                    self.__statistics.inc_store_owners_counter()
+                if self.get_user_type() == 'SYSTEMMANAGER':
+                    self.__statistics.inc_system_managers_counter()
+                if self.get_user_type() == 'SUBSCRIBER':
+                    self.__statistics.inc_subscribers_counter()
+                if self.get_user_type() == 'MANAGER':
+                    self.__statistics.inc_store_managers_counter()
+            return answer
         return {'response': False, 'msg': "Subscriber " + nickname + " already logged in"}
 
     @logger
