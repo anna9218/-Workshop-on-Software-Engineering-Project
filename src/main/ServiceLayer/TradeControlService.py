@@ -205,13 +205,16 @@ class TradeControlService:
     def cancel_payment(transaction_id: str):
         return PaymentProxy.get_instance().cancel_pay(transaction_id)
 
-    def cause_payment_timeout(self):
+    @staticmethod
+    def cause_payment_timeout():
         PaymentProxy.get_instance().cause_timeout_error()
 
-    def cause_payment_con_error(self):
+    @staticmethod
+    def cause_payment_con_error():
         PaymentProxy.get_instance().cause_connection_error()
 
-    def set_connection_payment_back(self):
+    @staticmethod
+    def set_connection_payment_back():
         PaymentProxy.get_instance().set_connection_back()
 
     @staticmethod

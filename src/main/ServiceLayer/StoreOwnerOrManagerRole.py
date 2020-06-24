@@ -16,6 +16,7 @@ class StoreOwnerOrManagerRole:
     def add_products(curr_nickname: str, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
         float, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :param products_details: list of tuples (product_name, product_price, product_amounts, product_category)
         # param products_details: list products details: [{"name": str, "price": int, "amount": int, "category": str},...]
@@ -29,6 +30,7 @@ class StoreOwnerOrManagerRole:
     # use 4.1.2
     def remove_products(curr_nickname: str, store_name: str, products_names: list) -> bool:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :param products_names: list of products name to remove
         :return: True if all products were removed, else return False
@@ -40,6 +42,7 @@ class StoreOwnerOrManagerRole:
     # use 4.1.3
     def edit_product(curr_nickname: str, store_name: str, product_name: str, op: str, new_value: str) -> {'response': bool, 'msg': str}:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :param product_name: product's name to edit
         :param op: edit options - name, price, amount
@@ -54,6 +57,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def appoint_additional_owner(curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
+        :param curr_nickname:
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
         :return: dict =  {'response': bool, 'msg': str}
@@ -65,6 +69,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def update_agreement_participants(curr_nickname: str, appointee_nickname: str, store_name: str, owner_response: AppointmentStatus):
         """
+        :param curr_nickname:
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
         :param owner_response: the owners response - declined/approved
@@ -90,6 +95,7 @@ class StoreOwnerOrManagerRole:
         """
         the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
         and owners appointee_nickname appointed.
+        :param curr_nickname:
         :param appointee_nickname: nickname of the owner we want to remove as owner
         :param store_name: store the owner will be removed from as owner
         :return: dict =  {'response': [], 'msg': str}
@@ -103,6 +109,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def appoint_store_manager(curr_nickname: str, appointee_nickname: str, store_name: str, permissions: list) -> {'response': bool, 'msg': str}:
         """
+        :param curr_nickname:
         :param appointee_nickname: new manager's nickname
         :param store_name: store's name
         :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
@@ -116,6 +123,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def edit_manager_permissions(curr_nickname: str, store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's permissions will be edited
         :param permissions: ManagerPermission[] ->list of permissions (list of Enum)
@@ -133,6 +141,7 @@ class StoreOwnerOrManagerRole:
     def get_appointees(curr_nickname: str, store_name, managers_or_owners: str) -> list:
         """
         returns for the current manager/owner all the managers he appointed
+        :param curr_nickname:
         :param store_name: name of the store
         :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
         :return: list of the managers nicknames
@@ -143,6 +152,7 @@ class StoreOwnerOrManagerRole:
     @staticmethod
     def remove_manager(curr_nickname: str, store_name: str, appointee_nickname: str) -> bool:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's will be removed
         :return: True on success, else False
@@ -154,6 +164,7 @@ class StoreOwnerOrManagerRole:
     @logger
     def display_store_purchases(curr_nickname: str, store_name: str) -> {'response': list, 'msg': str}:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
                  response = purchases list
@@ -190,6 +201,8 @@ class StoreOwnerOrManagerRole:
     def get_policies(curr_nickname: str, policy_type: str, store_name: str) -> {'response': [dict] or None, 'msg': str}:
         """
             according to the given type, displays a list of policies for the store
+        :param policy_type:
+        :param curr_nickname:
         :param purchase_type: can be "purchase" or "discount"
         :param store_name:
         :return: list of policies or empty list, returns None if user is not owner of the store or store doesn't exist
@@ -205,6 +218,7 @@ class StoreOwnerOrManagerRole:
             -> {'response': bool, 'msg': str}:
         """
             update must have valid policy name of an existing policy and at least one more detail
+        :param curr_nickname:
         :param store_name:
         :param details: {"name": str,                            -> policy name
                         "products": [str] or None,               -> list of product names
@@ -226,6 +240,7 @@ class StoreOwnerOrManagerRole:
             -> {'response': bool, 'msg': str}:
         """
             define requires valid and unique policy name, none empty list of products and at least one more detail
+        :param curr_nickname:
         :param store_name:
         :param details: {"name": str,                             -> policy name
                         "products": [str],                       -> list of product names
@@ -255,6 +270,7 @@ class StoreOwnerOrManagerRole:
         Updating an existing policy, either visible, conditional or composite.
         The key word "all" will flag that the policy is on the entire basket.
 
+        :param curr_nickname:
         :param valid_until: the last date the policy is valid.
         :param store_name.
         :param policy_name: the policy to update.
@@ -285,6 +301,7 @@ class StoreOwnerOrManagerRole:
         Define SIMPLE discount policy, either visible or conditional.
         The key word "all" will flag that the policy or constraint are on the entire basket.
 
+        :param curr_nickname:
         :param valid_until: the last date the policy is valid.
         :param store_name.
         :param percentage: the percentage of the discount.
@@ -305,6 +322,7 @@ class StoreOwnerOrManagerRole:
         Both policies should have the same product for success.
         The keyword "all" will flag that the policies are on the entire basket.
 
+        :param curr_nickname:
         :param valid_until: the last date the policy is valid.
         :param store_name.
         :param policy1_name: the policy uid.
