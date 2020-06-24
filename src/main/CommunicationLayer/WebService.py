@@ -23,18 +23,6 @@ app = Flask(__name__)
 CORS(app)
 
 socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
-# # socket = SocketIO(app, logger=True, engineio_logger=True,
-# #                   cors_allowed_origins='*', async_mode='eventlet')
-
-# eventlet.monkey_patch()
-#
-# app = Flask(__name__)
-# CORS(app)
-# app.secret_key = os.environ.get('SECRET')
-# app.config['WTF_CSRF_SECRET_KEY'] = "\xae\x5c{Xasa\x3b\x8e\x83\x19\xad\x24\x19\asda"
-# socket = SocketIO(app, logger=True, engineio_logger=True,
-#                cors_allowed_origins='*', async_mode='eventlet')
-#
 
 # 1 - purchase
 # 2 - add+remove manager
@@ -271,10 +259,17 @@ def appoint_store_owner():
                 msg = f"New owner appointment at store {store_name} - action required!"
                 notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
             elif response["response"]:
-                if add_subscriber_to_store(store_name, appointee_nickname):
-                    # TODO - we need to take into consideration LOGIN/LOGOUT
-                    print(_users)
+                # if add_subscriber_to_store(store_name, appointee_nickname, False):
+                #     print(_users)
+                #     # create_new_publisher()
+                #     if appointee_nickname in _users:
+                #         print(_users[appointee_nickname])
+                #         join_room(store_name, _users[appointee_nickname])
+                if appointee_nickname in _users:
+                    add_subscriber_to_store(store_name, appointee_nickname, True)
                     join_room(store_name, _users[appointee_nickname])
+                else:
+                    add_subscriber_to_store(store_name, appointee_nickname, False)
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
 
@@ -298,7 +293,7 @@ def handle_appointment_agreement_response():
                 status = StoreOwnerOrManagerRole.get_appointment_status(appointee_nickname, store_name)
                 if status == AppointmentStatus.APPROVED:
                     response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
-                    add_subscriber_to_store(store_name, appointee_nickname)
+                    add_subscriber_to_store(store_name, appointee_nickname, False)
                     msg = f"New owner {appointee_nickname} appointed at store {store_name}!"
                     notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
             return jsonify(msg=response["msg"])
@@ -769,7 +764,7 @@ def create_new_publisher(storename, username):
             # print(f"store = {store}")
             _stores.append(store)
             # print(f"{storename} has been added by {username}")
-            store.subscribe_owner(username)
+            store.subscribe_owner(username, True)
 
 
 def append_user_to_room(storename, username, sid):
@@ -841,20 +836,22 @@ def handle_login(data):
     username = data['username']
     user_sid = request.sid
     _users[username] = user_sid
+    print(_users)
     # user_sid = _users(username)
-    join_room(username, user_sid)
-    _users_with_their_own_rooms.append(username)
-    print (f"insert {username} to it's room. sid = {user_sid}")
-    for store in _stores:
-        if store.is_subscribed_to_store(username):
-            store_name = store.store_name()
-            print(f"search for msgs to {username} at store {store_name}")
-            join_room(room=store_name, sid=user_sid)
-            msgs = store.retrieveMsgs(username)
-            print (msgs)
-            for msg, event in msgs:
-                print (f"send msg '{msg}' only to {username}. event type is {event}")
-                socket.emit(event, msg, room=username)
+    if (TradeControlService.get_user_type() == 'OWNER'):
+        join_room(username, user_sid)
+        _users_with_their_own_rooms.append(username)
+        print (f"insert {username} to it's room. sid = {user_sid}")
+        for store in _stores:
+            if store.is_subscribed_to_store(username):
+                store_name = store.store_name()
+                print(f"search for msgs to {username} at store {store_name}")
+                join_room(room=store_name, sid=user_sid)
+                msgs = store.retrieveMsgs(username)
+                print (msgs)
+                for msg, event in msgs:
+                    print (f"send msg '{msg}' only to {username}. event type is {event}")
+                    socket.emit(event, msg, room=username)
 
 def get_store(store_name) -> StorePublisher:
     for store in _stores:
@@ -863,14 +860,14 @@ def get_store(store_name) -> StorePublisher:
     return None
 
 
-def add_subscriber_to_store(store_name, owner_nickname):
+def add_subscriber_to_store(store_name, owner_nickname, is_logged_in):
     store = get_store(store_name)
     if store is None:
         # print(f"store {store_name} is none, owner is {owner_nickname}")
         return False
     if store.is_subscribed_to_store(owner_nickname):
         return False
-    store.subscribe_owner(owner_nickname)
+    store.subscribe_owner(owner_nickname, is_logged_in)
     return True
 
 
