@@ -102,7 +102,7 @@ class StorePublisher:
             self.inc_last_msg_id(user_name)
             return self.__msgs[last_read_msg_id + 1]
 
-    def subscribe_owner(self, nick_name):  # maybe add store_name, or add store controller
+    def subscribe_owner(self, nick_name, is_logged_in):  # maybe add store_name, or add store controller
         """
         by receive new appointment of store owner, this func will subscribe the owner to the
         relevant store-topic-publisher, the owner will receive only msgs that have been sent after
@@ -111,7 +111,7 @@ class StorePublisher:
         """
         if (self.is_subscribed_to_store(nick_name)):
             return False
-        self.__subscribers.append((nick_name, len(self.__msgs), True))
+        self.__subscribers.append((nick_name, len(self.__msgs), is_logged_in))
         # print(f"subscribers: {self.__subscribers}")
         return True
         # return some validation?

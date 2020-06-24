@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Container, Row, Col, Button, Dropdown, Jumbotron, Form} from 'react-bootstrap'
 import {Link, Redirect, Router} from 'react-router-dom'
 import * as theService from '../../services/communication';
+import * as theWebsocket from '../../services/Notifications';
 
 
 // WHAT A SUBSCRIBER CAN DO?
@@ -54,7 +55,7 @@ class SubscriberAPI extends React.Component{
         const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
-            // TODO: yarin  
+            theWebsocket.logout()
             this.props.history.push("/");
         });
     };
