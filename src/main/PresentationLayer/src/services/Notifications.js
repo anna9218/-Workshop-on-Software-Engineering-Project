@@ -43,7 +43,7 @@ export const setHandlers = async () => {
   });
   socket.socket.on("agreement", (data) => {
     // const msgs = data['messages'];
-    Notifications.addNotification(data['messages'], 'regular', data['username'],data['store'])
+    Notifications.addNotification(data['messages'], 'agreement', data['username'],data['store'])
     
   });
 };
