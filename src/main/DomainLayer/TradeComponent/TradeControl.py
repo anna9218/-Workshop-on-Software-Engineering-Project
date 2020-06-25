@@ -39,7 +39,7 @@ class TradeControl:
             self.__subscribers = self.__pull_subscribers_from_db()
             self.__stores = self.__pull_stores_from_db()
             # self.__stores = []
-            self.__statistics : [Statistics] = [Statistics()]
+            self.__statistics: [Statistics] = [Statistics()]
             # self.__stores.append(Store("einat"))
             self.__pull_shopping_carts()
             self.__pull_personal_purchases()
@@ -149,7 +149,7 @@ class TradeControl:
                                                                                     new_system_managers)
                     if not db_result['response']:
                         return db_result
-                if len(self.get_managed_stores()) > 0:
+                if len(self.get_managed_stores(self.__curr_user.get_nickname())) > 0:
                     new_store_managers = (DataAccessFacade.get_instance()).read_statistics(['store_managers'],
                                                                                            date=self.__today)[
                                              'response'][0]['store_managers'] + 1
@@ -159,7 +159,7 @@ class TradeControl:
                     if not db_result['response']:
                         return db_result
 
-                if len(self.get_owned_stores()) > 0:
+                if len(self.get_owned_stores(self.__curr_user.get_nickname())) > 0:
                     new_store_owners = (DataAccessFacade.get_instance()).read_statistics(['store_owners'],
                                                                                          date=self.__today)[
                                            'response'][0]['store_owners'] + 1
@@ -388,8 +388,9 @@ class TradeControl:
         return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
     @logger
-    def save_products_to_basket(self, curr_nickname: str, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
-                                                                     "amount": int}]) -> {
+    def save_products_to_basket(self, curr_nickname: str,
+                                products_stores_quantity_ls: [{"store_name": str, "product_name": str,
+                                                               "amount": int}]) -> {
         'response': bool, 'msg': str}:
 
         self.set_curr_user_by_name(curr_nickname)
@@ -430,7 +431,8 @@ class TradeControl:
         return self.__curr_user.view_shopping_cart()
 
     @logger
-    def remove_from_shopping_cart(self, curr_nickname: str, products_details: [{"product_name": str, "store_name": str}]) -> {
+    def remove_from_shopping_cart(self, curr_nickname: str,
+                                  products_details: [{"product_name": str, "store_name": str}]) -> {
         'response': bool, 'msg': str}:
         """
         :param products_details: [{"product_name": str,
@@ -463,7 +465,7 @@ class TradeControl:
                  True on success, False when one of the products doesn't exist in the shopping cart
         """
         self.set_curr_user_by_name(curr_nickname)
-        #return self.__curr_user.update_quantity_in_shopping_cart(products_details)
+        # return self.__curr_user.update_quantity_in_shopping_cart(products_details)
         domain_result = self.__curr_user.update_quantity_in_shopping_cart(products_details)
         if domain_result['response']:
             for product_dict in products_details:
@@ -595,13 +597,17 @@ class TradeControl:
                                                                          total_price=purchase["basket_price"],
                                                                          date=now,
                                                                          products_lst=product_lst_for_db)
-            print(db_result)
+            # print(db_result)
         return {'response': True, 'msg': "Great Success! Purchase complete"}
 
     def remove_purchase(self, curr_nickname: str, store_name: str, purchase_date: datetime):
         self.set_curr_user_by_name(curr_nickname)
         if self.get_store(store_name) is not None:
             self.get_store(store_name).remove_purchase(self.__curr_user.get_nickname(), purchase_date)
+            db_result = (DataAccessFacade.get_instance()).delete_purchases("curr_nickname", "store_name",
+                                                                           date=purchase_date)
+            if not db_result['response']:
+                return db_result
         self.__curr_user.remove_purchase(store_name, purchase_date)
 
     # ---------------------------------------------------
@@ -620,7 +626,8 @@ class TradeControl:
         return {'response': True, 'msg': "Subscriber was logged out successfully"}
 
     @logger
-    def view_personal_purchase_history(self, curr_nickname: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
+    def view_personal_purchase_history(self, curr_nickname: str, flag_for_tests: bool or None) -> {'response': list,
+                                                                                                   'msg': str}:
         self.set_curr_user_by_name(curr_nickname)
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             purchases = self.__curr_user.get_purchase_history()
@@ -774,7 +781,8 @@ class TradeControl:
         return False
 
     @logger
-    def edit_product(self,curr_nickname: str,  store_name: str, product_name: str, op: str, new_value) -> {'response': bool, 'msg': str}:
+    def edit_product(self, curr_nickname: str, store_name: str, product_name: str, op: str, new_value) -> {
+        'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param product_name: product's name to edit
@@ -828,7 +836,8 @@ class TradeControl:
                 "purchase_type": product.get_purchase_type().name}
 
     @logger
-    def remove_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+    def remove_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': [],
+                                                                                             'msg': str}:
         """
         the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
         and owners appointee_nickname appointed.
@@ -860,7 +869,8 @@ class TradeControl:
         return {'response': [], 'msg': "Error! remove store owner failed."}
 
     @logger
-    def appoint_additional_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+    def appoint_additional_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {
+        'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -919,7 +929,7 @@ class TradeControl:
         return store.get_appointment_status(appointee_nickname)
 
     @logger
-     # TODO: eden check permissions with gui!!!!!
+    # TODO: eden check permissions with gui!!!!!
     def appoint_store_manager(self, curr_nickname: str, appointee_nickname: str, store_name: str,
                               permissions: [int or enumerate]) -> \
             {'response': bool, 'msg': str}:
@@ -969,7 +979,7 @@ class TradeControl:
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
 
-    def get_manager_permissions(self,curr_nickname, store_name) -> list:
+    def get_manager_permissions(self, curr_nickname, store_name) -> list:
         """
         :param store_name:
         :return: returns the permissions of the current user
@@ -984,8 +994,9 @@ class TradeControl:
         return False
 
     @logger
-    def edit_manager_permissions(self, curr_nickname: str, store_name: str, appointee_nickname: str, permissions: list) -> bool:
-    # TODO: If permissions type is [int], convert to [ManagerPermissions]
+    def edit_manager_permissions(self, curr_nickname: str, store_name: str, appointee_nickname: str,
+                                 permissions: list) -> bool:
+        # TODO: If permissions type is [int], convert to [ManagerPermissions]
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's permissions will be edited
@@ -1037,7 +1048,7 @@ class TradeControl:
         return []
 
     @logger
-    def remove_manager(self, curr_nickname: str,  store_name: str, appointee_nickname: str) -> bool:
+    def remove_manager(self, curr_nickname: str, store_name: str, appointee_nickname: str) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's will be removed
@@ -1065,7 +1076,8 @@ class TradeControl:
         return False
 
     @logger
-    def display_store_purchases(self, curr_nickname: str, store_name: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
+    def display_store_purchases(self, curr_nickname: str, store_name: str, flag_for_tests: bool or None) -> {
+        'response': list, 'msg': str}:
         """
         function for owner role
         :param store_name: store's name
@@ -1074,10 +1086,10 @@ class TradeControl:
         """
         self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
-        if store is not None and \
-                self.__curr_user.is_registered() and \
-                self.__curr_user.is_logged_in() and \
-                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
+        if (store is not None and
+                self.__curr_user.is_registered() and
+                self.__curr_user.is_logged_in() and
+                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname()))):
             # if not store.get_purchases(self.__curr_user.get_nickname()):
             #     return {'response': [], 'msg': "There are no previous purchases"}
             lst = []
@@ -1141,7 +1153,7 @@ class TradeControl:
 
     @logger
     # TODO: eden check type of dates: [dict] / [datetime]
-    def define_purchase_policy(self, curr_nickname: str,  store_name: str,
+    def define_purchase_policy(self, curr_nickname: str, store_name: str,
                                details: {"name": str, "products": [str], "min_amount": int or None,
                                          "max_amount": int or None, "dates": [datetime] or None,
                                          "bundle": bool or None}) \
@@ -1178,8 +1190,10 @@ class TradeControl:
 
     @logger
     def update_purchase_policy(self, curr_nickname: str, store_name: str, details: {"name": str, "products": [str],
-                                                                "min_amount": int or None, "max_amount": int or None,
-                                                                "dates": [dict] or None, "bundle": bool or None}) \
+                                                                                    "min_amount": int or None,
+                                                                                    "max_amount": int or None,
+                                                                                    "dates": [dict] or None,
+                                                                                    "bundle": bool or None}) \
             -> {'response': bool, 'msg': str}:
         """
             update must have valid policy name of an existing policy and at least one more detail
@@ -1269,7 +1283,8 @@ class TradeControl:
             return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
     @logger
-    def define_composite_policy(self, curr_nickname: str,  store_name: str, policy1_name: str, policy2_name: str, flag: str,
+    def define_composite_policy(self, curr_nickname: str, store_name: str, policy1_name: str, policy2_name: str,
+                                flag: str,
                                 percentage: float, name: str, valid_until: datetime):
 
         self.set_curr_user_by_name(curr_nickname)
@@ -1454,6 +1469,7 @@ class TradeControl:
                 self.get_managers().insert(0, user)
             output_lst.insert(0, user)
         return output_lst
+
     @logger
     def __pull_stores_from_db(self) -> list:
         stores_from_db = (DataAccessFacade.get_instance()).read_stores([])['response']
@@ -1561,8 +1577,6 @@ class TradeControl:
                                               purchase_time=purchase_dict['date'])
                 user.get_purchase_history().insert(0, purchase)
 
-
-
     # ------------------------------------------- UC 6.5 ---------------------------------------------------------
 
     @logger
@@ -1570,9 +1584,10 @@ class TradeControl:
         visitors_cut = []
         for s in self.__statistics:
             if s.in_range(start_date, end_date):
-                visitors_cut.append({'date':s.date(), 'guests': s.guests_amount(), 'subscribers': s.subscribers_amount(),
-                                     'store_managers': s.store_managers_amount(), 'store_owners': s.store_owners_amount(),
-                                     'system_managers': s.system_managers_amount()})
+                visitors_cut.append(
+                    {'date': s.date(), 'guests': s.guests_amount(), 'subscribers': s.subscribers_amount(),
+                     'store_managers': s.store_managers_amount(), 'store_owners': s.store_owners_amount(),
+                     'system_managers': s.system_managers_amount()})
         return {'msg': 'succc', 'response': visitors_cut}
 
     @logger
@@ -1593,6 +1608,6 @@ class TradeControl:
         elif counter_type == 'system_manager':
             today_statistics.inc_system_managers_counter()
         else:
-            print("problem at TradeControl.reset_statistics") # TODO- delete
+            print("problem at TradeControl.reset_statistics")  # TODO- delete
         self.__statistics.append(today_statistics)
         print(f"statistics: {self.__statistics}. todays = {today_statistics}")

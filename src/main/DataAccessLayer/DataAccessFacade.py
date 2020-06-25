@@ -455,7 +455,7 @@ class DataAccessFacade:
                                                                    *self.__prepare_permission_args(
                                                                        new_permissions_lst))])
         except Exception as e:
-            print(e)
+            # print(e)
             return ret(False, self.__execution_failed_error_msg)
 
     def delete_store_manager_appointments(self, appointee_username: str = "", store_name: str = "",
