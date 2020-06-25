@@ -162,14 +162,14 @@ class StoreOwnerOrManagerRole:
     # use case 4.10 - View store’s purchase history
     @staticmethod
     @logger
-    def display_store_purchases(curr_nickname: str, store_name: str) -> {'response': list, 'msg': str}:
+    def display_store_purchases(curr_nickname: str, store_name: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
         """
         :param curr_nickname:
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
                  response = purchases list
         """
-        return TradeControl.get_instance().display_store_purchases(curr_nickname, store_name)
+        return TradeControl.get_instance().display_store_purchases(curr_nickname, store_name, flag_for_tests)
 
     @logger
     def close_store(self, store_name: str) -> bool:

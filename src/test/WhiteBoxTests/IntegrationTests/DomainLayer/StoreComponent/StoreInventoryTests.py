@@ -5,7 +5,6 @@ from src.main.DomainLayer.StoreComponent.StoreInventory import StoreInventory
 
 
 class StoreInventoryTests(unittest.TestCase):
-    # @logger
     def setUp(self):
         self.inv = StoreInventory()
         self.product1 = Product("Chair", 100, "Furniture")
@@ -15,7 +14,6 @@ class StoreInventoryTests(unittest.TestCase):
         self.product3 = Product("Guitar", 1000, "Musical Instruments")
         self.product3.set_purchase_type(0)
 
-    # @logger
     def test_add_product(self):
         # All valid - None existing product
         self.assertTrue(self.inv.add_product(self.product1, 5))
@@ -28,7 +26,6 @@ class StoreInventoryTests(unittest.TestCase):
         # Invalid - Illegal amount
         self.assertFalse(self.inv.add_product(self.product2, -8))
 
-    # @logger
     def test_get_product(self):
         self.inv.add_product(self.product1, 5)
 
@@ -42,7 +39,6 @@ class StoreInventoryTests(unittest.TestCase):
         # Invalid -> none existing product
         self.assertIsNone(self.inv.get_product("Sofa"))
 
-    # @logger
     def test_get_products_by(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 5)
@@ -97,7 +93,6 @@ class StoreInventoryTests(unittest.TestCase):
         self.assertFalse(self.inv.remove_product("eden"))
         self.assertEqual(len(self.inv.get_products_by(2, "")), 1)
 
-    # @logger
     def test_change_amount(self):
         self.inv.add_product(self.product1, 4)
         self.inv.add_product(self.product2, 2)

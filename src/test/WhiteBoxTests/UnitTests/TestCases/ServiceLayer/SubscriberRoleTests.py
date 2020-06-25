@@ -41,15 +41,15 @@ class SubscriberRoleTests(unittest.TestCase):
         purchase: Purchase = Mock()
 
         self.__trade_control_mock.get_instance().view_personal_purchase_history = MagicMock(return_value=[purchase])
-        history = self.__subscriber.view_personal_purchase_history(self.name)
+        history = self.__subscriber.view_personal_purchase_history(self.name, True)
         self.assertIsNotNone(history)
 
         self.__trade_control_mock.get_instance().view_personal_purchase_history = MagicMock(return_value=[])
-        history = self.__subscriber.view_personal_purchase_history(self.name)
+        history = self.__subscriber.view_personal_purchase_history(self.name, True)
         self.assertIsNotNone(history)
 
         self.__trade_control_mock.get_instance().view_personal_purchase_history = MagicMock(return_value=None)
-        history = self.__subscriber.view_personal_purchase_history(self.name)
+        history = self.__subscriber.view_personal_purchase_history(self.name, True)
         self.assertIsNone(history)
 
     def tearDown(self):

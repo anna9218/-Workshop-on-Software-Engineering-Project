@@ -39,13 +39,13 @@ class SubscriberRole:
     @staticmethod
     @logger
     # use case 3.7
-    def view_personal_purchase_history(curr_nickname: str) -> {'response': list, 'msg': str}:
+    def view_personal_purchase_history(curr_nickname: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
         """
         View the subscriber's purchase history
         :return: list of json objects containing the subscriber's purchase history or None if none exist
         """
         loggerStaticMethod("SubscriberRole.view_personal_purchase_history", [])
-        return TradeControl.get_instance().view_personal_purchase_history(curr_nickname)
+        return TradeControl.get_instance().view_personal_purchase_history(curr_nickname, flag_for_tests)
 
     def __repr__(self):
         return repr("SubscriberRole")

@@ -161,7 +161,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
 
         # All valid
-        self.assertTrue((TradeControl.get_instance()).open_store("myFirstStore"))
+        self.assertTrue((TradeControl.get_instance()).open_store(self.__user_nickname, "myFirstStore"))
         self.assertEqual(stores_num + 1, len((TradeControl.get_instance()).get_stores()))
         store: Store = (TradeControl.get_instance()).get_store("myFirstStore")
         self.assertIsNotNone(store)
@@ -170,7 +170,7 @@ class TradeControlTestCase(unittest.TestCase):
         stores_num = stores_num + 1
 
         # Invalid - store already exist
-        self.assertFalse((TradeControl.get_instance()).open_store("myFirstStore")['response'])
+        self.assertFalse((TradeControl.get_instance()).open_store(self.__user_nickname, "myFirstStore")['response'])
         self.assertEqual(stores_num, len((TradeControl.get_instance()).get_stores()))
         self.assertIsNotNone((TradeControl.get_instance()).get_store("myFirstStore"))
 
@@ -178,7 +178,7 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).set_curr_user(bad_user)
 
         # Invalid - curr_user doesn't register
-        self.assertFalse((TradeControl.get_instance()).open_store("not myFirstStore")['response'])
+        self.assertFalse((TradeControl.get_instance()).open_store(bad_user.get_nickname(), "not myFirstStore")['response'])
         self.assertEqual(stores_num, len((TradeControl.get_instance()).get_stores()))
         self.assertIsNone((TradeControl.get_instance()).get_store("not myFirstStore"))
 
@@ -187,21 +187,21 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).set_curr_user(not_logged_in_user)
 
         # Invalid - curr_user doesn't register
-        self.assertFalse((TradeControl.get_instance()).open_store("not myFirstStore")['response'])
+        self.assertFalse((TradeControl.get_instance()).open_store(not_logged_in_user.get_nickname(), "not myFirstStore")['response'])
         self.assertEqual(stores_num, len((TradeControl.get_instance()).get_stores()))
         self.assertIsNone((TradeControl.get_instance()).get_store("not myFirstStore"))
 
         (TradeControl.get_instance()).set_curr_user(self.__user)
 
         # Invalid - store name is empty
-        self.assertFalse((TradeControl.get_instance()).open_store("          ")['response'])
+        self.assertFalse((TradeControl.get_instance()).open_store(self.__user_nickname, "          ")['response'])
         self.assertEqual(stores_num, len((TradeControl.get_instance()).get_stores()))
         self.assertIsNone((TradeControl.get_instance()).get_store("          "))
 
     def test_close_store(self):
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).open_store("myFirstStore")
+        (TradeControl.get_instance()).open_store(self.__user_nickname, "myFirstStore")
         stores_num = len(TradeControl.get_instance().get_stores())
 
         # All valid
@@ -217,7 +217,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertEqual(stores_num, len((TradeControl.get_instance()).get_stores()))
         self.assertIsNone((TradeControl.get_instance()).get_store("myFirstStore"))
 
-        (TradeControl.get_instance()).open_store("not myFirstStore")
+        (TradeControl.get_instance()).open_store(self.__user_nickname, "not myFirstStore")
         (TradeControl.get_instance()).get_curr_user().logout()
 
         stores_num = stores_num + 1
@@ -270,7 +270,7 @@ class TradeControlTestCase(unittest.TestCase):
     def test_get_products_by(self):
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).open_store("myFirstStore")
+        (TradeControl.get_instance()).open_store(self.__user_nickname, "myFirstStore")
 
         store = (TradeControl.get_instance()).get_store("myFirstStore")
 
@@ -326,7 +326,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertEqual(len(ls), 0)
 
         # Two stores (A.K.A more then one store)
-        (TradeControl.get_instance()).open_store("not myFirstStore")
+        (TradeControl.get_instance()).open_store(self.__user_nickname, "not myFirstStore")
 
         not_store = (TradeControl.get_instance()).get_store("not myFirstStore")
         not_store.add_products("Eytan", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 10,
@@ -398,7 +398,7 @@ class TradeControlTestCase(unittest.TestCase):
     def test_filter_products_by(self):
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).open_store("myFirstStore")
+        (TradeControl.get_instance()).open_store(self.__user_nickname, "myFirstStore")
 
         store = (TradeControl.get_instance()).get_store("myFirstStore")
 
@@ -552,17 +552,17 @@ class TradeControlTestCase(unittest.TestCase):
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
 
         # All valid
-        self.assertTrue((TradeControl.get_instance()).logout_subscriber()['response'])
+        self.assertTrue((TradeControl.get_instance()).logout_subscriber(self.__user_nickname)['response'])
 
         # Invalid - user already logged out
-        self.assertFalse((TradeControl.get_instance()).logout_subscriber()['response'])
+        self.assertFalse((TradeControl.get_instance()).logout_subscriber(self.__user_nickname)['response'])
 
     def test_save_products_to_basket(self):
         # TODO: Maybe add a test to check if try to purchase more amount then the store have.
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).open_store("myStore")
-        (TradeControl.get_instance()).add_products("myStore", [
+        (TradeControl.get_instance()).open_store(self.__user_nickname, "myStore")
+        (TradeControl.get_instance()).add_products(self.__user_nickname, "myStore", [
             {"name": "Eytan's product", "price": 12, "category": "Eytan's category", "amount": 5,
              "purchase_type": 0, "discount_type": 0}])
         product = Product("Eytan's product", 12, "Eytan's category")

@@ -391,7 +391,7 @@ def view_store_purchases_history():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
         curr_nickname = request_dict.get('user_nickname')
-        response = StoreOwnerOrManagerRole.display_store_purchases(curr_nickname, store_name)
+        response = StoreOwnerOrManagerRole.display_store_purchases(curr_nickname, store_name, None)
         return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error.", data=[])
 
@@ -657,7 +657,7 @@ def view_personal_purchase_history():
     if request.is_json:
         request_dict = request.get_json()
         curr_nickname = request_dict.get('user_nickname')
-        response = SubscriberRole.view_personal_purchase_history(curr_nickname)
+        response = SubscriberRole.view_personal_purchase_history(curr_nickname, None)
         return jsonify(msg=response["msg"], data=response["response"]) # NEED TO BE CHEKED, STAM ASITI
 
 
@@ -674,7 +674,7 @@ def view_user_purchase_history():
         request_dict = request.get_json()
         viewed_user = request_dict.get('nickname')
         curr_nickname = request_dict.get('user_nickname')
-        response = SystemManagerRole.view_user_purchase_history(curr_nickname, viewed_user)
+        response = SystemManagerRole.view_user_purchase_history(curr_nickname, viewed_user, None)
         if response:  # if not None
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
@@ -686,7 +686,7 @@ def view_any_store_purchase_history():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         curr_nickname = request_dict.get('user_nickname')
-        response = SystemManagerRole.view_store_purchases_history(curr_nickname, store_name)
+        response = SystemManagerRole.view_store_purchases_history(curr_nickname, store_name, None)
         if response:  # if not None
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
@@ -709,19 +709,6 @@ def get_visitors_cut():
         if response:  # if not None
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
-
-
-# @app.route('/view_store_purchases_history', methods=['POST'])
-# def view_store_purchases_history():
-#     if request.is_json:
-#         request_dict = request.get_json()
-#         store_name = request_dict.get('store_name')
-#     #     response = SystemManagerRole.view_store_purchases_history(store_name)
-#     #     if response:  # if not None
-#     #         return jsonify(msg="success", data=response)
-#     # return jsonify(msg="fail", data=response)
-#     return jsonify(data=["store_purchase1", "store_purchase2"])
-#
 
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 

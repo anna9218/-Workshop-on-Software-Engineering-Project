@@ -505,16 +505,20 @@ class TradeControl:
         return {'response': True, 'msg': "Subscriber was logged out successfully"}
 
     @logger
-    def view_personal_purchase_history(self, curr_nickname: str) -> {'response': list, 'msg': str}:
+    def view_personal_purchase_history(self, curr_nickname: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
         self.set_curr_user_by_name(curr_nickname)
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             purchases = self.__curr_user.get_purchase_history()
             ls = []
-            list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
-                                                 "nickname": purchase.get_nickname(),
-                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                 "total_price": purchase.get_total_price(),
-                                                 "products": purchase.get_products()}), purchases))
+            if flag_for_tests is None or flag_for_tests is False:
+                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                     "nickname": purchase.get_nickname(),
+                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                     "total_price": purchase.get_total_price(),
+                                                     "products": purchase.get_products()}), purchases))
+            else:
+                list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
+                         purchases))
             if len(ls) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': ls, 'msg': "Purchase history was retrieved successfully"}
@@ -524,20 +528,21 @@ class TradeControl:
 
     # ---- system manager functions ----
     @logger
-    def view_user_purchase_history(self, curr_nickname: str, nickname: str):
+    def view_user_purchase_history(self, curr_nickname: str, nickname: str, flag_for_tests: int or None):
         self.set_curr_user_by_name(curr_nickname)
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_user = self.get_subscriber(nickname)
             if viewed_user:
                 purchases = viewed_user.get_purchase_history()
                 ls = []
-                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
-                                                     "nickname": purchase.get_nickname(),
-                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                     "total_price": purchase.get_total_price(),
-                                                     "products": purchase.get_products()}), purchases))
-                # ls = []
-                # list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), viewed_user.get_purchase_history()))
+                if flag_for_tests is None or flag_for_tests is False:
+                    list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                         "nickname": purchase.get_nickname(),
+                                                         "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                         "total_price": purchase.get_total_price(),
+                                                         "products": purchase.get_products()}), purchases))
+                else:
+                    list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), purchases))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for user " + nickname}
                 return {'response': ls, 'msg': nickname + " purchases history was retrieved successfully"}
@@ -547,7 +552,13 @@ class TradeControl:
             return {'response': None, 'msg': "User is not a system manager"}
 
     @logger
-    def view_store_purchases_history(self, curr_nickname, store_name):
+    def view_store_purchases_history(self, curr_nickname, store_name, flag_for_tests: bool or None):
+        '''
+        funtction for system manager role
+        :param curr_nickname:
+        :param store_name:
+        :return:
+        '''
         self.set_curr_user_by_name(curr_nickname)
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_store = self.get_store(store_name)
@@ -555,14 +566,15 @@ class TradeControl:
                 owner_nickname = viewed_store.get_owners()[0].get_nickname()
                 purchases = viewed_store.get_purchases(owner_nickname)
                 ls = []
-                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
-                                                     "nickname": purchase.get_nickname(),
-                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                     "total_price": purchase.get_total_price(),
-                                                     "products": purchase.get_products()}), purchases))
-                # ls = []
-                # list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
-                #          viewed_store.get_purchases(self.__curr_user.get_nickname())))
+                if flag_for_tests is None or flag_for_tests is False:
+                    list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                         "nickname": purchase.get_nickname(),
+                                                         "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                         "total_price": purchase.get_total_price(),
+                                                         "products": purchase.get_products()}), purchases))
+                else:
+                    list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
+                             viewed_store.get_purchases(self.__curr_user.get_nickname())))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for store " + store_name}
                 return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully"}
@@ -851,8 +863,9 @@ class TradeControl:
         return False
 
     @logger
-    def display_store_purchases(self, curr_nickname: str, store_name: str) -> {'response': list, 'msg': str}:
+    def display_store_purchases(self, curr_nickname: str, store_name: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
         """
+        function for owner rule
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
                  response = purchases list
@@ -867,13 +880,15 @@ class TradeControl:
             #     return {'response': [], 'msg': "There are no previous purchases"}
             lst = []
             purchases = store.get_purchases(self.__curr_user.get_nickname())
-            list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
-                                                  "nickname": purchase.get_nickname(),
-                                                  "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                  "total_price": purchase.get_total_price(),
-                                                  "products": purchase.get_products()}), purchases))
-            # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
-            #          ))
+            if flag_for_tests is None or flag_for_tests is False:
+                list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
+                                                      "nickname": purchase.get_nickname(),
+                                                      "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                      "total_price": purchase.get_total_price(),
+                                                      "products": purchase.get_products()}), purchases))
+            else:
+                list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
+                         purchases))
             if len(lst) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': lst, 'msg': "Purchase history was retrieved successfully"}
@@ -1211,6 +1226,7 @@ class TradeControl:
         if "SUBSCRIBER" in roles:
             return "SUBSCRIBER"
         return "GUEST"
+
 
     def __repr__(self):
         return repr("TradeControl")

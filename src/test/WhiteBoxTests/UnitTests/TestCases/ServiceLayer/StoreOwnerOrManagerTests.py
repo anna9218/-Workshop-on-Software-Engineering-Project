@@ -95,10 +95,10 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
     def test_display_store_purchases(self):
         TradeControl.get_instance().display_store_purchases = MagicMock(return_value=True)
-        self.assertTrue(self.__store_owner_or_manager_role.display_store_purchases(self.name, "Store"))
+        self.assertTrue(self.__store_owner_or_manager_role.display_store_purchases(self.name, "Store", True))
 
         TradeControl.get_instance().display_store_purchases = MagicMock(return_value=False)
-        self.assertFalse(self.__store_owner_or_manager_role.display_store_purchases(self.name, "Store"))
+        self.assertFalse(self.__store_owner_or_manager_role.display_store_purchases(self.name, "Store", True))
 
     def setup_for_policies(self):
         self.__trade_control_mock.get_store = MagicMock(return_value=self.store_mock)
