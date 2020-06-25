@@ -25,6 +25,7 @@ class SubscriberRole:
     @staticmethod
     @logger
     # 3.2 open store
+    @synchronized
     def open_store(curr_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         Opens a new store with the given store name
