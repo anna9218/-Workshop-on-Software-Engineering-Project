@@ -251,26 +251,7 @@ class StoreTests(unittest.TestCase):
         self.assertTrue(len(res) == 0)
 
     def test_remove_owner(self):
-        owner1 = StubUser()
-        owner1.register("owner1", "password")
-        self.store.add_owner("shani", owner1)
-
-        owner2 = StubUser()
-        owner2.register("owner2", "password")
-        self.store.add_owner("owner1", owner2)
-
-        owner3 = StubUser()
-        owner3.register("owner3", "password")
-        self.store.add_owner("owner2", owner3)
-
-        manager1 = StubUser()
-        manager1.register("manager1", "password")
-        self.store.add_manager(owner3, manager1, [])
-
-        manager2 = StubUser()
-        manager2.register("manager2", "password")
-        self.store.add_manager(self.owner, manager2, [])
-
+        self.set_up_owners()
         # failed owner2 didn't appoint owner 2 as owner
         res = self.store.remove_owner("owner2", "owner1")
         self.assertEqual(res['response'], [])
@@ -292,17 +273,24 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(self.store.is_manager('manager1'))
         self.assertTrue(self.store.is_manager('manager2'))
 
-    def test_remove_owner_appointees(self):
+    def set_up_owners(self):
         owner1 = StubUser()
         owner1.register("owner1", "password")
+        # self.store.get_owners_appointments().append(StoreAppointment(None, owner1, []))
         self.store.add_owner("shani", owner1)
 
         owner2 = StubUser()
         owner2.register("owner2", "password")
         self.store.add_owner("owner1", owner2)
+        self.store.update_agreement_participants(owner2.get_nickname(), 'shani', AppointmentStatus.APPROVED)
+        self.store.add_owner("owner1", owner2)
 
         owner3 = StubUser()
         owner3.register("owner3", "password")
+        self.store.add_owner("owner2", owner3)
+        self.store.update_agreement_participants(owner3.get_nickname(), 'shani', AppointmentStatus.APPROVED)
+        self.store.update_agreement_participants(owner3.get_nickname(), owner1.get_nickname(),
+                                                 AppointmentStatus.APPROVED)
         self.store.add_owner("owner2", owner3)
 
         manager1 = StubUser()
@@ -313,7 +301,10 @@ class StoreTests(unittest.TestCase):
         manager2.register("manager2", "password")
         self.store.add_manager(self.owner, manager2, [])
 
+    def test_remove_owner_appointees(self):
+        self.set_up_owners()
         res = self.store.remove_owner_appointees("owner1")
+        # res = self.store.remove_owner_appointees("owner1")
 
         self.assertEqual(res, ['owner2 removed as owner', 'owner3 removed as owner', 'manager1 removed as manager'])
         self.assertTrue(self.store.is_owner('owner1'))

@@ -204,37 +204,22 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertEqual(res['response'], [])
         self.assertEqual(res['msg'], "Error! remove store owner failed.")
 
-        # success
         self.tradeControl.appoint_additional_owner("owner1", "owner2", "myStore")
+
+        # success
         owner2 = StubUser()
         owner2.register("owner2", "password")
         owner2.login("owner2", "password")
         self.tradeControl.set_curr_user(owner2)
-        self.tradeControl.register_guest("owner3", "213456")
-        self.tradeControl.appoint_additional_owner("owner2", "owner3", "myStore")
-
-        self.tradeControl.register_guest("manager2", "213456")
-        self.tradeControl.appoint_store_manager("owner2", "manager2", "myStore", [])
-
-        owner3 = StubUser()
-        owner3.register("owner3", "password")
-        owner3.login("owner3", "password")
-        self.tradeControl.set_curr_user(owner3)
-        self.tradeControl.register_guest("manager3", "213456")
-        self.tradeControl.appoint_store_manager("owner3", "manager3", "myStore", [])
 
         self.tradeControl.set_curr_user(owner1)
         res = self.tradeControl.remove_owner("owner1", "owner2", "myStore")
-        self.assertEqual(res['response'], ['owner2 removed as owner', 'owner3 removed as owner',
-                                           'manager3 removed as manager', 'manager2 removed as manager'])
+        self.assertEqual(res['response'], ['owner2 removed as owner',])
         self.assertEqual(res['msg'], "Store owner owner2 and his appointees were removed successfully.")
         store = self.tradeControl.get_store("myStore")
         self.assertTrue(store.is_manager("manager1"))
-        self.assertFalse(store.is_manager("manager2"))
-        self.assertFalse(store.is_manager("manager3"))
         self.assertTrue(store.is_owner("owner1"))
         self.assertFalse(store.is_owner("owner2"))
-        self.assertFalse(store.is_owner("owner3"))
 
     def test_appoint_store_manager(self):
         self.user.register("eden", "213456")

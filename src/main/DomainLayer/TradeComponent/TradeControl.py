@@ -167,16 +167,16 @@ class TradeControl:
             answer = self.__curr_user.login(nickname, password)
             if answer:
                 # update statistics
-                if self.get_user_type() == 'OWNER':
+                if self.get_user_type(nickname) == 'OWNER':
                     if not self.__statistics[0].inc_store_owners_counter():
                         self.reset_statistics('owner')
-                if self.get_user_type() == 'SYSTEMMANAGER':
+                if self.get_user_type(nickname) == 'SYSTEMMANAGER':
                     if not self.__statistics[0].inc_system_managers_counter():
                         self.reset_statistics('system_manager')
-                if self.get_user_type() == 'SUBSCRIBER':
+                if self.get_user_type(nickname) == 'SUBSCRIBER':
                     if not self.__statistics[0].inc_subscribers_counter():
                         self.reset_statistics('subscriber')
-                if self.get_user_type() == 'MANAGER':
+                if self.get_user_type(nickname) == 'MANAGER':
                     if not self.__statistics[0].inc_store_managers_counter():
                         self.reset_statistics('store_manager')
             return answer
@@ -838,8 +838,8 @@ class TradeControl:
         if self.__curr_user.is_registered() and \
                 appointee.is_registered() and \
                 self.__curr_user.is_logged_in() and \
-                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
-            result = store.add_owner(self.__curr_user.get_nickname(), appointee)
+                (store.is_owner(curr_nickname) or store.is_manager(curr_nickname)):
+            result = store.add_owner(curr_nickname, appointee)
             return result
             # if result:
             #     return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
@@ -1409,10 +1409,10 @@ class TradeControl:
         visitors_cut = []
         for s in self.__statistics:
             if s.in_range(start_date, end_date):
-                visitors_cut.append({'date':s.date(), 'guests': s.guests_amount(), 'subscribers': s.subscribers_amount(),
+                visitors_cut.append({'date': s.date(), 'guests': s.guests_amount(), 'subscribers': s.subscribers_amount(),
                                      'store_managers': s.store_managers_amount(), 'store_owners': s.store_owners_amount(),
                                      'system_managers': s.system_managers_amount()})
-        return {'msg': 'succc', 'response': visitors_cut}
+        return {'msg': 'success', 'response': visitors_cut}
 
     @logger
     def inc_todays_guests_counter(self):
