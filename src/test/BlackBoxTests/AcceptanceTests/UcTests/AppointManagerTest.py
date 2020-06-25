@@ -6,7 +6,6 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 class AppointManagerTest(ProjectAT):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.__appointee_name = "otherUsername"
@@ -16,13 +15,11 @@ class AppointManagerTest(ProjectAT):
         self.login(self._username, self._password)
         self.open_store(self._store_name)
 
-    # @logger
     def test_success(self):
         # all valid details
         res = self.appoint_additional_manager(self.__appointee_name, self._store_name, [])
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.appoint_additional_manager(self.__appointee_name, "someStoreName", [])
@@ -35,7 +32,6 @@ class AppointManagerTest(ProjectAT):
         res = self.appoint_additional_manager(self.__appointee_name, self._store_name, [])
         self.assertFalse(res['response'])
 
-    # @logger
     def tearDown(self) -> None:
         self.remove_store(self._store_name)
         self.delete_user(self._username)

@@ -12,22 +12,24 @@ class SystemManagerRole:
 # ---------------------------------------------------- U.C 6.4 ---------------------------------------------------------
     @staticmethod
     @logger
-    def view_user_purchase_history(viewed_user: str) -> {'response': list, 'msg': str}:
+    def view_user_purchase_history(curr_nickname: str, viewed_user: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
         """
         This function returns all the purchases that are done by a specific user.
+        :param curr_nickname:
         :param viewed_user: the user to view.
         :return: list of json objects containing the users' purchases or None if none exist
         """
-        return TradeControl.get_instance().view_user_purchase_history(viewed_user)
+        return TradeControl.get_instance().view_user_purchase_history(curr_nickname, viewed_user, flag_for_tests)
 
     @staticmethod
     @logger
-    def view_store_purchases_history(store_name: str) -> {'response': list, 'msg': str}:
+    def view_store_purchases_history(curr_nickname: str, store_name: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
         """
+        :param curr_nickname:
         :param store_name: the store to view
         :return: list of purchases
         """
-        return TradeControl.get_instance().view_store_purchases_history(store_name)
+        return TradeControl.get_instance().view_store_purchases_history(curr_nickname, store_name, flag_for_tests)
 
     @staticmethod
     @logger

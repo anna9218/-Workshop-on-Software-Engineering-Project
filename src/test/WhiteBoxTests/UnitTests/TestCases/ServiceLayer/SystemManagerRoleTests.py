@@ -17,30 +17,31 @@ class SystemManagerRoleTests(unittest.TestCase):
         self.__trade_control_mock = TradeControl().get_instance()
         self.__viewed_user = "anna9218"
         self.__store_name = "Some Store"
+        self.__sys_manager_name = "eden"
 
     def test_view_user_purchases_history(self):
         self.__trade_control_mock.get_instance().view_user_purchase_history = MagicMock(return_value=[])
-        res = self.__system_manager_role.view_user_purchase_history(self.__viewed_user)
+        res = self.__system_manager_role.view_user_purchase_history(self.__sys_manager_name, self.__viewed_user, True)
         self.assertListEqual(res, [])
 
         self.__trade_control_mock.get_instance().view_user_purchase_history = \
             MagicMock(return_value=[{"product_name": "Eytan's product",
                                      "store_name": "Eytan's store",
                                      "amount": 1}])
-        res = self.__system_manager_role.view_user_purchase_history(self.__viewed_user)
+        res = self.__system_manager_role.view_user_purchase_history(self.__sys_manager_name, self.__viewed_user, True)
         res_as_tuples = [(result['product_name'], result['store_name'], result['amount']) for result in res]
         self.assertListEqual(res_as_tuples, [("Eytan's product", "Eytan's store", 1)])
 
     def test_view_store_purchases_history(self):
         self.__trade_control_mock.get_instance().view_store_purchases_history = MagicMock(return_value=[])
-        res = self.__system_manager_role.view_store_purchases_history(self.__store_name)
+        res = self.__system_manager_role.view_store_purchases_history(self.__sys_manager_name, self.__store_name, True)
         self.assertListEqual(res, [])
 
         self.__trade_control_mock.get_instance().view_store_purchases_history = \
             MagicMock(return_value=[{"product_name": "Eytan's product",
                                      "store_name": "Eytan's store",
                                      "amount": 1}])
-        res = self.__system_manager_role.view_store_purchases_history(self.__store_name)
+        res = self.__system_manager_role.view_store_purchases_history(self.__sys_manager_name, self.__store_name, True)
         res_as_tuples = [(result['product_name'], result['store_name'], result['amount']) for result in res]
         self.assertListEqual(res_as_tuples, [("Eytan's product", "Eytan's store", 1)])
 

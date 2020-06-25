@@ -47,14 +47,18 @@ class SubscriberAPI extends React.Component{
 
     // for the search functionality
     fetchCategories = async () =>{
-        const promise = theService.getCategories(); // goes to register.js and sends to backend
+        const promise = theService.getCategories(); 
         promise.then((data) => {this.setState({categories: data["data"]})})
     }
 
     logoutHandler = async () =>{
-        const promise = theService.logout(); // goes to register.js and sends to backend
+        const promise = theService.logout(); 
         promise.then((data) => {
           alert(data["msg"]);
+            // if logged out successfuly - delete username from cash
+            localStorage.removeItem("loggedUser");
+
+            // TODO: yarin  
             theWebsocket.logout()
             this.props.history.push("/");
         });

@@ -31,9 +31,14 @@ class OwnerAPI extends React.Component {
     logoutHandler = async () =>{
         const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
-          alert(data["msg"]);
-          theWebsocket.logout()
+            alert(data["msg"]);
+            theWebsocket.logout()
+            
+            // if logged out successfuly - delete username from cash
+            localStorage.removeItem("loggedUser");
+
             this.props.history.push("/");
+
         });
     };
 

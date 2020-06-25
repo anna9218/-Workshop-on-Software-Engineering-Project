@@ -77,7 +77,8 @@ class DataAccessFacade:
         """
         try:
             return self.__proxy.execute([UserData.get_instance().write(username, password, is_system_manager)])
-        except Exception:
+        except Exception as e:
+            # print(e)
             return ret(False, self.__execution_failed_error_msg)
 
     def read_users(self, attributes_to_read=None, username: str = "", password: str = "",

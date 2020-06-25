@@ -55,8 +55,13 @@ class systemManagerAPI extends React.Component{
         const promise = theService.logout(); // goes to register.js and sends to backend
         promise.then((data) => {
           alert(data["msg"]);
+          // if logged out successfuly - delete username from cash
+          localStorage.removeItem("loggedUser");
+          
+          // TODO: yarin  
             theWebsocket.logout()
             this.props.history.push("/");
+
         });
     };
 

@@ -1,6 +1,8 @@
 import axios from "axios";
 //Responsible for sending requests to the back-end
 
+const cashed_username = localStorage.getItem("loggedUser");
+
 export async function register(nickname, password) {
     return axios.post('http://localhost:5000/register', {
         nickname: nickname, 
@@ -18,7 +20,9 @@ export async function login(nickname, password) {
 }
 
 export async function getUserType(){
-    return axios.get('http://localhost:5000/get_user_type')
+    return axios.post('http://localhost:5000/get_user_type', {
+        user_nickname: cashed_username
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -46,7 +50,9 @@ export async function displayStoresStores(store_name){
 }
 
 export async function displayShoppingCart(){
-    return axios.get('http://localhost:5000/view_shopping_cart')
+    return axios.post('http://localhost:5000/view_shopping_cart', {
+        user_nickname: cashed_username
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -89,7 +95,8 @@ export async function addToProductsCart(store_name, product_name, product_amount
     return axios.post('http://localhost:5000/add_products_to_cart', {
         products: [{"store_name": store_name,
                     "product_name": product_name, 
-                    "amount": product_amount}]
+                    "amount": product_amount}],
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -97,15 +104,20 @@ export async function addToProductsCart(store_name, product_name, product_amount
 export async function updateShoppingCart(action_type, product_name, store_name, amount){
     return axios.post('http://localhost:5000/update_or_remove_from_shopping_cart', {
         action_type: action_type,
-        store_name: store_name,
-        amount: amount,
-        product_name: product_name
+        products: [{
+            store_name: store_name,
+            amount: amount,
+            product_name: product_name
+        }],
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
 export async function purchaseCart(){
-    return axios.get('http://localhost:5000/purchase_products')
+    return axios.post('http://localhost:5000/purchase_products', {
+        user_nickname: cashed_username
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -113,7 +125,8 @@ export async function confirmPurchase(delivery_details, payment_details, purchas
     return axios.post('http://localhost:5000/confirm_purchase', {
         delivery_details: delivery_details,
         payment_details: payment_details,
-        purchases: purchase_details
+        purchases: purchase_details,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -128,18 +141,23 @@ export async function getNickname(){
 
 export async function openStore(store_name){
     return axios.post('http://localhost:5000/open_store', {
-        store_name: store_name
+        store_name: store_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
 export async function logout(){
-    return axios.get('http://localhost:5000/logout')
+    return axios.post('http://localhost:5000/logout', {
+        user_nickname: cashed_username
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
 export async function fetchPersonalPurchaseHistory(){
-    return axios.get('http://localhost:5000/view_personal_purchase_history')
+    return axios.post('http://localhost:5000/view_personal_purchase_history', {
+        user_nickname: cashed_username
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -158,7 +176,9 @@ export async function initSystem(){
 //--------------------------- MANAGRT ROLE --------------------------------------------//
 
 export async function fetchManagedStores(){
-    return axios.get('http://localhost:5000/get_managed_stores')
+    return axios.post('http://localhost:5000/get_managed_stores', {
+        user_nickname: cashed_username
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -172,6 +192,7 @@ export async function fetchManagerPermissions(store_name){
 export async function fetchManagersAppointees(store_name){
     return axios.post('http://localhost:5000/get_managers_appointees', {
         store_name: store_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -187,7 +208,9 @@ export async function fetchOwnersAppointees(store_name){
 //--------------------------- OWNER & MANAGER ROLE --------------------------------------------//
 
 export async function fetchOwnedStores(){
-    return axios.get('http://localhost:5000/get_owned_stores')
+    return axios.post('http://localhost:5000/get_owned_stores', {
+        user_nickname: cashed_username
+    })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
@@ -216,8 +239,8 @@ export async function addProduct(store_name, product_name, product_price, produc
             category: product_category,
             amount: parseInt(product_amount),
             purchase_type: purchase_type
-        }]
-        
+        }],
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -230,7 +253,8 @@ export async function editProduct(store_name, product_name, new_product_name, am
         amount: amount,
         price: price,
         category: category,
-        purchase_type: purchase_type
+        purchase_type: purchase_type,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -238,7 +262,8 @@ export async function editProduct(store_name, product_name, new_product_name, am
 export async function deleteProduct(store_name, product_name){
     return axios.post('http://localhost:5000/remove_product', {
         store_name: store_name,
-        product_name: product_name
+        product_name: product_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -255,7 +280,8 @@ export async function appointStoreManager(appointee_nickname, store_name, permis
     return axios.post('http://localhost:5000/appoint_store_manager', {
         appointee_nickname: appointee_nickname,
         store_name: store_name,
-        permissions: permissions
+        permissions: permissions,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -264,6 +290,7 @@ export async function appointStoreOwner(appointee_nickname, store_name){
     return axios.post('http://localhost:5000/appoint_store_owner', {
         appointee_nickname: appointee_nickname,
         store_name: store_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -276,6 +303,7 @@ export async function sendAgreementAnswer(appointee_nickname, store_name, answer
         appointee_nickname: appointee_nickname,
         store_name: store_name,
         appointment_agreement_response: answer,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -284,7 +312,8 @@ export async function sendAgreementAnswer(appointee_nickname, store_name, answer
 export async function removeOwner(store_name, nickname){
     return axios.post('http://localhost:5000/remove_owner', {
         store_name: store_name,
-        nickname: nickname
+        nickname: nickname,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -292,7 +321,8 @@ export async function removeOwner(store_name, nickname){
 export async function removeManager(store_name, nickname){
     return axios.post('http://localhost:5000/remove_manager', {
         store_name: store_name,
-        nickname: nickname
+        nickname: nickname,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -303,7 +333,8 @@ export async function editManagerPermissions(store_name, appointee_nickname, per
     return axios.post('http://localhost:5000/edit_manager_permissions', {
         store_name: store_name,
         appointee_nickname: appointee_nickname,
-        permissions: permissions
+        permissions: permissions,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -311,6 +342,7 @@ export async function editManagerPermissions(store_name, appointee_nickname, per
 export async function fetchStorePurchaseHistory(store_name){
     return axios.post('http://localhost:5000/view_store_purchases_history', {
         store_name: store_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -319,7 +351,8 @@ export async function fetchStorePurchaseHistory(store_name){
 export async function getPolicies(policy_type, store_name){
     return axios.post('http://localhost:5000/get_policies', {
         store_name: store_name,
-        policy_type: policy_type
+        policy_type: policy_type,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -333,7 +366,8 @@ export async function addAndUpdatePurchasePolicy(action_type, store_name, policy
         min_amount: min_amount,
         max_amount: max_amount,
         dates: dates,
-        bundle: bundle
+        bundle: bundle,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -349,7 +383,8 @@ export async function addAndUpdateDiscountPolicy(action_type, store_name, policy
         product: product,
         min_amount: min_amount,
         min_purchase_price: min_purchase_price,
-        new_policy_name: new_policy_name
+        new_policy_name: new_policy_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -362,7 +397,8 @@ export async function addCompositeDiscountPolicy(store_name, policy1, policy2, o
         operator: operator,
         percentage: percentage,
         new_policy_name: new_policy_name,
-        date: date
+        date: date,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
@@ -386,14 +422,16 @@ export async function deletePolicy(policy_type, store_name, policy_name){
 
 export async function fetchUserPurchaseHistory(nickname){
     return axios.post('http://localhost:5000/view_user_purchase_history', {
-        nickname: nickname
+        nickname: nickname,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
 
 export async function SystemManagerfetchStorePurchaseHistory(store_name){
     return axios.post('http://localhost:5000/view_any_store_purchase_history', {
-        store_name: store_name
+        store_name: store_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }

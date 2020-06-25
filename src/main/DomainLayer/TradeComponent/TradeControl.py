@@ -37,6 +37,7 @@ class TradeControl:
             self.__managers = []
             self.__subscribers = self.__pull_subscribers_from_db()
             self.__stores = self.__pull_stores_from_db()
+            # self.__stores = []
             self.__statistics : [Statistics] = [Statistics()]
             # self.__stores.append(Store("einat"))
             # self.__stores.append(Store("Eden"))
@@ -84,15 +85,15 @@ class TradeControl:
 
     @logger
     def register_test_user(self, nickname: str, password: str):
-        """
-        TODO: I think its for AT
-        :param nickname:
-        :param password:
-        :return:
-        """
         user = User()
         user.register(nickname, password)
         self.subscribe(user)
+
+    def remove_system_manager(self, nickname: str):
+        for manager in self.__managers:
+            if manager.get_nickname() == nickname:
+                self.__managers.remove(manager)
+        self.unsubscribe(nickname)
 
     @logger
     # ----   Guest functions   ----
@@ -121,7 +122,7 @@ class TradeControl:
         :param password:
         :return: dict = {'response': bool, 'msg': str}
         """
-        self.__curr_user = self.get_subscriber(nickname)
+        self.set_curr_user_by_name(nickname)
         if self.__curr_user is None or not self.__curr_user.is_registered():
             return {'response': False, 'msg': "Subscriber " + nickname + " is not registered."}
         if self.__curr_user.is_logged_out():
@@ -203,7 +204,8 @@ class TradeControl:
         # return {'response': False, 'msg': "User " + nickname + " is not a subscriber"}
 
     @logger
-    def open_store(self, store_name) -> {'response': bool, 'msg': str}:
+    def open_store(self, curr_nickname, store_name) -> {'response': bool, 'msg': str}:
+        self.set_curr_user_by_name(curr_nickname)
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in() and not store_name.strip() == "":
             for store in self.__stores:
                 if store.get_name() == store_name:
@@ -396,9 +398,11 @@ class TradeControl:
         return {'response': res, 'msg': "Store inventory was retrieved successfully"}
 
     @logger
-    def save_products_to_basket(self, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
+    def save_products_to_basket(self, curr_nickname: str, products_stores_quantity_ls: [{"store_name": str, "product_name": str,
                                                                      "amount": int}]) -> {
         'response': bool, 'msg': str}:
+
+        self.set_curr_user_by_name(curr_nickname)
         for element in products_stores_quantity_ls:
             if element is None:
                 return {'response': False, 'msg': "Error! Invalid input"}
@@ -414,7 +418,7 @@ class TradeControl:
         return self.__curr_user.save_products_to_basket(ls)
 
     @logger
-    def view_shopping_cart(self) -> {'response': list, 'msg': str}:
+    def view_shopping_cart(self, curr_nickname: str) -> {'response': list, 'msg': str}:
         """
         :return: dict: {'response': [{"store_name": str,
                                      "basket": [{"product_name": str
@@ -422,10 +426,11 @@ class TradeControl:
                                     }, ...],
                         'msg': str}
         """
+        self.set_curr_user_by_name(curr_nickname)
         return self.__curr_user.view_shopping_cart()
 
     @logger
-    def remove_from_shopping_cart(self, products_details: [{"product_name": str, "store_name": str}]) -> {
+    def remove_from_shopping_cart(self, curr_nickname: str, products_details: [{"product_name": str, "store_name": str}]) -> {
         'response': bool, 'msg': str}:
         """
         :param products_details: [{"product_name": str,
@@ -433,10 +438,11 @@ class TradeControl:
         :return: dict = {'response': bool, 'msg': str}
                  True on success, False when one of the products doesn't exist in the shopping cart
         """
+        self.set_curr_user_by_name(curr_nickname)
         return self.__curr_user.remove_from_shopping_cart(products_details)
 
     @logger
-    def update_quantity_in_shopping_cart(self,
+    def update_quantity_in_shopping_cart(self, curr_nickname: str,
                                          products_details: [{"product_name": str, "store_name": str, "amount": int}]) \
             -> {'response': bool, 'msg': str}:
         """
@@ -446,6 +452,7 @@ class TradeControl:
         :return: dict = {'response': bool, 'msg': str}
                  True on success, False when one of the products doesn't exist in the shopping cart
         """
+        self.set_curr_user_by_name(curr_nickname)
         return self.__curr_user.update_quantity_in_shopping_cart(products_details)
 
     # @logger
@@ -465,7 +472,7 @@ class TradeControl:
 
     # u.c 2.8
     @logger
-    def purchase_products(self) -> {'response': dict, 'msg': str}:
+    def purchase_products(self, curr_nickname: str) -> {'response': dict, 'msg': str}:
         """
             purchase all products in shopping cart according to the policies
         :return: dict = {'response': dict, 'msg': str}
@@ -476,6 +483,7 @@ class TradeControl:
                         }]
                 }
         """
+        self.set_curr_user_by_name(curr_nickname)
         # baskets = [{"store_name": str, "basket": ShoppingBasket}]
         baskets = self.__curr_user.get_shopping_cart().get_shopping_baskets()
         total_price = 0
@@ -487,7 +495,7 @@ class TradeControl:
             #                             [{"product_name", "product_price", "amount"}]
             #                 }]
             #         }
-            purchase_ls = self.purchase_basket(basket["store_name"])
+            purchase_ls = self.purchase_basket(curr_nickname, basket["store_name"])
             if purchase_ls["response"] is not None:
                 purchase_res = purchase_ls["response"]
                 purchase_baskets += purchase_res["purchases"]
@@ -497,9 +505,10 @@ class TradeControl:
         return {"total_price": total_price, "purchases": purchase_baskets}
 
     @logger
-    def purchase_basket(self, store_name: str) -> {'response': dict, 'msg': str}:
+    def purchase_basket(self, curr_nickname: str, store_name: str) -> {'response': dict, 'msg': str}:
         """
             purchase single basket from user cart by given store name, according to the policies
+        :param curr_nickname:
         :param store_name: store name
         :return: None if basket doesn't exist or some policy prevents purchase, else purchase dict
                 {"total_price": float, "baskets":
@@ -508,9 +517,13 @@ class TradeControl:
                         }]
                 }
         """
+        self.set_curr_user_by_name(curr_nickname)
         basket = self.__curr_user.get_shopping_cart().get_store_basket(store_name)
         if basket is None:
             return {'response': None, 'msg': "Store basket doesn't exist"}
+
+        if self.get_store(store_name) is None:
+            return {'response': None, 'msg': "Store" + store_name + "doesn't exist"}
 
         purchase = self.get_store(store_name).purchase_basket(basket)
         if purchase["response"] is None:
@@ -521,7 +534,7 @@ class TradeControl:
                 'msg': "Great Success! Purchase products successful"}
 
     @logger
-    def accept_purchases(self, purchase_ls: dict):
+    def accept_purchases(self, curr_nickname: str, purchase_ls: dict):
         """
             after payment confirmation, add purchases to user and store history
         :param purchase_ls: dict
@@ -532,6 +545,7 @@ class TradeControl:
                 }
         :return: void
         """
+        self.set_curr_user_by_name(curr_nickname)
         if purchase_ls is None or len(purchase_ls) == 0:
             return {'response': False, 'msg': "Empty purchase list provided"}
 
@@ -540,22 +554,28 @@ class TradeControl:
         # [{"store_name": str, "basket_price": float, "products": [{"product_name", "product_price", "amount"}]}]
         for purchase in purchase_ls["purchases"]:
             new_purchase = Purchase(purchase["products"], purchase["basket_price"], purchase["store_name"], nickname)
+            # try to update store inventory and add purchases to purchase history
+            update_store = self.get_store(purchase["store_name"]).complete_purchase(new_purchase)
+            if not update_store["response"]:
+                return {'response': False, 'msg': "Can't complete purchase. " + update_store["msg"]}
+
             # add products to users' purchase history and remove them from the cart
             self.__curr_user.complete_purchase(new_purchase)
-            # update store inventory and add purchases to purchase history
-            self.get_store(purchase["store_name"]).complete_purchase(new_purchase)
+
         return {'response': True, 'msg': "Great Success! Purchase complete"}
 
-    @logger
-    def remove_purchase(self, store_name: str, purchase_date: datetime):
-        self.get_store(store_name).remove_purchase(self.__curr_user.get_nickname(), purchase_date)
+    def remove_purchase(self, curr_nickname: str, store_name: str, purchase_date: datetime):
+        self.set_curr_user_by_name(curr_nickname)
+        if self.get_store(store_name) is not None:
+            self.get_store(store_name).remove_purchase(self.__curr_user.get_nickname(), purchase_date)
         self.__curr_user.remove_purchase(store_name, purchase_date)
 
     # ---------------------------------------------------
 
     # --------------   subscriber functions   --------------
     @logger
-    def logout_subscriber(self) -> {'response': bool, 'msg': str}:
+    def logout_subscriber(self, curr_nickname: str) -> {'response': bool, 'msg': str}:
+        self.set_curr_user_by_name(curr_nickname)
         if not self.__curr_user.is_registered():
             return {'response': False, 'msg': "Subscriber isn't registered"}
         if not self.__curr_user.is_logged_in():
@@ -566,15 +586,20 @@ class TradeControl:
         return {'response': True, 'msg': "Subscriber was logged out successfully"}
 
     @logger
-    def view_personal_purchase_history(self) -> {'response': list, 'msg': str}:
+    def view_personal_purchase_history(self, curr_nickname: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
+        self.set_curr_user_by_name(curr_nickname)
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in():
             purchases = self.__curr_user.get_purchase_history()
             ls = []
-            list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
-                                                 "nickname": purchase.get_nickname(),
-                                                 "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                 "total_price": purchase.get_total_price(),
-                                                 "products": purchase.get_products()}), purchases))
+            if flag_for_tests is None or flag_for_tests is False:
+                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                     "nickname": purchase.get_nickname(),
+                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                     "total_price": purchase.get_total_price(),
+                                                     "products": purchase.get_products()}), purchases))
+            else:
+                list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
+                         purchases))
             if len(ls) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': ls, 'msg': "Purchase history was retrieved successfully"}
@@ -584,19 +609,21 @@ class TradeControl:
 
     # ---- system manager functions ----
     @logger
-    def view_user_purchase_history(self, nickname: str):
+    def view_user_purchase_history(self, curr_nickname: str, nickname: str, flag_for_tests: int or None):
+        self.set_curr_user_by_name(curr_nickname)
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_user = self.get_subscriber(nickname)
             if viewed_user:
                 purchases = viewed_user.get_purchase_history()
                 ls = []
-                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
-                                                     "nickname": purchase.get_nickname(),
-                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                     "total_price": purchase.get_total_price(),
-                                                     "products": purchase.get_products()}), purchases))
-                # ls = []
-                # list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), viewed_user.get_purchase_history()))
+                if flag_for_tests is None or flag_for_tests is False:
+                    list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                         "nickname": purchase.get_nickname(),
+                                                         "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                         "total_price": purchase.get_total_price(),
+                                                         "products": purchase.get_products()}), purchases))
+                else:
+                    list(map(lambda purchase: ls.append(jsonpickle.encode(purchase)), purchases))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for user " + nickname}
                 return {'response': ls, 'msg': nickname + " purchases history was retrieved successfully"}
@@ -606,21 +633,29 @@ class TradeControl:
             return {'response': None, 'msg': "User is not a system manager"}
 
     @logger
-    def view_store_purchases_history(self, store_name):
+    def view_store_purchases_history(self, curr_nickname, store_name, flag_for_tests: bool or None):
+        '''
+        funtction for system manager role
+        :param curr_nickname:
+        :param store_name:
+        :return:
+        '''
+        self.set_curr_user_by_name(curr_nickname)
         if self.is_manager(self.__curr_user.get_nickname()):
             viewed_store = self.get_store(store_name)
             if viewed_store:
                 owner_nickname = viewed_store.get_owners()[0].get_nickname()
                 purchases = viewed_store.get_purchases(owner_nickname)
                 ls = []
-                list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
-                                                     "nickname": purchase.get_nickname(),
-                                                     "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                     "total_price": purchase.get_total_price(),
-                                                     "products": purchase.get_products()}), purchases))
-                # ls = []
-                # list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
-                #          viewed_store.get_purchases(self.__curr_user.get_nickname())))
+                if flag_for_tests is None or flag_for_tests is False:
+                    list(map(lambda purchase: ls.append({"store_name": purchase.get_store_name(),
+                                                         "nickname": purchase.get_nickname(),
+                                                         "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                         "total_price": purchase.get_total_price(),
+                                                         "products": purchase.get_products()}), purchases))
+                else:
+                    list(map(lambda curr_product: ls.append(jsonpickle.encode(curr_product)),
+                             viewed_store.get_purchases(self.__curr_user.get_nickname())))
                 if len(ls) == 0:
                     return {'response': [], 'msg': "There are no previous purchases for store " + store_name}
                 return {'response': ls, 'msg': store_name + " purchases history was retrieved successfully"}
@@ -639,7 +674,7 @@ class TradeControl:
     # ----------------------------------
 
     # @logger
-    def add_products(self, store_name: str,
+    def add_products(self, curr_nickname: str, store_name: str,
                      products_details: [{"name": str, "price": int, "category": str, "amount": int,
                                          "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
@@ -648,6 +683,7 @@ class TradeControl:
         :return: dict = {'response': bool, 'msg': str}
                 response = True if products were added, False otherwise
         """
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         if (store and
                 (store.is_owner(self.__curr_user.get_nickname()) or
@@ -676,12 +712,13 @@ class TradeControl:
         return {'response': False, 'msg': "User has no permissions to add products to the store"}
 
     @logger
-    def remove_products(self, store_name: str, products_names: list) -> bool:
+    def remove_products(self, curr_nickname, store_name: str, products_names: list) -> bool:
         """
         :param store_name: store's name
         :param products_names: list of product's names (str) to remove
         :return: True if all products were removed, False otherwise
         """
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         for product_name in products_names:
             if store is not None and not store.get_product(product_name):
@@ -703,7 +740,7 @@ class TradeControl:
         return False
 
     @logger
-    def edit_product(self, store_name: str, product_name: str, op: str, new_value) -> {'response': bool, 'msg': str}:
+    def edit_product(self,curr_nickname: str,  store_name: str, product_name: str, op: str, new_value) -> {'response': bool, 'msg': str}:
         """
         :param store_name: store's name
         :param product_name: product's name to edit
@@ -711,6 +748,7 @@ class TradeControl:
         :param new_value: new value to set to
         :return: dict =  {'response': bool, 'msg': str}
         """
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         if (store is not None and
                 self.__curr_user.is_registered() and
@@ -756,7 +794,7 @@ class TradeControl:
                 "purchase_type": product.get_purchase_type().name}
 
     @logger
-    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+    def remove_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
         """
         the function removes appointee_nickname as owner from the store, in addition to him it removes all the managers
         and owners appointee_nickname appointed.
@@ -766,6 +804,7 @@ class TradeControl:
                  response = nicknames list of all the removed appointees -> the appointee_nickname of the owner we want
                             to remove and all the appointees he appointed, we had to remove as well.
         """
+        self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
         appointee = self.get_subscriber(appointee_nickname)
         if appointee is not None and \
@@ -779,13 +818,14 @@ class TradeControl:
         return {'response': [], 'msg': "Error! remove store owner failed."}
 
     @logger
-    def appoint_additional_owner(self, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+    def appoint_additional_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
         :return: dict =  {'response': bool, 'msg': str}
                  response = True on success, else False
         """
+        self.set_curr_user_by_name(curr_nickname)
         appointee = self.get_subscriber(appointee_nickname)
         store = self.get_store(store_name)
 
@@ -807,8 +847,9 @@ class TradeControl:
         return {'response': False, 'msg': "User has no permissions"}
 
     # @logger
-    def update_agreement_participants(self, appointee_nickname: str, store_name: str,
+    def update_agreement_participants(self, curr_nickname: str, appointee_nickname: str, store_name: str,
                                       owner_response: AppointmentStatus):
+
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
         :param store_name: store the owner will be added to
@@ -816,6 +857,7 @@ class TradeControl:
         :return: dict =  {'response': bool, 'msg': str}
                  response = True on success, else False
         """
+        self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
         result = store.update_agreement_participants(appointee_nickname, self.__curr_user.get_nickname(),
                                                      owner_response)
@@ -835,8 +877,9 @@ class TradeControl:
         return store.get_appointment_status(appointee_nickname)
 
     @logger
-    # TODO: eden check permissions with gui!!!!!
-    def appoint_store_manager(self, appointee_nickname: str, store_name: str, permissions: [int or enumerate]) -> \
+     # TODO: eden check permissions with gui!!!!!
+    def appoint_store_manager(self, curr_nickname: str, appointee_nickname: str, store_name: str, 
+                              permissions: [int or enumerate]) -> \
             {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new manager that will be appointed
@@ -845,6 +888,7 @@ class TradeControl:
         :return: dict = {'response': bool, 'msg': str}
                  response = True on success, else False
         """
+        self.set_curr_user_by_name(curr_nickname)
         appointee = self.get_subscriber(appointee_nickname)
         store = self.get_store(store_name)
         try:
@@ -871,11 +915,12 @@ class TradeControl:
             return {'response': False, 'msg': "User has no permissions"}
         return {'response': False, 'msg': "User has no permissions"}
 
-    def get_manager_permissions(self, store_name) -> list:
+    def get_manager_permissions(self,curr_nickname, store_name) -> list:
         """
         :param store_name:
         :return: returns the permissions of the current user
         """
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         if store is not None and \
                 self.__curr_user.is_registered() and \
@@ -885,7 +930,7 @@ class TradeControl:
         return False
 
     @logger
-    def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
+    def edit_manager_permissions(self, curr_nickname: str, store_name: str, appointee_nickname: str, permissions: list) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's permissions will be edited
@@ -893,6 +938,7 @@ class TradeControl:
         :return: dict = {'response': bool, 'msg': str}
                  response = True on success, else False
         """
+        self.set_curr_user_by_name(curr_nickname)
         appointee = self.get_subscriber(appointee_nickname)
         store = self.get_store(store_name)
         if appointee is not None and \
@@ -907,13 +953,14 @@ class TradeControl:
         return False
 
     @logger
-    def get_appointees(self, store_name: str, managers_or_owners: str) -> list:
+    def get_appointees(self, curr_nickname: str, store_name: str, managers_or_owners: str) -> list:
         """
         returns for the current manager/owner all the managers he appointed
         :param appointer_nickname:
         :param managers_or_owners: "MANAGERS" or "OWNERS" to get a list of the managers or owners that appointer_nickname appointed
         :return: returns a list of nicknames, of all the managers appointer_nickname appointed
         """
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         if store is not None and \
                 self.__curr_user.is_registered() and \
@@ -924,12 +971,13 @@ class TradeControl:
         return []
 
     @logger
-    def remove_manager(self, store_name: str, appointee_nickname: str) -> bool:
+    def remove_manager(self, curr_nickname: str,  store_name: str, appointee_nickname: str) -> bool:
         """
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's will be removed
         :return: True if removed successfully, else False
         """
+        self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
         appointee = self.get_subscriber(appointee_nickname)
         if appointee is not None and \
@@ -944,12 +992,14 @@ class TradeControl:
         return False
 
     @logger
-    def display_store_purchases(self, store_name: str) -> {'response': list, 'msg': str}:
+    def display_store_purchases(self, curr_nickname: str, store_name: str, flag_for_tests: bool or None) -> {'response': list, 'msg': str}:
         """
+        function for owner role
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
                  response = purchases list
         """
+        self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
         if store is not None and \
                 self.__curr_user.is_registered() and \
@@ -959,13 +1009,16 @@ class TradeControl:
             #     return {'response': [], 'msg': "There are no previous purchases"}
             lst = []
             purchases = store.get_purchases(self.__curr_user.get_nickname())
-            list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
-                                                  "nickname": purchase.get_nickname(),
-                                                  "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
-                                                  "total_price": purchase.get_total_price(),
-                                                  "products": purchase.get_products()}), purchases))
-            # list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
-            #          ))
+            if flag_for_tests is None or flag_for_tests is False:
+                list(map(lambda purchase: lst.append({"store_name": purchase.get_store_name(),
+                                                      "nickname": purchase.get_nickname(),
+                                                      "date": purchase.get_date().strftime("%d/%m/%Y, %H:%M:%S"),
+                                                      "total_price": purchase.get_total_price(),
+                                                      "products": purchase.get_products()}), purchases))
+            else:
+                list(map(lambda curr_product: lst.append(jsonpickle.encode(curr_product)),
+                         purchases))
+
             if len(lst) == 0:
                 return {'response': [], 'msg': "There are no previous purchases"}
             return {'response': lst, 'msg': "Purchase history was retrieved successfully"}
@@ -973,13 +1026,14 @@ class TradeControl:
 
     # ------------------- 4.2 --------------------
     @logger
-    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+    def get_policies(self, curr_nickname: str, policy_type: str, store_name: str) -> [dict] or None:
         """
                 according to the given type, displays a list of policies for the store
         :param policy_type: can be "purchase" or "discount"
         :param store_name:
         :return: list of policies or empty list, returns None if user is not owner of the store or if invalid flag
         """
+        self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
         if store is None or not store.is_owner(self.__curr_user.get_nickname()):
             return {'response': None, 'msg': "Store doesn't exist, or user un-authorized for this action"}
@@ -1014,7 +1068,7 @@ class TradeControl:
 
     @logger
     # TODO: eden check type of dates: [dict] / [datetime]
-    def define_purchase_policy(self, store_name: str,
+    def define_purchase_policy(self, curr_nickname: str,  store_name: str,
                                details: {"name": str, "products": [str], "min_amount": int or None,
                                          "max_amount": int or None, "dates": [datetime] or None,
                                          "bundle": bool or None}) \
@@ -1031,6 +1085,7 @@ class TradeControl:
            i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
         :return: true if successful, otherwise false with details for failure
         """
+        self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
@@ -1049,7 +1104,7 @@ class TradeControl:
         return store.define_purchase_policy(details)
 
     @logger
-    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+    def update_purchase_policy(self, curr_nickname: str, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None, "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None}) \
             -> {'response': bool, 'msg': str}:
@@ -1065,6 +1120,7 @@ class TradeControl:
            i.e. details can be: {"products", "bundle"} / {"products", "min_amount"} etc.
         :return: true if successful, otherwise false with details for failure
         """
+        self.set_curr_user_by_name(curr_nickname)
         store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
@@ -1081,7 +1137,7 @@ class TradeControl:
         return store.update_purchase_policy(details)
 
     @logger
-    def define_discount_policy(self, store_name: str,
+    def define_discount_policy(self, curr_nickname: str, store_name: str,
                                percentage: float,
                                valid_until: datetime,
                                discount_details: {'name': str,
@@ -1091,6 +1147,8 @@ class TradeControl:
                                                        'min_basket_price': str or None} or None
                                ) \
             -> {'response': bool, 'msg': str}:
+
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
@@ -1108,7 +1166,7 @@ class TradeControl:
             return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
     @logger
-    def update_discount_policy(self, store_name: str, policy_name: str,
+    def update_discount_policy(self, curr_nickname: str, store_name: str, policy_name: str,
                                percentage: float = -999,
                                valid_until: datetime = None,
                                discount_details: {'name': str,
@@ -1118,6 +1176,8 @@ class TradeControl:
                                                        'min_basket_price': str or None} or None = None
                                ) \
             -> {'response': bool, 'msg': str}:
+
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
@@ -1136,9 +1196,10 @@ class TradeControl:
             return {'response': False, 'msg': "An unknown error has occurred. please try again."}
 
     @logger
-    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+    def define_composite_policy(self, curr_nickname: str,  store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str, valid_until: datetime):
 
+        self.set_curr_user_by_name(curr_nickname)
         store: Store = self.get_store(store_name)
         if store is None:
             return {'response': False, 'msg': "Store doesn't exist"}
@@ -1235,7 +1296,9 @@ class TradeControl:
 
     @logger
     def set_curr_user_by_name(self, nickname: str):
-        self.__curr_user = self.get_subscriber(nickname)
+        user = self.get_subscriber(nickname)
+        if user is not None:
+            self.__curr_user = user
 
     @logger
     def get_curr_user(self):
@@ -1248,7 +1311,8 @@ class TradeControl:
         return ""
 
     @logger
-    def get_owned_stores(self):
+    def get_owned_stores(self, curr_nickname: str):
+        self.set_curr_user_by_name(curr_nickname)
         stores = []
         for store in self.__stores:
             # owners = store.get_owners()
@@ -1260,7 +1324,8 @@ class TradeControl:
         #     return {'response': [], 'msg': "There are no stores"}
         # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
-    def get_managed_stores(self):
+    def get_managed_stores(self, curr_nickname: str):
+        self.set_curr_user_by_name(curr_nickname)
         stores = []
         for store in self.__stores:
             if store.is_manager(self.__curr_user.get_nickname()):
@@ -1270,8 +1335,10 @@ class TradeControl:
         #     return {'response': [], 'msg': "There are no stores"}
         # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
-    @logger
-    def get_user_type(self):
+    # @logger
+    def get_user_type(self, curr_nickname: str):
+        self.set_curr_user_by_name(curr_nickname)
+
         roles = []
         system_managers = [user.get_nickname() for user in self.__managers]
         if self.__curr_user is None:

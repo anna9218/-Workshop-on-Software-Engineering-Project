@@ -101,38 +101,38 @@ class GuestRoleTest(unittest.TestCase):
     # use case 2.6
     def test_save_products_to_basket(self):
         self.__trade_control_mock.get_instance().save_products_to_basket = MagicMock(return_value=[])
-        res = self.__guest_role.save_products_to_basket([])
+        res = self.__guest_role.save_products_to_basket(self.__nickname, [])
         self.assertEqual([], res)
 
     # use case 2.7
     def test_view_shopping_cart(self):
         self.__trade_control_mock.get_instance().view_shopping_cart = MagicMock(return_value=[])
-        res = self.__guest_role.view_shopping_cart()
+        res = self.__guest_role.view_shopping_cart(self.__nickname)
         self.assertEqual([], res)
 
     # use case 2.7
     def test_update_shopping_cart(self):
         self.__trade_control_mock.get_instance().remove_from_shopping_cart = MagicMock(return_value=True)
-        res = self.__guest_role.update_shopping_cart("remove", [])
+        res = self.__guest_role.update_shopping_cart(self.__nickname, "remove", [])
         self.assertTrue(res)
 
         self.__trade_control_mock.get_instance().remove_from_shopping_cart = MagicMock(return_value=False)
-        res = self.__guest_role.update_shopping_cart("remove", [])
+        res = self.__guest_role.update_shopping_cart(self.__nickname, "remove", [])
         self.assertFalse(res)
 
         self.__trade_control_mock.get_instance().update_quantity_in_shopping_cart = MagicMock(return_value=True)
-        res = self.__guest_role.update_shopping_cart("update", [])
+        res = self.__guest_role.update_shopping_cart(self.__nickname, "update", [])
         self.assertTrue(res)
 
         self.__trade_control_mock.get_instance().update_quantity_in_shopping_cart = MagicMock(return_value=False)
-        res = self.__guest_role.update_shopping_cart("update", [])
+        res = self.__guest_role.update_shopping_cart(self.__nickname, "update", [])
         self.assertFalse(res)
 
     # --------------------------------------------------------------------
     # use case 2.8
     def test_purchase_products(self):
         self.__trade_control_mock.get_instance().purchase_products = MagicMock(return_value=[])
-        res = self.__guest_role.purchase_products()
+        res = self.__guest_role.purchase_products(self.__nickname)
         self.assertEqual([], res)
 
     def tearDown(self):
