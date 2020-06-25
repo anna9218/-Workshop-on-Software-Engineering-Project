@@ -47,5 +47,5 @@ class SystemManagerRole:
     @staticmethod
     @logger
     def get_visitors_cut(start_date, end_date):
-        TradeControl.get_instance().get_visitors_cut(start_date, end_date)
+        return TradeControl.get_instance().get_visitors_cut(start_date, end_date)
 

@@ -1514,10 +1514,17 @@ class TradeControl:
         visitors_cut = []
         for s in self.__statistics:
             if s.in_range(start_date, end_date):
-                visitors_cut.append({'date':s.date(), 'guests': s.guests_amount(), 'subscribers': s.subscribers_amount(),
+                date = s.get_date()
+                # print (f'date = {date}. year = {date.year}, day = {date.day}')
+                # visitors_cut.append({'date':date, 'guests': s.guests_amount(),
+                visitors_cut.append({'date': datetime(date.year, date.month, date.day), 'guests': s.guests_amount(),
+                                     'subscribers': s.subscribers_amount(),
                                      'store_managers': s.store_managers_amount(), 'store_owners': s.store_owners_amount(),
                                      'system_managers': s.system_managers_amount()})
-        return {'msg': 'succc', 'response': visitors_cut}
+        # print(f'visitor cuts = {visitors_cut}')
+        answer = {'msg': 'succc', 'response': visitors_cut}
+        # print (f'ans = {answer}')
+        return answer
 
     @logger
     def inc_todays_guests_counter(self):

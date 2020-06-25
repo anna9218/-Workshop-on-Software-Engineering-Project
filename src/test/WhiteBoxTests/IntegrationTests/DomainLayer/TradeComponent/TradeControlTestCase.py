@@ -2308,6 +2308,36 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(store.is_owner("owner2"))
         self.assertFalse(store.is_owner("owner3"))
 
+    def test_view_statistics(self):
+        start_date = datetime(2020, 6, 5)
+        end_date = datetime.today()
+        trade_control: TradeControl = (TradeControl.get_instance())
+        statistics = trade_control.get_visitors_cut(start_date, end_date)['response']
+        self.assertTrue(len(statistics)== 1)
+        self.assertTrue(statistics[0]['guests']== 0)
+        self.assertTrue(statistics[0]['subscribers']== 0)
+        self.assertTrue(statistics[0]['store_managers']== 0)
+        self.assertTrue(statistics[0]['store_owners']== 0)
+        self.assertTrue(statistics[0]['system_managers']== 0)
+
+        trade_control.inc_todays_guests_counter()
+        statistics = trade_control.get_visitors_cut(start_date, end_date)['response']
+        self.assertTrue(len(statistics)== 1)
+        self.assertTrue(statistics[0]['subscribers']== 0)
+        self.assertTrue(statistics[0]['store_managers']== 0)
+        self.assertTrue(statistics[0]['store_owners']== 0)
+        self.assertTrue(statistics[0]['system_managers']== 0)
+        self.assertTrue(statistics[0]['guests']== 1)
+
+        # statistics[0].inc_subscribers_counter()
+        # self.assertTrue(statistics[0].subscribers_amount(), 1)
+        # statistics[0].inc_store_managers_counter()
+        # self.assertTrue(statistics[0].store_managers_amount(), 1)
+        # statistics[0].inc_store_owners_counter()
+        # self.assertTrue(statistics[0].store_owners_amount(), 1)
+        # statistics[0].inc_system_managers_counter()
+        # self.assertTrue(statistics[0].system_managers_amount(), 1)
+
     def tearDown(self):
         (DataAccessFacade.get_instance()).delete_purchases()
         # (DataAccessFacade.get_instance()).delete_discount_policies()

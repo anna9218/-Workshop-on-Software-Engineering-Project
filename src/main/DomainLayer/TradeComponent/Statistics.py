@@ -10,6 +10,7 @@ class Statistics:
 
     def __init__(self):
         self.__date = datetime.datetime.today()
+        # print(f"self date = {self.__date}")
         self.__guests_amount : int = 0
         self.__subscribers_amount = 0
         self.__store_managers_amount = 0
@@ -19,7 +20,7 @@ class Statistics:
         self.save_date_statistics_on_DB()
 
     @logger
-    def date (self):
+    def get_date (self):
         return self.__date
 
     @logger
@@ -87,6 +88,7 @@ class Statistics:
         return self.__DB_handler.write_statistic(self.__date, self.__guests_amount, self.__subscribers_amount,
                                                   self.__store_managers_amount, self.__store_owners_amount,
                                                   self.__system_managers_amount)
+        # return True
 
     @logger
     def correct_date(self, counter_kind):
