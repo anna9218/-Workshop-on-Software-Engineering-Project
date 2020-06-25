@@ -316,7 +316,8 @@ class Store:
 
     @logger
     def is_owner(self, user_nickname: str):
-        return user_nickname in [owner.get_nickname() for owner in self.get_owners()]
+        ls = [owner.get_nickname() for owner in self.get_owners()]
+        return user_nickname in ls
 
     @logger
     def is_manager(self, user_nickname: str):
