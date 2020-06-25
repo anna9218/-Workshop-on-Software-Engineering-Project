@@ -58,11 +58,11 @@ class TradeControlTestCase(unittest.TestCase):
     def test_close_and_open_store(self):
         stores_num = len(self.tradeControl.get_stores())
         self.tradeControl.set_curr_user(self.user)
-        self.assertFalse(self.tradeControl.open_store("myFirstStore")['response'])
+        self.assertFalse(self.tradeControl.open_store(self.user.get_nickname(), "myFirstStore")['response'])
         self.user.register("name", "213456")
-        self.assertFalse(self.tradeControl.open_store("myFirstStore")['response'])
+        self.assertFalse(self.tradeControl.open_store("name", "myFirstStore")['response'])
         self.user.login("name", "213456")
-        self.assertTrue(self.tradeControl.open_store("myFirstStore")['response'])
+        self.assertTrue(self.tradeControl.open_store("name", "myFirstStore")['response'])
         self.assertEqual(len(self.tradeControl.get_stores()), stores_num + 1)
         self.assertTrue(self.tradeControl.close_store("myFirstStore"))
         self.assertFalse(self.tradeControl.close_store("myFirstStore"))
@@ -84,8 +84,8 @@ class TradeControlTestCase(unittest.TestCase):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
         self.tradeControl.set_curr_user(self.user)
-        self.tradeControl.open_store("myStore")
-        self.tradeControl.open_store("myStore2")
+        self.tradeControl.open_store("eden", "myStore")
+        self.tradeControl.open_store("eden", "myStore2")
         store1 = self.tradeControl.get_store("myStore")
         store2: Store = self.tradeControl.get_store("myStore2")
         store1.add_products("eden", [{"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
@@ -104,27 +104,27 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.close_store("myStore2")
 
     def test_logout_subscriber(self):
-        self.assertFalse(self.tradeControl.logout_subscriber()['response'])
+        self.assertFalse(self.tradeControl.logout_subscriber("nickname")['response'])
         self.assertTrue(self.tradeControl.register_guest("eden", "passwoed")['response'])
         self.assertTrue(self.tradeControl.login_subscriber("eden", "passwoed")['response'])
-        self.assertTrue(self.tradeControl.logout_subscriber())
+        self.assertTrue(self.tradeControl.logout_subscriber("eden"))
 
     def test_add_and_remove_products(self):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
         self.tradeControl.set_curr_user(self.user)
-        self.tradeControl.open_store("myStore")
-        self.tradeControl.open_store("myStore2")
+        self.tradeControl.open_store("eden", "myStore")
+        self.tradeControl.open_store("eden", "myStore2")
         store1 = self.tradeControl.get_store("myStore")
-        self.assertFalse(self.tradeControl.add_products("Store", [
+        self.assertFalse(self.tradeControl.add_products("eden", "Store", [
             {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
             {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])['response'])
-        self.assertTrue(self.tradeControl.add_products("myStore", [
+        self.assertTrue(self.tradeControl.add_products("eden", "myStore", [
             {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
             {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])['response'])
         self.assertNotEqual(store1.get_product("Chair"), None)
         self.assertNotEqual(store1.get_product("Sofa"), None)
-        self.assertTrue(self.tradeControl.remove_products("myStore", ["Sofa"]))
+        self.assertTrue(self.tradeControl.remove_products("eden", "myStore", ["Sofa"]))
         self.assertNotEqual(store1.get_product("Chair"), None)
         self.assertEqual(store1.get_product("Sofa"), None)
 
@@ -132,21 +132,21 @@ class TradeControlTestCase(unittest.TestCase):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
         self.tradeControl.set_curr_user(self.user)
-        self.tradeControl.open_store("myStore")
+        self.tradeControl.open_store("eden", "myStore")
         store1 = self.tradeControl.get_store("myStore")
-        self.tradeControl.add_products("myStore", [
+        self.tradeControl.add_products("eden", "myStore", [
             {"name": "Chair", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0},
             {"name": "Sofa", "price": 100, "category": "Furniture", "amount": 5, "purchase_type": 0}])
 
-        self.assertTrue(self.tradeControl.edit_product("myStore", "Chair", "price", 155)['response'])
+        self.assertTrue(self.tradeControl.edit_product("eden", "myStore", "Chair", "price", 155)['response'])
         self.assertEqual(155, store1.get_product("Chair").get_price())
         self.assertEqual("Chair", store1.get_product("Chair").get_name())
 
-        self.assertTrue(self.tradeControl.edit_product("myStore", "Chair", "name", "ch")['response'])
+        self.assertTrue(self.tradeControl.edit_product("eden", "myStore", "Chair", "name", "ch")['response'])
         self.assertEqual("ch", store1.get_product("ch").get_name())
         self.assertEqual(155, store1.get_product("ch").get_price())
 
-        self.assertFalse(self.tradeControl.edit_product("myStore", "blaa", "name", "ch")['response'])
+        self.assertFalse(self.tradeControl.edit_product("eden", "myStore", "blaa", "name", "ch")['response'])
         self.tradeControl.close_store("myStore")
 
     def test_appoint_additional_owner(self):
@@ -154,10 +154,10 @@ class TradeControlTestCase(unittest.TestCase):
         self.user.login("eden", "213456")
         self.tradeControl.register_guest("appointee", "213456")
         self.tradeControl.set_curr_user(self.user)
-        self.tradeControl.open_store("myStore")
+        self.tradeControl.open_store("eden", "myStore")
         store1 = self.tradeControl.get_store("myStore")
-        self.assertTrue(self.tradeControl.appoint_additional_owner("appointee", "myStore")['response'])
-        self.assertFalse(self.tradeControl.appoint_additional_owner("a", "myStore")['response'])
+        self.assertTrue(self.tradeControl.appoint_additional_owner("eden", "appointee", "myStore")['response'])
+        self.assertFalse(self.tradeControl.appoint_additional_owner("eden", "a", "myStore")['response'])
         self.assertTrue(store1.is_owner("appointee"))
         self.assertFalse(store1.is_owner("a"))
 
@@ -169,12 +169,12 @@ class TradeControlTestCase(unittest.TestCase):
         self.store_mock = Store("store")
         self.store_mock.update_agreement_participants = MagicMock(return_value=True)
         self.tradeControl.get_store = MagicMock(return_value=self.store_mock)
-        res = self.tradeControl.update_agreement_participants("appointee", "store", AppointmentStatus.APPROVED)
+        res = self.tradeControl.update_agreement_participants(self.curr_user.get_nickname, "appointee", "store", AppointmentStatus.APPROVED)
         self.assertTrue(res["response"])
 
         self.store_mock.update_agreement_participants = MagicMock(return_value=False)
         self.tradeControl.get_store = MagicMock(return_value=self.store_mock)
-        res = self.tradeControl.update_agreement_participants("appointee", "store", AppointmentStatus.APPROVED)
+        res = self.tradeControl.update_agreement_participants(self.curr_user.get_nickname, "appointee", "store", AppointmentStatus.APPROVED)
         self.assertFalse(res["response"])
 
     def test_get_appointment_status(self):
@@ -194,57 +194,42 @@ class TradeControlTestCase(unittest.TestCase):
         owner1.register("owner1", "password")
         owner1.login("owner1", "password")
         self.tradeControl.set_curr_user(owner1)
-        self.tradeControl.open_store("myStore")
+        self.tradeControl.open_store("owner1", "myStore")
         self.tradeControl.register_guest("manager1", "213456")
-        self.tradeControl.appoint_store_manager("manager1", "myStore", [])
+        self.tradeControl.appoint_store_manager("owner1", "manager1", "myStore", [])
 
         # failed - owner2 is not store owner
         self.tradeControl.register_guest("owner2", "213456")
-        res = self.tradeControl.remove_owner("owner2", "myStore")
+        res = self.tradeControl.remove_owner("owner1", "owner2", "myStore")
         self.assertEqual(res['response'], [])
         self.assertEqual(res['msg'], "Error! remove store owner failed.")
 
+        self.tradeControl.appoint_additional_owner("owner1", "owner2", "myStore")
+
         # success
-        self.tradeControl.appoint_additional_owner("owner2", "myStore")
         owner2 = StubUser()
         owner2.register("owner2", "password")
         owner2.login("owner2", "password")
         self.tradeControl.set_curr_user(owner2)
-        self.tradeControl.register_guest("owner3", "213456")
-        self.tradeControl.appoint_additional_owner("owner3", "myStore")
-
-        self.tradeControl.register_guest("manager2", "213456")
-        self.tradeControl.appoint_store_manager("manager2", "myStore", [])
-
-        owner3 = StubUser()
-        owner3.register("owner3", "password")
-        owner3.login("owner3", "password")
-        self.tradeControl.set_curr_user(owner3)
-        self.tradeControl.register_guest("manager3", "213456")
-        self.tradeControl.appoint_store_manager("manager3", "myStore", [])
 
         self.tradeControl.set_curr_user(owner1)
-        res = self.tradeControl.remove_owner("owner2", "myStore")
-        self.assertEqual(res['response'], ['owner2 removed as owner', 'owner3 removed as owner',
-                                           'manager3 removed as manager', 'manager2 removed as manager'])
+        res = self.tradeControl.remove_owner("owner1", "owner2", "myStore")
+        self.assertEqual(res['response'], ['owner2 removed as owner',])
         self.assertEqual(res['msg'], "Store owner owner2 and his appointees were removed successfully.")
         store = self.tradeControl.get_store("myStore")
         self.assertTrue(store.is_manager("manager1"))
-        self.assertFalse(store.is_manager("manager2"))
-        self.assertFalse(store.is_manager("manager3"))
         self.assertTrue(store.is_owner("owner1"))
         self.assertFalse(store.is_owner("owner2"))
-        self.assertFalse(store.is_owner("owner3"))
 
     def test_appoint_store_manager(self):
         self.user.register("eden", "213456")
         self.user.login("eden", "213456")
         self.tradeControl.register_guest("appointee", "213456")
         self.tradeControl.set_curr_user(self.user)
-        self.tradeControl.open_store("myStore")
+        self.tradeControl.open_store(self.user.get_nickname(), "myStore")
         store1 = self.tradeControl.get_store("myStore")
-        self.assertTrue(self.tradeControl.appoint_store_manager("appointee", "myStore", [])['response'])
-        self.assertFalse(self.tradeControl.appoint_store_manager("a", "myStore", [])['response'])
+        self.assertTrue(self.tradeControl.appoint_store_manager(self.user.get_nickname(), "appointee", "myStore", [])['response'])
+        self.assertFalse(self.tradeControl.appoint_store_manager(self.user.get_nickname(), "a", "myStore", [])['response'])
         self.assertTrue(store1.is_manager("appointee"))
         self.assertFalse(store1.is_manager("a"))
 
@@ -253,13 +238,13 @@ class TradeControlTestCase(unittest.TestCase):
         self.user.login("eden", "213456")
         self.tradeControl.register_guest("appointee", "213456")
         self.tradeControl.set_curr_user(self.user)
-        self.tradeControl.open_store("myStore")
+        self.tradeControl.open_store(self.user.get_nickname(), "myStore")
         store1 = self.tradeControl.get_store("myStore")
         self.assertTrue(
-            self.tradeControl.appoint_store_manager("appointee", "myStore", [ManagerPermission.APPOINT_OWNER])[
+            self.tradeControl.appoint_store_manager(self.user.get_nickname(), "appointee", "myStore", [ManagerPermission.APPOINT_OWNER])[
                 'response'])
         self.assertTrue(
-            self.tradeControl.edit_manager_permissions("myStore", "appointee", [ManagerPermission.EDIT_INV]))
+            self.tradeControl.edit_manager_permissions(self.user.get_nickname(), "myStore", "appointee", [ManagerPermission.EDIT_INV]))
         self.assertTrue(ManagerPermission.EDIT_INV in store1.get_permissions("appointee"))
         self.assertFalse(ManagerPermission.APPOINT_OWNER in store1.get_permissions("appointee"))
 
@@ -267,7 +252,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.set_curr_user(self.user)
         self.user.register("name", "213456")
         self.user.login("name", "213456")
-        self.tradeControl.open_store("store1")
+        self.tradeControl.open_store(self.user.get_nickname(), "store1")
         self.store_mock = Store("store1")
         self.store_mock.get_name = MagicMock(return_value="store1")
         self.store_mock.define_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
@@ -281,7 +266,7 @@ class TradeControlTestCase(unittest.TestCase):
             return_value={"response": False, "msg": "no policy exists by the name"})
         self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
 
-        res = self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+        res = self.tradeControl.define_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(), {"name": "policy1",
                                                                                     "products": ["product1",
                                                                                                  "product2"],
                                                                                     "bundle": True})
@@ -293,7 +278,7 @@ class TradeControlTestCase(unittest.TestCase):
             return_value={"response": True, "msg": "ok"})
         self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
 
-        res = self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+        res = self.tradeControl.define_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(), {"name": "policy1",
                                                                                     "products": ["product1",
                                                                                                  "product2"],
                                                                                     "bundle": True})["response"]
@@ -304,7 +289,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.store_mock.purchase_policy_exists = MagicMock(
             return_value={"response": False, "msg": "no policy exists by the name"})
 
-        res = self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+        res = self.tradeControl.define_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(), {"name": "policy1",
                                                                                     "products": ["product1",
                                                                                                  "product2"]})[
             "response"]
@@ -317,7 +302,7 @@ class TradeControlTestCase(unittest.TestCase):
             return_value={"response": False, "msg": "no policy exists by the name"})
         self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
 
-        self.tradeControl.define_purchase_policy(self.store_mock.get_name(),
+        self.tradeControl.define_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(),
                                                  {"name": "policy1", "products": ["product1", "product2"],
                                                   "min_amount": 5})
         # valid update
@@ -325,7 +310,7 @@ class TradeControlTestCase(unittest.TestCase):
             return_value={"response": True, "msg": "ok"})
         self.purchase_policy_mock.update = MagicMock(return_value={"response": True, "msg": "updated"})
 
-        res = self.tradeControl.update_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+        res = self.tradeControl.update_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(), {"name": "policy1",
                                                                                     "products": ["product1",
                                                                                                  "product2"],
                                                                                     "min_amount": 9})["response"]
@@ -337,7 +322,7 @@ class TradeControlTestCase(unittest.TestCase):
             return_value={"response": False, "msg": "policy doesn't exist"})
         self.purchase_policy_mock.update = MagicMock(return_value={"response": True, "msg": "updated"})
 
-        res = self.tradeControl.update_purchase_policy(self.store_mock.get_name(), {"name": "policy2",
+        res = self.tradeControl.update_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(), {"name": "policy2",
                                                                                     "products": ["product1",
                                                                                                  "product2"],
                                                                                     "min_amount": 9})["response"]
@@ -348,7 +333,7 @@ class TradeControlTestCase(unittest.TestCase):
             return_value={"response": True, "msg": "ok"})
         self.purchase_policy_mock.update = MagicMock(return_value={"response": False, "msg": "can't update"})
 
-        res = self.tradeControl.update_purchase_policy(self.store_mock.get_name(),
+        res = self.tradeControl.update_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(),
                                                        {"name": "policy2", "products": ["product1", "product2"]})[
             "response"]
         self.assertFalse(res)
@@ -358,35 +343,35 @@ class TradeControlTestCase(unittest.TestCase):
         self.setup_for_policies()
 
         # no policies exist yet
-        res = self.tradeControl.get_policies("purchase", self.store_mock.get_name())["response"]
-        self.assertTrue(len(res) == 0)
+        res = self.tradeControl.get_policies(self.user.get_nickname(), "purchase", self.store_mock.get_name())["response"]
+        self.assertTrue((res is None) or (len(res) == 0))
 
         # policies exist
         self.store_mock.purchase_policy_exists = MagicMock(
             return_value={"response": False, "msg": "no policy exists by the name"})
         self.purchase_policy_mock.add_purchase_policy = MagicMock(return_value={"response": True, "msg": "ok"})
-        self.tradeControl.define_purchase_policy(self.store_mock.get_name(), {"name": "policy1",
+        self.tradeControl.define_purchase_policy(self.user.get_nickname(), self.store_mock.get_name(), {"name": "policy1",
                                                                               "products": ["product1",
                                                                                            "product2"],
                                                                               "min_amount": 5})
 
-        res = self.tradeControl.get_policies("purchase", self.store_mock.get_name())["response"]
+        res = self.tradeControl.get_policies(self.user.get_nickname(), "purchase", self.store_mock.get_name())["response"]
         self.assertTrue(len(res) > 0)
         self.tradeControl.reset_purchase_policies(self.store_mock.get_name())
 
     def tearDown(self):
-        # pass
+        self.tradeControl.logout_subscriber("nickname")
+        self.tradeControl.unsubscribe("nickname")
+        self.tradeControl.unsubscribe("eden")
+        self.tradeControl.unsubscribe("appointee")
+        self.tradeControl.unsubscribe("owner1")
+        self.tradeControl.unsubscribe("owner2")
+        self.tradeControl.unsubscribe("owner3")
+        self.tradeControl.unsubscribe("manager1")
+        self.tradeControl.unsubscribe("manager2")
+        self.tradeControl.unsubscribe("manager3")
         (TradeControl.get_instance()).__delete__()
-        # self.tradeControl.logout_subscriber()
-        # self.tradeControl.unsubscribe("nickname")
-        # self.tradeControl.unsubscribe("eden")
-        # self.tradeControl.unsubscribe("appointee")
-        # self.tradeControl.unsubscribe("owner1")
-        # self.tradeControl.unsubscribe("owner2")
-        # self.tradeControl.unsubscribe("owner3")
-        # self.tradeControl.unsubscribe("manager1")
-        # self.tradeControl.unsubscribe("manager2")
-        # self.tradeControl.unsubscribe("manager3")
+        
         (DataAccessFacade.get_instance()).delete_purchases()
         # (DataAccessFacade.get_instance()).delete_discount_policies()
         (DataAccessFacade.get_instance()).delete_statistics()

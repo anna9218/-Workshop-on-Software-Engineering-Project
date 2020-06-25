@@ -4,7 +4,6 @@
 import unittest
 
 from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
-from src.test.BlackBoxTests.AcceptanceTests import UcTests
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointManagerTest import AppointManagerTest as Test6
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.AppointOwnerTest import AppointOwnerTest as Test2
 from src.test.BlackBoxTests.AcceptanceTests.UcTests.DefineAndEditPoliciesTest import DefineAndUpdatePoliciesTest as Test3
@@ -35,11 +34,8 @@ class BlackBoxTestsRunner:
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
 
-    # add all tests in package UcTests (all acceptance tests) to test suite
-    # suite.addTests(loader.loadTestsFromModule(UcTests))
-
     # add individual tests to the test suite
-    # suite.addTest(loader.loadTestsFromTestCase(Test1))
+    suite.addTest(loader.loadTestsFromTestCase(Test1))
     suite.addTest(loader.loadTestsFromTestCase(Test2))
     suite.addTest(loader.loadTestsFromTestCase(Test3))
     suite.addTest(loader.loadTestsFromTestCase(Test4))
@@ -77,8 +73,5 @@ class BlackBoxTestsRunner:
     (DataAccessFacade.get_instance()).delete_users()
 
 
-
-if __name__ == '__main__':
-    unittest.main()
 
 

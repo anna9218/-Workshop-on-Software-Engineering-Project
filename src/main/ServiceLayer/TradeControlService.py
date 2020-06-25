@@ -184,12 +184,20 @@ class TradeControlService:
         TradeControl.get_instance().unsubscribe(nickname)
 
     @staticmethod
-    def remove_manager(store_name: str, appointee_nickname: str):
-        TradeControl.get_instance().remove_manager(store_name, appointee_nickname)
+    def remove_manager(curr_nickname: str, store_name: str, appointee_nickname: str):
+        TradeControl.get_instance().remove_manager(curr_nickname, store_name, appointee_nickname)
+
+    @staticmethod
+    def remove_sys_manager(nickname: str):
+        TradeControl.get_instance().remove_system_manager(nickname)
 
     @staticmethod
     def remove_store(store_name: str):
         TradeControl.get_instance().close_store(store_name)
+
+    @staticmethod
+    def add_system_manager(nickname: str, password: str):
+        TradeControl.get_instance().add_system_manager(nickname, password)
 
     # external system tests functions
     @staticmethod
@@ -205,13 +213,16 @@ class TradeControlService:
     def cancel_payment(transaction_id: str):
         return PaymentProxy.get_instance().cancel_pay(transaction_id)
 
-    def cause_payment_timeout(self):
+    @staticmethod
+    def cause_payment_timeout():
         PaymentProxy.get_instance().cause_timeout_error()
 
-    def cause_payment_con_error(self):
+    @staticmethod
+    def cause_payment_con_error():
         PaymentProxy.get_instance().cause_connection_error()
 
-    def set_connection_payment_back(self):
+    @staticmethod
+    def set_connection_payment_back():
         PaymentProxy.get_instance().set_connection_back()
 
     @staticmethod
@@ -245,8 +256,8 @@ class TradeControlService:
         TradeControl.get_instance().register_test_user(nickname, password)
 
     @staticmethod
-    def remove_purchase(store_name: str, purchase_date: datetime):
-        TradeControl.get_instance().remove_purchase(store_name, purchase_date)
+    def remove_purchase(curr_nickname: str, store_name: str, purchase_date: datetime):
+        TradeControl.get_instance().remove_purchase(curr_nickname, store_name, purchase_date)
 
     @staticmethod
     def set_user(nickname: str):
@@ -257,8 +268,8 @@ class TradeControlService:
         return TradeControl.get_instance().get_store(store_name)
 
     @staticmethod
-    def get_user_type():
-        return TradeControl.get_instance().get_user_type()
+    def get_user_type(curr_nickname: str):
+        return TradeControl.get_instance().get_user_type(curr_nickname)
 
     @staticmethod
     def get_product_details(store_name, product_name):
@@ -267,6 +278,10 @@ class TradeControlService:
     @staticmethod
     def get_curr_username():
         return TradeControl.get_instance().get_curr_username()
+
+    @staticmethod
+    def inc_todays_guests_counter():
+        TradeControl.get_instance().inc_todays_guests_counter()
 
     def __repr__(self):
         return repr("TradeFacadeService")

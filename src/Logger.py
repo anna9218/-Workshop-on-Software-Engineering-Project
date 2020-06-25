@@ -22,7 +22,7 @@ def logger(f, name=None):
             args_str = ''
             first_index = 0
             for arg in range(first_index, len(args)):
-                args_str += ", " + str(arg.__repr__())
+                args_str += ", " + str(arg)
             logger.fhwr.write("The function " + str(name) + " was called\n"
             # -------------------- the two lines (maybe the upper one can cause errors) ----------------
                               + "arguments: " + args_str + "\n\n")

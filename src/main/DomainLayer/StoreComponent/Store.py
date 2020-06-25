@@ -76,13 +76,14 @@ class Store:
         return {'response': False, 'msg': "User has no permissions"}
 
     @logger
-    def add_product(self, user_nickname: str, name: str, price: float, category: str, amount: int, purchase_type: int) \
+    def add_product(self, user_nickname: str, name: str, price: float, category: str, amount: int, purchase_type: int or enumerate) \
             -> bool:
         """
         :param name: name of the new product
         :param price: price of the new product
         :param amount: amount of the new product
         :param category: category of the new product
+        :param purchase_type: category of the new product
         :return: True if product was added to the inventory
         """
         if name == "".strip() or price < 0.0 or category == "".strip() or amount < 0.0:
@@ -707,8 +708,15 @@ class Store:
         # products = [{"product_name": str, "product_price": float, "amount": int}]
         for product in products:
             amount = self.__inventory.get_amount(product["product_name"]) - product["amount"]
-            if not self.__inventory.change_amount(product["product_name"], amount):
+            if amount < 0:
+                return {"response": False, "msg": "Requested amount for product " +
+                                                  product["product_name"] +
+                                                  " exceeds amount in store inventory"}
+            elif amount > 0:
+                self.__inventory.change_amount(product["product_name"], amount)
+            else:
                 self.__inventory.remove_product(product["product_name"])
+        return {"response": True, "msg": "Ok"}
 
     def remove_purchase(self, nickname: str, date: datetime):
         for p in self.__purchases:
