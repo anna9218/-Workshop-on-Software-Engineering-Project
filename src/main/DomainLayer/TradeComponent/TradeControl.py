@@ -914,8 +914,9 @@ class TradeControl:
             return {'response': False, 'msg': "appointee " + appointee_nickname + " is already a store owner"}
         if self.__curr_user.is_registered():
            if appointee.is_registered():
-             if self.__curr_user.is_logged_in() :
-               if (store.is_owner(curr_nickname) or store.is_manager(curr_nickname)):
+             if self.__curr_user.is_logged_in():
+                 if (store.is_owner(curr_nickname) or store.is_manager(curr_nickname)):
+                # if (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
                     result = store.add_owner(curr_nickname, appointee)
                     return result
             # if result:
@@ -1413,6 +1414,7 @@ class TradeControl:
 
     @logger
     def set_curr_user_by_name(self, nickname: str):
+        # nickname = nickname[1:-1]
         user = self.get_subscriber(nickname)
         if user is not None:
             self.__curr_user = user

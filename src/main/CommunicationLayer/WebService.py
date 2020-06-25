@@ -271,6 +271,7 @@ def appoint_store_owner():
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         store_name = request_dict.get('store_name')  # str
         curr_nickname = request_dict.get('user_nickname')
+        curr_nickname = curr_nickname[1:-1]
         response = StoreOwnerOrManagerRole.appoint_additional_owner(curr_nickname, appointee_nickname, store_name)
         if response:
             if response["msg"] == "The request is pending approval":
@@ -309,6 +310,7 @@ def handle_appointment_agreement_response():
         appointee_nickname = request_dict.get('appointee_nickname')
         store_name = request_dict.get('store_name')
         curr_nickname = request_dict.get('user_nickname')
+        curr_nickname = curr_nickname[1:-1]
         appointment_agreement_response = request_dict.get('appointment_agreement_response')
         if appointment_agreement_response == 1:
             appointment_agreement_response = AppointmentStatus.DECLINED
@@ -319,7 +321,7 @@ def handle_appointment_agreement_response():
         if response:
             # check is the status of the agreement is approved already
             if response["response"]:
-                status = StoreOwnerOrManagerRole.get_appointment_status(curr_nickname, appointee_nickname, store_name)
+                status = StoreOwnerOrManagerRole.get_appointment_status(appointee_nickname, store_name)
                 if status == AppointmentStatus.APPROVED:
                     response = StoreOwnerOrManagerRole.appoint_additional_owner(curr_nickname, appointee_nickname, store_name)
                     add_subscriber_to_store(store_name, appointee_nickname, False)

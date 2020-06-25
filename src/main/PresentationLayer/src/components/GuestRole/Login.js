@@ -37,7 +37,7 @@ class Login extends React.Component{
               // if logged in successfuly - cash username
               localStorage.clear();
               localStorage.setItem('loggedUser', JSON.stringify(this.state.nickname));
-              alert(this.state.nickname)
+              // alert(this.state.nickname)
 
               theWebsocket.login(this.state.nickname);
               if(is_manager){

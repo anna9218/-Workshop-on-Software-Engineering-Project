@@ -216,13 +216,87 @@ class Store:
     def product_in_inventory(self, product_name: str):
         return self.__inventory.get_product(product_name) is not None
 
+    # @logger
+    # def add_owner(self, appointer_nickname: str, appointee: User) -> dict:
+    #     """
+    #     appointee has to be registered.
+    #     appointee can't be owner already.
+    #     if appointee is already manager, we will remove him from being manager.
+    #
+    #     :param appointer_nickname: owner's/manager's nickname.
+    #     :param appointee: new manager from type User.
+    #     :return: True if owner has been added
+    #              False else.
+    #     """
+    #
+    #     # THESE CONDITIONS ARE ALREADY BEING CHECKED IN TRADE CONTROL
+    #     # if not appointee.is_registered():
+    #     #     return False
+    #     # if self.is_owner(appointee.get_nickname()):
+    #     #     return False
+    #     # if self.is_owner(appointer_nickname):
+    #     #     return False
+    #
+    #     managers = self.get_managers()
+    #     managers_with_owner_permissions = list(filter(
+    #         lambda user: self.has_permission(user.get_nickname(), ManagerPermission.APPOINT_OWNER), managers))
+    #
+    #     if appointee in self.get_owners():
+    #         return Response.ret(False, "Already owner.")
+    #
+    #     if self.has_permission(appointer_nickname, ManagerPermission.APPOINT_OWNER):
+    #         owners_and_managers = self.get_owners() + managers_with_owner_permissions
+    #         appointer = list(filter(lambda user: user.get_nickname() == appointer_nickname, owners_and_managers))[0]
+    #
+    #         if appointee in managers:
+    #             appointment = [manager_appointment for manager_appointment in self.__StoreManagerAppointments
+    #                            if manager_appointment.get_appointee() == appointee]
+    #             self.__StoreManagerAppointments.remove(appointment[0])
+    #             db_result = (DataAccessFacade.get_instance()).delete_store_manager_appointments(
+    #                 appointee_username=appointee.get_nickname(),
+    #                 store_name=self.__name)
+    #             if not db_result['response']:
+    #                 return db_result
+    #         # ----------------appointment agreement----------------------
+    #         if len(owners_and_managers) == 1:  # only one owner, and no managers with APPOINT_OWNER permission
+    #             self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
+    #             self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, [appointer]))
+    #             db_result = (DataAccessFacade.get_instance()).write_store_owner_appointment(
+    #                 appointee_username=appointee.get_nickname(),
+    #                 store_name=self.__name,
+    #                 appointer_username=appointer_nickname)
+    #             if not db_result['response']:
+    #                 return db_result
+    #             return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
+    #         else:  # more than one owner - they need the appointment as well
+    #             if self.check_appointment_exist(appointee.get_nickname()) and \
+    #                     self.check_appointment_status(appointee.get_nickname()) == AppointmentStatus.APPROVED:
+    #                 self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
+    #                 return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
+    #             elif self.check_appointment_exist(appointee.get_nickname()) and \
+    #                     self.check_appointment_status(appointee.get_nickname()) == AppointmentStatus.PENDING:
+    #                 self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
+    #                 return {'response': True,
+    #                         'msg': "Thanks for your response in regards to " + appointee.get_nickname() + "appointment"}
+    #             else:
+    #                 self.__StoreOwnerAppointmentAgreements.append(
+    #                     AppointmentAgreement(appointer, appointee, owners_and_managers))
+    #                 db_result = (DataAccessFacade.get_instance()).write_store_owner_appointment(
+    #                     appointee_username=appointee.get_nickname(),
+    #                     store_name=self.__name,
+    #                     appointer_username=appointer_nickname)
+    #                 if not db_result['response']:
+    #                     return db_result
+    #                 return {'response': False, 'msg': "The request is pending approval"}
+    #         # ---------------------------------------------------------
+    #     return {'response': False, 'msg': "User has no permissions"}
+
     @logger
     def add_owner(self, appointer_nickname: str, appointee: User) -> dict:
         """
         appointee has to be registered.
         appointee can't be owner already.
         if appointee is already manager, we will remove him from being manager.
-
         :param appointer_nickname: owner's/manager's nickname.
         :param appointee: new manager from type User.
         :return: True if owner has been added
@@ -241,9 +315,6 @@ class Store:
         managers_with_owner_permissions = list(filter(
             lambda user: self.has_permission(user.get_nickname(), ManagerPermission.APPOINT_OWNER), managers))
 
-        if appointee in self.get_owners():
-            return Response.ret(False, "Already owner.")
-
         if self.has_permission(appointer_nickname, ManagerPermission.APPOINT_OWNER):
             owners_and_managers = self.get_owners() + managers_with_owner_permissions
             appointer = list(filter(lambda user: user.get_nickname() == appointer_nickname, owners_and_managers))[0]
@@ -252,21 +323,10 @@ class Store:
                 appointment = [manager_appointment for manager_appointment in self.__StoreManagerAppointments
                                if manager_appointment.get_appointee() == appointee]
                 self.__StoreManagerAppointments.remove(appointment[0])
-                db_result = (DataAccessFacade.get_instance()).delete_store_manager_appointments(
-                    appointee_username=appointee.get_nickname(),
-                    store_name=self.__name)
-                if not db_result['response']:
-                    return db_result
             # ----------------appointment agreement----------------------
             if len(owners_and_managers) == 1:  # only one owner, and no managers with APPOINT_OWNER permission
                 self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
                 self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, [appointer]))
-                db_result = (DataAccessFacade.get_instance()).write_store_owner_appointment(
-                    appointee_username=appointee.get_nickname(),
-                    store_name=self.__name,
-                    appointer_username=appointer_nickname)
-                if not db_result['response']:
-                    return db_result
                 return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
             else:  # more than one owner - they need the appointment as well
                 if self.check_appointment_exist(appointee.get_nickname()) and \
@@ -282,15 +342,16 @@ class Store:
                 else:
                     self.__StoreOwnerAppointmentAgreements.append(
                         AppointmentAgreement(appointer, appointee, owners_and_managers))
-                    db_result = (DataAccessFacade.get_instance()).write_store_owner_appointment(
-                        appointee_username=appointee.get_nickname(),
-                        store_name=self.__name,
-                        appointer_username=appointer_nickname)
-                    if not db_result['response']:
-                        return db_result
                     return {'response': False, 'msg': "The request is pending approval"}
             # ---------------------------------------------------------
         return {'response': False, 'msg': "User has no permissions"}
+
+    @logger
+    def check_appointment_exist(self, appointee: str) -> bool:
+        for appointment in self.__StoreOwnerAppointmentAgreements:
+            if appointment.get_appointee().get_nickname() == appointee:
+                return True
+        return False
 
     @logger
     def check_appointment_exist(self, appointee: str) -> bool:
