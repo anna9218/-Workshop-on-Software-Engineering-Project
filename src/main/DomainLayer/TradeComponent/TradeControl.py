@@ -40,11 +40,12 @@ class TradeControl:
             self.__subscribers = self.__pull_subscribers_from_db()
             self.__stores = self.__pull_stores_from_db()
             # self.__stores = []
-            self.__statistics : [Statistics] = [Statistics()]
+            self.__statistics: [Statistics] = [Statistics()]
             # self.__stores.append(Store("einat"))
             # self.__stores.append(Store("Eden"))
             (DataAccessFacade.get_instance()).write_statistic()
             TradeControl.__instance = self
+            self.add_system_manager("m", "m")
 
     # def __init__(self):
     #     """ Virtually private constructor. """
@@ -1455,6 +1456,7 @@ class TradeControl:
         # return {'response': stores, 'msg': "Stores were retrieved successfully"}
 
     # @logger
+    @synchronized
     def get_user_type(self, curr_nickname: str):
         self.set_curr_user_by_name(curr_nickname)
 
