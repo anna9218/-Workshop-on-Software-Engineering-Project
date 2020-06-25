@@ -992,14 +992,14 @@ class TradeControl:
         """
         store = self.get_store(store_name)
         appointee = self.get_subscriber(appointee_nickname)
-        if appointee is not None and \
-                store is not None and \
-                self.__curr_user.is_registered() and \
-                appointee.is_registered() and \
-                self.__curr_user.is_logged_in() and \
+        if (appointee is not None and
+                store is not None and
+                self.__curr_user.is_registered() and
+                appointee.is_registered() and
+                self.__curr_user.is_logged_in() and
                 (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(
-                    self.__curr_user.get_nickname())) and \
-                store.is_manager(appointee_nickname):
+                    self.__curr_user.get_nickname())) and
+                store.is_manager(appointee_nickname)):
             domain_result = store.remove_manager(self.__curr_user.get_nickname(), appointee_nickname)
             if domain_result:
                 db_result = (DataAccessFacade.get_instance()).delete_store_manager_appointments(appointer_username=
