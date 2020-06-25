@@ -166,7 +166,7 @@ def purchase_products():
 
             # print("after handle")
             return jsonify(data=response)
-        return jsonify(msg="purchase products failed", data=response["response"], status=400)
+        return jsonify(msg="purchase products failed", data=response, status=400)
 
 
 @app.route('/confirm_purchase', methods=['POST'])
