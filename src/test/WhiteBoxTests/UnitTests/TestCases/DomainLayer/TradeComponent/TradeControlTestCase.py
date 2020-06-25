@@ -375,7 +375,6 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.reset_purchase_policies(self.store_mock.get_name())
 
     def tearDown(self):
-        # pass
         self.tradeControl.logout_subscriber("nickname")
         self.tradeControl.unsubscribe("nickname")
         self.tradeControl.unsubscribe("eden")
@@ -386,6 +385,8 @@ class TradeControlTestCase(unittest.TestCase):
         self.tradeControl.unsubscribe("manager1")
         self.tradeControl.unsubscribe("manager2")
         self.tradeControl.unsubscribe("manager3")
+        (TradeControl.get_instance()).__delete__()
+        
         (DataAccessFacade.get_instance()).delete_purchases()
         # (DataAccessFacade.get_instance()).delete_discount_policies()
         (DataAccessFacade.get_instance()).delete_statistics()

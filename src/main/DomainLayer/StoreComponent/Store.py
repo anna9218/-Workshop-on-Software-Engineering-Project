@@ -216,7 +216,7 @@ class Store:
         return self.__inventory.get_product(product_name) is not None
 
     @logger
-    def add_owner(self, appointer_nickname: str, appointee: User) -> bool:
+    def add_owner(self, appointer_nickname: str, appointee: User) -> dict:
         """
         appointee has to be registered.
         appointee can't be owner already.
@@ -254,9 +254,15 @@ class Store:
                 self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, [appointer]))
                 return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
             else:  # more than one owner - they need the appointment as well
-                if self.check_appointment_exist(appointee.get_nickname()):
+                if self.check_appointment_exist(appointee.get_nickname()) and \
+                        self.check_appointment_status(appointee.get_nickname()) == AppointmentStatus.APPROVED:
                     self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
                     return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
+                elif self.check_appointment_exist(appointee.get_nickname()) and \
+                        self.check_appointment_status(appointee.get_nickname()) == AppointmentStatus.PENDING:
+                    self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
+                    return {'response': True,
+                            'msg': "Thanks for your response in regards to " + appointee.get_nickname() + "appointment"}
                 else:
                     self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, owners_and_managers))
                     return {'response': False, 'msg': "The request is pending approval"}
@@ -269,6 +275,12 @@ class Store:
             if appointment.get_appointee().get_nickname() == appointee:
                 return True
         return False
+
+    @logger
+    def check_appointment_status(self, appointee: str) -> bool:
+        for appointment in self.__StoreOwnerAppointmentAgreements:
+            if appointment.get_appointee().get_nickname() == appointee:
+                return appointment.get_appointment_status()
 
     @logger
     def update_agreement_participants(self, appointee_nickname: str, owner_nickname: str,

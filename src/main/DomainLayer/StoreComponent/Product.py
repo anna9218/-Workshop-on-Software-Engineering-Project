@@ -60,11 +60,18 @@ class Product:
 
     @logger
     def set_purchase_type(self, purchase_type: int or enumerate):
-        for type_tmp in PurchaseType:
-            if type_tmp.value == purchase_type:
-                self.__purchase_type = type_tmp
-        # type1 = PurchaseType(purchase_type)
-        # self.__purchase_type = type1
+        try:
+            PurchaseType(purchase_type)
+            return True
+        except Exception:
+            return False
+    # Version 4 - parallel
+#     def set_purchase_type(self, purchase_type: int or enumerate):
+#         for type_tmp in PurchaseType:
+#             if type_tmp.value == purchase_type:
+#                 self.__purchase_type = type_tmp
+
+    
 
     @logger
     def set_category(self, category):
