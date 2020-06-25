@@ -9,10 +9,12 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
     def setUp(self) -> None:
         super().setUp()
-        self.__manager = "u1"
+        self._username = "manager"
         self.__manager_password = "pass"
-        self.init_sys()
-        self.login("u1", "pass")
+        self.add_system_manager(self._username, self.__manager_password)
+        self.login(self._username, self.__manager_password)
+        # self.init_sys()
+        # self.login("A1", "pass")
         self.open_store(self._store_name)
         self.add_products_to_store(self._store_name,
                                        [{"name": "product", "price": 10, "category": "general", "amount": 10,
@@ -27,7 +29,7 @@ class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
         self.__date = datetime.now()
 
     def test_success(self):
-        res = self.manager_view_user_purchases(self.__manager)
+        res = self.manager_view_user_purchases(self._username)
         self.assertTrue(res)
         res = self.manager_view_shop_purchase_history(self._store_name)
         self.assertTrue(res)
@@ -45,8 +47,8 @@ class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
         self.update_shopping_cart("remove",
                                   [{"product_name": "product", "store_name": self._store_name, "amount": 10}])
         self.remove_products_from_store(self._store_name, ["product"])
-        self.remove_store("store")
-        self.delete_user(self.__manager)
+        self.remove_store(self._store_name)
+        self.remove_sys_manager(self._username)
 
     def __repr__(self):
         return repr("ViewStoresAndUsersPurchaseHistoryTest")

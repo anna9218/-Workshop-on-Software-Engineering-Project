@@ -3,6 +3,8 @@
 """
 from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
+#TODO: wait for merge with updated add owner
+
 
 class RemoveStoreOwnerTest(ProjectAT):
     def setUp(self) -> None:

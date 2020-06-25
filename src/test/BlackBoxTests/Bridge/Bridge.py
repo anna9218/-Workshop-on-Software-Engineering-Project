@@ -204,6 +204,14 @@ class Bridge(ABC):
 
     # view users' and stores' purchase history
     @abstractmethod
+    def add_system_manager(self, nickname: str, password: str):
+        pass
+
+    @abstractmethod
+    def remove_sys_manager(self, nickname: str):
+        pass
+
+    @abstractmethod
     def manager_view_user_purchases(self, curr_nickname: str, nickname: str):
         pass
 

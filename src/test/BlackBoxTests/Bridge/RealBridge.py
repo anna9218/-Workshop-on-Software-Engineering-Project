@@ -227,6 +227,12 @@ class RealBridge(Bridge):
         self.__trade_control_srv.subscribe_user(nickname, password)
 
     # uc 6.4
+    def add_system_manager(self, nickname: str, password: str):
+        self.__trade_control_srv.add_system_manager(nickname, password)
+
+    def remove_sys_manager(self, nickname: str):
+        self.__trade_control_srv.remove_sys_manager(nickname)
+
     def manager_view_user_purchases(self, curr_nickname, nickname: str):
         purchase_ls = self.__system_manager.view_user_purchase_history(curr_nickname, nickname)['response']
         return purchase_ls is not None and len(purchase_ls) != 0

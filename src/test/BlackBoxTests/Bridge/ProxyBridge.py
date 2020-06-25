@@ -209,6 +209,12 @@ class ProxyBridge(Bridge):
         self._realbridge.subscribe_user(nickname, password)
 
     # 6.4
+    def add_system_manager(self, nickname: str, password: str):
+        self._realbridge.add_system_manager(nickname, password)
+
+    def remove_sys_manager(self, nickname: str):
+        self._realbridge.remove_sys_manager(nickname)
+
     def manager_view_user_purchases(self, curr_nickname: str, nickname: str):
         return self._realbridge.manager_view_user_purchases(curr_nickname, nickname)
 
