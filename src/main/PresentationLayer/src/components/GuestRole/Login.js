@@ -35,7 +35,10 @@ class Login extends React.Component{
           if(data["data"]){ // if logged in
 
               // if logged in successfuly - cash username
-              localStorage.setItem('loggedUser', this.state.nickname);
+              localStorage.clear();
+              localStorage.setItem('loggedUser', JSON.stringify(this.state.nickname));
+              alert(this.state.nickname)
+
               theWebsocket.login(this.state.nickname);
               if(is_manager){
                 // if system manager - redirect to system manager home page
