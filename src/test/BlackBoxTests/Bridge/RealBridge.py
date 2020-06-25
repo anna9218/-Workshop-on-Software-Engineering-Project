@@ -125,7 +125,7 @@ class RealBridge(Bridge):
 
     # uc 3.6
     def view_personal_purchase_history(self, curr_nickname):
-        purchase_ls = self.__subscriber.view_personal_purchase_history(curr_nickname)['response']
+        purchase_ls = self.__subscriber.view_personal_purchase_history(curr_nickname, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 4.1
@@ -220,7 +220,7 @@ class RealBridge(Bridge):
         return self.__store_owner_or_manager.remove_manager(curr_nickname, store_name, manager_nickname)
 
     def view_store_purchase_history(self, curr_nickname, store_name: str):
-        purchase_ls = self.__store_owner_or_manager.display_store_purchases(curr_nickname, store_name)['response']
+        purchase_ls = self.__store_owner_or_manager.display_store_purchases(curr_nickname, store_name, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     def subscribe_user(self, nickname: str, password: str):
@@ -234,11 +234,11 @@ class RealBridge(Bridge):
         self.__trade_control_srv.remove_sys_manager(nickname)
 
     def manager_view_user_purchases(self, curr_nickname, nickname: str):
-        purchase_ls = self.__system_manager.view_user_purchase_history(curr_nickname, nickname)['response']
+        purchase_ls = self.__system_manager.view_user_purchase_history(curr_nickname, nickname, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     def manager_view_shop_purchase_history(self, curr_nickname, store_name: str):
-        purchase_ls = self.__system_manager.view_store_purchases_history(curr_nickname, store_name)['response']
+        purchase_ls = self.__system_manager.view_store_purchases_history(curr_nickname, store_name, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 7
