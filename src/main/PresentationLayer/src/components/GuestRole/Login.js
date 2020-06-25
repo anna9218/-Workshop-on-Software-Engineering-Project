@@ -28,8 +28,10 @@ class Login extends React.Component{
     event.preventDefault();
         const promise = theService.login(this.state.nickname, this.state.password) // goes to register.js and sends to backend
         promise.then((data) => {
-          let is_manager = data["msg"] === "SYS_MANAGER";
-          if(!is_manager){
+          // let is_manager = data["msg"] === "SYS_MANAGER";
+          // if(!is_manager){
+          //   alert(data["msg"]);
+           if(!data["data"]){
             alert(data["msg"]);
           }
           if(data["data"]){ // if logged in
@@ -37,43 +39,41 @@ class Login extends React.Component{
               // if logged in successfuly - cash username
               localStorage.clear();
               localStorage.setItem('loggedUser', JSON.stringify(this.state.nickname));
-              alert(this.state.nickname)
 
               theWebsocket.login(this.state.nickname);
-              if(is_manager){
-                // if system manager - redirect to system manager home page
-                this.props.history.push({pathname: '/systemmanager', props: this.props});
-              }
-              else{
-                const userType = theService.getUserType();
-                userType.then((data) => {
+              // if(is_manager){
+              //   // if system manager - redirect to system manager home page
+              //   this.props.history.push({pathname: '/systemmanager', props: this.props});
+              // }
+              // else{
+              const userType = theService.getUserType();
+              userType.then((data) => {
+                  alert(data['data'])
                   if(data["data"] === "OWNER"){
-                      // websocket
-                      // theWebsocket.login(this.state.nickname);
-                    // if store owner - redirect to subscriber home page
-                    this.props.history.push({pathname: '/owner', props: this.props});
+                        // theWebsocket.login(this.state.nickname);
+                        // if store owner - redirect to subscriber home page
+                      this.props.history.push({pathname: '/owner', props: this.props});
                   }
                   else if(data["data"] === "MANAGER"){
-                    // if store manager - redirect to subscriber home page
-                    this.props.history.push({pathname: '/manager', props: this.props});
+                      // if store manager - redirect to subscriber home page
+                      this.props.history.push({pathname: '/manager', props: this.props});
                   }
                   else if(data["data"] === "SYSTEMMANAGER"){
-                    this.props.history.push({pathname: '/systemmanager', props: this.props});
+                      this.props.history.push({pathname: '/systemmanager', props: this.props});
                   }
                   else{
-                    // if subscriber - redirect to subscriber home page
-                    this.props.history.push({pathname: '/subscriber', props: this.props});
+                      // if subscriber - redirect to subscriber home page
+                      this.props.history.push({pathname: '/subscriber', props: this.props});
                   }
-                })
-              }
-            }
-            else{
-              // user didn't succeed to log in
-              this.state.nickname = ''
-              this.state.password = ''
-              return;
-            }
-        });
+              })
+          }
+          else{
+            // user didn't succeed to log in
+            this.state.nickname = ''
+            this.state.password = ''
+            return;
+          }
+      });
   }
 
   handleEmailChange(event){
