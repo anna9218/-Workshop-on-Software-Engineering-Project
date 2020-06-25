@@ -183,9 +183,10 @@ class PurchaseProducts extends React.Component{
               <Form.Control id="id" value={this.state.id} required type="text" placeholder="ID" 
                     onChange={(event => {this.setState({id: event.target.value})})} style={{marginTop: "1%"}} />
 
-              <Button id='confirm-button' variant="dark" style={{marginTop: "1%"}} onClick={this.handleConfirm} disabled={!this.isPaymentFilled() || this.state.lock_purchase}>
-                Confirm Purchase
-              </Button>
+                <Button id='confirm-button' variant="dark" style={{marginTop: "1%"}} onClick={this.handleConfirm} disabled={!this.isPaymentFilled() || this.state.lock_purchase}>                  
+                  Confirm Purchase
+                </Button>
+              
           </div>
         }
         

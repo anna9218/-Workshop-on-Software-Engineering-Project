@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from wrapt import synchronized
+
 from src.Logger import errorLogger, logger
 from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.StoreComponent.Purchase import Purchase
@@ -818,6 +820,7 @@ class TradeControl:
         return {'response': [], 'msg': "Error! remove store owner failed."}
 
     @logger
+    @synchronized
     def appoint_additional_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
         """
         :param appointee_nickname: nickname of the new owner that will be appointed
@@ -835,12 +838,12 @@ class TradeControl:
             return {'response': False, 'msg': "Appointee " + appointee_nickname + " is not a subscriber"}
         if store.is_owner(appointee_nickname):
             return {'response': False, 'msg': "appointee " + appointee_nickname + " is already a store owner"}
-        if self.__curr_user.is_registered() and \
-                appointee.is_registered() and \
-                self.__curr_user.is_logged_in() and \
-                (store.is_owner(curr_nickname) or store.is_manager(curr_nickname)):
-            result = store.add_owner(curr_nickname, appointee)
-            return result
+        if self.__curr_user.is_registered():
+           if appointee.is_registered():
+             if self.__curr_user.is_logged_in() :
+               if (store.is_owner(curr_nickname) or store.is_manager(curr_nickname)):
+                    result = store.add_owner(curr_nickname, appointee)
+                    return result
             # if result:
             #     return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}
             # return {'response': False, 'msg': "User has no permissions"}
