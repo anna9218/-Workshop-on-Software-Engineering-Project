@@ -53,11 +53,6 @@ function EditPermissions(props){
                                     setSubscriberNickname("")
 
                             }},
-                            {
-                                label: 'Back',
-                                onClick: () => {
-                                    props.history.push("./owner")
-                            }}
                         ]
                     });
                 }

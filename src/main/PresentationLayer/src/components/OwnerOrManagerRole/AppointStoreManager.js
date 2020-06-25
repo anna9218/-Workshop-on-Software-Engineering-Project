@@ -37,11 +37,6 @@ function AppointStoreManager(props){
                                     setPermissions([10])
                                     setSubscriberNickname("")
                             }},
-                            {
-                                label: 'Back',
-                                onClick: () => {
-                                    props.history.push("./owner")
-                            }}
                         ]
                     });
                 }

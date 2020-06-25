@@ -47,11 +47,7 @@ function RemoveManager(props){
                                     fetchManagersAppointees();
     
                             }},
-                            {
-                                label: 'Back',
-                                onClick: () => {
-                                    props.history.push("./owner")
-                            }}
+                          
                         ]
                     });
                 

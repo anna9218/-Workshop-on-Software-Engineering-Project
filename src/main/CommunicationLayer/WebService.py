@@ -229,7 +229,8 @@ def appoint_store_manager():
         request_dict = request.get_json()
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         store_name = request_dict.get('store_name')  # str
-        permissions = request_dict.get('permissions')  # list of tuples
+        # permissions = request_dict.get('permissions')
+        permissions = [ManagerPermission(value) for value in request_dict.get('permissions') ] # list of tuples
         curr_nickname = request_dict.get('user_nickname')
         response = StoreOwnerOrManagerRole.appoint_store_manager(curr_nickname, appointee_nickname, store_name, permissions)
         if response:
@@ -386,7 +387,7 @@ def edit_manager_permissions():
         store_name = request_dict.get('store_name')  # str
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         curr_nickname = request_dict.get('user_nickname')
-        permissions = request_dict.get('permissions')  # str
+        permissions = [ManagerPermission(value) for value in request_dict.get('permissions')] # str
         response = StoreOwnerOrManagerRole.edit_manager_permissions(curr_nickname, store_name, appointee_nickname,
                                                                     permissions)
         if response:
