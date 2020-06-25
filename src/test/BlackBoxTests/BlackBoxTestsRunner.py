@@ -73,5 +73,5 @@ class BlackBoxTestsRunner:
     (DataAccessFacade.get_instance()).delete_users()
 
 
-
-
+if __name__ == '__main__':
+    unittest.main()

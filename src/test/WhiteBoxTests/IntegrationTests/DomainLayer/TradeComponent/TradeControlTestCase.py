@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 from unittest.mock import MagicMock
 
 from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
@@ -11,7 +12,7 @@ from src.main.DomainLayer.UserComponent.DiscountType import DiscountType
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.main.DomainLayer.UserComponent.User import User
-from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path
+from src.main.DataAccessLayer.ConnectionProxy.Tables import rel_path, IntegrityError
 
 
 class TradeControlTestCase(unittest.TestCase):
@@ -26,24 +27,56 @@ class TradeControlTestCase(unittest.TestCase):
         self.__user_password = "Eytan's password"
         self.__user.register(self.__user_nickname, self.__user_password)
         self.__eytans_store = "Eytan's store"
+        self.__today_without_hour = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
         (DataAccessFacade.get_instance()).write_user("Mr. Eytan", self.__user_password)
         (DataAccessFacade.get_instance()).write_store("Eytan's store", "Mr. Eytan")
-        (DataAccessFacade.get_instance()).write_product("Eytan's product", "Eytan's store", 12, "Eytan's", 21, 0)
+        # (DataAccessFacade.get_instance()).write_product("Eytan's product", "Eytan's store", 12, "Eytan's", 21, 0)
+        try:
+            DataAccessFacade.get_instance().write_user("Eytan", "Eytan's password", False)
+            DataAccessFacade.get_instance().write_user("Anna", "Anna's password", False)
+            DataAccessFacade.get_instance().write_user("Lady Anna", "Anna's password", False)
+            DataAccessFacade.get_instance().write_user("System manager",
+                                                       "not Eytan's password", True)
+            DataAccessFacade.get_instance().write_store("Eytan's store", "Eytan")
+            DataAccessFacade.get_instance().write_product("Eytan's product",
+                                                          "Eytan's store", 12,
+                                                          "Eytan's", 21, 0)
+            DataAccessFacade.get_instance().write_store_manager_appointment(
+                "Anna", "Eytan's store",
+                "Eytan", ["EDIT_INV", "CLOSE_STORE"])
+            (DataAccessFacade.get_instance()).write_products_in_basket("Anna", "Eytan's store",
+                                                                       "Eytan's product", 12)
+            (DataAccessFacade.get_instance()).write_store_owner_appointment("Lady Anna",
+                                                                            "Eytan's store",
+                                                                            "Eytan")
+            (DataAccessFacade.get_instance()).write_statistic()
+            (DataAccessFacade.get_instance()).write_purchase("Anna", "Eytan's store", 12, self.__today_without_hour,
+                                                             [{"product_name": "Eytan's product",
+                                                               "product_price": 12,
+                                                               "amount": 1}])
+            (DataAccessFacade.get_instance()).write_products_in_basket("Anna", "Eytan's store",
+                                                                       "Eytan's product", 12)
+        except IntegrityError:
+            pass
+        except Exception as e:
+            print(e)
+            raise ValueError("My error. check set up.")
 
     def test_add_system_manager(self):
         # All valid - first manager
+        TradeControl.get_instance().register_guest("RvP", "RvP's password")
+        rvp = (TradeControl.get_instance()).get_subscriber("RvP")
         self.assertTrue((TradeControl.get_instance()).add_system_manager("RvP", "RvP's password"))
 
-        rvp = User()
-        rvp.register("RvP", "RvP's password")
-        TradeControl.get_instance().subscribe(self.__user)
+        # rvp = User()
+        # rvp.register("RvP", "RvP's password")
 
-        self.assertEqual(1, len((TradeControl.get_instance()).get_managers()))
+        self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
 
         # All valid - not first manager
         self.assertTrue((TradeControl.get_instance()).add_system_manager(self.__user_nickname, self.__user_password))
-        self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
+        self.assertEqual(3, len((TradeControl.get_instance()).get_managers()))
         lst = (TradeControl.get_instance()).get_managers()
         self.assertIn(self.__user, (TradeControl.get_instance()).get_managers())
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
@@ -51,7 +84,7 @@ class TradeControlTestCase(unittest.TestCase):
         # Invalid - already a manager.
         self.assertFalse(
             (TradeControl.get_instance()).add_system_manager(self.__user_nickname, self.__user_password)['response'])
-        self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
+        self.assertEqual(3, len((TradeControl.get_instance()).get_managers()))
         self.assertIn(self.__user, (TradeControl.get_instance()).get_managers())
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
 
@@ -59,7 +92,7 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertFalse(
             (TradeControl.get_instance()).add_system_manager("self.__user_nickname", "self.__user_password")[
                 'response'])
-        self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
+        self.assertEqual(3, len((TradeControl.get_instance()).get_managers()))
         self.assertIn(self.__user, (TradeControl.get_instance()).get_managers())
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
 
@@ -69,7 +102,7 @@ class TradeControlTestCase(unittest.TestCase):
         # Invalid -Incorrect password
         self.assertFalse(
             (TradeControl.get_instance()).add_system_manager(user.get_nickname(), self.__user_password)['response'])
-        self.assertEqual(2, len((TradeControl.get_instance()).get_managers()))
+        self.assertEqual(3, len((TradeControl.get_instance()).get_managers()))
         self.assertIn(self.__user, (TradeControl.get_instance()).get_managers())
         self.assertIn(rvp, (TradeControl.get_instance()).get_managers())
 
@@ -159,8 +192,8 @@ class TradeControlTestCase(unittest.TestCase):
     def test_open_store(self):
         stores_num = len(TradeControl.get_instance().get_stores())
         # (TradeControl.get_instance()).set_curr_user(self.__user)
-        (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
+        (TradeControl.get_instance()).login_subscriber("Lady Anna", "Anna's password")
+        (TradeControl.get_instance()).get_curr_user().is_logged_in = MagicMock(return_value=True)
 
         # All valid
         self.assertTrue((TradeControl.get_instance()).open_store(self.__user_nickname, "myFirstStore"))
@@ -561,6 +594,20 @@ class TradeControlTestCase(unittest.TestCase):
 
     def test_save_products_to_basket(self):
         # TODO: Maybe add a test to check if try to purchase more amount then the store have.
+
+        # db-testing
+        #(TradeControl.get_instance()).register_guest("Anna", "Anna's password")
+        (TradeControl.get_instance()).login_subscriber("Lady Anna", "Anna's password")
+
+        product_as_dictionary = {"product_name": "Eytan's product", "amount": 4, "store_name": "Eytan's store"}
+        self.assertTrue((TradeControl.get_instance()).save_products_to_basket([product_as_dictionary]))
+        self.assertEqual(len((TradeControl.get_instance()).get_subscriber("Anna").get_shopping_cart()
+                             .get_shopping_baskets()), 1)
+
+        (TradeControl.get_instance()).logout_subscriber()
+
+        # rest of tests
+
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).open_store(self.__user_nickname, "myStore")
@@ -633,6 +680,19 @@ class TradeControlTestCase(unittest.TestCase):
                                  shopping_cart.get_shopping_baskets()])
 
     def test_remove_from_shopping_cart(self):
+
+        # db tests
+        (TradeControl.get_instance()).login_subscriber("Anna", "Anna's password")
+
+        product_as_dictionary = {"product_name": "Eytan's product", "store_name": "Eytan's store"}
+        self.assertTrue((TradeControl.get_instance()).remove_from_shopping_cart([product_as_dictionary]))
+        self.assertEqual(len((TradeControl.get_instance()).get_subscriber("Anna").get_shopping_cart()
+                             .get_shopping_baskets()), 0)
+
+        (TradeControl.get_instance()).logout_subscriber()
+
+        # rest tests
+
         (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
         (TradeControl.get_instance()).open_store("myStore")
@@ -692,6 +752,19 @@ class TradeControlTestCase(unittest.TestCase):
         self.assertTrue((TradeControl.get_instance()).remove_from_shopping_cart([])['response'])
 
     def test_update_quantity_in_shopping_cart(self):
+
+        # db tests
+        (TradeControl.get_instance()).login_subscriber("Anna", "Anna's password")
+
+        product_as_dictionary = {"product_name": "Eytan's product", "amount": 44, "store_name": "Eytan's store"}
+        self.assertTrue((TradeControl.get_instance()).update_quantity_in_shopping_cart([product_as_dictionary]))
+        self.assertEqual(len((TradeControl.get_instance()).get_subscriber("Anna").get_shopping_cart()
+                             .get_shopping_baskets()), 1)
+
+        (TradeControl.get_instance()).logout_subscriber()
+
+        # rest tests
+
         product = Product("Eytan's product", 12, "Eytan's category")
         store: Store = Store("myStore")
         user: User = User()

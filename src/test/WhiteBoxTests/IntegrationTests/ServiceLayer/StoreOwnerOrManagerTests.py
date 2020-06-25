@@ -378,7 +378,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                              get_product(product_as_dictionary['name']))
 
         # Clean all
-        (TradeControl.get_instance()).__delete__()
+        self.tearDown()
 
         product = Product("Eytan's product", 12, "Eytan's category")
         product_as_dictionary = {"name": product.get_name(),
@@ -707,7 +707,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                              get_product(product_as_dictionary['name']))
 
         # Clean all
-        (TradeControl.get_instance()).__delete__()
+        self.tearDown()
 
         product = Product("Eytan's product", 12, "Eytan's category")
         product_as_dictionary = {"name": product.get_name(),
@@ -999,7 +999,9 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         user_password = "eytan as password"
         manager = User()
         manager.register("manager", "manager")
+        (DataAccessFacade.get_instance()).write_user("manager", "manager")
         store: Store = Store("myStore")
+        (DataAccessFacade.get_instance()).write_store("myStore", self.__user.get_nickname())
         # store.add_product("Eytan's product", 12, "Eytan's category", 5)
         (TradeControl.get_instance()).get_stores().append(store)
         (TradeControl.get_instance()).register_guest(user_nickname, user_password)
@@ -1011,6 +1013,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
         new_manager = User()
         new_manager.register("I", "manage this tests")
+        (DataAccessFacade.get_instance()).write_user("I", "manage this tests")
         (TradeControl.get_instance()).subscribe(new_manager)
         (TradeControl.get_instance()).subscribe(manager)
 
@@ -1100,6 +1103,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
         store2: Store = Store("Not store")
         store2.get_owners_appointments().append(StoreAppointment(None, self.__user, []))
+        (DataAccessFacade.get_instance()).write_store(store2, self.__user.get_nickname())
         (TradeControl.get_instance()).get_stores().append(store2)
         (TradeControl.get_instance()).appoint_additional_owner(user_nickname, new_manager.get_nickname(), store2.get_name())
 
@@ -1111,7 +1115,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         self.assertIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
 
         # Clear
-        (TradeControl.get_instance()).__delete__()
+        self.tearDown()
 
         # As a manager with permissions
 
@@ -1129,7 +1133,9 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
         new_manager = User()
         new_manager.register("I", "manage this tests")
+        (DataAccessFacade.get_instance()).write_user("I", "manage this tests")
         (TradeControl.get_instance()).subscribe(new_manager)
+        (TradeControl.get_instance()).subscribe(manager)
 
         # All valid
         self.assertTrue(self.__store_owner_or_manager_role.appoint_store_manager(manager.get_nickname(), new_manager.get_nickname(),
@@ -1229,8 +1235,10 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
 
         new_manager = User()
         new_manager.register("I", "manage this tests")
+        (DataAccessFacade.get_instance()).write_user("I", "manage this tests")
         new_owner = User()
         new_owner.register("Bed", "of roses")
+        (DataAccessFacade.get_instance()).write_user("Bed", "of roses")
         (TradeControl.get_instance()).get_store(store.get_name()).get_owners_appointments().append(
             StoreAppointment(self.__user, new_owner, []))
         (TradeControl.get_instance()).subscribe(new_manager)
@@ -1265,7 +1273,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
                                                                                      [ManagerPermission.EDIT_INV]))
 
         # Clear all
-        TradeControl.get_instance().__delete__()
+        self.tearDown()
 
         # Manager
 
@@ -1442,7 +1450,7 @@ class StoreOwnerOrManagerTests(unittest.TestCase):
         self.assertIn(new_manager, (TradeControl.get_instance()).get_store(store.get_name()).get_managers())
 
         # Clear all
-        (TradeControl.get_instance()).__delete__()
+        self.tearDown()
 
         # Manager
 
