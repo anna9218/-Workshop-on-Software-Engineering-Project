@@ -6,7 +6,6 @@ from src.test.BlackBoxTests.AcceptanceTests.ProjectAT import ProjectAT
 
 class EditManagerPermissionsTest(ProjectAT):
 
-    # @logger
     def setUp(self) -> None:
         super().setUp()
         self.__appointee_name = "username2"
@@ -17,12 +16,10 @@ class EditManagerPermissionsTest(ProjectAT):
         self.open_store(self._store_name)
         self.appoint_additional_manager(self.__appointee_name, self._store_name, [])
 
-    # @logger
     def test_success(self):
         res = self.edit_manager_permissions(self._store_name, self.__appointee_name, [])
         self.assertTrue(res)
 
-    # @logger
     def test_fail(self):
         # store doesn't exist
         res = self.edit_manager_permissions("anotherStoreName", self.__appointee_name, [])
@@ -35,7 +32,6 @@ class EditManagerPermissionsTest(ProjectAT):
         res = self.edit_manager_permissions(self._store_name, self.__appointee_name, [])
         self.assertFalse(res)
 
-    # @logger
     def tearDown(self) -> None:
         self.remove_store(self._store_name)
         self.delete_user(self._username)

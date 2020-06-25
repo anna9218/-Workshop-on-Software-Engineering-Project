@@ -51,8 +51,8 @@ class RealBridge(Bridge):
     def delete_user(self, nickname: str):
         self.__trade_control_srv.remove_user(nickname)
 
-    def delete_manager(self, store_name: str, appointee_nickname: str):
-        return self.__trade_control_srv.remove_manager(store_name, appointee_nickname)
+    def delete_manager(self, curr_nickname: str, store_name: str, appointee_nickname: str):
+        return self.__trade_control_srv.remove_manager(curr_nickname, store_name, appointee_nickname)
 
     # uc 2.3
     def login(self, nickname: str, password: str) -> bool:
@@ -77,7 +77,7 @@ class RealBridge(Bridge):
         return res is not None and len(res) != 0
 
     # uc 2.6
-    def add_products_to_cart(self, product_name: str, store_name: str, amount: int, discount_type: int,
+    def add_products_to_cart(self, curr_nickname, product_name: str, store_name: str, amount: int, discount_type: int,
                              purchase_type: int) -> bool:
         products_stores_quantity = {"product_name": product_name, "store_name": store_name, "amount": amount}
 
@@ -89,79 +89,79 @@ class RealBridge(Bridge):
             if purchase.value == purchase_type:
                 products_stores_quantity["purchase_type"] = purchase
 
-        return self.__guest_role.save_products_to_basket([products_stores_quantity])
+        return self.__guest_role.save_products_to_basket(curr_nickname, [products_stores_quantity])
 
     # uc 2.7
-    def view_shopping_cart(self):
-        res = self.__guest_role.view_shopping_cart()['response']
+    def view_shopping_cart(self, curr_nickname):
+        res = self.__guest_role.view_shopping_cart(curr_nickname)['response']
         return len(res) != 0
 
-    def update_shopping_cart(self, flag: str,
+    def update_shopping_cart(self, curr_nickname, flag: str,
                              products_details: [{"product_name": str, "store_name": str, "amount": int}]):
-        return self.__guest_role.update_shopping_cart(flag, products_details)
+        return self.__guest_role.update_shopping_cart(curr_nickname, flag, products_details)
 
-    def purchase_products(self) -> dict:
-        return self.__guest_role.purchase_products()
+    def purchase_products(self, curr_nickname) -> dict:
+        return self.__guest_role.purchase_products(curr_nickname)
 
-    def confirm_purchase(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+    def confirm_purchase(self, curr_nickname, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
                          payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
                                            'ccv': str, 'id': str},
                          purchase_ls: []):
-        return self.__guest_role.confirm_payment(delivery_details, payment_details, purchase_ls)
+        return self.__guest_role.confirm_payment(curr_nickname, delivery_details, payment_details, purchase_ls)
 
-    def remove_purchase(self, store_name: str, purchase_date: datetime):
-        self.__trade_control_srv.remove_purchase(store_name, purchase_date)
+    def remove_purchase(self, curr_nickname: str, store_name: str, purchase_date: datetime):
+        self.__trade_control_srv.remove_purchase(curr_nickname, store_name, purchase_date)
 
     # uc 3.1
-    def logout(self) -> bool:
-        return self.__subscriber.logout()
+    def logout(self, curr_nickname) -> bool:
+        return self.__subscriber.logout(curr_nickname)
 
     # uc 3.2
-    def open_store(self, store_name: str) -> bool:
-        return self.__subscriber.open_store(store_name)
+    def open_store(self, curr_nickname, store_name: str) -> bool:
+        return self.__subscriber.open_store(curr_nickname, store_name)
 
     def delete_store(self, store_name: str):
         self.__trade_control_srv.remove_store(store_name)
 
     # uc 3.6
-    def view_personal_purchase_history(self):
-        purchase_ls = self.__subscriber.view_personal_purchase_history()['response']
+    def view_personal_purchase_history(self, curr_nickname):
+        purchase_ls = self.__subscriber.view_personal_purchase_history(curr_nickname, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 4.1
-    def add_products_to_store(self, store_name: str,
+    def add_products_to_store(self, curr_nickname, store_name: str,
                               products_details: [{"name": str, "price": int, "category": str, "amount": int,
                                                   "purchase_type": int}]) -> bool:
-        return self.__store_owner_or_manager.add_products(store_name, products_details)
+        return self.__store_owner_or_manager.add_products(curr_nickname, store_name, products_details)
 
-    def edit_products_in_store(self, store_name: str, product_name: str, op: str, new_value: str):
-        return self.__store_owner_or_manager.edit_product(store_name, product_name, op, new_value)
+    def edit_products_in_store(self, curr_nickname, store_name: str, product_name: str, op: str, new_value: str):
+        return self.__store_owner_or_manager.edit_product(curr_nickname, store_name, product_name, op, new_value)
 
-    def remove_products_from_store(self, store_name: str, products_names: list) -> bool:
-        return self.__store_owner_or_manager.remove_products(store_name, products_names)
+    def remove_products_from_store(self, curr_nickname, store_name: str, products_names: list) -> bool:
+        return self.__store_owner_or_manager.remove_products(curr_nickname, store_name, products_names)
 
     # 4.2 add and update purchase and discount policies
     def set_purchase_operator(self, store_name: str, operator: str):
         self.__store_owner_or_manager.set_purchase_operator(store_name, operator)
 
-    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
-        return self.__store_owner_or_manager.get_policies(type, store_name)
+    def get_policies(self, curr_nickname, policy_type: str, store_name: str) -> [dict] or None:
+        return self.__store_owner_or_manager.get_policies(type, curr_nickname, store_name)
 
-    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+    def update_purchase_policy(self, curr_nickname, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None,
                                                                 "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None}):
-        res_dict = self.__store_owner_or_manager.update_purchase_policy(store_name, details)
+        res_dict = self.__store_owner_or_manager.update_purchase_policy(curr_nickname, store_name, details)
         return res_dict["response"]
 
-    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+    def define_purchase_policy(self, curr_nickname, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None,
                                                                 "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None}):
-        res_dict = self.__store_owner_or_manager.define_purchase_policy(store_name, details)
+        res_dict = self.__store_owner_or_manager.define_purchase_policy(curr_nickname, store_name, details)
         return res_dict["response"]
 
-    def update_discount_policy(self, store_name: str, policy_name: str,
+    def update_discount_policy(self, curr_nickname, store_name: str, policy_name: str,
                                percentage: float = -999,
                                valid_until: datetime = None,
                                discount_details: {'name': str,
@@ -169,10 +169,10 @@ class RealBridge(Bridge):
                                discount_precondition: {'product': str,
                                                        'min_amount': int or None,
                                                        'min_basket_price': str or None} or None = None):
-        return self.__store_owner_or_manager.update_discount_policy(store_name, policy_name, percentage, valid_until,
+        return self.__store_owner_or_manager.update_discount_policy(curr_nickname, store_name, policy_name, percentage, valid_until,
                                                                     discount_details, discount_precondition)['response']
 
-    def define_discount_policy(self, store_name: str,
+    def define_discount_policy(self, curr_nickname, store_name: str,
                                percentage: float,
                                valid_until: datetime,
                                discount_details: {'name': str,
@@ -181,27 +181,27 @@ class RealBridge(Bridge):
                                                        'min_amount': int or None,
                                                        'min_basket_price': str or None} or None = None
                                ):
-        return self.__store_owner_or_manager.define_discount_policy(store_name, percentage, valid_until,
+        return self.__store_owner_or_manager.define_discount_policy(curr_nickname, store_name, percentage, valid_until,
                                                                     discount_details, discount_precondition)['response']
 
-    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+    def define_composite_policy(self, curr_nickname, store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str, valid_until: datetime) -> {}:
-        return self.__store_owner_or_manager.define_composite_policy(store_name, policy1_name, policy2_name, flag,
+        return self.__store_owner_or_manager.define_composite_policy(curr_nickname, store_name, policy1_name, policy2_name, flag,
                                                                      percentage, name, valid_until)['response']
 
     # uc 4.3
-    def appoint_additional_owner(self, nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
-        return self.__store_owner_or_manager.appoint_additional_owner(nickname, store_name)
+    def appoint_additional_owner(self, curr_nickname, nickname: str, store_name: str) -> {'response': bool, 'msg': str}:
+        return self.__store_owner_or_manager.appoint_additional_owner(curr_nickname, nickname, store_name)
 
     # 4.4 remove store owner functions
-    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
-        return self.__store_owner_or_manager.remove_owner(appointee_nickname, store_name)
+    def remove_owner(self, curr_nickname, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+        return self.__store_owner_or_manager.remove_owner(curr_nickname, appointee_nickname, store_name)
 
     def get_store(self, store_name):
         return self.__trade_control_srv.get_store(store_name)
 
     # uc 4.5
-    def appoint_additional_manager(self, nickname: str, store_name: str, permissions: [int]) -> bool:
+    def appoint_additional_manager(self, curr_nickname, nickname: str, store_name: str, permissions: [int]) -> bool:
         manager_permissions = []
         if permissions:
             for permission in permissions:
@@ -209,30 +209,36 @@ class RealBridge(Bridge):
                     if p.value == permission:
                         manager_permissions.append(p)
 
-        return self.__store_owner_or_manager.appoint_store_manager(nickname, store_name, manager_permissions)
+        return self.__store_owner_or_manager.appoint_store_manager(curr_nickname, nickname, store_name, manager_permissions)
 
     # uc 4.6
-    def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
-        return self.__store_owner_or_manager.edit_manager_permissions(store_name, appointee_nickname, permissions)
+    def edit_manager_permissions(self, curr_nickname, store_name: str, appointee_nickname: str, permissions: list) -> bool:
+        return self.__store_owner_or_manager.edit_manager_permissions(curr_nickname, store_name, appointee_nickname, permissions)
 
     # uc 4.7
-    def remove_manager(self, store_name: str, manager_nickname: str) -> bool:
-        return self.__store_owner_or_manager.remove_manager(store_name, manager_nickname)
+    def remove_manager(self, curr_nickname, store_name: str, manager_nickname: str) -> bool:
+        return self.__store_owner_or_manager.remove_manager(curr_nickname, store_name, manager_nickname)
 
-    def view_store_purchase_history(self, store_name: str):
-        purchase_ls = self.__store_owner_or_manager.display_store_purchases(store_name)['response']
+    def view_store_purchase_history(self, curr_nickname, store_name: str):
+        purchase_ls = self.__store_owner_or_manager.display_store_purchases(curr_nickname, store_name, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     def subscribe_user(self, nickname: str, password: str):
         self.__trade_control_srv.subscribe_user(nickname, password)
 
     # uc 6.4
-    def manager_view_user_purchases(self, nickname: str):
-        purchase_ls = self.__system_manager.view_user_purchase_history(nickname)['response']
+    def add_system_manager(self, nickname: str, password: str):
+        self.__trade_control_srv.add_system_manager(nickname, password)
+
+    def remove_sys_manager(self, nickname: str):
+        self.__trade_control_srv.remove_sys_manager(nickname)
+
+    def manager_view_user_purchases(self, curr_nickname, nickname: str):
+        purchase_ls = self.__system_manager.view_user_purchase_history(curr_nickname, nickname, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
-    def manager_view_shop_purchase_history(self, store_name: str):
-        purchase_ls = self.__system_manager.view_store_purchases_history(store_name)['response']
+    def manager_view_shop_purchase_history(self, curr_nickname, store_name: str):
+        purchase_ls = self.__system_manager.view_store_purchases_history(curr_nickname, store_name, None)['response']
         return purchase_ls is not None and len(purchase_ls) != 0
 
     # uc 7

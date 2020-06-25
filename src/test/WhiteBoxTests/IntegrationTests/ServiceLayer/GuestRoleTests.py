@@ -862,16 +862,16 @@ class GuestRoleTest(unittest.TestCase):
                                   "discount_type": DiscountType.DEFAULT, "purchase_type": PurchaseType.DEFAULT}
 
         (TradeControl.get_instance()).set_curr_user(user)
-        self.__guest_role.save_products_to_basket([product_as_dictionary, product_as_dictionary2])
+        self.__guest_role.save_products_to_basket(user.get_nickname(), [product_as_dictionary, product_as_dictionary2])
 
         DeliveryProxy.get_instance().deliver_products = MagicMock(return_value={'response': True, 'msg': 'Good'})
         PaymentProxy.get_instance().commit_payment = MagicMock(return_value={'response': True, 'msg': 'Good'})
 
         # Assuming GuestRole.purchase_products() is working fine.
-        purchase_result = self.__guest_role.purchase_products()
+        purchase_result = self.__guest_role.purchase_products(user.get_nickname())
 
         # All valid
-        self.assertTrue(self.__guest_role.confirm_payment("Eytan's address", purchase_result)['response'])
+        self.assertTrue(self.__guest_role.confirm_payment(user.get_nickname(), "Eytan's address", purchase_result)['response'])
         # check post condition - purchase in purchase history
         self.assertEqual(2, len(user.get_purchase_history()))
         # # check post-condition: after purchase, shopping cart should be empty
@@ -886,7 +886,7 @@ class GuestRoleTest(unittest.TestCase):
         PaymentProxy.get_instance().commit_payment = MagicMock(return_value={'response': False, 'msg': 'Bad'})
 
         # Invalid  - can't make the payment
-        self.assertFalse(self.__guest_role.confirm_payment("Eytan's address", purchase_result)['response'])
+        self.assertFalse(self.__guest_role.confirm_payment(user.get_nickname(), "Eytan's address", purchase_result)['response'])
         # check post condition - purchase in not in purchase history
         self.assertEqual(2, len(user.get_purchase_history()))
         # check post condition - amount in stores not change
@@ -899,7 +899,7 @@ class GuestRoleTest(unittest.TestCase):
         PaymentProxy.get_instance().commit_payment = MagicMock(return_value={'response': True, 'msg': 'Good'})
 
         # Invalid  - can't make the Delivery
-        self.assertFalse(self.__guest_role.confirm_payment("Eytan's address", purchase_result)['response'])
+        self.assertFalse(self.__guest_role.confirm_payment(user.get_nickname(), "Eytan's address", purchase_result)['response'])
         # check post condition - inventory amount do not decrease
         self.assertEqual(4, (TradeControl.get_instance()).get_store(store.get_name()).get_inventory().
                          get_amount(product.get_name()))

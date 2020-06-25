@@ -57,27 +57,27 @@ class Bridge(ABC):
 
     # save products functions
     @abstractmethod
-    def add_products_to_cart(self, product_name: str, store_name: str, amount: int, discount_type: int,
+    def add_products_to_cart(self, curr_nickname: str, product_name: str, store_name: str, amount: int, discount_type: int,
                              purchase_type: int) -> bool:
         pass
 
     # update cart
     @abstractmethod
-    def view_shopping_cart(self):
+    def view_shopping_cart(self, curr_nickname: str):
         pass
 
     @abstractmethod
-    def update_shopping_cart(self, flag: str,
+    def update_shopping_cart(self, curr_nickname: str, flag: str,
                              products_details: [{"product_name": str, "store_name": str, "amount": int}]):
         pass
 
     # purchase cart
     @abstractmethod
-    def purchase_products(self) -> dict:
+    def purchase_products(self, curr_nickname: str) -> dict:
         pass
 
     @abstractmethod
-    def confirm_purchase(self, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
+    def confirm_purchase(self, curr_nickname: str, delivery_details: {'name': str, 'address': str, 'city': str, 'country': str, 'zip': str},
                         payment_details: {'card_number': str, 'month': str, 'year': str, 'holder': str,
                                           'ccv': str, 'id': str},
                         purchase_ls: []) -> bool:
@@ -89,12 +89,12 @@ class Bridge(ABC):
 
     # logout functions
     @abstractmethod
-    def logout(self) -> bool:
+    def logout(self, curr_nickname: str) -> bool:
         pass
 
     # open store functions
     @abstractmethod
-    def open_store(self, store_name: str) -> bool:
+    def open_store(self, curr_nickname: str, store_name: str) -> bool:
         pass
 
     @abstractmethod
@@ -103,52 +103,52 @@ class Bridge(ABC):
 
     # view personal purchase history
     @abstractmethod
-    def view_personal_purchase_history(self) -> bool:
+    def view_personal_purchase_history(self, curr_nickname: str) -> bool:
         pass
 
     # manage stock functions
     @abstractmethod
-    def add_products_to_store(self, store_name: str, products_details:
+    def add_products_to_store(self, curr_nickname: str, store_name: str, products_details:
                                             [{"name": str, "price": int, "category": str, "amount": int,
                                               "purchase_type": int}]) -> bool:
         pass
 
     @abstractmethod
-    def edit_products_in_store(self, store_name: str, product_name: str, op: str, new_value: str) -> bool:
+    def edit_products_in_store(self, curr_nickname: str, store_name: str, product_name: str, op: str, new_value: str) -> bool:
         pass
 
     @abstractmethod
-    def remove_products_from_store(self, store_name: str, products_names: list):
+    def remove_products_from_store(self, curr_nickname: str, store_name: str, products_names: list):
         pass
 
     # 4.2 add and update purchase and discount policies
     def set_purchase_operator(self, store_name: str, operator: str):
         pass
 
-    def get_policies(self, policy_type: str, store_name: str) -> [dict] or None:
+    def get_policies(self, curr_nickname: str, policy_type: str, store_name: str) -> [dict] or None:
         pass
 
     # 4.4
-    def remove_owner(self, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
+    def remove_owner(self, curr_nickname: str, appointee_nickname: str, store_name: str) -> {'response': [], 'msg': str}:
         pass
 
     def get_store(self, store_name):
         pass
 
-    def update_purchase_policy(self, store_name: str, details: {"name": str, "products": [str] or None,
+    def update_purchase_policy(self, curr_nickname: str, store_name: str, details: {"name": str, "products": [str] or None,
                                                                 "min_amount": int or None,
                                                                 "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None}):
         pass
 
-    def define_purchase_policy(self, store_name: str, details: {"name": str, "products": [str],
+    def define_purchase_policy(self, curr_nickname: str, store_name: str, details: {"name": str, "products": [str],
                                                                 "min_amount": int or None,
                                                                 "max_amount": int or None,
                                                                 "dates": [dict] or None, "bundle": bool or None}):
         pass
 
     @abstractmethod
-    def update_discount_policy(self, store_name: str, policy_name: str,
+    def update_discount_policy(self, curr_nickname: str, store_name: str, policy_name: str,
                                percentage: float = -999,
                                valid_until: datetime = None,
                                discount_details: {'name': str,
@@ -159,12 +159,12 @@ class Bridge(ABC):
         pass
 
     @abstractmethod
-    def define_composite_policy(self, store_name: str, policy1_name: str, policy2_name: str, flag: str,
+    def define_composite_policy(self, curr_nickname: str, store_name: str, policy1_name: str, policy2_name: str, flag: str,
                                 percentage: float, name: str, valid_until: datetime) -> {}:
         pass
 
     @abstractmethod
-    def define_discount_policy(self, store_name: str,
+    def define_discount_policy(self, curr_nickname: str, store_name: str,
                                percentage: float,
                                valid_until: datetime,
                                discount_details: {'name': str,
@@ -177,25 +177,25 @@ class Bridge(ABC):
 
     # add store owner functions
     @abstractmethod
-    def appoint_additional_owner(self, nickname: str, store_name: str):
+    def appoint_additional_owner(self, curr_nickname: str, nickname: str, store_name: str):
         pass
 
     # add store manager functions
     @abstractmethod
-    def appoint_additional_manager(self, nickname, store_name, permissions: [int]):
+    def appoint_additional_manager(self, curr_nickname: str,  nickname, store_name, permissions: [int]):
         pass
 
     @abstractmethod
-    def edit_manager_permissions(self, store_name: str, appointee_nickname: str, permissions: list) -> bool:
+    def edit_manager_permissions(self, curr_nickname: str, store_name: str, appointee_nickname: str, permissions: list) -> bool:
         pass
 
     @abstractmethod
     # remove manager functions
-    def remove_manager(self, store_name: str, manager_nickname: str):
+    def remove_manager(self, curr_nickname: str, store_name: str, manager_nickname: str):
         pass
 
     @abstractmethod
-    def view_store_purchase_history(self, store_name: str):
+    def view_store_purchase_history(self, curr_nickname: str, store_name: str):
         pass
 
     @abstractmethod
@@ -204,11 +204,19 @@ class Bridge(ABC):
 
     # view users' and stores' purchase history
     @abstractmethod
-    def manager_view_user_purchases(self, nickname: str):
+    def add_system_manager(self, nickname: str, password: str):
         pass
 
     @abstractmethod
-    def manager_view_shop_purchase_history(self, store_name: str):
+    def remove_sys_manager(self, nickname: str):
+        pass
+
+    @abstractmethod
+    def manager_view_user_purchases(self, curr_nickname: str, nickname: str):
+        pass
+
+    @abstractmethod
+    def manager_view_shop_purchase_history(self, curr_nickname: str, store_name: str):
         pass
 
     # Payment System tests bridged functions
