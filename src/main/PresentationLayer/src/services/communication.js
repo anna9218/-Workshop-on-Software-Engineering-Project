@@ -200,6 +200,7 @@ export async function fetchManagersAppointees(store_name){
 export async function fetchOwnersAppointees(store_name){
     return axios.post('http://localhost:5000/get_owners_appointees', {
         store_name: store_name,
+        user_nickname: cashed_username
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
