@@ -36,7 +36,7 @@ class TradeControl:
             self.__managers = []
             self.__subscribers = self.__pull_subscribers_from_db()
             self.__stores = self.__pull_stores_from_db()
-            self.__statistics : Statistics = [Statistics()]
+            self.__statistics : [Statistics] = [Statistics()]
             # self.__stores.append(Store("einat"))
             # self.__stores.append(Store("Eden"))
             TradeControl.__instance = self
