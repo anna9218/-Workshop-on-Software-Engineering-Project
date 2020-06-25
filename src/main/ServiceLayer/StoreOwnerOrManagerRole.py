@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from wrapt import synchronized
+
 from src.Logger import logger
 from src.main.DomainLayer.StoreComponent.AppointmentStatus import AppointmentStatus
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
@@ -13,6 +15,7 @@ class StoreOwnerOrManagerRole:
     # @logger
     # use case 4.1.1
     @staticmethod
+    @synchronized
     def add_products(curr_nickname: str, store_name: str, products_details: [{"name": str, "price": int, "category": str, "amount":
         float, "purchase_type": int}]) -> {'response': bool, 'msg': str}:
         """
