@@ -35,10 +35,12 @@ export const connect = async (host, username) => {
 
 export const setHandlers = async () => {
   socket.socket.on("message", (data) => {
+    // alert(data['messages'])
     Notifications.addNotification(data['messages'], 'regular', '','')
   });
   socket.socket.on("agreement", (data) => {
-    Notifications.addNotification(data['messages'], 'agreement', data['username'],data['store'])
+    // alert(data['messages'])
+    Notifications.addNotification(data['messages'], 'agreement', data['username'], data['store'])
   });
   // socket.socket.on("daily_cut", (data) => {
   //     // TODO - eden should create an update-daily-cut function

@@ -74,7 +74,7 @@ class App extends React.Component{
 
   componentWillUnmount = () => {
     // do anything you want a second before leaving the component and destroying it - never use setState here
-    localStorage.clear();
+    // localStorage.clear();
   }
 
   byNameHandler = () =>{
