@@ -29,6 +29,7 @@ class ViewStoresAndUsersPurchaseHistoryTest(ProjectAT):
         self.__date = datetime.now()
 
     def test_success(self):
+        self.add_system_manager(self._username, self.__manager_password)
         res = self.manager_view_user_purchases(self._username)
         self.assertTrue(res)
         res = self.manager_view_shop_purchase_history(self._store_name)
