@@ -53,4 +53,4 @@ class AppointmentAgreementTests(unittest.TestCase):
         self.__appointment_agreement_2 = None
 
     def __repr__(self):
-        return repr("StoreInventoryTests")
+        return repr("AppointmentAgreementTests")
