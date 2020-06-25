@@ -207,7 +207,8 @@ def get_manager_permissions():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        response = StoreOwnerOrManagerRole.get_manager_permissions(store_name)
+        curr_nickname = request_dict.get('user_nickname')
+        response = StoreOwnerOrManagerRole.get_manager_permissions(curr_nickname, store_name)
         numlist = [enum.value for enum in response]
         return jsonify(data=numlist)
     return jsonify(data=[])
@@ -352,30 +353,30 @@ def get_owners_appointees():
     return jsonify(data=[])
 
 
-def numbersToEnum(ls):
-    enumList: ManagerPermission = []
-    for num in ls:
-        if num == 1 and (ManagerPermission.EDIT_INV not in enumList):
-            enumList.append(ManagerPermission.EDIT_INV)
-        if num == 2 and (ManagerPermission.EDIT_POLICIES not in enumList):
-            enumList.append(ManagerPermission.EDIT_POLICIES)
-        if num == 3 and (ManagerPermission.APPOINT_OWNER not in enumList):
-            enumList.append(ManagerPermission.APPOINT_OWNER)
-        if num == 4 and (ManagerPermission.DEL_OWNER not in enumList):
-            enumList.append(ManagerPermission.DEL_OWNER)
-        if num == 5 and (ManagerPermission.APPOINT_MANAGER not in enumList):
-            enumList.append(ManagerPermission.APPOINT_MANAGER)
-        if num == 6 and (ManagerPermission.EDIT_MANAGER_PER not in enumList):
-            enumList.append(ManagerPermission.EDIT_MANAGER_PER)
-        if num == 7 and (ManagerPermission.DEL_MANAGER not in enumList):
-            enumList.append(ManagerPermission.DEL_MANAGER)
-        if num == 8 and (ManagerPermission.CLOSE_STORE not in enumList):
-            enumList.append(ManagerPermission.CLOSE_STORE)
-        if num == 9 and (ManagerPermission.USERS_QUESTIONS not in enumList):
-            enumList.append(ManagerPermission.USERS_QUESTIONS)
-        if num == 10 and (ManagerPermission.WATCH_PURCHASE_HISTORY not in enumList):
-            enumList.append(ManagerPermission.WATCH_PURCHASE_HISTORY)
-    return enumList
+# def numbersToEnum(ls):
+#     enumList: ManagerPermission = []
+#     for num in ls:
+#         if num == 1 and (ManagerPermission.EDIT_INV not in enumList):
+#             enumList.append(ManagerPermission.EDIT_INV)
+#         if num == 2 and (ManagerPermission.EDIT_POLICIES not in enumList):
+#             enumList.append(ManagerPermission.EDIT_POLICIES)
+#         if num == 3 and (ManagerPermission.APPOINT_OWNER not in enumList):
+#             enumList.append(ManagerPermission.APPOINT_OWNER)
+#         if num == 4 and (ManagerPermission.DEL_OWNER not in enumList):
+#             enumList.append(ManagerPermission.DEL_OWNER)
+#         if num == 5 and (ManagerPermission.APPOINT_MANAGER not in enumList):
+#             enumList.append(ManagerPermission.APPOINT_MANAGER)
+#         if num == 6 and (ManagerPermission.EDIT_MANAGER_PER not in enumList):
+#             enumList.append(ManagerPermission.EDIT_MANAGER_PER)
+#         if num == 7 and (ManagerPermission.DEL_MANAGER not in enumList):
+#             enumList.append(ManagerPermission.DEL_MANAGER)
+#         if num == 8 and (ManagerPermission.CLOSE_STORE not in enumList):
+#             enumList.append(ManagerPermission.CLOSE_STORE)
+#         if num == 9 and (ManagerPermission.USERS_QUESTIONS not in enumList):
+#             enumList.append(ManagerPermission.USERS_QUESTIONS)
+#         if num == 10 and (ManagerPermission.WATCH_PURCHASE_HISTORY not in enumList):
+#             enumList.append(ManagerPermission.WATCH_PURCHASE_HISTORY)
+#     return enumList
 
 
 @app.route('/edit_manager_permissions', methods=['POST'])

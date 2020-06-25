@@ -136,8 +136,8 @@ class StoreOwnerOrManagerRole:
 
     @staticmethod
     @logger
-    def get_manager_permissions(store_name) -> list:
-        return TradeControl.get_instance().get_manager_permissions(store_name)
+    def get_manager_permissions(curr_nickname, store_name) -> list:
+        return TradeControl.get_instance().get_manager_permissions(curr_nickname, store_name)
 
     # @logger
     @staticmethod

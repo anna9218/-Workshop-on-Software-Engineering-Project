@@ -48,7 +48,7 @@ class Login extends React.Component{
               // else{
               const userType = theService.getUserType();
               userType.then((data) => {
-                  alert(data['data'])
+                  // alert(data['data'])
                   if(data["data"] === "OWNER"){
                         // theWebsocket.login(this.state.nickname);
                         // if store owner - redirect to subscriber home page
