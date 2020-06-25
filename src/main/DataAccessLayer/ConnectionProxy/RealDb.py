@@ -136,7 +136,7 @@ class RealDb(DbSubject):
                 return ret(True, "Successful.")
             except Exception as e:
                 transaction.rollback()
-                print(e)
+                # print(e)
                 return ret(False, "Failed.")
 
     def execute_atomic_purchase_write(self, mother_write_query, daughters_write_queries_attributes: [{}],
