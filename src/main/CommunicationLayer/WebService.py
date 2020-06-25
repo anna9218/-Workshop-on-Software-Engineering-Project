@@ -319,7 +319,7 @@ def handle_appointment_agreement_response():
                     response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
                     add_subscriber_to_store(store_name, appointee_nickname, False)
                     msg = f"New owner {appointee_nickname} appointed at store {store_name}!"
-                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "message")
             return jsonify(msg=response["msg"])
     return jsonify(msg="Oops, communication error")
 
