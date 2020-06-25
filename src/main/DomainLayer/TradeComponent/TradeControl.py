@@ -167,16 +167,16 @@ class TradeControl:
             answer = self.__curr_user.login(nickname, password)
             if answer:
                 # update statistics
-                if self.get_user_type() == 'OWNER':
+                if self.get_user_type(nickname) == 'OWNER':
                     if not self.__statistics[0].inc_store_owners_counter():
                         self.reset_statistics('owner')
-                if self.get_user_type() == 'SYSTEMMANAGER':
+                if self.get_user_type(nickname) == 'SYSTEMMANAGER':
                     if not self.__statistics[0].inc_system_managers_counter():
                         self.reset_statistics('system_manager')
-                if self.get_user_type() == 'SUBSCRIBER':
+                if self.get_user_type(nickname) == 'SUBSCRIBER':
                     if not self.__statistics[0].inc_subscribers_counter():
                         self.reset_statistics('subscriber')
-                if self.get_user_type() == 'MANAGER':
+                if self.get_user_type(nickname) == 'MANAGER':
                     if not self.__statistics[0].inc_store_managers_counter():
                         self.reset_statistics('store_manager')
             return answer
