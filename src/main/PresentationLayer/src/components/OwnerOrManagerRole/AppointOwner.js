@@ -59,11 +59,6 @@ class AppointOwner extends React.Component {
                                 this.setSubscriberNickname("");
 
                             }},
-                            {
-                                label: 'Back',
-                                onClick: () => {
-                                    this.props.history.push("./owner")
-                            }}
                         ]
                     });
                 }

@@ -49,11 +49,6 @@ function RemoveOwner(props){
                                     fetchOwnersAppointees();
     
                             }},
-                            {
-                                label: 'Back',
-                                onClick: () => {
-                                    props.history.push("./owner")
-                            }}
                         ]
                     });
                 }

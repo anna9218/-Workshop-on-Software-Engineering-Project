@@ -185,6 +185,7 @@ export async function fetchManagedStores(){
 export async function fetchManagerPermissions(store_name){
     return axios.post('http://localhost:5000/get_manager_permissions', {
         store_name: store_name,
+        user_nickname: localStorage.getItem("loggedUser")
     })
     .then((response) => (response.data), (error) => {console.log(error)});
 }
