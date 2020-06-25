@@ -193,6 +193,7 @@ class TradeControl:
     def open_store(self, store_name) -> {'response': bool, 'msg': str}:
         if self.__curr_user.is_registered() and self.__curr_user.is_logged_in() and not store_name.strip() == "":
             for store in self.__stores:
+                # print(store)
                 if store.get_name() == store_name:
                     return {'response': False, 'msg': "Error! Store name " + store_name + " already exist"}
 
@@ -201,6 +202,7 @@ class TradeControl:
             self.__stores.append(store)
             db_result = (DataAccessFacade.get_instance()).write_store(store_name,
                                                                       self.get_curr_user().get_nickname())
+            # print(db_result)
             if not db_result['response']:
                 return db_result
             new_store_owners = (DataAccessFacade.get_instance()).read_statistics(['store_owners'],
@@ -211,6 +213,7 @@ class TradeControl:
                                                                             new_store_owners)
             if not db_result['response']:
                 return db_result
+
             return {'response': True, 'msg': "Store " + store_name + " opened successfully"}
         return {'response': False, 'msg': "Error! user doesn't have permission to open a store"}
 

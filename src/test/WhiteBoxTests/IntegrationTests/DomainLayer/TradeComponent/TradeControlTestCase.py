@@ -192,11 +192,11 @@ class TradeControlTestCase(unittest.TestCase):
     def test_open_store(self):
         stores_num = len(TradeControl.get_instance().get_stores())
         # (TradeControl.get_instance()).set_curr_user(self.__user)
-        (TradeControl.get_instance()).register_guest(self.__user_nickname, self.__user_password)
-        (TradeControl.get_instance()).login_subscriber(self.__user_nickname, self.__user_password)
+        (TradeControl.get_instance()).login_subscriber("Lady Anna", "Anna's password")
+        (TradeControl.get_instance()).get_curr_user().is_logged_in = MagicMock(return_value=True)
 
         # All valid
-        self.assertTrue((TradeControl.get_instance()).open_store("myFirstStore"))
+        self.assertTrue((TradeControl.get_instance()).open_store("s3"))
         self.assertEqual(stores_num + 1, len((TradeControl.get_instance()).get_stores()))
         store: Store = (TradeControl.get_instance()).get_store("myFirstStore")
         self.assertIsNotNone(store)
