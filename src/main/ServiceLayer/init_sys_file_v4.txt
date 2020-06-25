@@ -6,5 +6,5 @@ register//U12//pass
 register//U13//pass
 add_system_manager//A1//pass
 login//U11//pass
-open_store//S2
-logout
+open_store//U11//S2
+logout//U11
