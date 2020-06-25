@@ -42,6 +42,8 @@ from src.test.WhiteBoxTests.UnitTests.TestCases.ServiceLayer.TradeControlService
     import TradeControlServiceTests as Uc17
 from src.test.WhiteBoxTests.UnitTests.TestCases.ServiceLayer.GuestRoleTests \
     import GuestRoleTest as Uc18
+from src.test.WhiteBoxTests.UnitTests.TestCases.DomainLayer.StoreComponent.AppointmentAgreementTests \
+    import AppointmentAgreementTests as Uc19
 # ---------------------------------- end unit tests imports ------------------------------------------------------------
 # ---------------------------------- integration tests imports ---------------------------------------------------------
 from src.test.WhiteBoxTests.IntegrationTests.DomainLayer.StoreComponent.PurchasePolicyComposite.PurchasePolicyTests \
@@ -71,6 +73,8 @@ from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SystemManagerRoleTests
 from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.SubscriberRoleTests import SubscriberRoleTests as Ut15
 from src.test.WhiteBoxTests.IntegrationTests.ServiceLayer.StoreOwnerOrManagerTests import \
     StoreOwnerOrManagerTests as Ut16
+from src.test.WhiteBoxTests.IntegrationTests.DomainLayer.StoreComponent.AppointmentAgreementTests import \
+    AppointmentAgreementTests as Ut17
 # ---------------------------------- end integration tests imports -----------------------------------------------------
 
 
@@ -103,6 +107,7 @@ class WhiteBoxTestsRunner:
     suite.addTest(loader.loadTestsFromTestCase(Uc16))
     suite.addTest(loader.loadTestsFromTestCase(Uc17))
     suite.addTest(loader.loadTestsFromTestCase(Uc18))
+    suite.addTest(loader.loadTestsFromTestCase(Uc19))
 # ---------------------------------- add unit tests end ----------------------------------------------------------------
 
 # ---------------------------------- add integration tests -------------------------------------------------------------
@@ -122,6 +127,7 @@ class WhiteBoxTestsRunner:
     suite.addTest(loader.loadTestsFromTestCase(Ut14))
     suite.addTest(loader.loadTestsFromTestCase(Ut15))
     suite.addTest(loader.loadTestsFromTestCase(Ut16))
+    suite.addTest(loader.loadTestsFromTestCase(Ut17))
 
 # ---------------------------------- add integration tests end ---------------------------------------------------------
 
