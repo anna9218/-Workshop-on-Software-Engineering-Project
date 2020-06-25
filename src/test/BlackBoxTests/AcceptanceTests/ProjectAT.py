@@ -190,6 +190,12 @@ class ProjectAT(ABC, unittest.TestCase):
         return self.__bridge.view_store_purchase_history(self._username, store_name)
 
     # 6.4 view users' and stores' purchase history
+    def add_system_manager(self, nickname: str, password: str):
+        self.__bridge.add_system_manager(nickname, password)
+
+    def remove_sys_manager(self, nickname: str):
+        return self.__bridge.remove_sys_manager(nickname)
+
     def manager_view_user_purchases(self, nickname: str):
         return self.__bridge.manager_view_user_purchases(self._username, nickname)
 

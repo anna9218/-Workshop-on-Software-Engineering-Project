@@ -80,15 +80,15 @@ class TradeControl:
 
     @logger
     def register_test_user(self, nickname: str, password: str):
-        """
-        TODO: I think its for AT
-        :param nickname:
-        :param password:
-        :return:
-        """
         user = User()
         user.register(nickname, password)
         self.subscribe(user)
+
+    def remove_system_manager(self, nickname: str):
+        for manager in self.__managers:
+            if manager.get_nickname() == nickname:
+                self.__managers.remove(manager)
+        self.unsubscribe(nickname)
 
     @logger
     # ----   Guest functions   ----
@@ -431,6 +431,7 @@ class TradeControl:
     def purchase_basket(self, curr_nickname: str, store_name: str) -> {'response': dict, 'msg': str}:
         """
             purchase single basket from user cart by given store name, according to the policies
+        :param curr_nickname:
         :param store_name: store name
         :return: None if basket doesn't exist or some policy prevents purchase, else purchase dict
                 {"total_price": float, "baskets":
@@ -443,6 +444,9 @@ class TradeControl:
         basket = self.__curr_user.get_shopping_cart().get_store_basket(store_name)
         if basket is None:
             return {'response': None, 'msg': "Store basket doesn't exist"}
+
+        if self.get_store(store_name) is None:
+            return {'response': None, 'msg': "Store" + store_name + "doesn't exist"}
 
         purchase = self.get_store(store_name).purchase_basket(basket)
         if purchase["response"] is None:
@@ -483,10 +487,10 @@ class TradeControl:
 
         return {'response': True, 'msg': "Great Success! Purchase complete"}
 
-    @logger
     def remove_purchase(self, curr_nickname: str, store_name: str, purchase_date: datetime):
         self.set_curr_user_by_name(curr_nickname)
-        self.get_store(store_name).remove_purchase(self.__curr_user.get_nickname(), purchase_date)
+        if self.get_store(store_name) is not None:
+            self.get_store(store_name).remove_purchase(self.__curr_user.get_nickname(), purchase_date)
         self.__curr_user.remove_purchase(store_name, purchase_date)
 
     # ---------------------------------------------------
@@ -832,6 +836,7 @@ class TradeControl:
     @logger
     def remove_manager(self, curr_nickname: str,  store_name: str, appointee_nickname: str) -> bool:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :param appointee_nickname: manager's nickname who's will be removed
         :return: True if removed successfully, else False
@@ -853,6 +858,7 @@ class TradeControl:
     @logger
     def display_store_purchases(self, curr_nickname: str, store_name: str) -> {'response': list, 'msg': str}:
         """
+        :param curr_nickname:
         :param store_name: store's name
         :return: dict = {'response': list, 'msg': str}
                  response = purchases list

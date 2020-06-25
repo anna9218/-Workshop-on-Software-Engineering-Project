@@ -188,8 +188,16 @@ class TradeControlService:
         TradeControl.get_instance().remove_manager(curr_nickname, store_name, appointee_nickname)
 
     @staticmethod
+    def remove_sys_manager(nickname: str):
+        TradeControl.get_instance().remove_system_manager(nickname)
+
+    @staticmethod
     def remove_store(store_name: str):
         TradeControl.get_instance().close_store(store_name)
+
+    @staticmethod
+    def add_system_manager(nickname: str, password: str):
+        TradeControl.get_instance().add_system_manager(nickname, password)
 
     # external system tests functions
     @staticmethod

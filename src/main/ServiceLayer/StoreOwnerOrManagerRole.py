@@ -161,7 +161,7 @@ class StoreOwnerOrManagerRole:
 
     # use case 4.10 - View store’s purchase history
     @staticmethod
-    @logger
+    # @logger
     def display_store_purchases(curr_nickname: str, store_name: str) -> {'response': list, 'msg': str}:
         """
         :param curr_nickname:
