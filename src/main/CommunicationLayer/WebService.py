@@ -665,6 +665,7 @@ def get_visitors_cut():
         request_dict = request.get_json()
         start_date = request_dict.get('start_date')
         end_date = request_dict.get('end_date')
+        print(f'answer = {request_dict}. start= {start_date}, end = {end_date}')
         response = SystemManagerRole.get_visitors_cut(start_date, end_date)
         # response = {'msg': 'succc',
         #             'response': [{'date': datetime(2020, 6, 15), 'guests': 3, 'subscribers': 4, 'store_managers': 5, 'store_owners': 6, 'system_managers': 7},

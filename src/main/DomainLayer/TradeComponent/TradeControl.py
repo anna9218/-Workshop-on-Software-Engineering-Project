@@ -1274,6 +1274,9 @@ class TradeControl:
     def get_user_type(self):
         roles = []
         system_managers = [user.get_nickname() for user in self.__managers]
+        if self.__curr_user is None:
+            print("curr user is None")
+            return "GUEST"
         if self.__curr_user.get_nickname() in system_managers:
             return "SYSTEMMANAGER"
         if self.__curr_user.is_registered():
@@ -1342,7 +1345,7 @@ class TradeControl:
                 visitors_cut.append({'date':s.date(), 'guests': s.guests_amount(), 'subscribers': s.subscribers_amount(),
                                      'store_managers': s.store_managers_amount(), 'store_owners': s.store_owners_amount(),
                                      'system_managers': s.system_managers_amount()})
-        return visitors_cut
+        return {'msg': 'succc', 'response': visitors_cut}
 
     @logger
     def inc_todays_guests_counter(self):

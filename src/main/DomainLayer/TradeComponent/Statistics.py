@@ -96,6 +96,11 @@ class Statistics:
             return True
         return False
 
+    @logger
+    def in_range(self, start_date, end_date):
+        # TODO
+        return True
+
     def __repr__(self):
         str = f'guests = {self.__guests_amount}     subscribers = {self.__subscribers_amount}       ' \
               f'store managers = {self.__store_managers_amount}     store owners = {self.__store_owners_amount}     ' \
