@@ -136,7 +136,7 @@ function EditDiscountPolicyForm(props){
         }
         if(policyName === newPolicyName)
             new_policy_name = null
-        alert([storeName, policyName, selectedProduct, date, percentage, new_policy_name, !showProductPreCondition ? null : (productPreCondition === "Any product" ? "all" : productPreCondition), product_amount_precondition, minPurchasePrice])
+        // alert([storeName, policyName, selectedProduct, date, percentage, new_policy_name, !showProductPreCondition ? null : (productPreCondition === "Any product" ? "all" : productPreCondition), product_amount_precondition, minPurchasePrice])
         const promise = theService.addAndUpdateDiscountPolicy('update', storeName, policyName, selectedProduct, date, percentage, new_policy_name, !showProductPreCondition ? null : (productPreCondition === "Any product" ? "all" : productPreCondition), product_amount_precondition, minPurchasePrice)
         promise.then((data) => {
             if(data !== undefined){
@@ -148,7 +148,7 @@ function EditDiscountPolicyForm(props){
                                 if(data['data']){
                                     fetchDiscountPolicies(storeName)
                                     setPolicyName('Select policy')
-                                    alert(policyName)
+                                    // alert(policyName)
 
                                 }
                                 // setDate(null);
@@ -193,11 +193,11 @@ function EditDiscountPolicyForm(props){
         //     preConditions.push(pre_condition)
         // }
         if(pre_condition === 'product'){
-            alert(productPreCondition)
+            // alert(productPreCondition)
             if(showProductPreCondition)
                 setProductPreCondition("Any product");
             setShowProductPreCondition(!showProductPreCondition)
-            alert(productPreCondition)
+            // alert(productPreCondition)
 
         }
         else if(pre_condition === 'min_purchase_price'){
