@@ -19,6 +19,7 @@ from src.main.DomainLayer.StoreComponent.StoreAppointment import StoreAppointmen
 from src.main.DomainLayer.UserComponent.PurchaseType import PurchaseType
 from src.main.DomainLayer.UserComponent.ShoppingBasket import ShoppingBasket
 from src.main.DomainLayer.UserComponent.User import User
+from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
 import src.main.ResponseFormat as Response
 
 
@@ -251,13 +252,27 @@ class Store:
             if len(owners_and_managers) == 1:  # only one owner, and no managers with APPOINT_OWNER permission
                 self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
                 self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, [appointer]))
+                db_result = (DataAccessFacade.get_instance()).write_store_owner_appointment(
+                    appointee_username=appointee.get_nickname(),
+                    store_name=self.__name,
+                    appointer_username=appointer_nickname)
+                if not db_result['response']:
+                    return db_result
                 return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
             else:  # more than one owner - they need the appointment as well
                 if self.check_appointment_exist(appointee.get_nickname()):
                     self.__StoreOwnerAppointments.append(StoreAppointment(appointer, appointee, []))
-                    return {'response': True, 'msg': appointee.get_nickname() + " was added successfully as a store owner"}
+                    return {'response': True,
+                            'msg': appointee.get_nickname() + " was added successfully as a store owner"}
                 else:
-                    self.__StoreOwnerAppointmentAgreements.append(AppointmentAgreement(appointer, appointee, owners_and_managers))
+                    self.__StoreOwnerAppointmentAgreements.append(
+                        AppointmentAgreement(appointer, appointee, owners_and_managers))
+                    db_result = (DataAccessFacade.get_instance()).write_store_owner_appointment(
+                        appointee_username=appointee.get_nickname(),
+                        store_name=self.__name,
+                        appointer_username=appointer_nickname)
+                    if not db_result['response']:
+                        return db_result
                     return {'response': False, 'msg': "The request is pending approval"}
             # ---------------------------------------------------------
         return {'response': False, 'msg': "User has no permissions"}
@@ -279,7 +294,7 @@ class Store:
         :return: True if the response was updated successfully, otherwise false
         """
         appointment_agreement = list(filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
-                                       self.__StoreOwnerAppointmentAgreements))
+                                            self.__StoreOwnerAppointmentAgreements))
         return appointment_agreement[0].update_agreement_participants(owner_nickname, owner_response)
 
     # @logger
@@ -295,7 +310,7 @@ class Store:
         :return: AppointmentStatus - DECLINED = 1,APPROVED = 2, PENDING = 3
         """
         appointment_agreement = list(filter(lambda app: app.get_appointee().get_nickname() == appointee_nickname,
-                                       self.__StoreOwnerAppointmentAgreements))
+                                            self.__StoreOwnerAppointmentAgreements))
         return appointment_agreement[0].get_appointment_status()
 
     def get_appointment_agreements(self):
@@ -593,7 +608,7 @@ class Store:
 
             if purchase is not None:
                 products_purchases.append(purchase)
-                basket_price += purchase["product_price"]*purchase["amount"]
+                basket_price += purchase["product_price"] * purchase["amount"]
 
         if len(products_purchases) == 0:
             return {'response': None, 'msg': " No purchases can be made"}
@@ -604,7 +619,7 @@ class Store:
 
     # u.c 2.8.1
     @logger
-    def purchase_immediate(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
+    def purchase_immediate(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst: []):
         """
         :param product_name: product name
         :param product_price: product price
@@ -622,7 +637,7 @@ class Store:
 
     # u.c 2.8.2 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger
-    def purchase_auction(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
+    def purchase_auction(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst: []):
         """
         :param store_name: store name
         :param product_name: product name
@@ -643,7 +658,7 @@ class Store:
 
     # u.c 2.8.3 - mostly temp initialization since we don't have purchase policy functionality yet
     @logger
-    def purchase_lottery(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst:[]):
+    def purchase_lottery(self, product_name: str, product_price: int, amount: int, basket_price: int, prod_lst: []):
         """
         :param product_name: product name
         :param product_price: product price

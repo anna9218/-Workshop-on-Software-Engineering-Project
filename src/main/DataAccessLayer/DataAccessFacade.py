@@ -42,7 +42,6 @@ Our persistent domain objects:
 
 
 class DataAccessFacade:
-    # TODO: maybe add try-catch for each function.
     __instance = None
 
     @staticmethod
