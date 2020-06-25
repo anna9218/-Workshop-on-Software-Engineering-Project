@@ -36,6 +36,7 @@ class OwnerAPI extends React.Component {
             
             // if logged out successfuly - delete username from cash
             localStorage.removeItem("loggedUser");
+            localStorage.clear();
 
             this.props.history.push("/");
 

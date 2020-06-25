@@ -4,6 +4,7 @@ import unittest
 from datetime import datetime
 
 from src.main.DataAccessLayer.DataAccessFacade import DataAccessFacade
+from src.main.DomainLayer.StoreComponent.ManagerPermission import ManagerPermission
 from src.main.DomainLayer.StoreComponent.Store import Store
 from src.main.DomainLayer.TradeComponent.TradeControl import TradeControl
 from src.main.DomainLayer.UserComponent.User import User
@@ -86,17 +87,31 @@ class ParallelTests(unittest.TestCase):
         self.assertFalse(return_value_ls[1]['response'])
 
     def test_parallel_update_inventory(self):
-        users_nickname = ["name1", "name1"]
+        self.GuestRole.login(self.owner_name, self.password)
+        self.GuestRole.login(self.user_name, self.password)
+        self.OwnerManagerRole.appoint_store_manager(self.owner_name, self.user_name, self.store.get_name(), [ManagerPermission.EDIT_INV])
+        users_nickname = [self.owner_name, self.user_name]
+        self.products_ls = [{"name": "product2", "price": 10, "category": "general", "amount": 11, "purchase_type": 0}]
 
+        # add product
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            threads = [executor.submit(self.GuestRole.register, user_nickname, 'pass') for user_nickname in users_nickname]
+            threads = [executor.submit(self.OwnerManagerRole.add_products, user_nickname,
+                                       self.store.get_name(), self.products_ls) for user_nickname in users_nickname]
             return_value_ls = [thread.result() for thread in threads]
             print(return_value_ls)
+        # res = self.OwnerManagerRole.add_products(self.owner_name,
+        #         self.store.get_name(), self.products_ls)
+        # res1 = self.OwnerManagerRole.add_products(self.owner_name,
+        #         self.store.get_name(), self.products_ls)
 
-        self.assertEqual(return_value_ls[0]['msg'], "Guest registered successfully")
+        self.assertEqual(return_value_ls[0]['msg'], "Products were added successfully to the store")
         self.assertTrue(return_value_ls[0]['response'])
-        self.assertEqual(return_value_ls[1]['msg'], "Invalid nickname, nickname already exist")
-        self.assertFalse(return_value_ls[1]['response'])
+        self.assertEqual(return_value_ls[1]['msg'], "Products were added successfully to the store")
+        self.assertTrue(return_value_ls[1]['response'])
+        self.assertEqual(self.trad.get_store(self.store.get_name()).get_inventory().get_amount('product2'), 22)
+        self.SubscriberRole.logout(self.owner_name)
+        self.SubscriberRole.logout(self.owner_name)
+
 
     def tearDown(self):
         (DataAccessFacade.get_instance()).delete_purchases()

@@ -18,7 +18,7 @@ function StorePurchaseHistory(props){
   const fetchStorePurchaseHistory = async (store_name) => {
     const promise = theService.fetchStorePurchaseHistory(store_name); // goes to register.js and sends to backend
     promise.then((data) => {
-    alert(data["data"])
+    // alert(data["data"])
 
         if(data["data"].length === 0)
             alert("There are no purchases in store "+ store_name + ".");

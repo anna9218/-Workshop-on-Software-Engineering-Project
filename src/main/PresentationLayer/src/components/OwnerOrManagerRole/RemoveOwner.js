@@ -18,7 +18,7 @@ function RemoveOwner(props){
     const fetchOwnersAppointees = async () => {
         const promise = theService.fetchOwnersAppointees(props.location.store);  // goes to communication.js and sends to server
         promise.then((data) => {
-            if (data["data"].length > 0){   // if there are owned stores
+            if (data !== undefined && data["data"].length > 0){   // if there are owned stores
                 setOwners(data["data"]);
                 setSubscriberNickname(data["data"][0]);
             }
@@ -36,7 +36,7 @@ function RemoveOwner(props){
         else{
             const promise = theService.removeOwner(selectedStore, subscriberNickname);
             promise.then((data) => {
-                if(data["data"] !== undefined && data["data"].length > 0 ){
+                if(data !== undefined && data["data"] !== undefined && data["data"].length > 0 ){
                     confirmAlert({
                         title: data["msg"],
                         message: data['data'].reduce((acc, curr) => acc + "\n" + curr, []), 

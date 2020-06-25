@@ -57,6 +57,7 @@ class SubscriberAPI extends React.Component{
           alert(data["msg"]);
             // if logged out successfuly - delete username from cash
             localStorage.removeItem("loggedUser");
+            localStorage.clear();
 
             // TODO: yarin  
             theWebsocket.logout()

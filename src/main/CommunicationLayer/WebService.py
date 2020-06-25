@@ -24,6 +24,7 @@ CORS(app)
 
 socket = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
 
+
 # 1 - purchase
 # 2 - add+remove manager
 # 3 - else
@@ -106,11 +107,13 @@ def filter_products_by():
         if filter_option == 1:
             min_price = request_dict.get('min_price')
             max_price = request_dict.get('max_price')
-            response = GuestRole.filter_products_by(products_ls, filter_option, min_price=min_price, max_price=max_price)  # list of Products (Object)
+            response = GuestRole.filter_products_by(products_ls, filter_option, min_price=min_price,
+                                                    max_price=max_price)  # list of Products (Object)
         else:
             if filter_option == 2:
                 category = request_dict.get('category')
-                response = GuestRole.filter_products_by(products_ls, filter_option, category=category)  # list of Products (Object)
+                response = GuestRole.filter_products_by(products_ls, filter_option,
+                                                        category=category)  # list of Products (Object)
 
         return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error.", data=[])
@@ -163,7 +166,7 @@ def purchase_products():
 
             # print("after handle")
             return jsonify(data=response)
-        return jsonify(msg="purchase products failed", data=response["response"], status=400)
+        return jsonify(msg="purchase products failed", data=response, status=400)
 
 
 @app.route('/confirm_purchase', methods=['POST'])
@@ -273,7 +276,8 @@ def appoint_store_owner():
             if response["msg"] == "The request is pending approval":
                 # ----------------appointment agreement----------------------
                 msg = f"New owner appointment at store {store_name} - action required!"
-                notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+                notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name},
+                           "agreement")
             elif response["response"]:
                 # if add_subscriber_to_store(store_name, appointee_nickname, False):
                 #     print(_users)
@@ -281,7 +285,8 @@ def appoint_store_owner():
                 #     if appointee_nickname in _users:
                 #         print(_users[appointee_nickname])
                 #         join_room(store_name, _users[appointee_nickname])
-                appointee_msg = {'messages':'Congratulations! you are now one of ' + store_name + ' owners', 'storename': store_name}
+                appointee_msg = {'messages': 'Congratulations! you are now one of ' + store_name + ' owners',
+                                 'storename': store_name}
                 if appointee_nickname in _users:
                     add_subscriber_to_store(store_name, appointee_nickname, True)
                     # get_store(store_name).add_personal_msg(appointee_nickname, appintee_msg)
@@ -314,12 +319,13 @@ def handle_appointment_agreement_response():
         if response:
             # check is the status of the agreement is approved already
             if response["response"]:
-                status = StoreOwnerOrManagerRole.get_appointment_status(appointee_nickname, store_name)
+                status = StoreOwnerOrManagerRole.get_appointment_status(curr_nickname, appointee_nickname, store_name)
                 if status == AppointmentStatus.APPROVED:
-                    response = StoreOwnerOrManagerRole.appoint_additional_owner(appointee_nickname, store_name)
+                    response = StoreOwnerOrManagerRole.appoint_additional_owner(curr_nickname, appointee_nickname, store_name)
                     add_subscriber_to_store(store_name, appointee_nickname, False)
                     msg = f"New owner {appointee_nickname} appointed at store {store_name}!"
-                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name}, "agreement")
+                    notify_all(store_name, {'username': appointee_nickname, 'messages': msg, 'store': store_name},
+                               "agreement")
             return jsonify(msg=response["msg"])
     return jsonify(msg="Oops, communication error")
 
@@ -340,7 +346,8 @@ def get_owners_appointees():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        response = StoreOwnerOrManagerRole.get_appointees(store_name, "OWNERS")
+        curr_nickname = request_dict.get('user_nickname')
+        response = StoreOwnerOrManagerRole.get_appointees(curr_nickname, store_name, "OWNERS")
         return jsonify(data=response)
     return jsonify(data=[])
 
@@ -379,9 +386,11 @@ def edit_manager_permissions():
         appointee_nickname = request_dict.get('appointee_nickname')  # str
         curr_nickname = request_dict.get('user_nickname')
         permissions = request_dict.get('permissions')  # str
-        response = StoreOwnerOrManagerRole.edit_manager_permissions(curr_nickname, store_name, appointee_nickname, permissions)
+        response = StoreOwnerOrManagerRole.edit_manager_permissions(curr_nickname, store_name, appointee_nickname,
+                                                                    permissions)
         if response:
-            return jsonify(data=response, msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
+            return jsonify(data=response,
+                           msg="Permissions of manager " + appointee_nickname + " were updated successfully!")
         else:
             return jsonify(data=False, msg="Oops, update permissions failed.")
     return jsonify(data=False, msg="Oops, communication error.")
@@ -460,8 +469,8 @@ def add_and_update_purchase_policy():
                 dates += [parse(date)]
 
         details = {"name": policy_name, "products": products,
-                    "min_amount": min_amount, "max_amount": max_amount,
-                    "dates": dates, "bundle": bundle}
+                   "min_amount": min_amount, "max_amount": max_amount,
+                   "dates": dates, "bundle": bundle}
         if action_type == 'add':
             response = StoreOwnerOrManagerRole.define_purchase_policy(curr_nickname, store_name, details)
         else:
@@ -488,17 +497,20 @@ def add_and_update_dicount_policy():
 
         discount_details = {'name': policy_name, 'product': product_name}
         discount_precondition = {'product': product,
-                                'min_amount': min_amount,
-                                'min_basket_price': min_purchase_price}
+                                 'min_amount': min_amount,
+                                 'min_basket_price': min_purchase_price}
 
         if product is None and min_amount is None and min_purchase_price is None:
             discount_precondition = None
         if action_type == 'add':
-            response = StoreOwnerOrManagerRole.define_discount_policy(curr_nickname, store_name, percentage, date, discount_details, discount_precondition)
+            response = StoreOwnerOrManagerRole.define_discount_policy(curr_nickname, store_name, percentage, date,
+                                                                      discount_details, discount_precondition)
         else:
             new_policy_name = request_dict.get('new_policy_name')
             discount_details = {'name': new_policy_name, 'product': product_name}
-            response = StoreOwnerOrManagerRole.update_discount_policy(curr_nickname, store_name, policy_name, percentage, date, discount_details, discount_precondition)
+            response = StoreOwnerOrManagerRole.update_discount_policy(curr_nickname, store_name, policy_name,
+                                                                      percentage, date, discount_details,
+                                                                      discount_precondition)
         return jsonify(msg=response['msg'], data=response['response'])
 
     return jsonify(msg="Oops, communication error.")
@@ -517,7 +529,8 @@ def add_composite_dicount_policy():
         operator = request_dict.get('operator')
         curr_nickname = request_dict.get('user_nickname')
 
-        response = StoreOwnerOrManagerRole.define_composite_policy(curr_nickname, store_name, policy1, policy2, operator, percentage, new_policy_name, date)
+        response = StoreOwnerOrManagerRole.define_composite_policy(curr_nickname, store_name, policy1, policy2,
+                                                                   operator, percentage, new_policy_name, date)
 
         return jsonify(msg=response['msg'], data=response['response'])
 
@@ -577,19 +590,25 @@ def edit_product():
         #     return jsonify(msg="Oops, product's amount can't be smaller than 0.")
 
         if amount is not None:
-            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "amount", amount)["response"]:
+            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "amount", amount)[
+                "response"]:
                 errors.append("Product Amount")
         if price is not None:
-            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "price", price)["response"]:
+            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "price", price)[
+                "response"]:
                 errors.append("Product Price")
         if category is not None:
-            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "category", category)["response"]:
+            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "category", category)[
+                "response"]:
                 errors.append("Category")
         if purchase_type is not None:
-            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "purchase_type", purchase_type)["response"]:
+            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "purchase_type",
+                                                        purchase_type)["response"]:
                 errors.append("Purchase Type")
         if new_product_name is not None:
-            if not StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "name", new_product_name)["response"]:
+            if not \
+            StoreOwnerOrManagerRole.edit_product(curr_nickname, store_name, product_name, "name", new_product_name)[
+                "response"]:
                 errors.append("Product Name")
 
         error_str = ""
@@ -661,7 +680,7 @@ def view_personal_purchase_history():
         request_dict = request.get_json()
         curr_nickname = request_dict.get('user_nickname')
         response = SubscriberRole.view_personal_purchase_history(curr_nickname, None)
-        return jsonify(msg=response["msg"], data=response["response"]) # NEED TO BE CHEKED, STAM ASITI
+        return jsonify(msg=response["msg"], data=response["response"])  # NEED TO BE CHEKED, STAM ASITI
 
 
 # ------------------------------ SYSTEM MANAGER ROLE SERVICES ---------------------------------------------#
@@ -714,6 +733,7 @@ def get_visitors_cut():
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, error with communication!", data=response)
 
+
 # ------------------------------ TRADE CONTROL SERVICE ----------------------------------------------------#
 
 @app.route('/init_system', methods=['GET'])
@@ -736,12 +756,14 @@ def get_curr_user_nickname():
     result = TradeControlService.get_curr_username()
     return jsonify(data=result)
 
+
 # ------------------------------ WEBSOCKET ----------------------------------------------------#
 
 _users = {}  # dict of <username>: <its session ID>
 _stores: [StorePublisher] = []  # list of StorePublisher
-_users_with_their_own_rooms = [] # list of usernames that subsribed to room with their own name
-_system_managers = [] # list <system_manager_nickname, sid, is_in_daily_cuts_window>
+_users_with_their_own_rooms = []  # list of usernames that subsribed to room with their own name
+_system_managers = []  # list <system_manager_nickname, sid, is_in_daily_cuts_window>
+
 
 # @socket.on('')
 @socket.on('connect')
@@ -774,8 +796,8 @@ def connect():
 @socket.on('join')
 def websocket_open_store(data):
     if data:
-        username= data['username']
-        storename= data['store']
+        username = data['username']
+        storename = data['store']
         print(f"open store u= {username}, s = {storename}")
         # socket.emit('message', {}) - works!
         print(f"stores are {_stores}")
@@ -783,7 +805,7 @@ def websocket_open_store(data):
         if store is not None and store.is_subscribed_to_store(username):
             # print(f"new: open store (store name = {storename}) msg from {username} ")
             append_user_to_room(storename, username, request.sid)
-            print (f"append user {username} to new store {storename}")
+            print(f"append user {username} to new store {storename}")
             # create_new_publisher(storename, username)
         else:
             print(f"store is already exists! {get_store(storename)}")
@@ -829,7 +851,7 @@ def notify_all(store_name, msg, event):
     # socket.send(msgs, json=True, room=storename)
     store = get_store(store_name)
     store.add_msg(msg, event)
-    print (store)
+    print(store)
     print(f"room = {store_name}, msg = {msg}")
     socket.emit(event, msg, room=store_name)  # event = str like 'purchase', 'remove_owner', 'new_owner'
     # socket.send({
@@ -854,8 +876,8 @@ def handle_agreement_msg(appointe_name, store_name):
 
 def handle_remove_owner_msg(user_name, store_name):
     if not remove_subscriber_from_store(store_name, user_name):
-        print ("error in store publisher- remove owner")
-    sid = _users[user_name]
+        print("error in store publisher- remove owner")
+    sid = _users.get(user_name)
     if sid:
         leave_room(room=store_name, sid=user_name)
         if not TradeControlService.get_user_type() == 'OWNER' and user_name in _users_with_their_own_rooms:
@@ -863,9 +885,10 @@ def handle_remove_owner_msg(user_name, store_name):
             _users_with_their_own_rooms.remove(user_name)
     msg = f"{user_name} was removed as owner from store {store_name}"
     print(f"send msg: {msg}")
-    notify_all(store_name, {'username':user_name, 'messages':msg, 'store':store_name}, 'message')
+    notify_all(store_name, {'username': user_name, 'messages': msg, 'store': store_name}, 'message')
     # notify_all(store_name, jsonify(username=user_name, messages=msg, store=store_name))
     # print(f"send msg: {msg}")
+
 
 @socket.on('login')
 def handle_login(data):
@@ -874,24 +897,25 @@ def handle_login(data):
     _users[username] = user_sid
     print(_users)
     # user_sid = _users(username)
-    if (TradeControlService.get_user_type() == 'OWNER'):
+    if TradeControlService.get_user_type(username) == 'OWNER':
         join_room(username, user_sid)
         _users_with_their_own_rooms.append(username)
-        print (f"insert {username} to it's room. sid = {user_sid}")
+        print(f"insert {username} to it's room. sid = {user_sid}")
         for store in _stores:
             if store.is_subscribed_to_store(username):
                 store_name = store.store_name()
                 print(f"search for msgs to {username} at store {store_name}")
                 join_room(room=store_name, sid=user_sid)
                 msgs = store.retrieveMsgs(username)
-                print (msgs)
+                print(msgs)
                 for msg, event in msgs:
-                    print (f"send msg '{msg}' only to {username}. event type is {event}")
+                    print(f"send msg '{msg}' only to {username}. event type is {event}")
                     socket.emit(event, msg, room=username)
                 appointee_msgs = store.get_personal_msgs(username)
                 for msg in appointee_msgs:
-                    print (f"send msg '{msg}' only to {username}")
+                    print(f"send msg '{msg}' only to {username}")
                     socket.emit('message', msg, room=username)
+
 
 def get_store(store_name) -> StorePublisher:
     for store in _stores:
@@ -926,6 +950,7 @@ def is_subscribed_to_store(store_name, nickname):
     # print(f"store {store_name} is none. nickname is {nickname}")
     return False
 
+
 @socket.on('logout')
 def logout_from_stores(data):
     if (data):
@@ -936,16 +961,18 @@ def logout_from_stores(data):
             if store.is_subscribed_to_store(username):
                 store.logout_subscriber(username)
                 if sid:
-                    print (f"leave room: store name = {store.store_name()} , sid = {sid}")
+                    print(f"leave room: store name = {store.store_name()} , sid = {sid}")
                 if sid:
-                    storename=store.store_name()
-                    leave_room(room=storename, sid= sid)
+                    storename = store.store_name()
+                    leave_room(room=storename, sid=sid)
         if username in _users_with_their_own_rooms:
-            leave_room(room=username, sid= sid)
+            leave_room(room=username, sid=sid)
             _users_with_their_own_rooms.remove(username)
         del _users[username]
     else:
         print(f"error with logout message at websocket. recieved: {data}")
+
+
 #
 #
 # def delete_user(username):
@@ -960,12 +987,13 @@ def websocket_logout(username):
         sid = _users[username]
         if sid:
             del _users[username]
-        print (f"user list after logout of {username} = {_users}")
+        print(f"user list after logout of {username} = {_users}")
         # for user in _users:
         #     (user_name, sid) = user
         #     if username == user_name:
         #         del _users[user_name]
         #         print (f"user list = {_users}")
+
 
 # TODO - add call
 def send_daily_cut_update(statistics_update):
