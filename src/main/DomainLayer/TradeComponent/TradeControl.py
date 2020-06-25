@@ -838,8 +838,8 @@ class TradeControl:
         if self.__curr_user.is_registered() and \
                 appointee.is_registered() and \
                 self.__curr_user.is_logged_in() and \
-                (store.is_owner(self.__curr_user.get_nickname()) or store.is_manager(self.__curr_user.get_nickname())):
-            result = store.add_owner(self.__curr_user.get_nickname(), appointee)
+                (store.is_owner(curr_nickname) or store.is_manager(curr_nickname)):
+            result = store.add_owner(curr_nickname, appointee)
             return result
             # if result:
             #     return {'response': True, 'msg': appointee_nickname + " was added successfully as a store owner"}

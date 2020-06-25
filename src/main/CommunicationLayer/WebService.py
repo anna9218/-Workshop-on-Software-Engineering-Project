@@ -230,8 +230,7 @@ def appoint_store_manager():
         store_name = request_dict.get('store_name')  # str
         permissions = request_dict.get('permissions')  # list of tuples
         curr_nickname = request_dict.get('user_nickname')
-        response = StoreOwnerOrManagerRole.appoint_store_manager(curr_nickname, appointee_nickname, store_name,
-                                                                 permissions)
+        response = StoreOwnerOrManagerRole.appoint_store_manager(curr_nickname, appointee_nickname, store_name, permissions)
         if response:
             return jsonify(msg=response["msg"], data=response["response"])
     return jsonify(msg="Oops, communication error")
@@ -262,8 +261,6 @@ def remove_owner():
             handle_remove_owner_msg(appointee_nickname, store_name)
             return jsonify(msg=response['msg'], data=response['response'])
     return jsonify(msg="Oops, communication error--")
-
-
 # remove_owner(self, appointee_nickname: str, store_name: str)
 
 
@@ -751,7 +748,6 @@ def get_user_type():
         request_dict = request.get_json()
         curr_nickname = request_dict.get('user_nickname')
         result = TradeControlService.get_user_type(curr_nickname)
-        TradeControlService.add_system_manager("m", "m")
         return jsonify(data=result)
 
 
