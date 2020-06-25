@@ -546,7 +546,8 @@ def add_product():
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')
         products_details = request_dict.get('products_details')
-        response = StoreOwnerOrManagerRole.add_products(store_name, products_details)
+        curr_nickname = request_dict.get('user_nickname')
+        response = StoreOwnerOrManagerRole.add_products(curr_nickname, store_name, products_details)
         if response["response"]:
             return jsonify(msg="Congrats! Product was added!")
         return jsonify(msg="Oops, product wasn't added")
