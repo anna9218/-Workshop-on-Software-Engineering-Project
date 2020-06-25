@@ -340,7 +340,8 @@ def get_owners_appointees():
     if request.is_json:
         request_dict = request.get_json()
         store_name = request_dict.get('store_name')  # str
-        response = StoreOwnerOrManagerRole.get_appointees(store_name, "OWNERS")
+        curr_nickname = request_dict.get('user_nickname')
+        response = StoreOwnerOrManagerRole.get_appointees(curr_nickname, store_name, "OWNERS")
         return jsonify(data=response)
     return jsonify(data=[])
 
@@ -855,7 +856,7 @@ def handle_agreement_msg(appointe_name, store_name):
 def handle_remove_owner_msg(user_name, store_name):
     if not remove_subscriber_from_store(store_name, user_name):
         print ("error in store publisher- remove owner")
-    sid = _users[user_name]
+    sid = _users.get(user_name)
     if sid:
         leave_room(room=store_name, sid=user_name)
         if not TradeControlService.get_user_type() == 'OWNER' and user_name in _users_with_their_own_rooms:
